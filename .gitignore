@@ -1,0 +1,23 @@
+# Build artifacts
+*.vo
+*.vos
+*.vok
+*.glob
+.*.aux
+.*.cache
+.vfiles
+.coq-native/
+.coqdeps.d
+*.o
+*.obj
+*.exe
+*.dll
+
+# Lean artifacts
+.lake/
+lake-packages/
+
+# Editor files
+.vscode/
+*~
+*.swp
