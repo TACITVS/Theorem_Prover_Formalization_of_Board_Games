@@ -75,7 +75,7 @@ This sequence is verified exhaustively against all possible Black defensive bran
 
 ### 4. The +4 Defensive Surplus Law
 * In Twelve Men's Morris, each player places $12$ stones.
-* Because $12 - 8 = \mathbf{+4}$, Black has $4$ extra stones beyond the minimum transversal size.
+* Because $12 - 8 = +4$, Black has $4$ extra stones beyond the minimum transversal size.
 * However, because White moves first and exploits the high-degree corner junctions, White forces a mill at Ply 8 before Black can establish the static transversal barrier!
 
 ### 5. Zermelo Minimax Determinacy & Game Solution
@@ -95,7 +95,7 @@ This sequence is verified exhaustively against all possible Black defensive bran
 | **Mill Degree Distribution** | Uniform: all $24$ vertices have $\deg_{\mathcal{E}} = 2$ | Broken: $12$ corners have $\deg_{\mathcal{E}} = 3$, $12$ midpoints have $\deg_{\mathcal{E}} = 2$ |
 | **Transversal Number ($\tau$)** | $8$ | $8$ |
 | **Stones per Player ($n$)** | $9$ | $12$ |
-| **Defensive Surplus ($\delta$)** | $\mathbf{+1}$ stone ($9 - 8$) | $\mathbf{+4}$ stones ($12 - 8$) |
+| **Defensive Surplus ($\delta$)** | $+1$ stone ($9 - 8$) | $+4$ stones ($12 - 8$) |
 | **Can White force an opening mill?** | No (Black parries all lines) | **YES (Forced Double-Fork on Ply 8)** |
 | **Game-Theoretic Value** | **Exact Draw** (Ralph Gasser 1993) | **Win White in 49 Moves** (Gévay & Danner 2016) |
 
@@ -104,7 +104,7 @@ This sequence is verified exhaustively against all possible Black defensive bran
 ## 🧮 Multi-Disciplinary Analysis: Algebra of Fairness & Spectral Graph Theory
 
 See the complete mathematical monograph in [`ALGEBRA_OF_FAIRNESS_AND_SPECTRAL_ANALYSIS.md`](ALGEBRA_OF_FAIRNESS_AND_SPECTRAL_ANALYSIS.md) covering:
-1. **The Algebra of Fairness:** The exact triple conjunction ($\Delta_{\mathcal{E}} \le 2$, $n \ge \tau(H)$, $\rho < 1$) classifying fair vs. unfair Morris games.
+1. **The Algebra of Fairness:** The exact triple conjunction ($\Delta_{\mathcal{E}} \le 2$, $n \ge \tau(H)$, $\rho \lt 1$) classifying fair vs. unfair Morris games.
 2. **Spectral Graph Theory:** Adjacency spectral radius expansion from $2\sqrt{2}$ to $2 + \sqrt{2}$ ($+20.7\%$), algebraic connectivity jump of $+33.6\%$, and the degree-6 diagonal hub structure in the dual Gram matrix $G = M M^T$.
 3. **Polynomial Algebra & Commutative Ideals:** Exact monomial factorization of the double-fork $P_{\text{fork}} = x_{14}(x_6 x_{22} + x_8 x_{15})$ in the coordinate quotient ring $\mathbb{R}[x_0, \dots, x_{23}] / \langle x_i^2 - x_i \rangle$, proving via Hilbert's Nullstellensatz why Black cannot block both threat lines at Ply 7.
 
