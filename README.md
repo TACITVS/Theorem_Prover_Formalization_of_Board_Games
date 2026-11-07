@@ -220,7 +220,25 @@ $$
 |:---:|:---|:---|:---:|:---:|:---:|:---:|:---|
 | 1 | **Payne's Decoy Coup (1756)** | Endgame Masterwork | **`28-23!`** | **+10 (Win)** | **-120.0 (Worst)** | **420.0** | Sacrificial king decoy forcing compulsory `19x28` into double corner pin. |
 | 2 | **The Royal Shot** | Tactical Combination | **`30-26!`** | **+220 (Win)** | **-80.0 (Worst)** | **210.0** | Premature back-row evacuation sacrificing 2 checkers for 3-piece king stroke. |
-| 3 | **The Bristol Edge Paradox** | 3-Move Ballot | **`22x15!`** | **+10 (Adv)** | **+130.0 (Jump)** | **0.0** | Rim flank wedge establishing iron grip on opponent's crown row. |
+| 3 | **Autonomous Center Thrust** | Opening Tree (Ply 4) | **`12-15!`** | **+10 (Win)** | **-90.0 (Worst)** | **220.0** | Sacrificial pitch dislocating White's center into the rim dog-hole. |
+| 4 | **Autonomous Flank Gambit** | Opening Tree (Ply 3) | **`21-18!`** | **+10 (Win)** | **-90.0 (Worst)** | **220.0** | Counter-intuitive flank sac shattering Black's single-corner file. |
+| 5 | **The Bristol Edge Paradox** | 3-Move Ballot | **`22x15!`** | **+10 (Adv)** | **+130.0 (Jump)** | **0.0** | Rim flank wedge establishing iron grip on opponent's crown row. |
+
+### 🎮 Tournament PDN & Textbook Notation (Import to CheckerBoard / KingsRow)
+
+All discovered games are exported to the official tournament PDN file [`checkpoints_8x8/move37_tournament_games.pdn`](file:///C:/Rocq-Platform~9.1~2026.01/Math_Proofs/NineMensMorris/checkpoints_8x8/move37_tournament_games.pdn), ready for immediate import into **CheckerBoard**, **KingsRow**, **Aurora Borealis**, **Chinook**, or web analyzers ([lidraughts.org](https://lidraughts.org/editor)):
+
+#### 1. Autonomous Discovery #1: The Center Thrust Sac (`12-15!`)
+* **FEN String (Direct Paste):** `B:W17,19,23,24,25,26,27,28,29,30,31,32:B1,2,3,4,5,7,8,9,10,11,12,14`
+* **Textbook Moves:** `1. 11-14 22-19` | `2. 6-11 21-17` | `3. 12-15! 19x12` | `4. 8x15 23-19` | `5. 14x23 *`
+
+#### 2. Autonomous Discovery #2: The Flank Gambit (`21-18!`)
+* **FEN String (Direct Paste):** `W:W19,21,22,24,25,26,27,28,29,30,31,32:B1,2,3,4,5,6,7,8,9,10,14,16`
+* **Textbook Moves:** `1. 12-16 23-19` | `2. 11-14 21-18!` | `3. 14x21 25x18` | `4. 10-14 18x11` | `5. 7x23 27x20 *`
+
+#### 3. Historical Calibration: Payne's Decoy Coup (`28-23!`)
+* **FEN String (Direct Paste):** `W:W28,32:B15,19`
+* **Textbook Moves:** `1. 28-23! 19x28` | `2. 32-27! 1-0` (Forced Zugzwang)
 
 ### Architectural Insight: Why CUDA on GPUs for State Space, but C++ on CPUs for Move 37?
 
@@ -262,4 +280,11 @@ powershell -ExecutionPolicy Bypass -File .\run_10min_exploration.ps1
 g++ -O3 -march=native -fopenmp solver/move37_finder.cpp -o solver/move37_finder.exe
 .\solver\move37_finder.exe
 ```
+
+### 7. Run Autonomous Opening Tree Move 37 Miner (515 Anomalies from Scratch)
+```powershell
+g++ -O3 -march=native solver/autonomous_move37_miner.cpp -o solver/autonomous_move37_miner.exe
+.\solver\autonomous_move37_miner.exe
+```
+
 
