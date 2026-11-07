@@ -54,16 +54,12 @@ Because every vertex in Nine Men's Morris belongs to **strictly 2 mills** (`NMMG
 - **16 Dual Vertices:** The $16$ winning lines (mills).
 - **24 Dual Edges:** The $24$ board points (each board point is an edge linking the two mills it belongs to).
 - **Regularity:** Each mill contains $3$ points, so every dual vertex has degree $3$!
-- **Handshake Lemma in Dual Space:**
-  $$16 \text{ dual vertices} \times 3 = 48 = 2 \times 24 \text{ dual edges}$$
-  ([`NMMTransversal.v`](NMMTransversal.v)).
+- **Handshake Lemma in Dual Space:** $16 \text{ dual vertices} \times 3 = 48 = 2 \times 24 \text{ dual edges}$ ([`NMMTransversal.v`](NMMTransversal.v)).
 This transforms Nine Men's Morris from a planar geometry problem into an **Alternating Edge-Coloring Game on a 16-Vertex Cubic Graph**!
 
 ### Breakthrough II: The Exact 8-Stone Transversal Theorem ($\tau(H) = 8$)
-- By double-counting, since each vertex covers at most $2$ mills, covering all $16$ mills requires at least:
-  $$\tau(H) \ge \left\lceil \frac{16}{2} \right\rceil = 8 \text{ stones}$$
-- In [`NMMTransversal.v`](NMMTransversal.v), we proved the existence of an explicit **8-Stone Universal Transversal**:
-  $$T_8 = \{1, 3, 5, 7, 8, 12, 16, 20\}$$
+- By double-counting, since each vertex covers at most $2$ mills, covering all $16$ mills requires at least $\tau(H) \ge \lceil 16 / 2 \rceil = 8$ stones.
+- In [`NMMTransversal.v`](NMMTransversal.v), we proved the existence of an explicit **8-Stone Universal Transversal**: $T_8 = \{1, 3, 5, 7, 8, 12, 16, 20\}$.
   - **4 Outer Midpoints $\{1, 3, 5, 7\}$:** simultaneously intersect all $4$ outer mills AND all $4$ radial cross-mills ($8$ mills covered)!
   - **2 Opposite Middle Corners $\{8, 12\}$:** intersect all $4$ middle mills!
   - **2 Opposite Inner Corners $\{16, 20\}$:** intersect all $4$ inner mills!
@@ -73,9 +69,7 @@ This transforms Nine Men's Morris from a planar geometry problem into an **Alter
 ### Breakthrough III: The 768-Ply Finite Horizon & Zermelo Law
 - Captured stones are permanently removed (capture monotonicity).
 - At most $14$ captures can occur in an entire game.
-- Under the 50-move rule, any play has a maximum horizon of:
-  $$\text{Max Plies} = 18 + 15 \times 50 = 768 \text{ plies}$$
-  ([`NMMRetrograde.v`](NMMRetrograde.v)).
+- Under the 50-move rule, any play has a maximum horizon of $\text{Max Plies} = 18 + 15 \times 50 = 768 \text{ plies}$ ([`NMMRetrograde.v`](NMMRetrograde.v)).
 - Thus, the game tree is strictly finite and acyclic, guaranteeing the constructive validity of **Zermelo's Minimax Theorem** (`game_value = Draw`).
 
 ---
@@ -83,13 +77,13 @@ This transforms Nine Men's Morris from a planar geometry problem into an **Alter
 ## 📐 $D_4$ Dihedral Symmetry Automorphism Group
 
 The full automorphism group of the board graph is isomorphic to the dihedral group of order $8$:
+
 $$
 D_4 = \langle R, S \mid R^4 = \text{Id}, \quad S^2 = \text{Id}, \quad R S = S R^3 \rangle
 $$
-- **Clockwise $90^\circ$ Rotation $R$:** 
-  $$R(p) = 8 \lfloor p / 8 \rfloor + ((p + 2) \bmod 8)$$
-- **Vertical Reflection $S$:** 
-  $$S(p) = 8 \lfloor p / 8 \rfloor + ((10 - (p \bmod 8)) \bmod 8)$$
+
+- **Clockwise $90^\circ$ Rotation $R$:** $R(p) = 8 \lfloor p / 8 \rfloor + ((p + 2) \bmod 8)$
+- **Vertical Reflection $S$:** $S(p) = 8 \lfloor p / 8 \rfloor + ((10 - (p \bmod 8)) \bmod 8)$
 
 **Mechanized Equivariance Theorems ([`NMMStrategy.v`](NMMStrategy.v)):**
 1. $\text{Adj}(R(u), R(v)) = \text{Adj}(u, v)$ and $\text{Adj}(S(u), S(v)) = \text{Adj}(u, v)$.
