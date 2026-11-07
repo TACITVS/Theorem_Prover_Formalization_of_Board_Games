@@ -1,0 +1,207 @@
+{
+  "version": "1.0.0",
+  "game": "English Checkers (8x8 Draughts)",
+  "start_timestamp": 1794077490.6324198,
+  "total_elapsed_seconds": 0.0,
+  "total_states_explored": 20672334,
+  "total_states_resolved": 828960,
+  "disk_storage_bytes": 47967399,
+  "completed_slices": {
+    "0m1k_vs_0m1k": {
+      "name": "0m1k_vs_0m1k",
+      "num_states": 1984,
+      "white_wins": 338,
+      "black_wins": 338,
+      "draws": 1308,
+      "iterations": 11,
+      "solve_time_sec": 0.04695049999281764,
+      "throughput_states_per_sec": 42257.27096204528,
+      "file_path": "checkpoints_8x8\\tablebases\\0m1k_vs_0m1k.npz",
+      "file_size_bytes": 1271
+    },
+    "1m0k_vs_0m1k": {
+      "name": "1m0k_vs_0m1k",
+      "num_states": 1736,
+      "white_wins": 832,
+      "black_wins": 904,
+      "draws": 0,
+      "iterations": 2,
+      "solve_time_sec": 0.004802399780601263,
+      "throughput_states_per_sec": 361485.9402193817,
+      "file_path": "checkpoints_8x8\\tablebases\\1m0k_vs_0m1k.npz",
+      "file_size_bytes": 522
+    },
+    "1m0k_vs_1m0k": {
+      "name": "1m0k_vs_1m0k",
+      "num_states": 1520,
+      "white_wins": 760,
+      "black_wins": 760,
+      "draws": 0,
+      "iterations": 2,
+      "solve_time_sec": 0.00443939957767725,
+      "throughput_states_per_sec": 342388.64364520286,
+      "file_path": "checkpoints_8x8\\tablebases\\1m0k_vs_1m0k.npz",
+      "file_size_bytes": 496
+    },
+    "0m2k_vs_0m1k": {
+      "name": "0m2k_vs_0m1k",
+      "num_states": 29760,
+      "white_wins": 29760,
+      "black_wins": 0,
+      "draws": 0,
+      "iterations": 21,
+      "solve_time_sec": 0.7480742996558547,
+      "throughput_states_per_sec": 39782.14465286515,
+      "file_path": "checkpoints_8x8\\tablebases\\0m2k_vs_0m1k.npz",
+      "file_size_bytes": 8612
+    },
+    "1m1k_vs_0m1k": {
+      "name": "1m1k_vs_0m1k",
+      "num_states": 52080,
+      "white_wins": 28824,
+      "black_wins": 23256,
+      "draws": 0,
+      "iterations": 2,
+      "solve_time_sec": 0.18254229985177517,
+      "throughput_states_per_sec": 285303.73531115305,
+      "file_path": "checkpoints_8x8\\tablebases\\1m1k_vs_0m1k.npz",
+      "file_size_bytes": 5079
+    },
+    "2m0k_vs_0m1k": {
+      "name": "2m0k_vs_0m1k",
+      "num_states": 22680,
+      "white_wins": 12228,
+      "black_wins": 10452,
+      "draws": 0,
+      "iterations": 2,
+      "solve_time_sec": 0.08166880020871758,
+      "throughput_states_per_sec": 277707.0306168042,
+      "file_path": "checkpoints_8x8\\tablebases\\2m0k_vs_0m1k.npz",
+      "file_size_bytes": 2014
+    },
+    "0m2k_vs_0m2k": {
+      "name": "0m2k_vs_0m2k",
+      "num_states": 431520,
+      "white_wins": 41,
+      "black_wins": 41,
+      "draws": 431438,
+      "iterations": 3,
+      "solve_time_sec": 6.436484599951655,
+      "throughput_states_per_sec": 67042.80780897716,
+      "file_path": "checkpoints_8x8\\tablebases\\0m2k_vs_0m2k.npz",
+      "file_size_bytes": 2175
+    },
+    "0m3k_vs_0m1k": {
+      "name": "0m3k_vs_0m1k",
+      "num_states": 287680,
+      "white_wins": 287680,
+      "black_wins": 0,
+      "draws": 0,
+      "iterations": 21,
+      "solve_time_sec": 6.839229799807072,
+      "throughput_states_per_sec": 42063.215949859616,
+      "file_path": "checkpoints_8x8\\tablebases\\0m3k_vs_0m1k.npz",
+      "file_size_bytes": 71553
+    }
+  },
+  "completed_plies": [
+    {
+      "ply": 0,
+      "unique_states": 1,
+      "branching_factor": 7.0,
+      "time_sec": 5.530007183551788e-05,
+      "file_size_bytes": 217
+    },
+    {
+      "ply": 1,
+      "unique_states": 7,
+      "branching_factor": 7.0,
+      "time_sec": 0.0002764998935163021,
+      "file_size_bytes": 238
+    },
+    {
+      "ply": 2,
+      "unique_states": 49,
+      "branching_factor": 4.408163265306122,
+      "time_sec": 0.0016989996656775475,
+      "file_size_bytes": 386
+    },
+    {
+      "ply": 3,
+      "unique_states": 216,
+      "branching_factor": 3.7268518518518516,
+      "time_sec": 0.007877499796450138,
+      "file_size_bytes": 980
+    },
+    {
+      "ply": 4,
+      "unique_states": 805,
+      "branching_factor": 3.395031055900621,
+      "time_sec": 0.025246799923479557,
+      "file_size_bytes": 3250
+    },
+    {
+      "ply": 5,
+      "unique_states": 2733,
+      "branching_factor": 3.328576655689718,
+      "time_sec": 0.0861196001060307,
+      "file_size_bytes": 11001
+    },
+    {
+      "ply": 6,
+      "unique_states": 9097,
+      "branching_factor": 3.0734308013630867,
+      "time_sec": 0.2709719999693334,
+      "file_size_bytes": 38498
+    },
+    {
+      "ply": 7,
+      "unique_states": 27959,
+      "branching_factor": 2.9672377409778603,
+      "time_sec": 0.794684000313282,
+      "file_size_bytes": 129713
+    },
+    {
+      "ply": 8,
+      "unique_states": 82961,
+      "branching_factor": 2.855992574824315,
+      "time_sec": 2.3785969000309706,
+      "file_size_bytes": 410813
+    },
+    {
+      "ply": 9,
+      "unique_states": 236936,
+      "branching_factor": 2.8136036735658574,
+      "time_sec": 6.7210815995931625,
+      "file_size_bytes": 1279870
+    },
+    {
+      "ply": 10,
+      "unique_states": 666644,
+      "branching_factor": 2.746938395905461,
+      "time_sec": 19.635621999856085,
+      "file_size_bytes": 3809910
+    },
+    {
+      "ply": 11,
+      "unique_states": 1831230,
+      "branching_factor": 2.6930462039175853,
+      "time_sec": 51.87701650010422,
+      "file_size_bytes": 11097364
+    },
+    {
+      "ply": 12,
+      "unique_states": 4931587,
+      "branching_factor": 2.6121629812066582,
+      "time_sec": 174.11089070001617,
+      "file_size_bytes": 31087696
+    },
+    {
+      "ply": 13,
+      "unique_states": 12882109,
+      "branching_factor": 2.5346661792723535,
+      "time_sec": 428.9407550999895,
+      "file_size_bytes": 84384499
+    }
+  ]
+}
