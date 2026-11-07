@@ -1,7 +1,7 @@
 # Theorem Prover Formalization of Board Games
 
 [![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-74_Theorems_Closed-22c55e?style=for-the-badge)](build.ps1)
-[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-33_Theorems_0_sorry-10b981?style=for-the-badge)](build_lean.ps1)
+[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-48_Theorems_0_sorry-10b981?style=for-the-badge)](build_lean.ps1)
 [![C11 Engine](https://img.shields.io/badge/C11_Bitboard-1.6_Billion_Evals%2Fsec-blue?style=for-the-badge)](solver/nmm_solver.c)
 [![12MM Engine](https://img.shields.io/badge/12MM_Engine-1.02_Billion_Evals%2Fsec-indigo?style=for-the-badge)](solver/nmm12_solver.c)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)](LICENSE)
