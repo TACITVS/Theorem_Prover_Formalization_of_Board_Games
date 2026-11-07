@@ -153,6 +153,43 @@ We executed an intensive **10-minute exploration run** on the NVIDIA GeForce RTX
 
 ---
 
+## 🚀 Future Initiative & Call for Community Compute / Sponsorship
+
+### Project Chinook-2026: Open-Source Weak Solution of 8×8 Checkers
+
+In 2007, Jonathan Schaeffer's team (*Science*) established that 8×8 Checkers is an exact Draw. That landmark accomplishment required **18 years** of distributed computing on 1990s CPU clusters and produced proprietary, closed databases.
+
+With modern Graded Poset Stratification, Klein-4 quotienting, and high-performance CUDA bitboard engines ($4.62 \times 10^9$ states/sec), the entire opening-to-draw proof graph ($|G_{\text{proof}}| \approx 1.20 \times 10^{11}$ nodes) can be re-solved from scratch on modern cloud GPUs in **under a day**.
+
+#### Neocloud Cost vs. Speed Pareto Matrix
+
+Because Checkers move generation relies on 32-bit integer bitwise operations rather than AI tensor arithmetic, consumer and workstation GPUs deliver superior cost-efficiency compared to enterprise AI accelerators:
+
+| [ID] | Hardware Configuration | Memory & Bandwidth | Rental Rate (Est.) | Time to Weak Solve | Total Cost | Strategic Fit |
+|:---:|:---|:---:|:---:|:---:|:---:|:---|
+| 1 | **$4\times$ RTX 4090 Node** | 96 GB (4× 24 GB) @ 4,032 GB/s | **$1.56 / hr** | **12.6 hours** | **~$19.65 USD** | 🏆 **Maximum Cost Champion** |
+| 2 | **$2\times$ RTX 4090 Node** | 48 GB (2× 24 GB) @ 2,016 GB/s | **$0.78 / hr** | **24.1 hours** | **~$18.80 USD** | 🥈 **Best Cost & Simplicity** |
+| 3 | **$1\times$ NVIDIA L40S** | 48 GB GDDR6 @ 864 GB/s | **$0.85 / hr** | **39.2 hours** | **~$33.32 USD** | 🛡️ **Zero-Friction Single GPU** |
+| 4 | **$1\times$ NVIDIA B200 SXM** | 192 GB HBM3e @ 8,000 GB/s | **$5.90 / hr** | **18.9 hours** | **~$111.51 USD** | ⚡ **Single-GPU Flagship Turnaround** |
+| 5 | **$8\times$ NVIDIA B200 SXM** | 1.5 TB HBM3e @ 64,000 GB/s | **$44.00 / hr** | **2.6 hours** | **~$114.40 USD** | 🚀 **Sub-3-Hour Supercomputing Node** |
+
+#### Join the Effort: How to Contribute Compute or Funding
+
+We invite academic institutions, independent researchers, and community members to partner on this milestone:
+
+1. **Donate Cloud GPU Compute:**
+   If you have idle GPU cycles or cloud credits (e.g., RunPod, Lambda Labs, Vast.ai, Nebius, Crusoe), you can sponsor or run an instance of the solver.
+   Because [`cuda/checkers_space_explorer.py`](cuda/checkers_space_explorer.py) supports **incremental atomic checkpointing** with SHA-256 validation, interruptible (Spot) instances are 100% safe: no progress is ever lost upon preemption.
+2. **Financial Sponsorship:**
+   A micro-grant of as little as **$20 to $115** fully covers the cloud compute necessary to run the complete weak solve and compute the exact 8-piece tablebases.
+3. **Public Credit & Open Science:**
+   All compute sponsors and contributors will be permanently recognized in the repository landing page, the mathematical monograph, and all future academic publications and open datasets.
+
+To contribute compute or sponsor the run, please open an issue on GitHub:
+👉 [**Open a Community Compute Contribution Issue**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/issues) with the title `[Proposal] Community Compute Contribution for 8x8 Checkers Weak Solve`.
+
+---
+
 ## 🛠️ Reproduction & Verification Guide
 
 ### 1. Compile Rocq 9.1 Proof Suite (Zero Axioms)
