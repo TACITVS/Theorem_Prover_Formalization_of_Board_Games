@@ -23,10 +23,13 @@ Print Assumptions score_conservation_universal.
 Print Assumptions odd_n_strictly_forbids_draw.
 Print Assumptions even_n_admits_draw.
 Print Assumptions dab_4x4_draw_score.
+Print Assumptions dab_6x6_draw_score.
+Print Assumptions dab_7x7_boxes_strictly_forbids_draw.
 Print Assumptions tempo_conservation_universal.
 Print Assumptions tempo_difference_universal.
 Print Assumptions net_tempo_surplus.
 Print Assumptions dab_4x4_tempo_surplus.
+Print Assumptions dab_6x6_tempo_surplus.
 Print Assumptions berlekamp_double_deal_sacrifice.
 Print Assumptions berlekamp_parity_control.
 

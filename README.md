@@ -20,6 +20,8 @@
 | **Odd $n$ Forbids Draw** | $\text{Odd}(n) \implies S_1 \ne S_2$ | Verified (0 axioms) | Verified (0 sorry) | Verified |
 | **Even $n$ Admits Draw** | $\text{Even}(n) \implies \exists s,\ s + s = n^2$ | Verified (0 axioms) | Verified (0 sorry) | Verified |
 | **$4 \times 4$ Boxes Draw Score** | $\exists s,\ s + s = 16 \land s = 8$ | Verified (0 axioms) | Verified (0 sorry) | Verified ($8 - 8$ Draw) |
+| **$6 \times 6$ Boxes Draw Score** | $\exists s,\ s + s = 36 \land s = 18$ | Verified (0 axioms) | Verified (0 sorry) | Target $18 - 18$ |
+| **$7 \times 7$ Boxes Forbids Draw** | $\text{Odd}(7) \implies S_1 \ne S_2$ | Verified (0 axioms) | Verified (0 sorry) | Unfair by Parity |
 | **Tempo Conservation Law** | $e_0 - e_2 = n(n+2) = E(n) - B(n)$ | Verified (0 axioms) | Verified (0 sorry) | Verified ($40 - 16 = 24$) |
 | **Berlekamp Sacrifice Law** | $S = 2C + 4L = 2(C + 2L)$ | Verified (0 axioms) | Verified (0 sorry) | Verified |
 | **$D_4$ Rotation Order 4** | $\forall e \lt 40,\ R^4(e) = e$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
@@ -27,7 +29,7 @@
 | **$D_4$ Dihedral Commutation**| $\forall e \lt 40,\ R(S(e)) = S(R^3(e))$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
 | **Dual 4-Regularity** | $\forall b \lt 16,\ \deg^{\ast}(B_b) = 4$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 16 boxes |
 | **Inductive Double-Turn** | Strict transition semantics | Verified (0 axioms) | Verified (0 sorry) | 40-bit bitboard engine |
-| **Assumption Audit** | Kernel check | **Closed (34/34)** | **0 sorry (17/17)** | C11 Engine Clean |
+| **Assumption Audit** | Kernel check | **Closed (37/37)** | **0 sorry (20/20)** | C11 Engine Clean |
 
 ---
 
@@ -108,10 +110,10 @@ For the comprehensive mathematical treatise detailing the algebraic topology, du
   - [`DABUniversal.v`](DABUniversal.v): Universal $n \times n$ theorems, Euler invariant, edge classification, draw parity dichotomy, tempo surplus, and Berlekamp sacrifice.
   - [`DAB16Graph.v`](DAB16Graph.v): Concrete $4 \times 4$ box graph topology, coordinate encodings, box bounding masks, and $D_4$ dihedral group actions.
   - [`DABGame.v`](DABGame.v): Operational game semantics, inductive `step` relation, double-turn bonus rule, and monotonic score tracking.
-  - [`DABCheckAssumptions.v`](DABCheckAssumptions.v): Complete assumption audit proving all 34 theorems are `Closed under the global context`.
+  - [`DABCheckAssumptions.v`](DABCheckAssumptions.v): Complete assumption audit proving all 37 theorems are `Closed under the global context`.
   - [`build.ps1`](build.ps1): Automated build script compiling all Rocq modules.
 - **Lean 4.35.0 Formalization:**
-  - [`lean4/DotsAndBoxes.lean`](lean4/DotsAndBoxes.lean): End-to-end Lean 4 formalization with 17 verified theorems and 0 sorry.
+  - [`lean4/DotsAndBoxes.lean`](lean4/DotsAndBoxes.lean): End-to-end Lean 4 formalization with 20 verified theorems and 0 sorry.
   - [`build_lean.ps1`](build_lean.ps1): Lean 4 compilation and `#print axioms` audit script.
 - **C11 Bitboard Engine & Audits:**
   - [`solver/audit_dab.c`](solver/audit_dab.c): Combinatorial and group-theoretic audit verifying incidences and $D_4$ orbits.
@@ -131,7 +133,7 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 ```
 Output:
 ```
-Closed under the global context (34/34 theorems audited).
+Closed under the global context (37/37 theorems audited).
 All Rocq 9.1 proofs cleanly compiled and verified!
 ```
 

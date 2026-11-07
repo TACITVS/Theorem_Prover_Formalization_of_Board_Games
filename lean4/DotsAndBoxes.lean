@@ -127,6 +127,15 @@ theorem even_n_admits_draw (n : Nat) (hn : n % 2 = 0) :
 theorem dab_4x4_draw_score : ∃ s, s + s = boxesCount 4 ∧ s = 8 :=
   ⟨8, rfl, rfl⟩
 
+/-- For n = 6 (7x7 dots, 6x6 boxes, 36 boxes), the exact draw score is 18-18. -/
+theorem dab_6x6_draw_score : ∃ s, s + s = boxesCount 6 ∧ s = 18 :=
+  ⟨18, rfl, rfl⟩
+
+/-- For n = 7 (8x8 dots, 7x7 boxes, 49 boxes): 49 is odd, draw is strictly impossible. -/
+theorem dab_7x7_boxes_strictly_forbids_draw (s1 s2 : Nat) (hsum : s1 + s2 = boxesCount 7) :
+    s1 ≠ s2 :=
+  odd_n_strictly_forbids_draw 7 s1 s2 rfl hsum
+
 /-- Non-scoring move surplus over double-box moves is exactly n*(n + 2). -/
 theorem net_tempo_surplus (n : Nat) :
     edgesCount n - boxesCount n = n * (n + 2) := by
@@ -137,6 +146,11 @@ theorem net_tempo_surplus (n : Nat) :
 
 /-- For 4x4 boxes (5x5 dots), tempo surplus E - B = 40 - 16 = 24. -/
 theorem dab_4x4_tempo_surplus : edgesCount 4 - boxesCount 4 = 24 := by
+  unfold edgesCount boxesCount
+  omega
+
+/-- For 6x6 boxes (7x7 dots), tempo surplus E - B = 84 - 36 = 48. -/
+theorem dab_6x6_tempo_surplus : edgesCount 6 - boxesCount 6 = 48 := by
   unfold edgesCount boxesCount
   omega
 
@@ -236,8 +250,11 @@ end DotsAndBoxes
 #print axioms DotsAndBoxes.odd_n_strictly_forbids_draw
 #print axioms DotsAndBoxes.even_n_admits_draw
 #print axioms DotsAndBoxes.dab_4x4_draw_score
+#print axioms DotsAndBoxes.dab_6x6_draw_score
+#print axioms DotsAndBoxes.dab_7x7_boxes_strictly_forbids_draw
 #print axioms DotsAndBoxes.net_tempo_surplus
 #print axioms DotsAndBoxes.dab_4x4_tempo_surplus
+#print axioms DotsAndBoxes.dab_6x6_tempo_surplus
 #print axioms DotsAndBoxes.berlekamp_double_deal_sacrifice
 #print axioms DotsAndBoxes.berlekamp_parity_control
 #print axioms DotsAndBoxes.rot_order_4

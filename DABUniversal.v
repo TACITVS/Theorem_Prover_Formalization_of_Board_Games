@@ -178,6 +178,25 @@ Proof.
   split; lia.
 Qed.
 
+(** For n = 6 (7x7 dots, 6x6 boxes, 36 boxes), the exact draw score is 18-18. *)
+Theorem dab_6x6_draw_score :
+  exists (s : nat), s + s = boxes_count 6 /\ s = 18.
+Proof.
+  exists 18.
+  unfold boxes_count. simpl.
+  split; lia.
+Qed.
+
+(** For n = 7 (8x8 dots, 7x7 boxes, 49 boxes): 49 is odd, draw is strictly impossible. *)
+Theorem dab_7x7_boxes_strictly_forbids_draw : forall (s1 s2 : nat),
+  s1 + s2 = boxes_count 7 ->
+  ~ is_draw s1 s2.
+Proof.
+  intros s1 s2 Hsum.
+  apply (odd_n_strictly_forbids_draw 7 s1 s2); auto.
+  exists 3. lia.
+Qed.
+
 (** **************************************************************************
     7. Move Tempo & Non-Scoring Move Invariant
     ************************************************************************** *)
@@ -221,6 +240,13 @@ Qed.
 (** For 4x4 boxes (5x5 dots): E - B = 40 - 16 = 24 = 4 * 6. *)
 Theorem dab_4x4_tempo_surplus :
   edges_count 4 - boxes_count 4 = 24.
+Proof.
+  unfold edges_count, boxes_count. simpl. lia.
+Qed.
+
+(** For 6x6 boxes (7x7 dots): E - B = 84 - 36 = 48 = 6 * 8. *)
+Theorem dab_6x6_tempo_surplus :
+  edges_count 6 - boxes_count 6 = 48.
 Proof.
   unfold edges_count, boxes_count. simpl. lia.
 Qed.

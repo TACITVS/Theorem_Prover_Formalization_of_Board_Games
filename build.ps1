@@ -27,7 +27,7 @@ foreach ($f in $files) {
     Write-Host " OK" -ForegroundColor Green
     if ($f -eq "DABCheckAssumptions.v") {
         $closed_count = ($output | Select-String "Closed under the global context").Count
-        Write-Host "Closed under the global context ($closed_count/34 theorems audited)" -ForegroundColor Yellow
+        Write-Host "Closed under the global context ($closed_count/37 theorems audited)" -ForegroundColor Yellow
     }
 }
 

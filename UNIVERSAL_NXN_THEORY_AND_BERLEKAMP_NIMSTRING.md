@@ -120,7 +120,21 @@ $$
 S_1 = S_2 = 8
 $$
 
-Formalized as `odd_n_strictly_forbids_draw`, `even_n_admits_draw`, and `dab_4x4_draw_score`.
+*Corollary (The $7 \times 7$ Dot Board Draw Score):*
+For $n = 6$ ($6 \times 6$ boxes, 36 boxes), an exact draw requires:
+
+$$
+S_1 = S_2 = 18
+$$
+
+*Corollary (The $7 \times 7$ Box Grid Strict Unfairness):*
+For $n = 7$ ($7 \times 7$ boxes, 49 boxes, $8 \times 8$ dots), $49 \equiv 1 \pmod 2$. An exact draw is strictly impossible:
+
+$$
+S_1 \ne S_2
+$$
+
+Formalized as `odd_n_strictly_forbids_draw`, `even_n_admits_draw`, `dab_4x4_draw_score`, `dab_6x6_draw_score`, `dab_7x7_boxes_strictly_forbids_draw`, and `dab_6x6_tempo_surplus`.
 
 ---
 
