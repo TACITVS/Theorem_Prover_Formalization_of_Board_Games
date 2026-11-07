@@ -208,10 +208,11 @@ In **Payne's First Position (1756)** (White Kings on 28 and 32 vs. Black Kings o
 * **Game-Theoretic Minimax ($V = +10$, Unique Win):**
   * `28-31` lets Black escape into the open board (`15-18` or `19-24`), resulting in a draw ($V = -20$).
   * `28-23!` is the **ONLY WINNING MOVE**: In English Draughts, jumping is **mandatory**. Because square 28 was just vacated by White, square 28 is empty! Black is legally forced to jump `19x28`, walking directly into the double-corner file. White's second king on square 32 then immediately plays `32-27!`, sealing Black against the edge in an inescapable zugzwang!
-* **Divergence Score:**
-  
+
+**Heuristic-Oracle Divergence Metric:**
+
 $$
-\mathcal{D}(m^*) = 10 \cdot \left(V(m^*) - \mathrm{max}_{m \ne m^*} V(m)\right) + \left(\mathrm{max}(H) - H(m^*)\right) = 300 + 120 = 420.0
+\mathcal{D}(m^{\star}) = 10 \cdot \left(V(m^{\star}) - \mathrm{max}_{m \ne m^{\star}} V(m)\right) + \left(\mathrm{max}(H) - H(m^{\star})\right) = 300 + 120 = 420.0
 $$
 
 #### Ranked "Move 37" Candidates

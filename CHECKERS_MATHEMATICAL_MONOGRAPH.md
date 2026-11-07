@@ -359,7 +359,7 @@ In English Draughts (8×8 Checkers), over 250 years of published master literatu
 3. **Dog-Hole Avoidance:** Never step into edge perimeter squares (squares 4, 12, 20, 28, 5, 13, 21), captured by the adage *"A man on the edge is half a man"*.
 4. **Center Dominance:** Control the vital cross squares (14, 15, 18, 19).
 
-A **"Move 37" Anomaly** in Checkers is mathematically defined as a state transition $m^*$ where the exact game-theoretic minimax value $V(m^*)$ is uniquely optimal, while the classical human master heuristic $H(m^*)$ penalizes the move as the absolute worst option on the board.
+A **"Move 37" Anomaly** in Checkers is mathematically defined as a state transition $m^{\star}$ where the exact game-theoretic minimax value $V(m^{\star})$ is uniquely optimal, while the classical human master heuristic $H(m^{\star})$ penalizes the move as the absolute worst option on the board.
 
 ### 13.2 Formal Divergence Metric
 
@@ -369,16 +369,16 @@ $$
 H(m) = \Delta \mathrm{Material}(m) + \Delta \mathrm{Center}(m) - \mathrm{EdgePenalty}(m) - \mathrm{BackRankViolation}(m) - \mathrm{HangingPiecePenalty}(m)
 $$
 
-The **Heuristic-Oracle Divergence** $\mathcal{D}(m^*)$ for an optimal move $m^* = \mathrm{arg\,max}_{m \in \mathcal{M}(s)} V(m)$ is formalized as:
+The **Heuristic-Oracle Divergence** $\mathcal{D}(m^{\star})$ for an optimal move $m^{\star} = \mathrm{arg\,max}_{m \in \mathcal{M}(s)} V(m)$ is formalized as:
 
 $$
-\mathcal{D}(m^*) = 10 \cdot \left(V(m^*) - \mathrm{max}_{m \ne m^*} V(m)\right) + \left(\mathrm{max}_{m \in \mathcal{M}(s)} H(m) - H(m^*)\right)
+\mathcal{D}(m^{\star}) = 10 \cdot \left(V(m^{\star}) - \mathrm{max}_{m \ne m^{\star}} V(m)\right) + \left(\mathrm{max}_{m \in \mathcal{M}(s)} H(m) - H(m^{\star})\right)
 $$
 
-When $m^*$ is the **unique winning move** ($V(m^*) = +10$ while all alternatives fail to win with $\mathrm{max}_{m \ne m^*} V(m) = -20$, yielding $\Delta V = 30$), and $m^*$ simultaneously scores as the **absolute worst move** under human master criteria ($\Delta H = 120.0$), the divergence attains the critical anomaly score:
+When $m^{\star}$ is the **unique winning move** ($V(m^{\star}) = +10$ while all alternatives fail to win with $\mathrm{max}_{m \ne m^{\star}} V(m) = -20$, yielding $\Delta V = 30$), and $m^{\star}$ simultaneously scores as the **absolute worst move** under human master criteria ($\Delta H = 120.0$), the divergence attains the critical anomaly score:
 
 $$
-\mathcal{D}(m^*) = 10 \cdot (10 - (-20)) + (0.0 - (-120.0)) = 300 + 120 = 420.0
+\mathcal{D}(m^{\star}) = 10 \cdot (10 - (-20)) + (0.0 - (-120.0)) = 300 + 120 = 420.0
 $$
 
 ### 13.3 Discovery #1: Payne's Decoy Coup (`28-23!`)
@@ -416,7 +416,7 @@ Using the high-performance C++17 bitboard solver [`solver/move37_finder.cpp`](fi
 Beyond analyzing classical textbook studies, we deployed an autonomous game-tree miner ([`solver/autonomous_move37_miner.cpp`](file:///C:/Rocq-Platform~9.1~2026.01/Math_Proofs/NineMensMorris/solver/autonomous_move37_miner.cpp)) starting directly from the official 8×8 starting position with zero pre-fed positions:
 * **Starting Board State:** White on squares 21..32 (`wm = 0x00000fff`), Black on squares 1..12 (`bm = 0xfff00000`), Black to move (`turn = 1`).
 * **Exploration Scope:** 3,465 realistic opening game states traversed down plies 1 to 6.
-* **Discoveries:** **515 unprompted Move 37 anomalies** where the optimal minimax move sharply defies human master dogma ($H_{\mathrm{max}} - H(m^*) \ge 40.0$).
+* **Discoveries:** **515 unprompted Move 37 anomalies** where the optimal minimax move sharply defies human master dogma ($H_{\mathrm{max}} - H(m^{\star}) \ge 40.0$).
 
 ### 13.5 Tournament PDN & FEN Export Standards
 
