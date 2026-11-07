@@ -235,7 +235,7 @@ Formalized as `berlekamp_double_deal_sacrifice` and `berlekamp_parity_control`.
 The 4 bounding edges for box $(r, c)$ are given by:
 
 $$
-\text{box\_edges}(r, c) = [H(r, c), H(r+1, c), V(r, c), V(r, c+1)]
+\operatorname{BoxEdges}(r, c) = [H(r, c), H(r+1, c), V(r, c), V(r, c+1)]
 $$
 
 ### 8.2 Dihedral Automorphism Group $D_4$
