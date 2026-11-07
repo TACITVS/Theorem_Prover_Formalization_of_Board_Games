@@ -60,14 +60,11 @@ This sequence is verified exhaustively against all possible Black defensive bran
 * In **Twelve Men's Morris**, adding $4$ diagonal mills breaks this symmetry:
   - **12 Corners** belong to **strictly 3 mills** ($2$ ring mills $+ 1$ diagonal mill).
   - **12 Midpoints** belong to **strictly 2 mills** ($1$ ring mill $+ 1$ radial mill).
-  - **Incidence Handshake:** 
-    $$(12 \times 3) + (12 \times 2) = 60 = 20 \times 3 \text{ mills}$$
+  - **Incidence Handshake:** $(12 \times 3) + (12 \times 2) = 60 = 20 \times 3 \text{ mills}$.
 * **Consequence:** Corner points serve as **high-leverage junction points** where multiple attack axes intersect.
 
 ### 2. The 40-Edge Graph Handshake Theorem ([`NMM12Graph.v`](NMM12Graph.v))
-* Middle ring vertices have degree $4$; outer and inner ring vertices have degree $3$.
-* **Handshake Lemma:** 
-  $$(8 \times 4) + (16 \times 3) = 80 = 2 \times 40 \text{ edges}$$
+* Middle ring vertices have degree $4$; outer and inner ring vertices have degree $3$: $(8 \times 4) + (16 \times 3) = 80 = 2 \times 40 \text{ edges}$.
 
 ### 3. The 8-Stone Transversal Barrier Invariant ([`solver/audit_verification.c`](solver/audit_verification.c))
 * Even with $4$ additional diagonal mills, the transversal number remains **EXACTLY 8** ($\tau(H) = 8$).
