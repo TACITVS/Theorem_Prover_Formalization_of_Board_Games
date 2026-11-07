@@ -88,8 +88,8 @@ $$
 **Mechanized Equivariance Theorems ([`NMMStrategy.v`](NMMStrategy.v)):**
 1. $\text{Adj}(R(u), R(v)) = \text{Adj}(u, v)$ and $\text{Adj}(S(u), S(v)) = \text{Adj}(u, v)$.
 2. $R(\mathcal{E}) = \mathcal{E}$ and $S(\mathcal{E}) = \mathcal{E}$.
-3. $\text{count\_stones}(\text{rot\_board}(b), c) = \text{count\_stones}(b, c)$.
-4. $\text{is\_terminal\_loss}(\text{rot\_state}(s), c) = \text{is\_terminal\_loss}(s, c)$.
+3. $\operatorname{CountStones}(\operatorname{RotBoard}(b), c) = \operatorname{CountStones}(b, c)$.
+4. $\operatorname{IsTerminalLoss}(\operatorname{RotState}(s), c) = \operatorname{IsTerminalLoss}(s, c)$.
 
 For complete algebraic proofs, see [`GRAPH_THEORY_AND_D4_SYMMETRIES.md`](GRAPH_THEORY_AND_D4_SYMMETRIES.md).
 
