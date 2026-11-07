@@ -1,11 +1,7 @@
--Q . NMM
-NMMGraph.v
-NMMGame.v
-NMMInvariants.v
-NMMBitboard.v
-NMMStrategy.v
-NMMRetrograde.v
-NMMCertChecker.v
-NMMTransversal.v
-NMM12Graph.v
-CheckAssumptions.v
+-Q . Checkers
+CheckersBoard.v
+CheckersGame.v
+CheckersInvariants.v
+CheckersMicro.v
+CheckersShashkiDiff.v
+CheckersCheckAssumptions.v

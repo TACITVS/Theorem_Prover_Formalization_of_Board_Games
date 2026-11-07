@@ -17,7 +17,10 @@
 .lake/
 lake-packages/
 
-# Editor files
-.vscode/
-*~
-*.swp
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Large state exploration frontier dumps (manifest and tablebases preserved)
+checkpoints_*/frontiers/
+checkpoints_test/
