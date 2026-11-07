@@ -270,6 +270,45 @@ theorem transversal_8_covers_all_mills :
 /-- Dual Graph 3-regularity handshake: 16 dual vertices * degree 3 = 2 * 24 dual edges -/
 theorem dual_graph_handshake : 16 * 3 = 2 * 24 := by rfl
 
+/- ============================================================================== -/
+/- Twelve Men's Morris (12MM) - 20 Mills, Broken Regularity, Defensive Surplus     -/
+/- ============================================================================== -/
+
+def diagonal_mills : List (Nat × Nat × Nat) :=
+  [ (0, 8, 16), (2, 10, 18), (4, 12, 20), (6, 14, 22) ]
+
+theorem diagonal_mills_count : diagonal_mills.length = 4 := by rfl
+
+def all_mills_12 : List (Nat × Nat × Nat) :=
+  all_mills ++ diagonal_mills
+
+theorem all_mills_12_count : all_mills_12.length = 20 := by rfl
+
+def mills_of_point_12 (p : Nat) : List (Nat × Nat × Nat) :=
+  all_mills_12.filter (point_in_mill p)
+
+/-- Broken Regularity: 12 Corners have mill degree 3 -/
+theorem corners_mill_degree_3 : (corners.all (fun p => (mills_of_point_12 p).length == 3)) = true := by
+  decide
+
+/-- Broken Regularity: 12 Midpoints have mill degree 2 -/
+theorem midpoints_mill_degree_2 : (all_midpoints.all (fun p => (mills_of_point_12 p).length == 2)) = true := by
+  decide
+
+/-- 12MM Transversal Set of size 8 -/
+def transversal_12_8 : List Nat := [1, 3, 5, 7, 10, 14, 16, 20]
+
+theorem transversal_12_8_length : transversal_12_8.length = 8 := by rfl
+
+theorem transversal_12_8_covers_all_20_mills :
+  (all_mills_12.all (mill_intersects transversal_12_8)) = true := by
+  decide
+
+def STONE_COUNT_12MM : Nat := 12
+def TRANSVERSAL_SIZE_12MM : Nat := 8
+
+theorem defensive_surplus_12mm : STONE_COUNT_12MM - TRANSVERSAL_SIZE_12MM = 4 := by rfl
+
 end NineMensMorris
 
 -- Axiom audits
@@ -299,5 +338,13 @@ end NineMensMorris
 #print axioms NineMensMorris.transversal_8_length
 #print axioms NineMensMorris.transversal_8_covers_all_mills
 #print axioms NineMensMorris.dual_graph_handshake
+#print axioms NineMensMorris.diagonal_mills_count
+#print axioms NineMensMorris.all_mills_12_count
+#print axioms NineMensMorris.corners_mill_degree_3
+#print axioms NineMensMorris.midpoints_mill_degree_2
+#print axioms NineMensMorris.transversal_12_8_length
+#print axioms NineMensMorris.transversal_12_8_covers_all_20_mills
+#print axioms NineMensMorris.defensive_surplus_12mm
+
 
 

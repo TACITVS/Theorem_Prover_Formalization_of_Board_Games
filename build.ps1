@@ -17,6 +17,7 @@ $files = @(
     "NMMRetrograde.v",
     "NMMCertChecker.v",
     "NMMTransversal.v",
+    "NMM12Graph.v",
     "CheckAssumptions.v"
 )
 

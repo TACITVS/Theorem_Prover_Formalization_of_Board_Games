@@ -84,3 +84,24 @@ Print Assumptions transversal_barrier_prevents_attacker_mills.
 Print Assumptions dual_graph_handshake.
 Print Assumptions mill_coverage_bound.
 
+(* Twelve Men's Morris Foundations (NMM12Graph.v) *)
+Require Import NMM.NMM12Graph.
+Print Assumptions diagonal_mills_count.
+Print Assumptions all_mills_12_count.
+Print Assumptions corner_mill_degree_3.
+Print Assumptions midpoint_mill_degree_2.
+Print Assumptions mill_incidence_handshake_12.
+Print Assumptions adjacent_12_sym.
+Print Assumptions middle_ring_degree_4.
+Print Assumptions outer_ring_degree_3.
+Print Assumptions inner_ring_degree_3.
+Print Assumptions handshake_lemma_12.
+Print Assumptions rot_preserves_diagonal_mills.
+Print Assumptions refl_preserves_diagonal_mills.
+Print Assumptions rot_preserves_all_20_mills.
+Print Assumptions refl_preserves_all_20_mills.
+Print Assumptions transversal_12_8_length.
+Print Assumptions transversal_12_8_covers_all_20_mills.
+Print Assumptions defensive_surplus_12mm.
+
+
