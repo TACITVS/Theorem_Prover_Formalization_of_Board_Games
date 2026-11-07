@@ -41,19 +41,19 @@ The canonical coordinate system establishes $20$ horizontal edges $H(r, c) = 4r 
   <img src="assets/dots_and_boxes_5x5_board.svg" alt="Dots and Boxes 5x5 Dots 4x4 Boxes Grid Graph" width="850"/>
 </p>
 
-* **Planar Euler Characteristic:**
+**Planar Euler Characteristic Invariant:**
 
 $$
 V - E + F = 25 - 40 + 17 = 2
 $$
 
-* **Box-Edge Incidence Equation:**
+**Box-Edge Incidence Double-Counting Equation:**
 
 $$
 1 \cdot \text{Bnd} + 2 \cdot \text{Int} = 1 \cdot (16) + 2 \cdot (24) = 16 + 48 = 64 = 4 \cdot 16
 $$
 
-* **Draw Score:** Exactly $S_1 = S_2 = 8$ points.
+**Exact Draw Score:** Exactly $S_1 = S_2 = 8$ points.
 
 ---
 
@@ -65,13 +65,13 @@ Every interior face (box $B_b$) corresponds to a vertex in the planar dual graph
   <img src="assets/dots_and_boxes_nimstring_dual.svg" alt="Nimstring Planar Dual Graph Equivalence" width="850"/>
 </p>
 
-* **Dual 4-Regularity Theorem:**
+**Dual 4-Regularity Theorem:**
 
 $$
 \forall b \in \{0, \dots, 15\}, \quad \deg^*(B_b) = \deg_{\text{int}}^*(B_b) + \deg_{\text{ext}}^*(B_b) = 4
 $$
 
-* **Nimstring Isomorphism:** Drawing an edge in Dots and Boxes is isomorphic to severing a string between coins in Nimstring. Completing the 3rd edge of a box hands a coin to the opponent unless managed via Berlekamp sacrifice.
+**Nimstring Isomorphism:** Drawing an edge in Dots and Boxes is isomorphic to severing a string between coins in Nimstring. Completing the 3rd edge of a box hands a coin to the opponent unless managed via Berlekamp sacrifice.
 
 ---
 
@@ -83,14 +83,15 @@ The looping animation below illustrates **Elwyn Berlekamp's Hard-Hearted Handout
   <img src="assets/dots_and_boxes_double_deal_animation.svg" alt="Berlekamp Double Dealing Animation" width="850"/>
 </p>
 
-* **Berlekamp Sacrifice Formula:**
+**Berlekamp Long-Chain Double-Dealing Formula:**
 
 $$
 S = 2 \cdot C + 4 \cdot L
 $$
 
-  where $C$ is the number of open long chains and $L$ is the number of closed loops.
-* **Control of Parity:** By declining the final 2 boxes of a chain, Player 1 compels Player 2 to make the final capture and face the empty board, forcing Player 2 to open the next territory.
+where $C$ is the number of open long chains and $L$ is the number of closed loops.
+
+**Control of Parity:** By declining the final 2 boxes of a chain, Player 1 compels Player 2 to make the final capture and face the empty board, forcing Player 2 to open the next territory.
 
 ---
 

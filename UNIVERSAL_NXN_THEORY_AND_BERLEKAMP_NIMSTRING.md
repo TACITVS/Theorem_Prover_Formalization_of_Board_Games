@@ -18,19 +18,19 @@ This monograph presents the complete algebraic, topological, and game-theoretic 
 
 Let $G_n = (V_n, E_n)$ be the planar grid graph representing an $n \times n$ box grid ($n+1 \times n+1$ dots):
 
-* **Vertices (Dots):**
+**Vertices (Dots):**
 
 $$
 V(n) = (n+1)^2
 $$
 
-* **Edges (Segments):** Horizontal edges count $n(n+1)$ and vertical edges count $n(n+1)$:
+**Edges (Segments):** Horizontal edges count $n(n+1)$ and vertical edges count $n(n+1)$:
 
 $$
 E(n) = 2n(n+1)
 $$
 
-* **Faces:** The plane is partitioned into $B(n) = n^2$ bounded square faces (boxes) and $1$ unbounded exterior face $\mathcal{E}$:
+**Faces:** The plane is partitioned into $B(n) = n^2$ bounded square faces (boxes) and $1$ unbounded exterior face $\mathcal{E}$:
 
 $$
 F(n) = B(n) + 1 = n^2 + 1
@@ -172,15 +172,15 @@ $$
 
 ## 6. Planar Dual Graph and Conway-Berlekamp Nimstring Equivalence
 
-John H. Conway and Elwyn Berlekamp proved that Dots and Boxes is isomorphic to the impartial game **Nimstring** played on the planar dual graph $G_n^*$:
+John H. Conway and Elwyn Berlekamp proved that Dots and Boxes is isomorphic to the impartial game **Nimstring** played on the planar dual graph $G_n^*$.
 
-* The dual vertex set $V_n^*$ contains $n^2$ vertices corresponding to the boxes, plus a special ground vertex $\mathcal{E}$ corresponding to the exterior face:
+The dual vertex set $V_n^*$ contains $n^2$ vertices corresponding to the boxes, plus a special ground vertex $\mathcal{E}$ corresponding to the exterior face:
 
 $$
 V_n^* = \{B_0, \dots, B_{n^2-1}\} \cup \{\mathcal{E}\}
 $$
 
-* Each grid edge $e \in E_n$ corresponds to a dual edge $e^*$ connecting the faces adjacent to $e$.
+Each grid edge $e \in E_n$ corresponds to a dual edge $e^*$ connecting the faces adjacent to $e$.
 
 ### Theorem 6 (Dual 4-Regularity Law)
 Every internal box vertex $B_b$ in $G_n^*$ has total degree exactly $4$:
@@ -231,7 +231,8 @@ Formalized as `berlekamp_double_deal_sacrifice` and `berlekamp_parity_control`.
 * Horizontal edges: $H(r, c) = 4r + c$ for $r \in \{0..4\}, c \in \{0..3\}$, indexing $0 \dots 19$.
 * Vertical edges: $V(r, c) = 20 + 5r + c$ for $r \in \{0..3\}, c \in \{0..4\}$, indexing $20 \dots 39$.
 * Boxes: $B(r, c) = 4r + c$ for $r, c \in \{0..3\}$, indexing $0 \dots 15$.
-* Bounding edges for box $(r, c)$:
+
+The 4 bounding edges for box $(r, c)$ are given by:
 
 $$
 \text{box\_edges}(r, c) = [H(r, c), H(r+1, c), V(r, c), V(r, c+1)]
