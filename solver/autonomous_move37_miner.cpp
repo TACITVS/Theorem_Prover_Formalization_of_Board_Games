@@ -1,11 +1,12 @@
 /**
  * ============================================================================
- * AUTONOMOUS MOVE 37 MINER: MINING FROM THE RAW OPENING GAME TREE
+ * AUTONOMOUS MOVE 37 MINER: WITH TOURNAMENT PDN & TEXTBOOK NOTATION EXPORT
  * ============================================================================
  * Traverses reachable game states directly from the official 8x8 starting board
- * (Black on 1..12, White on 21..32) down plies 4 to 10.
- * Evaluates candidate moves for each position completely autonomously,
- * discovering genuine, unprompted 'Move 37' anomalies in natural gameplay!
+ * (Black on 1..12, White on 21..32) down plies 4 to 8.
+ * Discovers Move 37 anomalies and exports them in:
+ * 1. Official Tournament PDN (Portable Draughts Notation) with FEN setup tags
+ * 2. Classical Textbook Two-Column & Tabular Notation (Lees' Guide format)
  * ============================================================================
  */
 
@@ -89,12 +90,40 @@ struct BoardState {
     inline uint32_t black_all() const { return bm | bk; }
     inline uint32_t all_pieces() const { return wm | wk | bm | bk; }
 
-    bool operator<(const BoardState &o) const {
-        if (wm != o.wm) return wm < o.wm;
-        if (wk != o.wk) return wk < o.wk;
-        if (bm != o.bm) return bm < o.bm;
-        if (bk != o.bk) return bk < o.bk;
-        return turn < o.turn;
+    std::string to_fen() const {
+        std::stringstream ss;
+        ss << (turn == 0 ? "W:" : "B:");
+        // White pieces
+        ss << "W";
+        bool first = true;
+        for (int s = 1; s <= 32; ++s) {
+            int internal_s = std_to_sq(s);
+            if ((wk >> internal_s) & 1) {
+                if (!first) ss << ",";
+                ss << "K" << s;
+                first = false;
+            } else if ((wm >> internal_s) & 1) {
+                if (!first) ss << ",";
+                ss << s;
+                first = false;
+            }
+        }
+        // Black pieces
+        ss << ":B";
+        first = true;
+        for (int s = 1; s <= 32; ++s) {
+            int internal_s = std_to_sq(s);
+            if ((bk >> internal_s) & 1) {
+                if (!first) ss << ",";
+                ss << "K" << s;
+                first = false;
+            } else if ((bm >> internal_s) & 1) {
+                if (!first) ss << ",";
+                ss << s;
+                first = false;
+            }
+        }
+        return ss.str();
     }
 };
 
@@ -491,6 +520,28 @@ int alpha_beta(const BoardState &st, int depth, int alpha, int beta, uint64_t &n
     return best_score;
 }
 
+std::vector<std::string> extract_pv(BoardState st, int max_plies = 8) {
+    std::vector<std::string> pv;
+    for (int p = 0; p < max_plies; ++p) {
+        uint64_t h = compute_hash(st);
+        const TTEntry &e = tt[h & TT_MASK];
+        if (e.key != h || e.best_src < 0) break;
+        std::vector<Move> moves;
+        generate_moves(st, moves);
+        bool found = false;
+        for (const auto &m : moves) {
+            if (m.src == e.best_src && m.dest == e.best_dest) {
+                pv.push_back(m.to_string());
+                st = m.next_state;
+                found = true;
+                break;
+            }
+        }
+        if (!found) break;
+    }
+    return pv;
+}
+
 struct AutonomousDiscovery {
     int ply;
     std::string move_path;
@@ -498,8 +549,10 @@ struct AutonomousDiscovery {
     int minimax_value;
     double heuristic_score;
     double divergence_score;
-    std::string description;
-    BoardState state;
+    std::string fen;
+    BoardState state_before_move;
+    BoardState state_after_move;
+    std::vector<std::string> continuation_pv;
 };
 
 int main() {
@@ -511,16 +564,12 @@ int main() {
     std::cout << "  AUTONOMOUS MOVE 37 MINER: TRAVERSING OPENING GAME TREE FROM SCRATCH" << std::endl;
     std::cout << "================================================================================" << std::endl;
 
-    // Official 8x8 Starting Board:
-    // White: squares 21..32 (0x00000fff)
-    // Black: squares 1..12  (0xfff00000)
-    // Turn: Black moves first (turn = 1)
     BoardState root;
-    root.wm = 0x00000fff;
+    root.wm = 0x00000fff; // White 21..32
     root.wk = 0;
-    root.bm = 0xfff00000;
+    root.bm = 0xfff00000; // Black 1..12
     root.bk = 0;
-    root.turn = 1;
+    root.turn = 1;        // Black to move
 
     std::vector<AutonomousDiscovery> discoveries;
     uint64_t total_nodes = 0;
@@ -568,7 +617,6 @@ int main() {
             if (e.h < min_h) min_h = e.h;
         }
 
-        // Check if any optimal minimax move diverges from human heuristic
         for (const auto &e : evals) {
             if (e.v == max_v && e.h < max_h - 40.0) {
                 int second_v = -30000;
@@ -585,13 +633,20 @@ int main() {
                     disc.minimax_value = e.v;
                     disc.heuristic_score = e.h;
                     disc.divergence_score = divergence;
-                    disc.state = node.st;
+                    disc.fen = node.st.to_fen();
+                    disc.state_before_move = node.st;
+                    disc.state_after_move = e.m.next_state;
+
+                    // Extract continuation PV
+                    disc.continuation_pv.push_back(disc.discovered_move);
+                    auto sub_pv = extract_pv(e.m.next_state, 6);
+                    for (const auto &p : sub_pv) disc.continuation_pv.push_back(p);
+
                     discoveries.push_back(disc);
                 }
             }
         }
 
-        // Add top candidate moves to exploration queue to continue down tree
         for (const auto &e : evals) {
             if (e.v >= max_v - 20) {
                 std::string new_path = node.path.empty() ? e.m.to_string() : (node.path + " " + e.m.to_string());
@@ -601,20 +656,108 @@ int main() {
     }
 
     std::cout << "[Completed] Explored " << queue.size() << " realistic opening game states." << std::endl;
-    std::cout << "[Discoveries] Found " << discoveries.size() << " autonomous Move 37 divergence moves directly in the game tree!\n" << std::endl;
+    std::cout << "[Discoveries] Found " << discoveries.size() << " autonomous Move 37 divergence moves!\n" << std::endl;
 
     std::sort(discoveries.begin(), discoveries.end(), [](const AutonomousDiscovery &a, const AutonomousDiscovery &b) {
         return a.divergence_score > b.divergence_score;
     });
 
-    for (size_t i = 0; i < std::min((size_t)5, discoveries.size()); ++i) {
+    // Write tournament PDN file
+    std::ofstream pdn_out("checkpoints_8x8/move37_tournament_games.pdn");
+
+    for (size_t i = 0; i < std::min((size_t)10, discoveries.size()); ++i) {
         const auto &d = discoveries[i];
-        std::cout << "[" << (i + 1) << "] Autonomous Move 37 at Ply " << d.ply << std::endl;
-        std::cout << "    Opening Line : " << (d.move_path.empty() ? "(Initial Board)" : d.move_path) << std::endl;
-        std::cout << "    Emergent Move: " << d.discovered_move << " !" << std::endl;
-        std::cout << "    Minimax V    : " << d.minimax_value << " (Maintains Optimal Outcome)" << std::endl;
-        std::cout << "    Human Dogma H: " << d.heuristic_score << " (Dogmatically Penalized)" << std::endl;
-        std::cout << "    Divergence   : " << d.divergence_score << std::endl << std::endl;
+
+        // 1. Build PDN Game Record
+        std::stringstream pdn_game;
+        pdn_game << "[Event \"Autonomous Move 37 Discovery - Anomaly #" << (i + 1) << "\"]\n";
+        pdn_game << "[Site \"Antigravity C++ Bitboard Engine\"]\n";
+        pdn_game << "[Date \"2026.11.07\"]\n";
+        pdn_game << "[Round \"" << (i + 1) << "\"]\n";
+        pdn_game << "[Black \"Autonomous Tree Search\"]\n";
+        pdn_game << "[White \"Game-Theoretic Oracle\"]\n";
+        pdn_game << "[Result \"*\"]\n";
+        pdn_game << "[FEN \"" << d.fen << "\"]\n";
+        pdn_game << "[SetUp \"1\"]\n";
+        pdn_game << "[DivergenceScore \"" << std::fixed << std::setprecision(1) << d.divergence_score << "\"]\n\n";
+
+        // Convert move_path into standard numbered moves
+        std::stringstream ss(d.move_path);
+        std::string token;
+        std::vector<std::string> path_moves;
+        while (ss >> token) path_moves.push_back(token);
+
+        int move_num = 1;
+        for (size_t m_i = 0; m_i < path_moves.size(); ++m_i) {
+            if (m_i % 2 == 0) {
+                pdn_game << move_num << ". " << path_moves[m_i] << " ";
+            } else {
+                pdn_game << path_moves[m_i] << " ";
+                move_num++;
+            }
+        }
+
+        // Now append discovered move and continuation
+        bool is_black = (path_moves.size() % 2 == 0);
+        if (is_black) {
+            pdn_game << move_num << ". " << d.discovered_move << "! ";
+        } else {
+            pdn_game << d.discovered_move << "! ";
+            move_num++;
+        }
+
+        for (size_t c_i = 1; c_i < d.continuation_pv.size(); ++c_i) {
+            size_t total_idx = path_moves.size() + c_i;
+            if (total_idx % 2 == 0) {
+                pdn_game << move_num << ". " << d.continuation_pv[c_i] << " ";
+            } else {
+                pdn_game << d.continuation_pv[c_i] << " ";
+                move_num++;
+            }
+        }
+        pdn_game << "*\n\n";
+
+        if (pdn_out.is_open()) {
+            pdn_out << pdn_game.str();
+        }
+
+        // Print to console
+        std::cout << "================================================================================" << std::endl;
+        std::cout << "ANOMALY #" << (i + 1) << " (Divergence: " << std::fixed << std::setprecision(1) << d.divergence_score << ")" << std::endl;
+        std::cout << "================================================================================" << std::endl;
+        std::cout << "1. Official Tournament PDN (CheckerBoard / KingsRow importable):" << std::endl;
+        std::cout << pdn_game.str();
+        std::cout << "2. FEN Board String (Paste directly into engine setup):" << std::endl;
+        std::cout << "   " << d.fen << std::endl << std::endl;
+        std::cout << "3. Textbook Numbered Notation:" << std::endl;
+        
+        // Print clean textbook format
+        int t_num = 1;
+        for (size_t m_i = 0; m_i < path_moves.size(); m_i += 2) {
+            std::cout << "   " << std::setw(2) << t_num << ". "
+                      << std::left << std::setw(10) << path_moves[m_i] << " "
+                      << (m_i + 1 < path_moves.size() ? path_moves[m_i + 1] : "")
+                      << std::endl;
+            t_num++;
+        }
+        std::cout << "   " << std::setw(2) << t_num << ". "
+                  << std::left << std::setw(10) << (d.discovered_move + " !")
+                  << (d.continuation_pv.size() > 1 ? d.continuation_pv[1] : "")
+                  << "  <-- MOVE 37 (Sacrificial / Counter-Dogma Coup)"
+                  << std::endl;
+        for (size_t c_i = 2; c_i < d.continuation_pv.size(); c_i += 2) {
+            t_num++;
+            std::cout << "   " << std::setw(2) << t_num << ". "
+                      << std::left << std::setw(10) << d.continuation_pv[c_i] << " "
+                      << (c_i + 1 < d.continuation_pv.size() ? d.continuation_pv[c_i + 1] : "")
+                      << std::endl;
+        }
+        std::cout << std::endl;
+    }
+
+    if (pdn_out.is_open()) {
+        pdn_out.close();
+        std::cout << "[Saved] Tournament PDN games written to checkpoints_8x8/move37_tournament_games.pdn" << std::endl;
     }
 
     return 0;
