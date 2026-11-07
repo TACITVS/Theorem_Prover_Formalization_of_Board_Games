@@ -102,6 +102,15 @@ This sequence is verified exhaustively against all possible Black defensive bran
 
 ---
 
+## 🧮 Multi-Disciplinary Analysis: Algebra of Fairness & Spectral Graph Theory
+
+See the complete mathematical monograph in [`ALGEBRA_OF_FAIRNESS_AND_SPECTRAL_ANALYSIS.md`](ALGEBRA_OF_FAIRNESS_AND_SPECTRAL_ANALYSIS.md) covering:
+1. **The Algebra of Fairness:** The exact triple conjunction (`Delta_E <= 2`, `n >= tau(H)`, `rho < 1`) classifying fair vs. unfair Morris games.
+2. **Spectral Graph Theory:** Adjacency spectral radius expansion from `2*sqrt(2)` to `2 + sqrt(2)` (+20.7%), algebraic connectivity jump of +33.6%, and the degree-6 diagonal hub structure in the dual Gram matrix `G = M * M^T`.
+3. **Polynomial Algebra & Commutative Ideals:** Exact monomial factorization of the double-fork `P_{fork} = x_{14}*(x_6*x_{22} + x_8*x_{15})` in the coordinate quotient ring `R[x_0, ..., x_{23}] / <x_i^2 - x_i>`, proving via Hilbert's Nullstellensatz why Black cannot block both threat lines at Ply 7.
+
+---
+
 ## 🛠️ Verification & Compilation Suite
 
 ### 1. Rocq 9.1 Proof Verification
