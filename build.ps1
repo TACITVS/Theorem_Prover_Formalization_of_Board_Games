@@ -13,6 +13,9 @@ $files = @(
     "NMMGame.v",
     "NMMInvariants.v",
     "NMMBitboard.v",
+    "NMMStrategy.v",
+    "NMMRetrograde.v",
+    "NMMCertChecker.v",
     "CheckAssumptions.v"
 )
 
