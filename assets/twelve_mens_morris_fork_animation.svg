@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 950" width="100%" height="100%" style="background:#090d16; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <linearGradient id="bgGradAnim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="50%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <radialGradient id="whiteDisc" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#e2e8f0"/>
+      <stop offset="100%" stop-color="#94a3b8"/>
+    </radialGradient>
+    <radialGradient id="blackDisc" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#475569"/>
+      <stop offset="70%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </radialGradient>
+    <filter id="laserGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <style>
+    /* 16s Master Loop */
+    @keyframes move0_w0  { 0%, 4% { opacity:0; transform: scale(0.3); } 8%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+    @keyframes move1_b1  { 0%, 11% { opacity:0; transform: scale(0.3); } 15%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+    @keyframes move2_w6  { 0%, 19% { opacity:0; transform: scale(0.3); } 23%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+    @keyframes move3_b7  { 0%, 27% { opacity:0; transform: scale(0.3); } 31%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+    @keyframes move4_w8  { 0%, 35% { opacity:0; transform: scale(0.3); } 39%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+    @keyframes move5_b16 { 0%, 43% { opacity:0; transform: scale(0.3); } 47%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+    @keyframes move6_w14 { 0%, 51% { opacity:0; transform: scale(0.3); } 56%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+    
+    /* Fork Threat Highlights (58% to 88%) */
+    @keyframes laserA { 0%, 58% { opacity:0; stroke-dashoffset: 300; } 63%, 88% { opacity:1; stroke-dashoffset: 0; } 93%, 100% { opacity:0; } }
+    @keyframes laserB { 0%, 58% { opacity:0; stroke-dashoffset: 300; } 63%, 88% { opacity:1; stroke-dashoffset: 0; } 93%, 100% { opacity:0; } }
+    @keyframes targetGlow { 0%, 58% { opacity:0; transform: scale(0.8); } 64%, 88% { opacity:0.85; transform: scale(1.15); } 93%, 100% { opacity:0; } }
+    @keyframes bannerAnim { 0%, 58% { opacity:0; transform: translateY(-10px); } 62%, 88% { opacity:1; transform: translateY(0); } 93%, 100% { opacity:0; } }
+
+    /* Final Victory (88% to 96%) */
+    @keyframes move8_wMill { 0%, 88% { opacity:0; transform: scale(0.4); } 91%, 96% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
+
+    /* Subtitle Banner text swap */
+    @keyframes sub0 { 0%, 10% { opacity:1; } 12%, 100% { opacity:0; } }
+    @keyframes sub1 { 0%, 11% { opacity:0; } 13%, 18% { opacity:1; } 20%, 100% { opacity:0; } }
+    @keyframes sub2 { 0%, 19% { opacity:0; } 21%, 26% { opacity:1; } 28%, 100% { opacity:0; } }
+    @keyframes sub3 { 0%, 27% { opacity:0; } 29%, 34% { opacity:1; } 36%, 100% { opacity:0; } }
+    @keyframes sub4 { 0%, 35% { opacity:0; } 37%, 42% { opacity:1; } 44%, 100% { opacity:0; } }
+    @keyframes sub5 { 0%, 43% { opacity:0; } 45%, 50% { opacity:1; } 52%, 100% { opacity:0; } }
+    @keyframes sub6 { 0%, 51% { opacity:0; } 53%, 58% { opacity:1; } 60%, 100% { opacity:0; } }
+    @keyframes subFork { 0%, 59% { opacity:0; } 61%, 86% { opacity:1; } 88%, 100% { opacity:0; } }
+    @keyframes subWin { 0%, 87% { opacity:0; } 89%, 97% { opacity:1; } 99%, 100% { opacity:0; } }
+
+    .disc-w { fill: url(#whiteDisc); stroke: #ffffff; stroke-width: 2.5; transform-origin: center; animation-duration: 16s; animation-iteration-count: infinite; }
+    .disc-b { fill: url(#blackDisc); stroke: #94a3b8; stroke-width: 2.5; transform-origin: center; animation-duration: 16s; animation-iteration-count: infinite; }
+  </style>
+
+  <!-- Background Canvas -->
+  <rect width="900" height="950" fill="url(#bgGradAnim)"/>
+
+  <!-- Title Header -->
+  <g id="header">
+    <text x="450" y="45" fill="#f8fafc" font-size="26" font-weight="800" text-anchor="middle" letter-spacing="1">12-MEN'S MORRIS: WHITE'S FORCED MILL FORK</text>
+    <text x="450" y="72" fill="#38bdf8" font-size="14" font-weight="600" text-anchor="middle">How Diagonal Corner Junctions Enable a Guaranteed Opening Mill at Ply 8</text>
+  </g>
+
+  <!-- Interactive Dynamic Subtitle Box -->
+  <g id="dynamic-subtitles" transform="translate(150, 85)">
+    <rect width="600" height="34" rx="17" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+    <text x="300" y="22" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub0 16s infinite;">Ply 0 [White]: Plays Outer-NW (Point 0)</text>
+    <text x="300" y="22" fill="#fca5a5" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub1 16s infinite;">Ply 1 [Black]: Plays Outer-N (Point 1) [Blocks mill 0-1-2]</text>
+    <text x="300" y="22" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub2 16s infinite;">Ply 2 [White]: Plays Outer-SW (Point 6)</text>
+    <text x="300" y="22" fill="#fca5a5" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub3 16s infinite;">Ply 3 [Black]: Plays Outer-W (Point 7) [Blocks mill 0-7-6]</text>
+    <text x="300" y="22" fill="#38bdf8" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub4 16s infinite;">Ply 4 [White]: Plays Mid-NW (Point 8)</text>
+    <text x="300" y="22" fill="#fca5a5" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub5 16s infinite;">Ply 5 [Black]: Plays In-NW (Point 16) [Blocks diagonal mill 0-8-16]</text>
+    <text x="300" y="22" fill="#fbbf24" font-size="14" font-weight="800" text-anchor="middle" style="animation: sub6 16s infinite;">Ply 6 [White]: Plays Mid-SW (Point 14)! DOUBLE-FORK ACTIVATED!</text>
+    <text x="300" y="22" fill="#f43f5e" font-size="14" font-weight="800" text-anchor="middle" style="animation: subFork 16s infinite;">DOUBLE THREAT: Point 22 &amp; Point 15! Black cannot block both!</text>
+    <text x="300" y="22" fill="#4ade80" font-size="14" font-weight="800" text-anchor="middle" style="animation: subWin 16s infinite;">Ply 8 [White]: Completes Unstoppable Mill &amp; Captures Opponent Stone!</text>
+  </g>
+
+  <!-- Board Edges Group -->
+  <g id="board-edges" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Ring 0: Outer Square (x: 150 to 750, y: 180 to 780) -->
+    <rect x="150" y="180" width="600" height="600" fill="none" stroke="#334155" stroke-width="4"/>
+    <!-- Ring 1: Middle Square (x: 250 to 650, y: 280 to 680) -->
+    <rect x="250" y="280" width="400" height="400" fill="none" stroke="#334155" stroke-width="4"/>
+    <!-- Ring 2: Inner Square (x: 350 to 550, y: 380 to 580) -->
+    <rect x="350" y="380" width="200" height="200" fill="none" stroke="#334155" stroke-width="4"/>
+
+    <!-- Radial Midpoint Connectors -->
+    <line x1="450" y1="180" x2="450" y2="380" stroke="#334155" stroke-width="4"/>
+    <line x1="550" y1="480" x2="750" y2="480" stroke="#334155" stroke-width="4"/>
+    <line x1="450" y1="580" x2="450" y2="780" stroke="#334155" stroke-width="4"/>
+    <line x1="150" y1="480" x2="350" y2="480" stroke="#334155" stroke-width="4"/>
+
+    <!-- 4 Diagonal Mills -->
+    <line x1="150" y1="180" x2="350" y2="380" stroke="#475569" stroke-width="3" stroke-dasharray="6,4"/>
+    <line x1="750" y1="180" x2="550" y2="380" stroke="#475569" stroke-width="3" stroke-dasharray="6,4"/>
+    <line x1="750" y1="780" x2="550" y2="580" stroke="#475569" stroke-width="3" stroke-dasharray="6,4"/>
+    <line x1="150" y1="780" x2="350" y2="580" stroke="#475569" stroke-width="3" stroke-dasharray="6,4"/>
+  </g>
+
+  <!-- Board Vertices (Background Circles) -->
+  <g id="board-points" fill="#1e293b" stroke="#475569" stroke-width="2">
+    <!-- Outer -->
+    <circle cx="150" cy="180" r="13"/><circle cx="450" cy="180" r="13"/><circle cx="750" cy="180" r="13"/>
+    <circle cx="750" cy="480" r="13"/><circle cx="750" cy="780" r="13"/><circle cx="450" cy="780" r="13"/>
+    <circle cx="150" cy="780" r="13"/><circle cx="150" cy="480" r="13"/>
+    <!-- Middle -->
+    <circle cx="250" cy="280" r="13"/><circle cx="450" cy="280" r="13"/><circle cx="650" cy="280" r="13"/>
+    <circle cx="650" cy="480" r="13"/><circle cx="650" cy="680" r="13"/><circle cx="450" cy="680" r="13"/>
+    <circle cx="250" cy="680" r="13"/><circle cx="250" cy="480" r="13"/>
+    <!-- Inner -->
+    <circle cx="350" cy="380" r="13"/><circle cx="450" cy="380" r="13"/><circle cx="550" cy="380" r="13"/>
+    <circle cx="550" cy="480" r="13"/><circle cx="550" cy="580" r="13"/><circle cx="450" cy="580" r="13"/>
+    <circle cx="350" cy="580" r="13"/><circle cx="350" cy="480" r="13"/>
+  </g>
+
+  <!-- ================= ANIMATED LASER BEAMS & TARGETS ================= -->
+  <!-- Threat A: Diagonal 6 -> 14 -> 22 -->
+  <line x1="150" y1="780" x2="350" y2="580" stroke="#f43f5e" stroke-width="6" stroke-linecap="round"
+        style="animation: laserA 16s infinite;" stroke-dasharray="300" filter="url(#laserGlow)"/>
+  
+  <!-- Threat B: Middle Ring Left 8 -> 15 -> 14 -->
+  <line x1="250" y1="280" x2="250" y2="680" stroke="#38bdf8" stroke-width="6" stroke-linecap="round"
+        style="animation: laserB 16s infinite;" stroke-dasharray="400" filter="url(#laserGlow)"/>
+
+  <!-- Target A: Point 22 (In-SW Corner, 350, 580) -->
+  <circle cx="350" cy="580" r="22" fill="none" stroke="#f43f5e" stroke-width="4" stroke-dasharray="6,4"
+          style="transform-origin: 350px 580px; animation: targetGlow 16s infinite;" filter="url(#laserGlow)"/>
+  <text x="350" y="615" fill="#f43f5e" font-size="13" font-weight="800" text-anchor="middle"
+        style="animation: targetGlow 16s infinite;">THREAT A (22)</text>
+
+  <!-- Target B: Point 15 (Mid-W Midpoint, 250, 480) -->
+  <circle cx="250" cy="480" r="22" fill="none" stroke="#38bdf8" stroke-width="4" stroke-dasharray="6,4"
+          style="transform-origin: 250px 480px; animation: targetGlow 16s infinite;" filter="url(#laserGlow)"/>
+  <text x="210" y="485" fill="#38bdf8" font-size="13" font-weight="800" text-anchor="end"
+        style="animation: targetGlow 16s infinite;">THREAT B (15)</text>
+
+  <!-- ================= ANIMATED STONE PLACEMENTS ================= -->
+  <!-- Ply 0: White plays Point 0 (150, 180) -->
+  <circle cx="150" cy="180" r="17" class="disc-w" style="transform-origin: 150px 180px; animation-name: move0_w0;"/>
+  <!-- Ply 1: Black plays Point 1 (450, 180) -->
+  <circle cx="450" cy="180" r="17" class="disc-b" style="transform-origin: 450px 180px; animation-name: move1_b1;"/>
+  <!-- Ply 2: White plays Point 6 (150, 780) -->
+  <circle cx="150" cy="780" r="17" class="disc-w" style="transform-origin: 150px 780px; animation-name: move2_w6;"/>
+  <!-- Ply 3: Black plays Point 7 (150, 480) -->
+  <circle cx="150" cy="480" r="17" class="disc-b" style="transform-origin: 150px 480px; animation-name: move3_b7;"/>
+  <!-- Ply 4: White plays Point 8 (250, 280) -->
+  <circle cx="250" cy="280" r="17" class="disc-w" style="transform-origin: 250px 280px; animation-name: move4_w8;"/>
+  <!-- Ply 5: Black plays Point 16 (350, 380) -->
+  <circle cx="350" cy="380" r="17" class="disc-b" style="transform-origin: 350px 380px; animation-name: move5_b16;"/>
+  <!-- Ply 6: White plays Point 14 (250, 680) - ACTIVATING FORK! -->
+  <circle cx="250" cy="680" r="17" class="disc-w" style="transform-origin: 250px 680px; animation-name: move6_w14;"/>
+
+  <!-- Ply 8: White takes Point 22 (or 15) to complete the Mill -->
+  <circle cx="350" cy="580" r="17" class="disc-w" style="transform-origin: 350px 580px; animation-name: move8_wMill;"/>
+
+  <!-- ================= FLOATING CALLOUT BANNER ================= -->
+  <g id="callout-box" transform="translate(480, 420)" style="animation: bannerAnim 16s infinite;">
+    <rect width="360" height="150" rx="14" fill="#0f172a" stroke="#f43f5e" stroke-width="2" filter="url(#laserGlow)"/>
+    <text x="180" y="32" fill="#f43f5e" font-size="16" font-weight="800" text-anchor="middle">CORNER-DIAGONAL FORK</text>
+    <line x1="20" y1="44" x2="340" y2="44" stroke="#334155" stroke-width="1.5"/>
+    <text x="25" y="70" fill="#f8fafc" font-size="13" font-weight="600">White controls: <tspan fill="#38bdf8">{0, 6, 8, 14}</tspan></text>
+    <text x="25" y="94" fill="#cbd5e1" font-size="12">Threat 1: <tspan fill="#f43f5e" font-weight="700">SW Diag (6-14-22)</tspan> needs Pt 22</text>
+    <text x="25" y="116" fill="#cbd5e1" font-size="12">Threat 2: <tspan fill="#38bdf8" font-weight="700">Mid-Left (8-14-15)</tspan> needs Pt 15</text>
+    <text x="180" y="138" fill="#4ade80" font-size="12" font-weight="800" text-anchor="middle">Black has 1 stone: Cannot block both!</text>
+  </g>
+
+  <!-- Bottom Legend Footer -->
+  <g id="footer-card" transform="translate(70, 840)">
+    <rect width="760" height="85" rx="12" fill="#0f172a" stroke="#334155" stroke-width="1.5"/>
+    <circle cx="35" cy="30" r="12" fill="url(#whiteDisc)" stroke="#ffffff" stroke-width="2"/>
+    <text x="55" y="34" fill="#f8fafc" font-size="13" font-weight="700">White Stones (First Player)</text>
+    <circle cx="35" cy="58" r="12" fill="url(#blackDisc)" stroke="#94a3b8" stroke-width="2"/>
+    <text x="55" y="62" fill="#cbd5e1" font-size="13" font-weight="700">Black Stones (Second Player)</text>
+
+    <text x="320" y="34" fill="#94a3b8" font-size="13">Mill Completed: <tspan fill="#4ade80" font-weight="700">Guaranteed at Ply 8</tspan></text>
+    <text x="320" y="62" fill="#94a3b8" font-size="13">Game Value: <tspan fill="#f43f5e" font-weight="700">Win White in 49 Moves</tspan> (Gévay &amp; Danner 2016)</text>
+    <text x="610" y="48" fill="#38bdf8" font-size="12" font-weight="600">Pure Vector SVG Animation</text>
+  </g>
+</svg>
