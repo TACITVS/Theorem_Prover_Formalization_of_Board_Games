@@ -18,13 +18,14 @@
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
 
-    <style>
+    <style type="text/css">
+      <![CDATA[
       /* Timeline: 16s infinite loop */
       /* 0s - 3s: Setup of 3-box chain */
       /* 3s - 6s: Greedy Trap Demonstration */
       /* 6s - 10s: Berlekamp Step 1 (Capture Box 1) */
       /* 10s - 13s: Berlekamp Step 2 (The Double-Deal Sacrifice Move) */
-      /* 13s - 16s: P2 Forced Handout & Parity Retained */
+      /* 13s - 16s: P2 Forced Handout and Parity Retained */
 
       .txt-title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 800; fill: #f8fafc; }
       .txt-sub   { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 500; fill: #94a3b8; }
@@ -96,6 +97,7 @@
       .alert-parity {
         animation: animParityWinAlert 16s infinite ease-in-out;
       }
+      ]]>
     </style>
   </defs>
 
