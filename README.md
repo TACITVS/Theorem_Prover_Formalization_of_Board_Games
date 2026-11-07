@@ -25,7 +25,7 @@
 | **$D_4$ Rotation Order 4** | $\forall e \lt 40,\ R^4(e) = e$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
 | **$D_4$ Reflection Order 2** | $\forall e \lt 40,\ S^2(e) = e$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
 | **$D_4$ Dihedral Commutation**| $\forall e \lt 40,\ R(S(e)) = S(R^3(e))$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
-| **Dual 4-Regularity** | $\forall b \lt 16,\ \text{deg}^*(B_b) = 4$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 16 boxes |
+| **Dual 4-Regularity** | $\forall b \lt 16,\ \deg^{\ast}(B_b) = 4$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 16 boxes |
 | **Inductive Double-Turn** | Strict transition semantics | Verified (0 axioms) | Verified (0 sorry) | 40-bit bitboard engine |
 | **Assumption Audit** | Kernel check | **Closed (34/34)** | **0 sorry (17/17)** | C11 Engine Clean |
 
@@ -68,7 +68,7 @@ Every interior face (box $B_b$) corresponds to a vertex in the planar dual graph
 **Dual 4-Regularity Theorem:**
 
 $$
-\forall b \in \{0, \dots, 15\}, \quad \deg^*(B_b) = \deg_{\text{int}}^*(B_b) + \deg_{\text{ext}}^*(B_b) = 4
+\forall b \in \{0, \dots, 15\}, \quad \deg^{\ast}(B_b) = \deg_{\text{int}}^{\ast}(B_b) + \deg_{\text{ext}}^{\ast}(B_b) = 4
 $$
 
 **Nimstring Isomorphism:** Drawing an edge in Dots and Boxes is isomorphic to severing a string between coins in Nimstring. Completing the 3rd edge of a box hands a coin to the opponent unless managed via Berlekamp sacrifice.

@@ -172,21 +172,21 @@ $$
 
 ## 6. Planar Dual Graph and Conway-Berlekamp Nimstring Equivalence
 
-John H. Conway and Elwyn Berlekamp proved that Dots and Boxes is isomorphic to the impartial game **Nimstring** played on the planar dual graph $G_n^*$.
+John H. Conway and Elwyn Berlekamp proved that Dots and Boxes is isomorphic to the impartial game **Nimstring** played on the planar dual graph $G_n^{\ast}$.
 
-The dual vertex set $V_n^*$ contains $n^2$ vertices corresponding to the boxes, plus a special ground vertex $\mathcal{E}$ corresponding to the exterior face:
+The dual vertex set $V_n^{\ast}$ contains $n^2$ vertices corresponding to the boxes, plus a special ground vertex $\mathcal{E}$ corresponding to the exterior face:
 
 $$
-V_n^* = \{B_0, \dots, B_{n^2-1}\} \cup \{\mathcal{E}\}
+V_n^{\ast} = \{B_0, \dots, B_{n^2-1}\} \cup \{\mathcal{E}\}
 $$
 
-Each grid edge $e \in E_n$ corresponds to a dual edge $e^*$ connecting the faces adjacent to $e$.
+Each grid edge $e \in E_n$ corresponds to a dual edge $e^{\ast}$ connecting the faces adjacent to $e$.
 
 ### Theorem 6 (Dual 4-Regularity Law)
-Every internal box vertex $B_b$ in $G_n^*$ has total degree exactly $4$:
+Every internal box vertex $B_b$ in $G_n^{\ast}$ has total degree exactly $4$:
 
 $$
-\forall b \in \{0, \dots, n^2-1\}, \quad \deg^*(B_b) = \deg_{\text{int}}^*(B_b) + \deg_{\text{ext}}^*(B_b) = 4
+\forall b \in \{0, \dots, n^2-1\}, \quad \deg^{\ast}(B_b) = \deg_{\text{int}}^{\ast}(B_b) + \deg_{\text{ext}}^{\ast}(B_b) = 4
 $$
 
 *Proof.* Every unit square box in the Cartesian grid is bounded by top, bottom, left, and right edges. Each boundary edge connects $B_b$ to $\mathcal{E}$, while each interior edge connects $B_b$ to another box. The sum is strictly 4. Formalized as `dual_box_degree_4`.
