@@ -26,24 +26,20 @@
 | **Freestyle Gomoku** | $15 \times 15$ ($10^{105}$ states) | **Win White (P1)** | Victor Allis (1993 PhD Thesis) | ❌ **Unverified** | Inductive Threat-Space Search (VCF / VCT), Proof-Number Search |
 | **Hex ($7 \times 7$ and $8 \times 8$)** | $49$ and $64$ cells | **Win White (P1)** | Hayward, Henderson et al. (2002) | ❌ **Unverified** | Virtual Connection H-Search, Resistance Networks, Carrier Sets |
 | **Chomp ($3 \times n$ and $n \times n$)** | Arbitrary rectangular grid | **Win White (P1)** | David Gale (1974), Zeilberger (2001) | ❌ **Unverified** | Poset Ideal Games, Constructive Winning First-Move Formulas |
+| **Dots and Boxes ($5 \times 5$ Dots)** | $16$ boxes, $40$ edges | **Exact Draw ($8 - 8$)** | Wilson (1995), Barker & Korf (2012) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Dual 4-Regularity, Net Tempo Surplus $e_0 - e_2 = 24$, Berlekamp Sacrifice |
 | **Domineering ($6 \times 6$ and $8 \times 8$)** | Grid tiling by $2 \times 1$ dominoes | **Partisan Values** | Conway (1976), Bullock (2002) | ❌ **Unverified** | Combinatorial Game Theory, Surreal Numbers, Dyadic Rational Values |
 
 ---
 
 ## 2. Unsolved Frontiers: Games Whose Fairness Is Mathematically Unknown
 
-| Game Frontier | Dimensions / Complexity | Suspected / Conjectured Value | Core Unsolved Mathematical Question |
-| :--- | :---: | :---: | :--- |
-| **Dots and Boxes ($5 \times 5$ Dots)** | $16$ Boxes, $40$ Edges | **Conjectured Exact Draw (8–8)** | Famous Conway/Berlekamp open problem: even box parity permits an 8–8 draw, but optimal strategy is unproven. |
-| **Connect-5 Critical Threshold** | $8 \times 8$ and $9 \times 7$ with gravity | **UNKNOWN (Draw vs. Win White)** | At what exact grid size $(w, h)$ does gravity Connect-5 transition from a Claimeven Draw to a First-Player Win? |
-| **Connect6 Critical Threshold** | $7 \times 7$, $8 \times 8$, $9 \times 9$ grids | **UNKNOWN Boundary** | Designed by I-Chen Wu (2005) for fairness; the critical board size where first-mover advantage forces a win is open. |
-| **Russian Checkers (Shashki)** | $8 \times 8$, flying kings, backward captures | **Conjectured Exact Draw** | English draughts is solved (Draw); Russian checkers with flying kings has never been computationally exhausted. |
-
----
-
-## 3. Active Next Project: $5 \times 5$ Dots and Boxes (16 Boxes)
-
-We select **$5 \times 5$ Dots and Boxes** ($16$ Boxes, $40$ Edges) as our immediate next formal investigation in its own dedicated branch:
-1. **The Game:** Played on a $5 \times 5$ square dot grid containing $40$ lines ($20$ horizontal, $20$ vertical) forming $16$ unit square boxes.
-2. **Conjectured Value:** **Exact 8–8 Fair Draw** under optimal Berlekamp double-dealing strategy.
-3. **Formalization Target:** Mechanize Conway's nimstring theory, Berlekamp's long-chain rule, and the 40-edge graph topology in Rocq 9.1 and Lean 4.35.0 with zero unproven axioms.
+| [ID] | Game Frontier | Dimensions / State Space | Conjectured / Suspected Value | Core Unsolved Mathematical Question | Key Mathematical Structures |
+| :---: | :--- | :---: | :---: | :--- | :--- |
+| **[01]** | **Connect-5 Critical Boundary** | $8 \times 8$ and $9 \times 7$ Gravity Grids | **UNKNOWN (Draw vs. Win White)** | At what exact grid size $(w, h)$ does gravity Connect-5 transition from a Claimeven Draw to a First-Player Win? | Claimeven Domino Couplings, Parity Breaking, Potential Functions |
+| **[02]** | **Connect6 Critical Threshold** | $7 \times 7$, $8 \times 8$, $9 \times 9$ Grids | **UNKNOWN Boundary** | Designed by I-Chen Wu (2005) for fairness (2 stones/turn); what is the minimal board size where P1 can force a win? | 2-Stone Threat Dynamics, Double-Threat Disjunctions, Matroid Theory |
+| **[03]** | **Russian Checkers (Shashki)** | $8 \times 8$ ($32$ active squares) | **Conjectured Exact Draw** | English draughts is solved (Draw); do flying kings and mandatory backward captures preserve an exact draw? | Diagonals Homology, Flying King Mobility, Backward Capture Transversals |
+| **[04]** | **Havannah** | Base sizes $4, 5, 6$ Hexagonal Board | **UNKNOWN (Draw vs. Win White)** | Can White force a Ring, Bridge, or Fork on small boards, or do three winning topological paths force a Draw? | Hexagonal Topology, Cycle Ring Detection, 6-Corner Graph Diameter |
+| **[05]** | **Breakthrough** | $8 \times 8$ Grid ($32$ pieces) | **UNKNOWN (Win White vs. Win Black)** | Invented by Dan Troyka (2000); which player has the forced breakthrough race victory on standard boards? | Forward Infiltration Cones, Capture Invariants, Distance Monotonicity |
+| **[06]** | **Ataxx** | $7 \times 7$ Grid ($49$ squares) | **UNKNOWN (Draw vs. Win P1/P2)** | Does the cloning (dist 1) vs. jumping (dist 2) infection mechanic yield an exact draw or a decisive win? | Voronoi Infection Dynamics, Clonal Growth Thresholds, Parity Invariants |
+| **[07]** | **Lines of Action (LOA)** | $8 \times 8$ Grid ($24$ pieces) | **UNKNOWN (Draw vs. Win White)** | Claude Soucie's 1969 classic: can White force a connected group via line-of-sight piece counts? | Connected Component Invariants, Line Density Conservation, Spectral Graph Bounds |
+| **[08]** | **Cram (Impartial Dominoes)** | Odd $\times$ Odd ($5 \times 5, 7 \times 7$) | **UNKNOWN (Win P1 vs. Win P2)** | Impartial $2 \times 1$ tiling; even boards are solved by symmetry, but odd $\times$ odd boards remain open. | Sprague-Grundy Nim-Values, Bipartite Matching Invariants, Symmetry Breaking |
