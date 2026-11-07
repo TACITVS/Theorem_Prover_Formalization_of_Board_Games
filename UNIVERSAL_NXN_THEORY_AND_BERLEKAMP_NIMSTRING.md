@@ -248,7 +248,7 @@ The square grid graph possesses the full symmetry group of the square $D_4 = \la
   - Vertical edge $(r, c) \mapsto$ Vertical edge $(r, 4-c)$.
 
 ### Theorem 8 ($D_4$ Group Action Verification)
-For all edge indices $e < 40$:
+For all edge indices $e \lt 40$:
 1. $R^4(e) = e$
 2. $S^2(e) = e$
 3. $R(S(e)) = S(R^3(e))$

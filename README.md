@@ -22,10 +22,10 @@
 | **$4 \times 4$ Boxes Draw Score** | $\exists s,\ s + s = 16 \land s = 8$ | Verified (0 axioms) | Verified (0 sorry) | Verified ($8 - 8$ Draw) |
 | **Tempo Conservation Law** | $e_0 - e_2 = n(n+2) = E(n) - B(n)$ | Verified (0 axioms) | Verified (0 sorry) | Verified ($40 - 16 = 24$) |
 | **Berlekamp Sacrifice Law** | $S = 2C + 4L = 2(C + 2L)$ | Verified (0 axioms) | Verified (0 sorry) | Verified |
-| **$D_4$ Rotation Order 4** | $\forall e < 40,\ R^4(e) = e$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
-| **$D_4$ Reflection Order 2** | $\forall e < 40,\ S^2(e) = e$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
-| **$D_4$ Dihedral Commutation**| $\forall e < 40,\ R(S(e)) = S(R^3(e))$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
-| **Dual 4-Regularity** | $\forall b < 16,\ \text{deg}^*(B_b) = 4$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 16 boxes |
+| **$D_4$ Rotation Order 4** | $\forall e \lt 40,\ R^4(e) = e$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
+| **$D_4$ Reflection Order 2** | $\forall e \lt 40,\ S^2(e) = e$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
+| **$D_4$ Dihedral Commutation**| $\forall e \lt 40,\ R(S(e)) = S(R^3(e))$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 40 edges |
+| **Dual 4-Regularity** | $\forall b \lt 16,\ \text{deg}^*(B_b) = 4$ | Verified (0 axioms) | Verified (0 sorry) | Verified on 16 boxes |
 | **Inductive Double-Turn** | Strict transition semantics | Verified (0 axioms) | Verified (0 sorry) | 40-bit bitboard engine |
 | **Assumption Audit** | Kernel check | **Closed (34/34)** | **0 sorry (17/17)** | C11 Engine Clean |
 
