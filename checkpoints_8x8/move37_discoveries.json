@@ -1,0 +1,96 @@
+[
+  {
+    "rank": 1,
+    "title": "Payne's First Position (1756) - The Double-Corner Decoy Sacrifice",
+    "category": "Endgame Masterwork",
+    "turn": "White",
+    "move": "28-23",
+    "src_std": 28,
+    "dest_std": 23,
+    "minimax_value": 10,
+    "heuristic_score": -120,
+    "divergence_score": 420,
+    "rationale": "Human master dogma dictates: Never give away a King without immediate recapture. Yet White plays 28-23! directly offering the king to 19x28. By vacating 28, Black is forced to jump into the double corner, where White's remaining King on 32 traps both enemy pieces for an exact mathematical win.",
+    "pv_line": ["28-23", "19x28", "32x23", "15-11", "23-19", "11-7", "19-14"],
+    "wm": 0,
+    "wk": 136,
+    "bm": 0,
+    "bk": 278528,
+    "all_moves": [
+      { "src": 28, "dest": 23, "minimax": 10, "heuristic": -120 },
+      { "src": 28, "dest": 24, "minimax": -20, "heuristic": -35 },
+      { "src": 28, "dest": 31, "minimax": -20, "heuristic": 0 }
+    ]
+  },
+  {
+    "rank": 2,
+    "title": "The Royal Shot - Sacrificial Coup",
+    "category": "Tactical Master Combination",
+    "turn": "White",
+    "move": "30-26",
+    "src_std": 30,
+    "dest_std": 26,
+    "minimax_value": 220,
+    "heuristic_score": -80,
+    "divergence_score": 210,
+    "rationale": "Classical dogma strictly warns against breaking the back row prematurely. Yet White plays 30-26!, vacating the back rank and sacrificing material into the opponent's line of fire, triggering an explosive 3-piece jump stroke that crowns and wins.",
+    "pv_line": ["30-26", "6-11", "23-20", "14-19"],
+    "wm": 1810,
+    "wk": 0,
+    "bm": 35852288,
+    "bk": 0,
+    "all_moves": [
+      { "src": 30, "dest": 26, "minimax": 220, "heuristic": -80 },
+      { "src": 30, "dest": 27, "minimax": -220, "heuristic": -80 },
+      { "src": 21, "dest": 18, "minimax": 210, "heuristic": -90 },
+      { "src": 22, "dest": 18, "minimax": -150, "heuristic": -90 },
+      { "src": 22, "dest": 19, "minimax": -20, "heuristic": 30 },
+      { "src": 23, "dest": 19, "minimax": -100, "heuristic": -90 },
+      { "src": 23, "dest": 20, "minimax": -120, "heuristic": 0 }
+    ]
+  },
+  {
+    "rank": 3,
+    "title": "The Bristol Edge Paradox",
+    "category": "3-Move Tournament Ballot",
+    "turn": "White",
+    "move": "22x15",
+    "src_std": 22,
+    "dest_std": 15,
+    "minimax_value": 10,
+    "heuristic_score": 130,
+    "divergence_score": 0,
+    "rationale": "Attacking down the rim against human principles, establishing an iron grip on the board.",
+    "pv_line": ["22x15", "12x19", "23x14", "10x19", "21-18", "5-10", "18-13"],
+    "wm": 34815,
+    "wk": 0,
+    "bm": 4289740800,
+    "bk": 0,
+    "all_moves": [
+      { "src": 22, "dest": 15, "minimax": 10, "heuristic": 130 },
+      { "src": 23, "dest": 14, "minimax": 10, "heuristic": 130 }
+    ]
+  },
+  {
+    "rank": 4,
+    "title": "The Bristol Edge Paradox",
+    "category": "3-Move Tournament Ballot",
+    "turn": "White",
+    "move": "23x14",
+    "src_std": 23,
+    "dest_std": 14,
+    "minimax_value": 10,
+    "heuristic_score": 130,
+    "divergence_score": 0,
+    "rationale": "Attacking down the rim against human principles, establishing an iron grip on the board.",
+    "pv_line": ["23x14", "10x19", "22x15", "12x19", "21-18", "5-10", "18-13"],
+    "wm": 34815,
+    "wk": 0,
+    "bm": 4289740800,
+    "bk": 0,
+    "all_moves": [
+      { "src": 22, "dest": 15, "minimax": 10, "heuristic": 130 },
+      { "src": 23, "dest": 14, "minimax": 10, "heuristic": 130 }
+    ]
+  }
+]
