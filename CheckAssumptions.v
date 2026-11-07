@@ -9,6 +9,7 @@ Require Import NMM.NMMBitboard.
 Require Import NMM.NMMStrategy.
 Require Import NMM.NMMRetrograde.
 Require Import NMM.NMMCertChecker.
+Require Import NMM.NMMTransversal.
 
 (* Graph Theory & Topology (NMMGraph.v) *)
 Print Assumptions all_points_length.
@@ -75,3 +76,11 @@ Print Assumptions zermelo_finite_horizon_applies.
 Print Assumptions initial_state_non_terminal.
 Print Assumptions initial_cert_checks.
 Print Assumptions check_cert_non_terminal.
+
+(* 8-Stone Transversal Theorem & Cubic Dual Graph (NMMTransversal.v) *)
+Print Assumptions transversal_8_length.
+Print Assumptions transversal_8_covers_all_mills.
+Print Assumptions transversal_barrier_prevents_attacker_mills.
+Print Assumptions dual_graph_handshake.
+Print Assumptions mill_coverage_bound.
+
