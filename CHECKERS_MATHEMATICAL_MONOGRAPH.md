@@ -57,7 +57,7 @@ $$
 $$
 
 $$
-\mathrm{Col}(s) = \begin{cases} 2 \cdot (s \ \mathrm{mod}\ 4) + 1 & \text{if } \mathrm{Rank}(s) \ \mathrm{mod}\ 2 = 0 \\ 2 \cdot (s \ \mathrm{mod}\ 4) & \text{if } \mathrm{Rank}(s) \ \mathrm{mod}\ 2 = 1 \end{cases}
+\mathrm{Col}(s) = \begin{cases} 2 \cdot (s \ \mathrm{mod}\ 4) + 1 & \mathrm{if\ } \mathrm{Rank}(s) \ \mathrm{mod}\ 2 = 0 \\ 2 \cdot (s \ \mathrm{mod}\ 4) & \mathrm{if\ } \mathrm{Rank}(s) \ \mathrm{mod}\ 2 = 1 \end{cases}
 $$
 
 ### 2.3 Bipartite Parity Invariant
@@ -131,7 +131,7 @@ In English Checkers, regular men can only move and jump forward:
 
 ### 5.1 Potential Function Definition
 
-Define the global forward potential function $\Phi : \text{State} \to \mathbb{N}$:
+Define the global forward potential function $\Phi : \mathrm{State} \to \mathbb{N}$:
 
 $$
 \Phi(st) = 64 \cdot (24 - \mathrm{TotalPieces}(st)) + \sum_{w \in W_{\mathrm{men}}(st)} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}(st)} (7 - \mathrm{Rank}(b))
@@ -148,7 +148,7 @@ For any legal move prior to king creation:
 Because $\Phi(st)$ is strictly increasing on every half-move and bounded above by:
 
 $$
-\Phi_{\max} = 64 \cdot 24 + 12 \cdot 7 + 12 \cdot 7 = 1536 + 168 = 1704
+\Phi_{\mathrm{max}} = 64 \cdot 24 + 12 \cdot 7 + 12 \cdot 7 = 1536 + 168 = 1704
 $$
 
 **No game sequence consisting of regular men can repeat a position or enter a cycle.** Every men-only sequence must terminate in at most 1,704 ply.
@@ -280,7 +280,7 @@ All 51 formal theorems across the 5 Rocq modules are verified with zero axioms:
 
 ### 11.2 Forward Reachable Frontier Expansion (Plies 0 to 14)
 
-| [ID] | Ply $d$ | Unique Canonical States $|F_d|$ | Reachable Successors $|F_{d+1}|$ | Effective Branching $b_{\text{eff}}$ | Ply Compute Time | Checkpoint Size |
+| [ID] | Ply $d$ | Unique Canonical States $|F_d|$ | Reachable Successors $|F_{d+1}|$ | Effective Branching $b_{\mathrm{eff}}$ | Ply Compute Time | Checkpoint Size |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | 1 | **Ply 00** | 1 | 7 | 7.00× | 0.000 s | 0.2 KB |
 | 2 | **Ply 01** | 7 | 49 | 7.00× | 0.000 s | 0.2 KB |
@@ -308,7 +308,7 @@ All 51 formal theorems across the 5 Rocq modules are verified with zero axioms:
    - $N = 8$: $\approx 6.0 \times 10^{10}$ quotiented states $\to$ **10.2 days on a single RTX 4060 GPU** (~28 hours on an 8× GPU cluster).
 
 3. **Weak Solution Complexity (Minimal Proof DAG with DF-PN):**
-   - With effective branching decaying to $b_{\text{eff}} \approx 2.50$, the minimal proof graph for proving a Draw contains $\approx 1.2 \times 10^{11}$ nodes.
+   - With effective branching decaying to $b_{\mathrm{eff}} \approx 2.50$, the minimal proof graph for proving a Draw contains $\approx 1.2 \times 10^{11}$ nodes.
    - At our measured GPU bitboard throughput of **$4.62 \times 10^9$ states/sec**, a single modern workstation can weakly solve 8×8 Checkers in **$\approx 17.4$ days of continuous compute**, or **under 48 hours** on an 8-GPU node.
 
 ---
@@ -369,13 +369,13 @@ $$
 H(m) = \Delta \mathrm{Material}(m) + \Delta \mathrm{Center}(m) - \mathrm{EdgePenalty}(m) - \mathrm{BackRankViolation}(m) - \mathrm{HangingPiecePenalty}(m)
 $$
 
-The **Heuristic-Oracle Divergence** $\mathcal{D}(m^*)$ for an optimal move $m^* = \arg\max_{m \in \mathcal{M}(s)} V(m)$ is formalized as:
+The **Heuristic-Oracle Divergence** $\mathcal{D}(m^*)$ for an optimal move $m^* = \mathrm{arg\,max}_{m \in \mathcal{M}(s)} V(m)$ is formalized as:
 
 $$
-\mathcal{D}(m^*) = 10 \cdot \left(V(m^*) - \max_{m \ne m^*} V(m)\right) + \left(\max_{m \in \mathcal{M}(s)} H(m) - H(m^*)\right)
+\mathcal{D}(m^*) = 10 \cdot \left(V(m^*) - \mathrm{max}_{m \ne m^*} V(m)\right) + \left(\mathrm{max}_{m \in \mathcal{M}(s)} H(m) - H(m^*)\right)
 $$
 
-When $m^*$ is the **unique winning move** ($V(m^*) = +10$ while all alternatives fail to win with $\max_{m \ne m^*} V(m) = -20$, yielding $\Delta V = 30$), and $m^*$ simultaneously scores as the **absolute worst move** under human master criteria ($\Delta H = 120.0$), the divergence attains the critical anomaly score:
+When $m^*$ is the **unique winning move** ($V(m^*) = +10$ while all alternatives fail to win with $\mathrm{max}_{m \ne m^*} V(m) = -20$, yielding $\Delta V = 30$), and $m^*$ simultaneously scores as the **absolute worst move** under human master criteria ($\Delta H = 120.0$), the divergence attains the critical anomaly score:
 
 $$
 \mathcal{D}(m^*) = 10 \cdot (10 - (-20)) + (0.0 - (-120.0)) = 300 + 120 = 420.0
@@ -416,7 +416,7 @@ Using the high-performance C++17 bitboard solver [`solver/move37_finder.cpp`](fi
 Beyond analyzing classical textbook studies, we deployed an autonomous game-tree miner ([`solver/autonomous_move37_miner.cpp`](file:///C:/Rocq-Platform~9.1~2026.01/Math_Proofs/NineMensMorris/solver/autonomous_move37_miner.cpp)) starting directly from the official 8×8 starting position with zero pre-fed positions:
 * **Starting Board State:** White on squares 21..32 (`wm = 0x00000fff`), Black on squares 1..12 (`bm = 0xfff00000`), Black to move (`turn = 1`).
 * **Exploration Scope:** 3,465 realistic opening game states traversed down plies 1 to 6.
-* **Discoveries:** **515 unprompted Move 37 anomalies** where the optimal minimax move sharply defies human master dogma ($H_{\max} - H(m^*) \ge 40.0$).
+* **Discoveries:** **515 unprompted Move 37 anomalies** where the optimal minimax move sharply defies human master dogma ($H_{\mathrm{max}} - H(m^*) \ge 40.0$).
 
 ### 13.5 Tournament PDN & FEN Export Standards
 

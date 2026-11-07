@@ -129,7 +129,7 @@ We executed an intensive **10-minute exploration run** on the NVIDIA GeForce RTX
 
 #### Forward Reachable Frontier Expansion (Plies 0 to 14)
 
-| [ID] | Ply $d$ | Unique Canonical States $|F_d|$ | Reachable Successors $|F_{d+1}|$ | Effective Branching $b_{\text{eff}}$ | Ply Compute Time | Checkpoint Size |
+| [ID] | Ply $d$ | Unique Canonical States $|F_d|$ | Reachable Successors $|F_{d+1}|$ | Effective Branching $b_{\mathrm{eff}}$ | Ply Compute Time | Checkpoint Size |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | 1 | **Ply 00** | 1 | 7 | 7.00× | 0.000 s | 0.2 KB |
 | 2 | **Ply 01** | 7 | 49 | 7.00× | 0.000 s | 0.2 KB |
@@ -149,7 +149,7 @@ We executed an intensive **10-minute exploration run** on the NVIDIA GeForce RTX
 
 #### Extrapolated Time Horizon to Complete Weak Solution
 1. **Effective Branching Decay:** As ply depth increases, effective branching decays monotonically from $7.00 \to 2.53$ due to board congestion and mandatory capture convergence.
-2. **Minimal Proof DAG Search (DF-PN):** A draw proof requires searching only $O(b_{\text{eff}}^{d/2}) \approx 1.2 \times 10^{11}$ nodes. At our measured GPU rate of $4.62 \times 10^9$ states/sec, a single RTX 4060 can weakly solve 8×8 Checkers in **$\approx 17.4$ days of continuous compute** (under 48 hours on an 8-GPU node), compared to Chinook's 18 years on 1990s CPU clusters.
+2. **Minimal Proof DAG Search (DF-PN):** A draw proof requires searching only $O(b_{\mathrm{eff}}^{d/2}) \approx 1.2 \times 10^{11}$ nodes. At our measured GPU rate of $4.62 \times 10^9$ states/sec, a single RTX 4060 can weakly solve 8×8 Checkers in **$\approx 17.4$ days of continuous compute** (under 48 hours on an 8-GPU node), compared to Chinook's 18 years on 1990s CPU clusters.
 
 ---
 
@@ -159,7 +159,7 @@ We executed an intensive **10-minute exploration run** on the NVIDIA GeForce RTX
 
 In 2007, Jonathan Schaeffer's team (*Science*) established that 8×8 Checkers is an exact Draw. That landmark accomplishment required **18 years** of distributed computing on 1990s CPU clusters and produced proprietary, closed databases.
 
-With modern Graded Poset Stratification, Klein-4 quotienting, and high-performance CUDA bitboard engines ($4.62 \times 10^9$ states/sec), the entire opening-to-draw proof graph ($|G_{\text{proof}}| \approx 1.20 \times 10^{11}$ nodes) can be re-solved from scratch on modern cloud GPUs in **under a day**.
+With modern Graded Poset Stratification, Klein-4 quotienting, and high-performance CUDA bitboard engines ($4.62 \times 10^9$ states/sec), the entire opening-to-draw proof graph ($|G_{\mathrm{proof}}| \approx 1.20 \times 10^{11}$ nodes) can be re-solved from scratch on modern cloud GPUs in **under a day**.
 
 #### Neocloud Cost vs. Speed Pareto Matrix
 
@@ -211,7 +211,7 @@ In **Payne's First Position (1756)** (White Kings on 28 and 32 vs. Black Kings o
 * **Divergence Score:**
   
 $$
-\mathcal{D}(m^*) = 10 \cdot (V(m^*) - \max_{m \ne m^*} V(m)) + (\max H - H(m^*)) = 300 + 120 = 420.0
+\mathcal{D}(m^*) = 10 \cdot \left(V(m^*) - \mathrm{max}_{m \ne m^*} V(m)\right) + \left(\mathrm{max}(H) - H(m^*)\right) = 300 + 120 = 420.0
 $$
 
 #### Ranked "Move 37" Candidates

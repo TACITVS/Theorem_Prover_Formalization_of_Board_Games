@@ -7,7 +7,7 @@
 
 > **Abstract:** Between 1980 and 2026, computer scientists and combinatorial game theorists resolved the exact game-theoretic values of over a dozen classic board games. However, virtually **every single one of these historic solutions relies on unverified C/C++ code, ad-hoc retrograde databases, or proprietary mainframe scripts**.
 >
-> Following our complete machine-checked formal proofs of **$8 \times 7$ Connect-5 ($\mathrm{Value} = \text{Draw}$)**, **Nine Men's Morris ($\mathrm{Value} = \text{Draw}$)**, and **Twelve Men's Morris ($\mathrm{Value} = \text{Win White}$ in 49 moves)**, this document provides a comprehensive scientific catalog and execution roadmap of both **famous solved board games awaiting machine proof** and **unsolved classic games whose game-theoretic fairness is unknown**.
+> Following our complete machine-checked formal proofs of **$8 \times 7$ Connect-5 ($\mathrm{Value} = \mathrm{Draw}$)**, **Nine Men's Morris ($\mathrm{Value} = \mathrm{Draw}$)**, and **Twelve Men's Morris ($\mathrm{Value} = \mathrm{Win\ White}$ in 49 moves)**, this document provides a comprehensive scientific catalog and execution roadmap of both **famous solved board games awaiting machine proof** and **unsolved classic games whose game-theoretic fairness is unknown**.
 
 ---
 
