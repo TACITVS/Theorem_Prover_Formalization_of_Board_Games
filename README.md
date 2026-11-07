@@ -1,44 +1,65 @@
-# Theorem Prover Formalization of Board Games
+# Formal Mathematical Verification of Classical Board Games
 
-[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-74_Theorems_Closed-22c55e?style=for-the-badge)](build.ps1)
-[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-33_Theorems_0_sorry-10b981?style=for-the-badge)](build_lean.ps1)
-[![C11 Engine](https://img.shields.io/badge/C11_Bitboard-1.6_Billion_Evals%2Fsec-blue?style=for-the-badge)](solver/nmm_solver.c)
-[![12MM Engine](https://img.shields.io/badge/12MM_Engine-1.02_Billion_Evals%2Fsec-indigo?style=for-the-badge)](solver/nmm12_solver.c)
+[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-Zero_Axioms_Closed-22c55e?style=for-the-badge)](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/main)
+[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-Zero_Sorrys_Kernel_Only-10b981?style=for-the-badge)](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/main)
+[![C11 Verification Engines](https://img.shields.io/badge/C11_Engines-1.6_Billion_Evals%2Fsec-blue?style=for-the-badge)](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/main)
+[![Exhaustive Transversal Audit](https://img.shields.io/badge/Audit_Verification-1.27_Million_Subsets_Checked-indigo?style=for-the-badge)](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)](LICENSE)
 
-> **Abstract:** For over half a century, computer scientists and combinatorial game theorists resolved the game-theoretic values of historic board games (Connect-Four, Nine Men's Morris, Qubic, Gomoku, Pentago, Hex). However, virtually every one of these landmark solutions relied exclusively on unverified C/C++ scripts, ad-hoc retrograde databases, or proprietary mainframe code.
+> **Abstract:** For over half a century, combinatorial game theorists and computer scientists solved the game-theoretic values of historic board games — Connect-Four, Nine Men's Morris, Qubic, Gomoku, Pentago, and Hex. However, virtually every one of these landmark results relied entirely on **unverified C/C++ scripts, ad-hoc retrograde databases, or proprietary mainframe executions** that were never mathematically audited.
 >
-> This repository provides the **first zero-axiom, multi-prover deductive formalization suite** for solved classical board games and active open game frontiers, mechanizing their complete mathematical topology, group symmetries, trusted operational semantics, and retrograde search algorithms inside **Rocq 9.1** and **Lean 4.35.0**.
+> This repository is the **first multi-prover, zero-axiom mathematical verification hub for board games**, formalizing their complete graph topologies, algebraic symmetries, operational semantics, and game-theoretic certificates inside **Rocq 9.1** and **Lean 4.35.0**.
 
 ---
 
-## 🏛️ Flagship Formalizations
+## 🧭 Branch Architecture
 
-### 1. Nine Men's Morris (Mill) — Solved Exact Draw
-- **History:** 3,400+ years old (Kurna, Egypt, c. 1400 BC); computationally solved by Ralph Gasser (1993, ETH Zurich) as an **Exact Draw**.
-- **Topology:** 24 vertices, 32 edges, 16 mills.
-- **Regularity:** Every vertex belongs to **strictly 2 mills** (`16 × 3 = 48 = 24 × 2`).
-- **Transversal Barrier:** The transversal number is exactly 8 (`τ(H) = 8`). Any player occupying one of the 36 minimal 8-stone transversals completely blocks the opponent from forming any mill during Phase 1.
+To maintain modularity, reproducibility, and rigorous proof checking, **each board game formalization is developed, maintained, and audited in its own dedicated git branch**:
 
-### 2. Twelve Men's Morris (12MM with Diagonals) — Active Open Frontier
-- **The Game:** Extends the 24-point graph with **4 diagonal mills** across the corners:
-  - NW (0, 8, 16), NE (2, 10, 18), SE (4, 12, 20), SW (6, 14, 22).
-  - Total mills: **16 + 4 = 20 mills**.
-  - Total edges: **32 + 8 = 40 undirected edges**.
-  - Stones per player: **12 stones**.
-- **Broken Regularity Theorem ([`NMM12Graph.v`](NMM12Graph.v)):**
-  - 12 Corners have mill degree 3 (2 ring sides + 1 diagonal).
-  - 12 Midpoints have mill degree 2 (1 ring side + 1 radial cross).
-  - Incidence Handshake: `12 × 3 + 12 × 2 = 60 = 20 × 3 mills`.
-- **40-Edge Handshake Theorem:**
-  - Middle ring vertices have degree 4; outer and inner ring vertices have degree 3.
-  - Graph Handshake: `(8 × 4) + (16 × 3) = 80 = 2 × 40 edges`.
-- **The 12MM 8-Stone Transversal Theorem ([`NMM12Graph.v`](NMM12Graph.v)):**
-  - Even with 4 additional diagonal mills, the transversal number remains **EXACTLY 8**!
-  - Explicit canonical barrier: `{1, 3, 5, 7, 10, 14, 16, 20}` intersects **ALL 20 MILLS**.
-- **The +4 Defensive Surplus Law:**
-  - In 12 Men's Morris, each player places 12 stones.
-  - Because `12 - 8 = +4`, the defender has **4 surplus stones** of freedom to enforce a total mill barrier.
+| Branch | Board Game | Formal Provers | Game-Theoretic Status | Key Mathematical Breakthroughs |
+| :--- | :--- | :---: | :---: | :--- |
+| [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | **Nine Men's Morris (Mill)** | Rocq 9.1 & Lean 4.35.0 | **Exact Draw** | Uniform Mill Regularity, 16-Vertex Cubic Dual Graph, 8-Stone Transversal Barrier (tau = 8), 768-Ply Zermelo Finite Horizon |
+| [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) | **Twelve Men's Morris (Morabaraba)** | Rocq 9.1 & Lean 4.35.0 | **Active Open Frontier** | 20 Mills (4 Diagonals), 40 Edges, Broken Mill Regularity, 8-Stone Transversal Barrier, +4 Defensive Surplus Law |
+| [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) | **Connect-5 on 8x7 Board with Gravity** | Rocq 9.1 | **Exact Draw** | Victor Allis Follow-Up Pairing Theory, Well-Founded Induction, Claimeven Parity Invariants, Mutual Safety Duality |
+| [`dots-and-boxes-5x5`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes-5x5) *(Roadmap)* | **Dots and Boxes (5x5 Dots, 16 Boxes)** | Rocq 9.1 & Lean 4.35.0 | **Conjectured 8–8 Draw** | Berlekamp Long-Chain Exploitation, Conway Nimstring Reductions, 40-Edge Graph Topology |
+
+---
+
+## 🏛️ Flagship Formalizations Overview
+
+### 1. Nine Men's Morris (Branch: [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris))
+
+One of humanity's oldest strategy games (dating to Kurna, Egypt, c. 1400 BC). Computationally solved by Ralph Gasser (1993, ETH Zurich) as an **Exact Draw**.
+
+```
+                      Nine Men's Morris Planar Board Graph
+  
+    NW(0) ═══════════════════════ N(1) ═══════════════════════ NE(2)
+      ║                             ║                             ║
+      ║     NW(8) ═══════════════ N(9) ═══════════════ NE(10)     ║
+      ║       ║                     ║                     ║       ║
+      ║       ║     16 ════════════ 17 ════════════ 18    ║       ║
+      ║       ║      ║                             ║      ║       ║
+    W(7) ═══ W(15) ═ 23                           19 ═ E(11) ═══ E(3)
+      ║       ║      ║                             ║      ║       ║
+      ║       ║     22 ════════════ 21 ════════════ 20    ║       ║
+      ║       ║                     ║                     ║       ║
+      ║     SW(14) ══════════════ S(13) ══════════════ SE(12)     ║
+      ║                             ║                             ║
+    SW(6) ═══════════════════════ S(5) ═══════════════════════ SE(4)
+```
+
+- **Mill Regularity Theorem:** Every vertex belongs to **strictly 2 mills** (`16 × 3 = 48 = 24 × 2`).
+- **Cubic Dual Graph:** The mill incidence structure forms a **3-regular cubic graph on 16 vertices** with 24 edges.
+- **8-Stone Transversal Barrier Theorem (`tau(H) = 8`):** Any player occupying a canonical 8-stone transversal set (e.g., `{1, 3, 5, 7, 8, 12, 16, 20}`) intersects **ALL 16 MILLS**, completely barring the opponent from forming any mill during Phase 1.
+- **Finite Horizon Monotonicity:** Maximum 14 captures, with a 768-ply global game horizon under the 50-move rule, guaranteeing Zermelo minimax determinacy.
+- **Proof Count:** 74 Theorems in Rocq 9.1 (`Closed under the global context`) and 33 Theorems in Lean 4.35.0 (0 sorrys, approved kernel axioms only).
+
+---
+
+### 2. Twelve Men's Morris (Branch: [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris))
+
+Twelve Men's Morris adds **4 diagonal mills** across the corners: NW (0-8-16), NE (2-10-18), SE (4-12-20), SW (6-14-22), bringing total mills to 20 and undirected edges to 40.
 
 ```
                   Twelve Men's Morris (with 4 Diagonals)
@@ -58,96 +79,87 @@
     SW(6) ═══════════════════════ S(5) ═══════════════════════ SE(4)
 ```
 
----
-
-## 🔬 Formal Machine Verification Matrix
-
-### Rocq 9.1 Verification Suite (`build.ps1`)
-All 74 theorems are **Closed under the global context** (0 axioms):
-
-| Module | Verification Domain | Key Formal Theorems | Status |
-| :--- | :--- | :--- | :---: |
-| [`NMMGraph.v`](NMMGraph.v) | Topology & D4 Group | `mill_regularity`, `handshake_lemma`, `rot_order_4`, `refl_order_2`, `dihedral_relation`, `rot_preserves_adjacency`, `rot_preserves_mills` | **Closed (0 axioms)** |
-| [`NMMGame.v`](NMMGame.v) | 3-Phase Semantics | `opp_involutive`, `in_nat_list_iff`, step transition relation, legal placement/slide/flying | **Closed (0 axioms)** |
-| [`NMMInvariants.v`](NMMInvariants.v) | Analytic Invariants | `all_mills_intersect_midpoints`, `radial_mills_disjoint_from_corners`, `mill_complete_requires_at_least_three`, `phase1_no_terminal_loss` | **Closed (0 axioms)** |
-| [`NMMBitboard.v`](NMMBitboard.v) | Bitboard Reflection | `testbit_stones_to_bitboard`, `mill_masks_exact`, `bitboard_mill_reflection` | **Closed (0 axioms)** |
-| [`NMMStrategy.v`](NMMStrategy.v) | Strategy & Safety | `rot_preserves_stone_count`, `rot_preserves_terminal_loss`, `strategy_sound`, `mutual_safety_guarantees_draw` | **Closed (0 axioms)** |
-| [`NMMRetrograde.v`](NMMRetrograde.v) | Monotonicity & Horizon | `capture_decreases_total_stones`, `slide_stone_count_preservation`, `max_game_depth_positive`, `zermelo_finite_horizon_applies` | **Closed (0 axioms)** |
-| [`NMMCertChecker.v`](NMMCertChecker.v) | Computational Validator | `initial_state_non_terminal`, `initial_cert_checks`, `check_cert_non_terminal` | **Closed (0 axioms)** |
-| [`NMMTransversal.v`](NMMTransversal.v) | 9MM Transversal & Dual | `transversal_8_length`, `transversal_8_covers_all_mills`, `transversal_barrier_prevents_attacker_mills`, `dual_graph_handshake` | **Closed (0 axioms)** |
-| [`NMM12Graph.v`](NMM12Graph.v) | 12MM 20-Mill Foundations | `all_mills_12_count`, `corner_mill_degree_3`, `midpoint_mill_degree_2`, `handshake_lemma_12`, `transversal_12_8_covers_all_20_mills`, `defensive_surplus_12mm` | **Closed (0 axioms)** |
-| [`CheckAssumptions.v`](CheckAssumptions.v) | Axiom Auditor | Global context assumption auditor across all 74 theorems | **74/74 Verified** |
-
-### Lean 4.35.0 Verification Suite (`build_lean.ps1`)
-- [`lean4/NineMensMorris.lean`](lean4/NineMensMorris.lean): 33 theorems verified with Lean 4.35.0.
-- **Axioms:** Strictly `[propext, Quot.sound]` (zero `sorry`, zero custom axioms, zero `Classical.choice` dependencies).
+- **Broken Regularity Theorem:**
+  - 12 Corners have mill degree 3 (2 concentric ring mills + 1 diagonal mill).
+  - 12 Midpoints have mill degree 2 (1 concentric ring mill + 1 radial mill).
+  - Mill Incidence Handshake: `12 × 3 + 12 × 2 = 60 = 20 × 3`.
+- **40-Edge Graph Handshake:** Middle ring vertices have degree 4; outer and inner have degree 3 (`8 × 4 + 16 × 3 = 80 = 2 × 40`).
+- **The 8-Stone Transversal Invariant:** Despite 4 additional diagonal mills, the transversal number remains **EXACTLY 8**! Canonical set `{1, 3, 5, 7, 10, 14, 16, 20}` intersects all 20 mills.
+- **The +4 Defensive Surplus Law:** Each player places 12 stones. Because `12 - 8 = +4`, the defending player has **4 surplus stones** of freedom, strongly supporting the conjecture that Twelve Men's Morris is a drawn game.
+- **Exhaustive Subset Audit:** Verified across all 536,154 subsets of size 7 or smaller (strictly 0 transversals) and all 735,471 subsets of size 8 (strictly 18 minimal transversals covering all 20 mills).
+- **Proof Count:** Dual-formalized in Rocq 9.1 and Lean 4.35.0 (48 Lean theorems audited).
 
 ---
 
-## ⚡ High-Performance C11 Computational Engines
+### 3. Connect-5 on 8x7 Board with Gravity (Branch: [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7))
 
-| Engine | Source File | Key Metric / Capability | Benchmark |
-| :--- | :--- | :--- | :---: |
-| **9MM Bitboard Engine** | [`solver/nmm_solver.c`](solver/nmm_solver.c) | 2-instruction mill detector across 24 points | **1,612.90 Million evals/sec** |
-| **12MM Bitboard Engine** | [`solver/nmm12_solver.c`](solver/nmm12_solver.c) | 20 mills (including 4 diagonals) with broken regularity | **1,020.41 Million evals/sec** |
-| **3v3 Retrograde Analyzer** | [`solver/nmm_retrograde.c`](solver/nmm_retrograde.c) | Solves 2.69 million positions under 7.96x D4 reduction | **1.112 seconds** |
+Connect-5 on an 8x7 grid with standard gravity. Formalizes Victor Allis's pairing strategies to deductively prove `game_value = Draw`.
+
+- **Even Width 8 Symmetry:** Even column width allows complete vertical domino decomposition and cross-column symmetric couplings.
+- **Follow-Up Soundness:** Inductive proof by well-founded induction on empty cells guaranteeing defender non-losing invariant.
+- **Claimeven Parity Invariants:** Attacker can never claim both cells of any defensive domino or paired base threat.
+- **Verified Certificate:** Minimax strategy tree audited in Rocq 9.1 with zero unproven axioms.
 
 ---
 
-## 🚀 Reproduction Instructions
+## 🔬 Rigorous Verification Guarantees
 
-### 1. Verify in Rocq 9.1
-```powershell
-powershell -ExecutionPolicy Bypass -File .\build.ps1
-```
-Expected output:
-```text
-=== Compiling Nine Men's Morris Formal Mathematical Proof in Rocq 9.1 ===
-...
-Compiling NMM12Graph.v... OK
-Compiling CheckAssumptions.v... OK
-Closed under the global context (74/74 theorems)
-ALL THEOREMS FULLY VERIFIED (0 AXIOMS / CLOSED UNDER GLOBAL CONTEXT)
-```
+Every formal mathematical theorem in this project obeys strict verification guidelines:
 
-### 2. Verify in Lean 4.35.0
-```powershell
-powershell -ExecutionPolicy Bypass -File .\build_lean.ps1
-```
-Expected output:
-```text
-=== Compiling Nine Men's Morris Formal Proof in Lean 4 ===
-Lean (version 4.35.0)
-LEAN 4 VERIFICATION SUCCESSFUL
-Total verified theorems audited for axioms: 33
-Approved standard kernel axioms only: [propext, Quot.sound]
-Zero 'sorry' keywords, zero unapproved axioms, zero Classical.choice dependencies.
-```
+1. **Zero Unproven Axioms in Rocq 9.1:**
+   - Every theorem must report `Closed under the global context` when audited with `Print Assumptions`.
+   - Zero `admit`, zero `Axiom`, zero unproven conjectures.
+2. **Kernel Axioms Only in Lean 4.35.0:**
+   - Every declaration is audited with `#print axioms`.
+   - Zero `sorry`, zero custom axioms, zero `Classical.choice`.
+   - The axiom allowlist is strictly limited to standard kernel axioms: `[propext, Quot.sound]`.
+3. **High-Performance Verification Engines:**
+   - C11 bitboard engines achieving 1.0 to 1.6 Billion position evaluations per second on commodity hardware.
+   - Exact exhaustive state and transversal verification suites.
 
-### 3. Compile and Run the C11 Engines
+---
+
+## 🚀 Quick Start Guide
+
+### Clone and Checkout Specific Game Branches
+
 ```bash
-# 9MM 1.6 Billion evals/sec engine
-gcc -O3 -Wall -Wextra solver/nmm_solver.c -o solver/nmm_solver.exe
-./solver/nmm_solver.exe
+# Clone the repository
+git clone https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games.git
+cd Theorem_Prover_Formalization_of_Board_Games
 
-# 12MM 1.02 Billion evals/sec engine
-gcc -O3 -Wall -Wextra solver/nmm12_solver.c -o solver/nmm12_solver.exe
-./solver/nmm12_solver.exe
+# Inspect Nine Men's Morris proof suite
+git checkout nine-mens-morris
+powershell -ExecutionPolicy Bypass -File build.ps1
+powershell -ExecutionPolicy Bypass -File build_lean.ps1
 
-# 3v3 Retrograde analyzer (1.1s for 2.69M positions)
-gcc -O3 -Wall -Wextra solver/nmm_retrograde.c -o solver/nmm_retrograde.exe
-./solver/nmm_retrograde.exe
+# Inspect Twelve Men's Morris proof suite
+git checkout twelve-mens-morris
+powershell -ExecutionPolicy Bypass -File build.ps1
+powershell -ExecutionPolicy Bypass -File build_lean.ps1
+
+# Inspect Connect-5 8x7 proof suite
+git checkout connect5-8x7
+powershell -ExecutionPolicy Bypass -File build.ps1
 ```
 
 ---
 
-## 🌐 Related Projects & Roadmaps
+## 🗺️ Long-Term Roadmap: Solved Games & Open Frontiers
 
-- **[Formal Verification Roadmap](UNPROVED_GAMES_FORMAL_ROADMAP.md):** Catalog of classic solved games awaiting formal proof and open unsolved game frontiers.
-- **[Connect-5 on 8x7 Board](https://github.com/TACITVS/8x7_Connect_5_Is_A_Proven_Fair_Game):** Complete zero-axiom machine proof in Rocq 9.1, Lean 4.35.0, and CUDA of Victor Allis's pairing theory (`game_value = Draw`).
+See [`UNPROVED_GAMES_FORMAL_ROADMAP.md`](UNPROVED_GAMES_FORMAL_ROADMAP.md) for the full scientific roadmap covering:
+- Classic Connect-Four (7x6, Win White)
+- Even-Height Connect-Four (6x6, 8x6, 8x8, Win Black)
+- Qubic 4x4x4 (Win White)
+- Quarto 4x4 (Exact Draw)
+- Pentago 6x6 (Win White)
+- Freestyle Gomoku 15x15 (Win White)
+- Hex (7x7, 8x8)
+- 5x5 Dots and Boxes (Conjectured 8–8 Draw)
+- Russian Checkers (Shashki)
 
 ---
 
 ## 📄 License
 
-This repository is published under the permissive [MIT License](LICENSE).
+This project is licensed under the [MIT License](LICENSE).
