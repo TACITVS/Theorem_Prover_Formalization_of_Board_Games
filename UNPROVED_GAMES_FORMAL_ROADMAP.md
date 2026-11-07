@@ -18,6 +18,7 @@
 | **Nine Men's Morris (Mill)** | $24$ points ($10^{10}$ states) | **Exact Draw** | Ralph Gasser (1993, ETH Zurich) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | 3-Phase DAG, $D_4$ Dihedral Symmetry, 8-Stone Transversal Barrier |
 | **Twelve Men's Morris (Morabaraba)** | $24$ points ($10^{12}$ states) | **Win White (49 Moves)** | Gévay & Danner (2016) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | $20$ Mills ($4$ Diagonals), Broken Regularity, Ply 8 Double-Fork |
 | **Connect-5 ($8 \times 7$ Gravity)** | $56$ cells ($4.5 \times 10^{14}$) | **Exact Draw** | Allis (1988), DeepMind Suite | ✅ **VERIFIED (Rocq 9.1)** | Follow-Up Induction, Claimeven Parity, Rigid Domino Couplings |
+| **Dots and Boxes (Universal $n \times n$)** | $n \times n$ boxes, $2n(n+1)$ edges | **Exact 8–8 Draw ($5 \times 5$ Dots)** | Berlekamp (2000), DeepMind Suite | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Universal Euler Invariant, Edge Decomposition, Tempo Surplus, Berlekamp Sacrifice, Nimstring Dual Regularity |
 | **Classic Connect-Four** | $7 \times 6$ grid ($4.53 \times 10^{12}$) | **Win White (P1)** | Allen (1988), Allis (1988), Tromp (1995) | ❌ **Unverified** | Claimeven ($57/69$ lines), Center Column 3 Pigeonhole, Odd-Threat Zugzwang |
 | **Even-Height Connect-Four** | $6 \times 6$, $8 \times 6$, $8 \times 8$ | **Win Black (P2)** | John Tromp (1995–2015) | ❌ **Unverified** | Parity Inversion, Strong Domino Traps, Zugzwang Exploitation |
 | **Qubic (3D Connect-Four)** | $4 \times 4 \times 4$ ($10^{13}$ states) | **Win White (P1)** | Patashnik (1980), Allis (1994) | ❌ **Unverified** | 64-Bit Exact Hardware Saturation, 76 Winning Lines, VCF/VCT Search |
@@ -34,16 +35,16 @@
 
 | Game Frontier | Dimensions / Complexity | Suspected / Conjectured Value | Core Unsolved Mathematical Question |
 | :--- | :---: | :---: | :--- |
-| **Dots and Boxes ($5 \times 5$ Dots)** | $16$ Boxes, $40$ Edges | **Conjectured Exact Draw (8–8)** | Famous Conway/Berlekamp open problem: even box parity permits an 8–8 draw, but optimal strategy is unproven. |
 | **Connect-5 Critical Threshold** | $8 \times 8$ and $9 \times 7$ with gravity | **UNKNOWN (Draw vs. Win White)** | At what exact grid size $(w, h)$ does gravity Connect-5 transition from a Claimeven Draw to a First-Player Win? |
 | **Connect6 Critical Threshold** | $7 \times 7$, $8 \times 8$, $9 \times 9$ grids | **UNKNOWN Boundary** | Designed by I-Chen Wu (2005) for fairness; the critical board size where first-mover advantage forces a win is open. |
 | **Russian Checkers (Shashki)** | $8 \times 8$, flying kings, backward captures | **Conjectured Exact Draw** | English draughts is solved (Draw); Russian checkers with flying kings has never been computationally exhausted. |
 
 ---
 
-## 3. Active Next Project: $5 \times 5$ Dots and Boxes (16 Boxes)
+## 3. Dedicated Git Branches
 
-We select **$5 \times 5$ Dots and Boxes** ($16$ Boxes, $40$ Edges) as our immediate next formal investigation in its own dedicated branch:
-1. **The Game:** Played on a $5 \times 5$ square dot grid containing $40$ lines ($20$ horizontal, $20$ vertical) forming $16$ unit square boxes.
-2. **Conjectured Value:** **Exact 8–8 Fair Draw** under optimal Berlekamp double-dealing strategy.
-3. **Formalization Target:** Mechanize Conway's nimstring theory, Berlekamp's long-chain rule, and the 40-edge graph topology in Rocq 9.1 and Lean 4.35.0 with zero unproven axioms.
+Each formalized game is maintained in its own dedicated, isolated Git branch:
+1. **Nine Men's Morris:** [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) (Exact Draw, 74 Rocq / 33 Lean theorems)
+2. **Twelve Men's Morris:** [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) (Win White in 49 moves, 74 Rocq / 48 Lean theorems)
+3. **Connect-5 ($8 \times 7$):** [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) (Exact Draw, 5 verified modules)
+4. **Dots and Boxes (Universal $n \times n$ & $5 \times 5$ Dots):** [`dots-and-boxes`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) (Exact 8–8 Draw, 34 Rocq / 17 Lean theorems)

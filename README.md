@@ -17,8 +17,7 @@ Each game formalization is developed and maintained in its own dedicated, isolat
 | :--- | :---: | :---: | :---: | :---: | :--- |
 | **Nine Men's Morris (Mill)** | $24$ points ($3$ rings, $16$ mills) | **Exact Draw** | **74 Theorems (0 axioms)** | **33 Theorems (0 sorry)** | [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) |
 | **Twelve Men's Morris (Morabaraba)** | $24$ points ($20$ mills, $4$ diagonals) | **Win White (49 Moves)** | **74 Theorems (0 axioms)** | **48 Theorems (0 sorry)** | [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) |
-| **Connect-5 ($8 \times 7$ Gravity)** | $56$ cells ($76$ winning lines) | **Exact Draw** | **5 Modules Verified** | Formal Specification | [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) |
-| **$5 \times 5$ Dots and Boxes** | $16$ Boxes, $40$ Edges | **Conjectured 8–8 Draw** | Active Frontier | Active Frontier | *Upcoming* |
+| **$5 \times 5$ Dots and Boxes** | $16$ Boxes, $40$ Edges | **Exact 8–8 Draw** | **34 Theorems (0 axioms)** | **17 Theorems (0 sorry)** | [`dots-and-boxes`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) |
 
 ---
 
@@ -167,6 +166,11 @@ powershell -ExecutionPolicy Bypass -File build_lean.ps1
 # Inspect Connect-5 8x7 proof suite (Exact Draw)
 git checkout connect5-8x7
 powershell -ExecutionPolicy Bypass -File build.ps1
+
+# Inspect Dots and Boxes proof suite (Universal n x n & 5x5 Dots 8-8 Draw)
+git checkout dots-and-boxes
+powershell -ExecutionPolicy Bypass -File build.ps1
+powershell -ExecutionPolicy Bypass -File build_lean.ps1
 ```
 
 ---
