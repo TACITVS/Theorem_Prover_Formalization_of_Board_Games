@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#1f242d"/>
+      <stop offset="100%" stop-color="#0e1117"/>
+    </radialGradient>
+    <radialGradient id="whiteKing" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#ecf0f1"/>
+      <stop offset="100%" stop-color="#bdc3c7"/>
+    </radialGradient>
+    <radialGradient id="blackPiece" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#444444"/>
+      <stop offset="60%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#050505"/>
+    </radialGradient>
+    <filter id="pieceShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="4" dy="6" stdDeviation="4" flood-opacity="0.7"/>
+    </filter>
+    <filter id="neonGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="800" fill="url(#bgGlow)"/>
+
+  <!-- Title Banner -->
+  <text x="400" y="45" font-family="'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="900" fill="#f1c40f" text-anchor="middle" filter="url(#neonGlow)">
+    MANDATORY MULTI-JUMP SEQUENCE (THEORETICAL INVARIANT)
+  </text>
+  <text x="400" y="75" font-family="'Segoe UI', Roboto, sans-serif" font-size="14" fill="#95a5a6" text-anchor="middle">
+    Invariant Jump Vectors: Step 1 = +9 (FR Jump) | Step 2 = +7 (FL Jump)
+  </text>
+
+  <!-- Board Excerpt (Lattice from Rank 2 to Rank 6) -->
+  <g id="grid_cells" stroke="#2c3e50" stroke-width="2">
+    <!-- Row 2 -->
+    <rect x="250" y="140" width="100" height="100" fill="#34495e" rx="6"/>
+    <text x="300" y="195" font-family="Arial" font-size="14" fill="#7f8c8d" text-anchor="middle">Sq 9 (R2, C3)</text>
+    
+    <!-- Row 3 -->
+    <rect x="350" y="240" width="100" height="100" fill="#34495e" rx="6"/>
+    <text x="400" y="295" font-family="Arial" font-size="14" fill="#7f8c8d" text-anchor="middle">Sq 14 (R3, C4)</text>
+
+    <!-- Row 4 -->
+    <rect x="450" y="340" width="100" height="100" fill="#34495e" rx="6"/>
+    <text x="500" y="395" font-family="Arial" font-size="14" fill="#7f8c8d" text-anchor="middle">Sq 18 (R4, C5)</text>
+
+    <!-- Row 5 -->
+    <rect x="350" y="440" width="100" height="100" fill="#34495e" rx="6"/>
+    <text x="400" y="495" font-family="Arial" font-size="14" fill="#7f8c8d" text-anchor="middle">Sq 22 (R5, C4)</text>
+
+    <!-- Row 6 -->
+    <rect x="250" y="540" width="100" height="100" fill="#34495e" rx="6"/>
+    <text x="300" y="595" font-family="Arial" font-size="14" fill="#7f8c8d" text-anchor="middle">Sq 25 (R6, C3)</text>
+  </g>
+
+  <!-- Jump Arc Path 1: Sq 9 (300, 190) -> Sq 18 (500, 390) over Sq 14 (400, 290) -->
+  <path d="M 300 190 Q 430 230 500 390" fill="none" stroke="#e67e22" stroke-width="4" stroke-dasharray="8,6" opacity="0.6"/>
+  <!-- Jump Arc Path 2: Sq 18 (500, 390) -> Sq 25 (300, 590) over Sq 22 (400, 490) -->
+  <path d="M 500 390 Q 430 430 300 590" fill="none" stroke="#2ecc71" stroke-width="4" stroke-dasharray="8,6" opacity="0.6"/>
+
+  <!-- Captured Black Piece 1 at Sq 14 (400, 290) -->
+  <g id="black_piece_1" filter="url(#pieceShadow)">
+    <circle cx="400" cy="290" r="32" fill="url(#blackPiece)" stroke="#7f8c8d" stroke-width="3">
+      <animate attributeName="opacity" values="1; 1; 0.1; 0.1; 1" keyTimes="0; 0.25; 0.35; 0.90; 1" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="32; 32; 45; 0; 32" keyTimes="0; 0.25; 0.35; 0.90; 1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <text x="400" y="295" font-family="Arial" font-size="11" font-weight="bold" fill="#e74c3c" text-anchor="middle">
+      <animate attributeName="opacity" values="0; 1; 0; 0" keyTimes="0; 0.26; 0.40; 1" dur="6s" repeatCount="indefinite"/>
+      CAPTURED!
+    </text>
+  </g>
+
+  <!-- Captured Black Piece 2 at Sq 22 (400, 490) -->
+  <g id="black_piece_2" filter="url(#pieceShadow)">
+    <circle cx="400" cy="490" r="32" fill="url(#blackPiece)" stroke="#7f8c8d" stroke-width="3">
+      <animate attributeName="opacity" values="1; 1; 0.1; 0.1; 1" keyTimes="0; 0.55; 0.65; 0.90; 1" dur="6s" repeatCount="indefinite"/>
+      <animate attributeName="r" values="32; 32; 45; 0; 32" keyTimes="0; 0.55; 0.65; 0.90; 1" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <text x="400" y="495" font-family="Arial" font-size="11" font-weight="bold" fill="#e74c3c" text-anchor="middle">
+      <animate attributeName="opacity" values="0; 1; 0; 0" keyTimes="0; 0.56; 0.70; 1" dur="6s" repeatCount="indefinite"/>
+      CAPTURED!
+    </text>
+  </g>
+
+  <!-- Animated White Jumping Piece -->
+  <g id="jumping_white_piece" filter="url(#pieceShadow)">
+    <circle r="34" fill="url(#whiteKing)" stroke="#f39c12" stroke-width="4">
+      <animateMotion path="M 300 190 Q 430 230 500 390 Q 430 430 300 590"
+                     keyPoints="0; 0; 0.5; 0.5; 1; 1; 0"
+                     keyTimes="0; 0.15; 0.35; 0.50; 0.70; 0.90; 1"
+                     dur="6s" repeatCount="indefinite" calcMode="linear"/>
+    </circle>
+    <circle r="22" fill="none" stroke="#bdc3c7" stroke-width="2">
+      <animateMotion path="M 300 190 Q 430 230 500 390 Q 430 430 300 590"
+                     keyPoints="0; 0; 0.5; 0.5; 1; 1; 0"
+                     keyTimes="0; 0.15; 0.35; 0.50; 0.70; 0.90; 1"
+                     dur="6s" repeatCount="indefinite" calcMode="linear"/>
+    </circle>
+  </g>
+
+  <!-- Status Readout Box -->
+  <g transform="translate(150, 680)">
+    <rect width="500" height="90" rx="10" fill="#1e272e" stroke="#f1c40f" stroke-width="2" filter="url(#pieceShadow)"/>
+    <text x="250" y="30" font-family="'Segoe UI', Roboto" font-size="16" font-weight="bold" fill="#ecf0f1" text-anchor="middle">
+      RULE OF MANDATORY CAPTURE &amp; MULTI-JUMP
+    </text>
+    <text x="250" y="55" font-family="'Segoe UI', Roboto" font-size="13" fill="#2ecc71" text-anchor="middle">
+      • Δ Rank = +2 per jump | Total Pieces Decreases Strictly
+    </text>
+    <text x="250" y="75" font-family="'Segoe UI', Roboto" font-size="13" fill="#3498db" text-anchor="middle">
+      • Machine-Checked in Rocq 9.1 (`CheckersGame.v` &amp; `CheckersInvariants.v`)
+    </text>
+  </g>
+</svg>
