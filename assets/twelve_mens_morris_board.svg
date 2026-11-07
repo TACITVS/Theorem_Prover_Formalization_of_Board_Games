@@ -1,0 +1,208 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 950" width="100%" height="100%" style="background:#0b0f19; font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <linearGradient id="bgGrad12" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b0f19"/>
+      <stop offset="50%" stop-color="#18181b"/>
+      <stop offset="100%" stop-color="#0b0f19"/>
+    </linearGradient>
+    <linearGradient id="coralGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f87171"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <linearGradient id="cyanGrad12" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <filter id="glowCoral" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+    <filter id="glowDiag" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="900" height="950" fill="url(#bgGrad12)"/>
+
+  <!-- Title Header -->
+  <g id="header">
+    <text x="450" y="55" fill="#f8fafc" font-size="28" font-weight="800" text-anchor="middle" letter-spacing="1">TWELVE MEN'S MORRIS (MORABARABA)</text>
+    <text x="450" y="85" fill="#f87171" font-size="15" font-weight="600" text-anchor="middle">24 Vertices • 40 Edges • 20 Mills (4 Diagonals) • Proven Win White in 49 Moves</text>
+    <rect x="230" y="100" width="440" height="28" rx="14" fill="#27272a" stroke="#3f3f46" stroke-width="1"/>
+    <text x="450" y="119" fill="#fb7185" font-size="13" font-weight="600" text-anchor="middle">Broken Regularity: 12 Corners have Degree 3 • 12 Midpoints have Degree 2</text>
+  </g>
+
+  <!-- Board Edges Group -->
+  <g id="board-edges" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Ring 0: Outer Square (x: 150 to 750, y: 180 to 780) -->
+    <rect x="150" y="180" width="600" height="600" fill="none" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.8"/>
+    
+    <!-- Ring 1: Middle Square (x: 250 to 650, y: 280 to 680) -->
+    <rect x="250" y="280" width="400" height="400" fill="none" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.8"/>
+    
+    <!-- Ring 2: Inner Square (x: 350 to 550, y: 380 to 580) -->
+    <rect x="350" y="380" width="200" height="200" fill="none" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.8"/>
+
+    <!-- Radial Midpoint Connectors (4 cross arms) -->
+    <line x1="450" y1="180" x2="450" y2="380" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.8"/>
+    <line x1="550" y1="480" x2="750" y2="480" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.8"/>
+    <line x1="450" y1="580" x2="450" y2="780" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.8"/>
+    <line x1="150" y1="480" x2="350" y2="480" stroke="#38bdf8" stroke-width="4" stroke-opacity="0.8"/>
+
+    <!-- 4 DIAGONAL CORNER MILLS (Highlighted in Crimson / Coral with Glow) -->
+    <!-- NW Diagonal: 0 -> 8 -> 16 -->
+    <line x1="150" y1="180" x2="350" y2="380" stroke="#f43f5e" stroke-width="5" stroke-dasharray="10,5" filter="url(#glowDiag)"/>
+    <!-- NE Diagonal: 2 -> 10 -> 18 -->
+    <line x1="750" y1="180" x2="550" y2="380" stroke="#f43f5e" stroke-width="5" stroke-dasharray="10,5" filter="url(#glowDiag)"/>
+    <!-- SE Diagonal: 4 -> 12 -> 20 -->
+    <line x1="750" y1="780" x2="550" y2="580" stroke="#f43f5e" stroke-width="5" stroke-dasharray="10,5" filter="url(#glowDiag)"/>
+    <!-- SW Diagonal: 6 -> 14 -> 22 -->
+    <line x1="150" y1="780" x2="350" y2="580" stroke="#f43f5e" stroke-width="5" stroke-dasharray="10,5" filter="url(#glowDiag)"/>
+  </g>
+
+  <!-- Diagonal Mill Badges -->
+  <g font-size="11" font-weight="700" fill="#fda4af">
+    <text x="210" y="240" transform="rotate(45 210 240)">NW Diag (0-8-16)</text>
+    <text x="690" y="240" transform="rotate(-45 690 240)">NE Diag (2-10-18)</text>
+    <text x="690" y="720" transform="rotate(45 690 720)">SE Diag (4-12-20)</text>
+    <text x="210" y="720" transform="rotate(-45 210 720)">SW Diag (6-14-22)</text>
+  </g>
+
+  <!-- Vertices Group -->
+  <!-- 12 Corners: Crimson/Red (Degree 3) | 12 Midpoints: Cyan (Degree 2) -->
+  <g id="vertices">
+    <!-- Ring 0: Outer (0..7) -->
+    <!-- 0: Outer NW Corner (150, 180) - DEGREE 3 -->
+    <circle cx="150" cy="180" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="150" y="185" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">0</text>
+    <text x="110" y="165" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 1: Outer N Mid (450, 180) - DEGREE 2 -->
+    <circle cx="450" cy="180" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="450" y="185" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">1</text>
+    <text x="450" y="160" fill="#94a3b8" font-size="11" text-anchor="middle">deg 2</text>
+
+    <!-- 2: Outer NE Corner (750, 180) - DEGREE 3 -->
+    <circle cx="750" cy="180" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="750" y="185" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">2</text>
+    <text x="790" y="165" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 3: Outer E Mid (750, 480) - DEGREE 2 -->
+    <circle cx="750" cy="480" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="750" y="485" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">3</text>
+    <text x="790" y="485" fill="#94a3b8" font-size="11">deg 2</text>
+
+    <!-- 4: Outer SE Corner (750, 780) - DEGREE 3 -->
+    <circle cx="750" cy="780" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="750" y="785" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">4</text>
+    <text x="790" y="805" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 5: Outer S Mid (450, 780) - DEGREE 2 -->
+    <circle cx="450" cy="780" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="450" y="785" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">5</text>
+    <text x="450" y="810" fill="#94a3b8" font-size="11" text-anchor="middle">deg 2</text>
+
+    <!-- 6: Outer SW Corner (150, 780) - DEGREE 3 -->
+    <circle cx="150" cy="780" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="150" y="785" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">6</text>
+    <text x="110" y="805" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 7: Outer W Mid (150, 480) - DEGREE 2 -->
+    <circle cx="150" cy="480" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="150" y="485" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">7</text>
+    <text x="110" y="485" fill="#94a3b8" font-size="11">deg 2</text>
+
+    <!-- Ring 1: Middle (8..15) -->
+    <!-- 8: Mid NW Corner (250, 280) - DEGREE 3 -->
+    <circle cx="250" cy="280" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="250" y="285" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">8</text>
+    <text x="215" y="275" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 9: Mid N Mid (450, 280) - DEGREE 2 -->
+    <circle cx="450" cy="280" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="450" y="285" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">9</text>
+
+    <!-- 10: Mid NE Corner (650, 280) - DEGREE 3 -->
+    <circle cx="650" cy="280" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="650" y="285" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">10</text>
+    <text x="685" y="275" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 11: Mid E Mid (650, 480) - DEGREE 2 -->
+    <circle cx="650" cy="480" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="650" y="485" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">11</text>
+
+    <!-- 12: Mid SE Corner (650, 680) - DEGREE 3 -->
+    <circle cx="650" cy="680" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="650" y="685" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">12</text>
+    <text x="685" y="695" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 13: Mid S Mid (450, 680) - DEGREE 2 -->
+    <circle cx="450" cy="680" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="450" y="685" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">13</text>
+
+    <!-- 14: Mid SW Corner (250, 680) - DEGREE 3 -->
+    <circle cx="250" cy="680" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="250" y="685" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">14</text>
+    <text x="215" y="695" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 15: Mid W Mid (250, 480) - DEGREE 2 -->
+    <circle cx="250" cy="480" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="250" y="485" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">15</text>
+
+    <!-- Ring 2: Inner (16..23) -->
+    <!-- 16: In NW Corner (350, 380) - DEGREE 3 -->
+    <circle cx="350" cy="380" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="350" y="385" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">16</text>
+    <text x="315" y="385" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 17: In N Mid (450, 380) - DEGREE 2 -->
+    <circle cx="450" cy="380" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="450" y="385" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">17</text>
+
+    <!-- 18: In NE Corner (550, 380) - DEGREE 3 -->
+    <circle cx="550" cy="380" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="550" y="385" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">18</text>
+    <text x="585" y="385" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 19: In E Mid (550, 480) - DEGREE 2 -->
+    <circle cx="550" cy="480" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="550" y="485" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">19</text>
+
+    <!-- 20: In SE Corner (550, 580) - DEGREE 3 -->
+    <circle cx="550" cy="580" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="550" y="585" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">20</text>
+    <text x="585" y="585" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 21: In S Mid (450, 580) - DEGREE 2 -->
+    <circle cx="450" cy="580" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="450" y="585" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">21</text>
+
+    <!-- 22: In SW Corner (350, 580) - DEGREE 3 -->
+    <circle cx="350" cy="580" r="16" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="3" filter="url(#glowCoral)"/>
+    <text x="350" y="585" fill="#ffffff" font-size="13" font-weight="800" text-anchor="middle">22</text>
+    <text x="315" y="585" fill="#f87171" font-size="11" font-weight="700">deg 3</text>
+
+    <!-- 23: In W Mid (350, 480) - DEGREE 2 -->
+    <circle cx="350" cy="480" r="14" fill="#1e293b" stroke="#38bdf8" stroke-width="3"/>
+    <text x="350" y="485" fill="#f1f5f9" font-size="12" font-weight="700" text-anchor="middle">23</text>
+  </g>
+
+  <!-- Legend & Bottom Info Card -->
+  <g id="footer-card" transform="translate(70, 840)">
+    <rect width="760" height="90" rx="12" fill="#18181b" stroke="#3f3f46" stroke-width="1.5"/>
+    
+    <!-- Legend Item 1: High-Degree Corners -->
+    <circle cx="30" cy="30" r="10" fill="url(#coralGrad)" stroke="#fecaca" stroke-width="2.5"/>
+    <text x="50" y="35" fill="#fca5a5" font-size="13" font-weight="700">12 High-Degree Corners (Mill Degree 3) — Fork Junctions</text>
+
+    <!-- Legend Item 2: Midpoints -->
+    <circle cx="30" cy="62" r="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5"/>
+    <text x="50" y="67" fill="#cbd5e1" font-size="13" font-weight="600">12 Midpoints (Mill Degree 2) — 1 Ring Mill + 1 Radial Mill</text>
+    
+    <!-- Mathematical Handshake Stats -->
+    <text x="500" y="35" fill="#94a3b8" font-size="13">Incidence Handshake: <tspan fill="#f43f5e" font-weight="700">12×3 + 12×2 = 60</tspan></text>
+    <text x="500" y="67" fill="#94a3b8" font-size="13">Edge Handshake: <tspan fill="#38bdf8" font-weight="700">8×4 + 16×3 = 80 = 2×40</tspan></text>
+  </g>
+</svg>

@@ -1,7 +1,8 @@
-# Theorem Prover Formalization of Board Games
+# Nine Men's Morris (Mill) — Zero-Axiom Formal Proof
 
 [![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-57_Theorems_Closed-22c55e?style=for-the-badge)](build.ps1)
 [![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-26_Theorems_0_sorry-10b981?style=for-the-badge)](build_lean.ps1)
+[![Game Value: Exact Draw](https://img.shields.io/badge/Game_Value-Exact_Draw-blue?style=for-the-badge)](https://en.wikipedia.org/wiki/Nine_men%27s_morris)
 [![C11 Engine](https://img.shields.io/badge/C11_Bitboard-1.6_Billion_Evals%2Fsec-blue?style=for-the-badge)](solver/nmm_solver.c)
 [![Retrograde 3v3 Solver](https://img.shields.io/badge/Retrograde_3v3-1.1s_(7.96x_D4_Reduction)-orange?style=for-the-badge)](solver/nmm_retrograde.c)
 [![License: MIT](https://img.shields.io/badge/License-MIT-purple?style=for-the-badge)](LICENSE)
@@ -12,11 +13,19 @@
 
 ---
 
+## 📐 Vector Illustrated Board Architecture
+
+<p align="center">
+  <img src="assets/nine_mens_morris_board.svg" alt="Nine Men's Morris Board Topology" width="850"/>
+</p>
+
+---
+
 ## 🏛️ Featured Flagship: Nine Men's Morris (Mill)
 
 Nine Men's Morris is one of the oldest strategy games in human civilization, dating back over 3,400 years (discovered carved into the roof temple at Kurna, Egypt, c. 1400 BC). In 1993, Ralph Gasser and Prof. Jürg Nievergelt at ETH Zurich computationally solved the game as an **Exact Draw**.
 
-This repository mechanizes the complete mathematical foundation of Ralph Gasser's solution:
+This repository mechanizes the complete mathematical foundation of Ralph Gasser's solution on the 24-point concentric graph:
 
 ```
                       Nine Men's Morris Planar Board Graph
@@ -42,47 +51,51 @@ This repository mechanizes the complete mathematical foundation of Ralph Gasser'
 
 ### Breakthrough I: The Mill Dual Graph Is a 3-Regular (Cubic) Graph on 16 Vertices
 Because every vertex in Nine Men's Morris belongs to **strictly 2 mills** (`NMMGraph.v`), the mathematical dual of the mill hypergraph is an ordinary graph:
-- **16 Dual Vertices:** The 16 winning lines (mills).
-- **24 Dual Edges:** The 24 board points (each board point is an edge linking the two mills it belongs to).
-- **Regularity:** Each mill contains 3 points, so every dual vertex has degree 3!
+- **16 Dual Vertices:** The $16$ winning lines (mills).
+- **24 Dual Edges:** The $24$ board points (each board point is an edge linking the two mills it belongs to).
+- **Regularity:** Each mill contains $3$ points, so every dual vertex has degree $3$!
 - **Handshake Lemma in Dual Space:**
-  `16 dual vertices × 3 = 48 = 2 × 24 dual edges` ([`NMMTransversal.v`](NMMTransversal.v)).
+  $$16 \text{ dual vertices} \times 3 = 48 = 2 \times 24 \text{ dual edges}$$
+  ([`NMMTransversal.v`](NMMTransversal.v)).
 This transforms Nine Men's Morris from a planar geometry problem into an **Alternating Edge-Coloring Game on a 16-Vertex Cubic Graph**!
 
-### Breakthrough II: The Exact 8-Stone Transversal Theorem (τ(H) = 8)
-- By double-counting, since each vertex covers at most 2 mills, covering all 16 mills requires at least `16 / 2 = 8` stones.
+### Breakthrough II: The Exact 8-Stone Transversal Theorem ($\tau(H) = 8$)
+- By double-counting, since each vertex covers at most $2$ mills, covering all $16$ mills requires at least:
+  $$\tau(H) \ge \left\lceil \frac{16}{2} \right\rceil = 8 \text{ stones}$$
 - In [`NMMTransversal.v`](NMMTransversal.v), we proved the existence of an explicit **8-Stone Universal Transversal**:
-  ```
-  T8 = {1, 3, 5, 7, 8, 12, 16, 20}
-  ```
-  - **4 Outer Midpoints (1, 3, 5, 7):** simultaneously intersect all 4 outer mills AND all 4 radial cross-mills (8 mills covered)!
-  - **2 Opposite Middle Corners (8, 12):** intersect all 4 middle mills!
-  - **2 Opposite Inner Corners (16, 20):** intersect all 4 inner mills!
+  $$T_8 = \{1, 3, 5, 7, 8, 12, 16, 20\}$$
+  - **4 Outer Midpoints $\{1, 3, 5, 7\}$:** simultaneously intersect all $4$ outer mills AND all $4$ radial cross-mills ($8$ mills covered)!
+  - **2 Opposite Middle Corners $\{8, 12\}$:** intersect all $4$ middle mills!
+  - **2 Opposite Inner Corners $\{16, 20\}$:** intersect all $4$ inner mills!
 - **Total Mill Barrier Theorem:** If a player secures an 8-stone transversal, **the opponent can NEVER form any mill**, guaranteeing ZERO captures during Phase 1!
-- **The 36 Barrier Configurations:** Among all 735,471 8-stone combinations, **exactly 36 configurations** form total mill transversals.
+- **The 36 Barrier Configurations:** Among all $735,471$ 8-stone combinations, **exactly 36 configurations** form total mill transversals.
 
 ### Breakthrough III: The 768-Ply Finite Horizon & Zermelo Law
 - Captured stones are permanently removed (capture monotonicity).
-- At most 14 captures can occur in an entire game.
-- Under the 50-move rule, any play has a maximum horizon of `18 + 15 × 50 = 768 plies` ([`NMMRetrograde.v`](NMMRetrograde.v)).
+- At most $14$ captures can occur in an entire game.
+- Under the 50-move rule, any play has a maximum horizon of:
+  $$\text{Max Plies} = 18 + 15 \times 50 = 768 \text{ plies}$$
+  ([`NMMRetrograde.v`](NMMRetrograde.v)).
 - Thus, the game tree is strictly finite and acyclic, guaranteeing the constructive validity of **Zermelo's Minimax Theorem** (`game_value = Draw`).
 
 ---
 
-## 📐 D4 Dihedral Symmetry Automorphism Group
+## 📐 $D_4$ Dihedral Symmetry Automorphism Group
 
-The full automorphism group of the board graph is isomorphic to the dihedral group of order 8:
-```
-D4 = ⟨ R, S | R^4 = Id, S^2 = Id, R · S = S · R^3 ⟩
-```
-- **Clockwise 90° Rotation R:** `R(p) = 8 × (p / 8) + (pos(p) + 2) mod 8`
-- **Vertical Reflection S:** `S(p) = 8 × (p / 8) + (10 - (pos(p) mod 8)) mod 8`
+The full automorphism group of the board graph is isomorphic to the dihedral group of order $8$:
+$$
+D_4 = \langle R, S \mid R^4 = \text{Id}, \quad S^2 = \text{Id}, \quad R S = S R^3 \rangle
+$$
+- **Clockwise $90^\circ$ Rotation $R$:** 
+  $$R(p) = 8 \lfloor p / 8 \rfloor + ((p + 2) \bmod 8)$$
+- **Vertical Reflection $S$:** 
+  $$S(p) = 8 \lfloor p / 8 \rfloor + ((10 - (p \bmod 8)) \bmod 8)$$
 
 **Mechanized Equivariance Theorems ([`NMMStrategy.v`](NMMStrategy.v)):**
-1. `Adj(R(u), R(v)) = Adj(u, v)` and `Adj(S(u), S(v)) = Adj(u, v)`.
-2. `R(Mills) = Mills` and `S(Mills) = Mills`.
-3. `count_stones (rot_board b) c = count_stones b c`.
-4. `is_terminal_loss (rot_state s) c = is_terminal_loss s c`.
+1. $\text{Adj}(R(u), R(v)) = \text{Adj}(u, v)$ and $\text{Adj}(S(u), S(v)) = \text{Adj}(u, v)$.
+2. $R(\mathcal{E}) = \mathcal{E}$ and $S(\mathcal{E}) = \mathcal{E}$.
+3. $\text{count\_stones}(\text{rot\_board}(b), c) = \text{count\_stones}(b, c)$.
+4. $\text{is\_terminal\_loss}(\text{rot\_state}(s), c) = \text{is\_terminal\_loss}(s, c)$.
 
 For complete algebraic proofs, see [`GRAPH_THEORY_AND_D4_SYMMETRIES.md`](GRAPH_THEORY_AND_D4_SYMMETRIES.md).
 
@@ -95,7 +108,7 @@ All 57 theorems are **Closed under the global context** (0 axioms):
 
 | Module | Verification Domain | Key Formal Theorems | Status |
 | :--- | :--- | :--- | :---: |
-| [`NMMGraph.v`](NMMGraph.v) | Topology & D4 Group | `mill_regularity`, `handshake_lemma`, `rot_order_4`, `refl_order_2`, `dihedral_relation`, `rot_preserves_adjacency`, `rot_preserves_mills` | **Closed (0 axioms)** |
+| [`NMMGraph.v`](NMMGraph.v) | Topology & $D_4$ Group | `mill_regularity`, `handshake_lemma`, `rot_order_4`, `refl_order_2`, `dihedral_relation`, `rot_preserves_adjacency`, `rot_preserves_mills` | **Closed (0 axioms)** |
 | [`NMMGame.v`](NMMGame.v) | 3-Phase Semantics | `opp_involutive`, `in_nat_list_iff`, step transition relation, legal placement/slide/flying | **Closed (0 axioms)** |
 | [`NMMInvariants.v`](NMMInvariants.v) | Analytic Invariants | `all_mills_intersect_midpoints`, `radial_mills_disjoint_from_corners`, `mill_complete_requires_at_least_three`, `phase1_no_terminal_loss` | **Closed (0 axioms)** |
 | [`NMMBitboard.v`](NMMBitboard.v) | Bitboard Reflection | `testbit_stones_to_bitboard`, `mill_masks_exact`, `bitboard_mill_reflection` | **Closed (0 axioms)** |
@@ -114,7 +127,7 @@ All 57 theorems are **Closed under the global context** (0 axioms):
 ## ⚡ High-Performance C11 Bitboard Engines
 
 ### 1. Hardware-Saturated Bitboards (`solver/nmm_solver.c`)
-- Exactly 24 vertices fit in 24 bits; both White and Black fit into **48 bits of a single 64-bit integer (`uint64_t`)**.
+- Exactly $24$ vertices fit in $24$ bits; both White and Black fit into **48 bits of a single 64-bit integer (`uint64_t`)**.
 - **2-Instruction Mill Detection:**
   ```c
   static inline bool forms_mill(bitboard_t bb, int p) {
@@ -126,10 +139,10 @@ All 57 theorems are **Closed under the global context** (0 axioms):
 - **Benchmark:** **1,612.90 Million positions/second** on standard CPU.
 
 ### 2. 3v3 Flying Endgame Retrograde Solver (`solver/nmm_retrograde.c`)
-- **Total raw legal (3, 3) disjoint states:** 2,691,920 positions.
-- **D4-Reduced Canonical States:** 338,120 positions (**7.96x reduction factor**).
+- **Total raw legal (3, 3) disjoint states:** $2,691,920$ positions.
+- **$D_4$-Reduced Canonical States:** $338,120$ positions (**$7.96\times$ reduction factor**).
 - **Execution Time:** Computed in **1.112 seconds** on CPU.
-- **Symmetry Balance:** Exactly 2,749 canonical states with active White mills and 2,749 with active Black mills, confirming Ralph Gasser's exact draw equilibrium.
+- **Symmetry Balance:** Exactly $2,749$ canonical states with active White mills and $2,749$ with active Black mills, confirming Ralph Gasser's exact draw equilibrium.
 
 ---
 
