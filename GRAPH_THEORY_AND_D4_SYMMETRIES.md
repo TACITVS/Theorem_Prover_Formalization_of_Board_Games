@@ -25,10 +25,8 @@ The $24$ vertices $V = \{0, 1, \dots, 23\}$ are partitioned into three concentri
 ### Algebraic Coordinate Decomposition
 
 For any vertex $p \in \{0, \dots, 23\}$:
-- **Ring Index:** 
-  $$\text{ring}(p) = \lfloor p / 8 \rfloor \in \{0, 1, 2\}$$
-- **Cyclic Position:** 
-  $$\text{pos}(p) = p \pmod 8 \in \{0, \dots, 7\}$$
+- **Ring Index:** $\text{ring}(p) = \lfloor p / 8 \rfloor \in \{0, 1, 2\}$
+- **Cyclic Position:** $\text{pos}(p) = p \pmod 8 \in \{0, \dots, 7\}$
   - Even positions $\{0, 2, 4, 6\}$ correspond to the $12$ **corners**.
   - Odd positions $\{1, 3, 5, 7\}$ correspond to the $12$ **midpoints**.
 
@@ -37,8 +35,7 @@ For any vertex $p \in \{0, \dots, 23\}$:
 ## 2. Vertex Degree Distribution & Handshake Invariant
 
 The $32$ undirected edges $E$ are formed by:
-1. **Concentric Cycles ($24$ edges):** Each ring $r$ forms an $8$-cycle:
-   $$e = (8r + i, 8r + ((i+1) \bmod 8)) \quad (r \in \{0, 1, 2\}, i \in \{0, \dots, 7\})$$
+1. **Concentric Cycles ($24$ edges):** Each ring $r$ forms an $8$-cycle: $e = (8r + i, 8r + ((i+1) \bmod 8))$ for $r \in \{0, 1, 2\}, i \in \{0, \dots, 7\}$.
 2. **Radial Orthogonal Connectors ($8$ edges):** Connecting corresponding midpoints across adjacent rings:
    - **North:** $(1, 9)$ and $(9, 17)$
    - **East:** $(3, 11)$ and $(11, 19)$
@@ -54,9 +51,11 @@ The $32$ undirected edges $E$ are formed by:
 ### Handshake Lemma
 
 The sum of degrees over all $24$ vertices satisfies Euler's Handshake Lemma:
+
 $$
 \sum_{v \in V} \deg(v) = (12 \times 2) + (8 \times 3) + (4 \times 4) = 24 + 24 + 16 = 64 = 2 \lvert E \rvert
 $$
+
 Mechanized in Rocq (`handshake_lemma`) and Lean 4 (`handshake_lemma_64`).
 
 ---
@@ -72,6 +71,7 @@ A **mill** is a collinear triplet of vertices along a graph line. There are exac
 ### Theorem (Mill Regularity)
 
 **Every single vertex $v \in V$ belongs to EXACTLY 2 distinct mills:**
+
 $$
 \forall v \in V, \quad \deg_{\mathcal{E}}(v) = 2
 $$
@@ -79,8 +79,7 @@ $$
 *Proof:*
 - Each corner $v \in \{0, 2, 4, 6\}$ of ring $r$ belongs to the two adjacent sides of ring $r$.
 - Each midpoint $v \in \{1, 3, 5, 7\}$ of ring $r$ belongs to one ring side and one radial cross line.
-- Double-counting verification:
-  $$16 \text{ mills} \times 3 \text{ vertices} = 48 \text{ vertex incidences} = 24 \text{ vertices} \times 2$$
+- Double-counting verification: $16 \text{ mills} \times 3 \text{ vertices} = 48 \text{ vertex incidences} = 24 \text{ vertices} \times 2$.
 
 Mechanized in Rocq (`mill_regularity`) and Lean 4 (`mill_regularity_all`).
 
@@ -89,23 +88,20 @@ Mechanized in Rocq (`mill_regularity`) and Lean 4 (`mill_regularity_all`).
 ## 4. $D_4$ Dihedral Symmetry Group Actions
 
 The automorphism group of the Nine Men's Morris graph is isomorphic to the dihedral group of order $8$:
+
 $$
 D_4 = \langle R, S \mid R^4 = \text{Id}, \quad S^2 = \text{Id}, \quad R S = S R^3 \rangle
 $$
 
 ### Explicit Permutation Formulas
 
-1. **Clockwise $90^\circ$ Rotation $R$:**
-   $$R(p) = 8 \lfloor p / 8 \rfloor + ((p + 2) \bmod 8)$$
-2. **Vertical Axis Reflection $S$ (North-South Midline):**
-   $$S(p) = 8 \lfloor p / 8 \rfloor + ((10 - (p \bmod 8)) \bmod 8)$$
+1. **Clockwise $90^\circ$ Rotation $R$:** $R(p) = 8 \lfloor p / 8 \rfloor + ((p + 2) \bmod 8)$
+2. **Vertical Axis Reflection $S$ (North-South Midline):** $S(p) = 8 \lfloor p / 8 \rfloor + ((10 - (p \bmod 8)) \bmod 8)$
 
 ### Automorphism Invariance Theorems
 
-1. **Adjacency Preservation:** For all $u, v \in V$:
-   $$\text{Adj}(R(u), R(v)) = \text{Adj}(u, v) \quad \land \quad \text{Adj}(S(u), S(v)) = \text{Adj}(u, v)$$
-2. **Mill System Preservation:** For every mill $m = \{a, b, c\} \in \mathcal{E}$:
-   $$R(m) \in \mathcal{E} \quad \land \quad S(m) \in \mathcal{E}$$
+1. **Adjacency Preservation:** For all $u, v \in V$: $\text{Adj}(R(u), R(v)) = \text{Adj}(u, v)$ and $\text{Adj}(S(u), S(v)) = \text{Adj}(u, v)$.
+2. **Mill System Preservation:** For every mill $m = \{a, b, c\} \in \mathcal{E}$: $R(m) \in \mathcal{E}$ and $S(m) \in \mathcal{E}$.
 
 Mechanized in Rocq (`rot_preserves_adjacency`, `refl_preserves_adjacency`, `rot_preserves_mills`, `refl_preserves_mills`) and Lean 4 (`rot_preserves_adjacency`, `refl_preserves_adjacency`, `rot_preserves_mills`, `refl_preserves_mills`).
 

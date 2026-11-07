@@ -17,7 +17,7 @@ Let a generalized concentric Morris game $\mathcal{M}(r, d, n)$ be parameterized
 * $r \ge 1$: The number of concentric square rings ($N = 8r$ board vertices).
 * $d \in \{0, 4\}$: The number of diagonal corner lines ($d = 0$ for classical Morris; $d = 4$ for Morabaraba).
 * $n \in \mathbb{N}$: The number of stones allocated to each player.
-* $H = (V, \mathcal{E})$: The 3-uniform mill hypergraph where each mill $e \in \mathcal{E}$ has cardinality $|e| = 3$.
+* $H = (V, \mathcal{E})$: The $3$-uniform mill hypergraph where each mill $e \in \mathcal{E}$ has cardinality $|e| = 3$.
 
 ---
 
@@ -42,8 +42,7 @@ $$
 
 Where $\tau(H)$ is the **transversal number** (minimum hitting set size) of the mill hypergraph:
 * For Black to have the theoretical capacity to prevent White from completing any mill, Black must place at least $\tau(H)$ stones.
-* For $r$ concentric rings without diagonals ($d = 0$): 
-  $$\tau(H) = 4(r - 1) \quad (\forall r \ge 2)$$
+* For $r$ concentric rings without diagonals ($d = 0$): $\tau(H) = 4(r - 1)$ for all $r \ge 2$.
 * If $n < \tau(H)$, Black is **transversal insolvent**: White is mathematically guaranteed an unblockable mill.
 
 ---
@@ -62,20 +61,20 @@ $$
 ### 2. The Morris Fairness Classification Theorem
 
 > **Theorem (Algebra of Fairness Dichotomy):**  
-> A concentric Morris game $\mathcal{M}(r, d, n)$ with $r \ge 2$ rings is an **Exact Fair Draw** if and only if it satisfies the **Triple Fairness Conjunction**:
->
-> $$
-> \text{Fair}(\mathcal{M}) \iff \begin{cases} 
-> d = 0 \iff \Delta_{\mathcal{E}} \le 2 & \text{(Fork-Free Regularity)} \\ 
-> n \ge \tau(H) = 4(r - 1) & \text{(Transversal Solvency)} \\ 
-> \rho = \dfrac{n}{4r} < 1 \iff n < 4r & \text{(Sub-Saturation Mobility)} 
-> \end{cases}
-> $$
->
-> If any of these three conditions is violated:
-> * If $d = 4$ ($\Delta_{\mathcal{E}} \ge 3$): White exploits the high-degree corner junctions to force an unblockable double-threat fork in Phase 1 $\implies$ **Win White**.
-> * If $n < \tau(H)$: Black lacks sufficient stones to cover all lines $\implies$ **Win White**.
-> * If $n \ge 4r$ and $d = 0$: The board deadlocks with zero sliding moves in Phase 2.
+> A concentric Morris game $\mathcal{M}(r, d, n)$ with $r \ge 2$ rings is an **Exact Fair Draw** if and only if it satisfies the **Triple Fairness Conjunction**.
+
+$$
+\text{Fair}(\mathcal{M}) \iff \begin{cases} 
+d = 0 \iff \Delta_{\mathcal{E}} \le 2 & \text{(Fork-Free Regularity)} \\ 
+n \ge \tau(H) = 4(r - 1) & \text{(Transversal Solvency)} \\ 
+\rho = \dfrac{n}{4r} < 1 \iff n < 4r & \text{(Sub-Saturation Mobility)} 
+\end{cases}
+$$
+
+If any of these three conditions is violated:
+* If $d = 4$ ($\Delta_{\mathcal{E}} \ge 3$): White exploits the high-degree corner junctions to force an unblockable double-threat fork in Phase 1 $\implies$ **Win White**.
+* If $n < \tau(H)$: Black lacks sufficient stones to cover all lines $\implies$ **Win White**.
+* If $n \ge 4r$ and $d = 0$: The board deadlocks with zero sliding moves in Phase 2.
 
 ---
 
@@ -88,11 +87,8 @@ Historically, the classical European tradition assigned $n(r) = 3r$ stones per p
 
 Setting $n = 3r$ with $d = 0$ guarantees that all three conditions hold simultaneously for all $r \ge 2$:
 1. **Regularity:** $\Delta_{\mathcal{E}} = 2$ uniformly everywhere.
-2. **Defensive Solvency:** 
-   $$\delta(r) = 3r - 4(r - 1) = 4 - r > 0 \quad (\text{for } r \in \{2, 3\})$$
-3. **Constant 75% Saturation:** 
-   $$\rho = \frac{3r}{4r} = \frac{3}{4} = 75\% \quad (\forall r \ge 1)$$
-   Exactly one-quarter of the board remains open for dynamic Phase 2 maneuvering.
+2. **Defensive Solvency:** $\delta(r) = 3r - 4(r - 1) = 4 - r > 0$ for all $r \in \{2, 3\}$.
+3. **Constant 75% Saturation:** $\rho = \dfrac{3r}{4r} = \dfrac{3}{4} = 75\%$ for all $r \ge 1$. Exactly one-quarter of the board remains open for dynamic Phase 2 maneuvering.
 
 ---
 
@@ -114,20 +110,16 @@ Let $A_9$ and $A_{12}$ be the $24 \times 24$ adjacency matrices of the Nine Men'
 ### 2. Graph Laplacians & Fiedler Algebraic Connectivity
 
 The combinatorial Graph Laplacian is defined as:
+
 $$
 L = D - A, \quad \text{where } D = \text{diag}(\deg(v))
 $$
 
 The second smallest eigenvalue $\mu_2(L)$ is the **Fiedler Algebraic Connectivity**, which quantifies the difficulty of partitioning the graph into disconnected components:
 
-* **Nine Men's Morris Laplacian:**
-  $$\mu_2(L_9) \approx 0.4384$$
-* **Twelve Men's Morris Laplacian:**
-  $$\mu_2(L_{12}) = 2 - \sqrt{2} \approx 0.5858$$
-* **Connectivity Jump:**
-  $$
-  \Delta \mu_2 = \frac{0.5858 - 0.4384}{0.4384} = +33.6\%
-  $$
+* **Nine Men's Morris Laplacian:** $\mu_2(L_9) \approx 0.4384$
+* **Twelve Men's Morris Laplacian:** $\mu_2(L_{12}) = 2 - \sqrt{2} \approx 0.5858$
+* **Connectivity Jump:** $\Delta \mu_2 = \dfrac{0.5858 - 0.4384}{0.4384} = +33.6\%$
 
 The $+33.6\%$ increase in algebraic connectivity proves that the $4$ diagonal edges drastically compress the graph's diameter and mixing time, eliminating defensive pockets where Black could shelter stones in Nine Men's Morris.
 
@@ -143,11 +135,8 @@ Let $M \in \{0, 1\}^{|\mathcal{E}| \times 24}$ be the incidence matrix where $M_
 
 **Matrix Computation Results:**
 1. **In Nine Men's Morris ($M_9 \in \mathbb{R}^{16 \times 24}$):**
-   * Every diagonal entry is $3$.
-   * Every off-diagonal row sum is **strictly 3**:
-     $$
-     \sum_{j \ne i} (G_9)_{i, j} = 3 \quad (\forall i \in \{1, \dots, 16\})
-     $$
+   * Every diagonal entry is $3$: $(G_9)_{i, i} = 3$.
+   * Every off-diagonal row sum is **strictly 3**: $\sum_{j \ne i} (G_9)_{i, j} = 3$ for all $i \in \{1, \dots, 16\}$.
    * **Matrix Proof of 3-Regularity:** The dual mill graph is an **exact 3-regular cubic graph on 16 vertices**.
 2. **In Twelve Men's Morris ($M_{12} \in \mathbb{R}^{20 \times 24}$):**
    * The $12$ ring mills intersect $5$ other mills.
@@ -157,22 +146,30 @@ Let $M \in \{0, 1\}^{|\mathcal{E}| \times 24}$ be the incidence matrix where $M_
 
 ---
 
-#### Exact Linear Dependencies in the Mill Hypergraph
+### 4. Exact Linear Dependencies in the Mill Hypergraph
 
-* **Nine Men's Morris ($\text{rank}(M_9) = 15$):**
-  There is **strictly one linear dependency** spanning $\ker(M_9^T)$:
-  $$
-  \mathbf{v}_9 = [-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, 1, -1, 1, -1]^T
-  $$
-  **The Alternating Mill Conservation Law:**
-  The alternating sum of the $12$ concentric ring mills equals the alternating sum of the $4$ radial cross mills:
-  $$
-  \sum_{r=0}^2 \sum_{k=0}^3 (-1)^{k+1} \mathbf{m}_{r, k} + \sum_{j=0}^3 (-1)^j \mathbf{m}_{\text{radial}, j} = \mathbf{0}
-  $$
+#### Nine Men's Morris ($\text{rank}(M_9) = 15$)
 
-* **Twelve Men's Morris ($\text{rank}(M_{12}) = 16$):**
-  $$\dim(\ker(M_{12}^T)) = 20 - 16 = 4$$
-  The $4$ diagonal mills introduce $4$ independent linear dependencies, reflecting the $4$ new algebraic closed cycles in the dual graph.
+There is **strictly one linear dependency** spanning $\ker(M_9^T)$:
+
+$$
+\mathbf{v}_9 = [-1, 1, -1, 1, -1, 1, -1, 1, -1, 1, -1, 1, 1, -1, 1, -1]^T
+$$
+
+**The Alternating Mill Conservation Law:**  
+The alternating sum of the $12$ concentric ring mills equals the alternating sum of the $4$ radial cross mills:
+
+$$
+\sum_{r=0}^2 \sum_{k=0}^3 (-1)^{k+1} \mathbf{m}_{r, k} + \sum_{j=0}^3 (-1)^j \mathbf{m}_{\text{radial}, j} = \mathbf{0}
+$$
+
+#### Twelve Men's Morris ($\text{rank}(M_{12}) = 16$)
+
+$$
+\dim(\ker(M_{12}^T)) = 20 - 16 = 4
+$$
+
+The $4$ diagonal mills introduce $4$ independent linear dependencies, reflecting the $4$ new algebraic closed cycles in the dual graph.
 
 ---
 
@@ -181,19 +178,25 @@ Let $M \in \{0, 1\}^{|\mathcal{E}| \times 24}$ be the incidence matrix where $M_
 ### 1. The Game Coordinate Ring & Mill Ideals
 
 We formulate the game in the polynomial quotient ring over the 24 vertex variables:
+
 $$
 R = \mathbb{R}[x_0, x_1, \dots, x_{23}] / \langle x_i^2 - x_i \rangle_{i=0}^{23}
 $$
+
 Where $x_i = 1$ indicates that White occupies vertex $i$, and $x_i = 0$ otherwise.
 
 Every mill $m = \{a, b, c\} \in \mathcal{E}$ corresponds to a square-free cubic monomial:
+
 $$
 P_m(x) = x_a x_b x_c
 $$
+
 The **Mill Ideal** is defined as:
+
 $$
 I_{\text{mill}} = \langle x_a x_b x_c \mid \{a, b, c\} \in \mathcal{E} \rangle
 $$
+
 The set of mill-free board states is precisely the **algebraic variety** $\mathcal{V}(I_{\text{mill}})$ where all generators vanish.
 
 ---
@@ -205,6 +208,7 @@ In Twelve Men's Morris, White's Ply 8 forced-mill win arises from the algebraic 
 * $m_2 = \{8, 14, 15\}$ (Middle Ring Left Mill)
 
 In the polynomial ring, their ideal sum factors as:
+
 $$
 P_{m_1}(x) + P_{m_2}(x) = x_6 x_{14} x_{22} + x_8 x_{14} x_{15} = \mathbf{x_{14}} \cdot \left( x_6 x_{22} + x_8 x_{15} \right)
 $$
@@ -212,10 +216,7 @@ $$
 **The Commutative Reduction:**
 1. At Plies 0–5, White establishes $x_6 = 1$ and $x_8 = 1$.
 2. At Ply 6, White places stone 4 at the junction vertex: $x_{14} = 1$.
-3. Substituting $x_6 = 1, x_8 = 1, x_{14} = 1$ into the polynomial reduces the cubic ideal to a **linear binomial**:
-   $$
-   P_{\text{fork}}(x) = x_{22} + x_{15}
-   $$
+3. Substituting $x_6 = 1, x_8 = 1, x_{14} = 1$ into the polynomial reduces the cubic ideal to a **linear binomial**: $P_{\text{fork}}(x) = x_{22} + x_{15}$.
 4. At Ply 7, Black has only **one placement operator** $y \in \{0, 1\}^{24}$ with $\|y\|_0 = 1$.
 5. Black can set $x_{22} = 0$ OR $x_{15} = 0$, but Black cannot simultaneously eliminate both independent linear terms!
 6. By **Hilbert's Nullstellensatz**, White is algebraically guaranteed to evaluate the remaining variable to $1$ at Ply 8, driving $P_{\text{mill}}(x) = 1$.
@@ -229,22 +230,26 @@ The characteristic polynomial of the adjacency matrix is $\chi_G(\lambda) = \det
 Because both 9MM and 12MM boards are bipartite graphs (having no odd cycles), $\chi_G(\lambda)$ contains **strictly even powers of $\lambda$** ($\chi_G(-\lambda) = \chi_G(\lambda)$):
 
 #### Nine Men's Morris Characteristic Polynomial:
+
 $$
 \begin{aligned}
 \chi_{G_9}(\lambda) &= \lambda^{24} - 32\lambda^{22} + 436\lambda^{20} - 3328\lambda^{18} + 15744\lambda^{16} \\
 &\quad - 48192\lambda^{14} + 96576\lambda^{12} - 124928\lambda^{10} + 99584\lambda^8 - 44032\lambda^6 + 8192\lambda^4
 \end{aligned}
 $$
+
 * **Edges:** Coefficient of $\lambda^{22}$ is $-32$ ($-|E| = -32$).
 * **Kernel Dimension:** The lowest non-zero power is $\lambda^4$ with coefficient $8192 = 2^{13}$, confirming that $\lambda = 0$ has multiplicity $4$.
 
 #### Twelve Men's Morris Characteristic Polynomial:
+
 $$
 \begin{aligned}
 \chi_{G_{12}}(\lambda) &= \lambda^{24} - 40\lambda^{22} + 652\lambda^{20} - 5648\lambda^{18} + 28528\lambda^{16} \\
 &\quad - 87040\lambda^{14} + 160064\lambda^{12} - 169216\lambda^{10} + 90112\lambda^8 - 16384\lambda^6
 \end{aligned}
 $$
+
 * **Edges:** Coefficient of $\lambda^{22}$ is $-40$ ($-|E| = -40$).
 * **Kernel Dimension:** The lowest non-zero power is $\lambda^6$ with coefficient $-16384 = -2^{14}$, confirming that $\lambda = 0$ has multiplicity $6$.
 
