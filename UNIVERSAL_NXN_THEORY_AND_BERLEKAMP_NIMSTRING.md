@@ -228,14 +228,17 @@ Formalized as `berlekamp_double_deal_sacrifice` and `berlekamp_parity_control`.
 ## 8. Concrete $5 \times 5$ Dot Board ($4 \times 4$ Boxes, 40 Edges)
 
 ### 8.1 Coordinate Indexing System
-* Horizontal edges: $H(r, c) = 4r + c$ for $r \in \{0..4\}, c \in \{0..3\}$, indexing $0 \dots 19$.
-* Vertical edges: $V(r, c) = 20 + 5r + c$ for $r \in \{0..3\}, c \in \{0..4\}$, indexing $20 \dots 39$.
-* Boxes: $B(r, c) = 4r + c$ for $r, c \in \{0..3\}$, indexing $0 \dots 15$.
 
-The 4 bounding edges for box $(r, c)$ are given by:
+For the concrete $5 \times 5$ dot lattice ($4 \times 4$ boxes, $40$ edges), the coordinates are indexed canonically:
+
+* **Horizontal Edges ($20$):** $H(r, c) = 4r + c \quad \text{for } r \in \{0, \dots, 4\}, \; c \in \{0, \dots, 3\} \quad (\text{indices } 0 \dots 19)$
+* **Vertical Edges ($20$):** $V(r, c) = 20 + 5r + c \quad \text{for } r \in \{0, \dots, 3\}, \; c \in \{0, \dots, 4\} \quad (\text{indices } 20 \dots 39)$
+* **Boxes ($16$):** $B(r, c) = 4r + c \quad \text{for } r, c \in \{0, \dots, 3\} \quad (\text{indices } 0 \dots 15)$
+
+The $4$ bounding edges of box $(r, c)$ form the ordered tuple:
 
 $$
-\operatorname{BoxEdges}(r, c) = [H(r, c), H(r+1, c), V(r, c), V(r, c+1)]
+\mathrm{BoxEdges}(r, c) = \left[ H(r, c), \, H(r+1, c), \, V(r, c), \, V(r, c+1) \right]
 $$
 
 ### 8.2 Dihedral Automorphism Group $D_4$
