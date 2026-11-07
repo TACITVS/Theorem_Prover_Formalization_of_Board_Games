@@ -1,0 +1,310 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+
+    <!-- Edge Glow Filters -->
+    <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+    <filter id="amberGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Deep Background -->
+  <rect width="960" height="960" fill="url(#bgGrad)" />
+
+  <!-- Header Section -->
+  <g transform="translate(480, 55)" text-anchor="middle">
+    <text font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="26" font-weight="800" fill="#f8fafc" letter-spacing="1.5">
+      DOTS AND BOXES: 5×5 DOTS / 4×4 BOXES GRID
+    </text>
+    <text y="28" font-family="'Segoe UI', system-ui, -apple-system, sans-serif" font-size="14" font-weight="500" fill="#94a3b8">
+      V = 25 Dots | E = 40 Edges (16 Boundary + 24 Interior) | B = 16 Boxes | D₄ Automorphism Group
+    </text>
+  </g>
+
+  <!-- Grid Origin: Top-Left dot at (180, 150), spacing 150px -->
+  <!-- Coordinates: col x = 180 + c*150 (c=0..4: 180, 330, 480, 630, 780) -->
+  <!--              row y = 160 + r*150 (r=0..4: 160, 310, 460, 610, 760) -->
+
+  <!-- Box Cells (4x4) -->
+  <!-- b = 4*r + c -->
+  <g font-family="'Segoe UI', system-ui, sans-serif" text-anchor="middle" dominant-baseline="central">
+    <!-- Row 0: y=235 -->
+    <rect x="180" y="160" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="255" y="225" font-size="16" font-weight="700" fill="#38bdf8">B₀</text>
+    <text x="255" y="247" font-size="11" fill="#64748b">(0,0)</text>
+
+    <rect x="330" y="160" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="405" y="225" font-size="16" font-weight="700" fill="#38bdf8">B₁</text>
+    <text x="405" y="247" font-size="11" fill="#64748b">(0,1)</text>
+
+    <rect x="480" y="160" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="555" y="225" font-size="16" font-weight="700" fill="#38bdf8">B₂</text>
+    <text x="555" y="247" font-size="11" fill="#64748b">(0,2)</text>
+
+    <rect x="630" y="160" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="705" y="225" font-size="16" font-weight="700" fill="#38bdf8">B₃</text>
+    <text x="705" y="247" font-size="11" fill="#64748b">(0,3)</text>
+
+    <!-- Row 1: y=385 -->
+    <rect x="180" y="310" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="255" y="375" font-size="16" font-weight="700" fill="#38bdf8">B₄</text>
+    <text x="255" y="397" font-size="11" fill="#64748b">(1,0)</text>
+
+    <rect x="330" y="310" width="150" height="150" fill="#0369a1" fill-opacity="0.15" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="405" y="375" font-size="16" font-weight="700" fill="#38bdf8">B₅</text>
+    <text x="405" y="397" font-size="11" fill="#64748b">(1,1)</text>
+
+    <rect x="480" y="310" width="150" height="150" fill="#0369a1" fill-opacity="0.15" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="555" y="375" font-size="16" font-weight="700" fill="#38bdf8">B₆</text>
+    <text x="555" y="397" font-size="11" fill="#64748b">(1,2)</text>
+
+    <rect x="630" y="310" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="705" y="375" font-size="16" font-weight="700" fill="#38bdf8">B₇</text>
+    <text x="705" y="397" font-size="11" fill="#64748b">(1,3)</text>
+
+    <!-- Row 2: y=535 -->
+    <rect x="180" y="460" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="255" y="525" font-size="16" font-weight="700" fill="#38bdf8">B₈</text>
+    <text x="255" y="547" font-size="11" fill="#64748b">(2,0)</text>
+
+    <rect x="330" y="460" width="150" height="150" fill="#0369a1" fill-opacity="0.15" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="405" y="525" font-size="16" font-weight="700" fill="#38bdf8">B₉</text>
+    <text x="405" y="547" font-size="11" fill="#64748b">(2,1)</text>
+
+    <rect x="480" y="460" width="150" height="150" fill="#0369a1" fill-opacity="0.15" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="555" y="525" font-size="16" font-weight="700" fill="#38bdf8">B₁₀</text>
+    <text x="555" y="547" font-size="11" fill="#64748b">(2,2)</text>
+
+    <rect x="630" y="460" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="705" y="525" font-size="16" font-weight="700" fill="#38bdf8">B₁₁</text>
+    <text x="705" y="547" font-size="11" fill="#64748b">(2,3)</text>
+
+    <!-- Row 3: y=685 -->
+    <rect x="180" y="610" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="255" y="675" font-size="16" font-weight="700" fill="#38bdf8">B₁₂</text>
+    <text x="255" y="697" font-size="11" fill="#64748b">(3,0)</text>
+
+    <rect x="330" y="610" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="405" y="675" font-size="16" font-weight="700" fill="#38bdf8">B₁₃</text>
+    <text x="405" y="697" font-size="11" fill="#64748b">(3,1)</text>
+
+    <rect x="480" y="610" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="555" y="675" font-size="16" font-weight="700" fill="#38bdf8">B₁₄</text>
+    <text x="555" y="697" font-size="11" fill="#64748b">(3,2)</text>
+
+    <rect x="630" y="610" width="150" height="150" fill="#1e293b" fill-opacity="0.25" stroke="#334155" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="705" y="675" font-size="16" font-weight="700" fill="#38bdf8">B₁₅</text>
+    <text x="705" y="697" font-size="11" fill="#64748b">(3,3)</text>
+  </g>
+
+  <!-- Horizontal Edges (20): 0..19 -->
+  <!-- Top Boundary: H0..H3 (Gold #f59e0b) -->
+  <g stroke-linecap="round">
+    <!-- Row 0: y=160 -->
+    <line x1="180" y1="160" x2="330" y2="160" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="330" y1="160" x2="480" y2="160" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="480" y1="160" x2="630" y2="160" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="630" y1="160" x2="780" y2="160" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+
+    <!-- Row 1: y=310 (Interior Cyan #06b6d4) -->
+    <line x1="180" y1="310" x2="330" y2="310" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="330" y1="310" x2="480" y2="310" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="480" y1="310" x2="630" y2="310" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="630" y1="310" x2="780" y2="310" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+
+    <!-- Row 2: y=460 (Interior Cyan #06b6d4) -->
+    <line x1="180" y1="460" x2="330" y2="460" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="330" y1="460" x2="480" y2="460" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="480" y1="460" x2="630" y2="460" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="630" y1="460" x2="780" y2="460" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+
+    <!-- Row 3: y=610 (Interior Cyan #06b6d4) -->
+    <line x1="180" y1="610" x2="330" y2="610" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="330" y1="610" x2="480" y2="610" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="480" y1="610" x2="630" y2="610" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="630" y1="610" x2="780" y2="610" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+
+    <!-- Row 4: y=760 (Bottom Boundary Gold #f59e0b) -->
+    <line x1="180" y1="760" x2="330" y2="760" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="330" y1="760" x2="480" y2="760" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="480" y1="760" x2="630" y2="760" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="630" y1="760" x2="780" y2="760" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+  </g>
+
+  <!-- Vertical Edges (20): 20..39 -->
+  <g stroke-linecap="round">
+    <!-- Row 0: y from 160 to 310 -->
+    <line x1="180" y1="160" x2="180" y2="310" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="330" y1="160" x2="330" y2="310" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="480" y1="160" x2="480" y2="310" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="630" y1="160" x2="630" y2="310" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="780" y1="160" x2="780" y2="310" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+
+    <!-- Row 1: y from 310 to 460 -->
+    <line x1="180" y1="310" x2="180" y2="460" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="330" y1="310" x2="330" y2="460" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="480" y1="310" x2="480" y2="460" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="630" y1="310" x2="630" y2="460" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="780" y1="310" x2="780" y2="460" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+
+    <!-- Row 2: y from 460 to 610 -->
+    <line x1="180" y1="460" x2="180" y2="610" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="330" y1="460" x2="330" y2="610" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="480" y1="460" x2="480" y2="610" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="630" y1="460" x2="630" y2="610" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="780" y1="460" x2="780" y2="610" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+
+    <!-- Row 3: y from 610 to 760 -->
+    <line x1="180" y1="610" x2="180" y2="760" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+    <line x1="330" y1="610" x2="330" y2="760" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="480" y1="610" x2="480" y2="760" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="630" y1="610" x2="630" y2="760" stroke="#06b6d4" stroke-width="4" filter="url(#cyanGlow)" />
+    <line x1="780" y1="610" x2="780" y2="760" stroke="#f59e0b" stroke-width="5" filter="url(#amberGlow)" />
+  </g>
+
+  <!-- Edge Labels (Horizontal) -->
+  <g font-family="'Courier New', monospace" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">
+    <!-- H0..H3 -->
+    <circle cx="255" cy="148" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="255" y="148" fill="#f59e0b">0</text>
+    <circle cx="405" cy="148" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="405" y="148" fill="#f59e0b">1</text>
+    <circle cx="555" cy="148" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="555" y="148" fill="#f59e0b">2</text>
+    <circle cx="705" cy="148" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="705" y="148" fill="#f59e0b">3</text>
+
+    <!-- H4..H7 -->
+    <circle cx="255" cy="300" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="255" y="300" fill="#38bdf8">4</text>
+    <circle cx="405" cy="300" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="405" y="300" fill="#38bdf8">5</text>
+    <circle cx="555" cy="300" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="555" y="300" fill="#38bdf8">6</text>
+    <circle cx="705" cy="300" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="705" y="300" fill="#38bdf8">7</text>
+
+    <!-- H8..H11 -->
+    <circle cx="255" cy="450" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="255" y="450" fill="#38bdf8">8</text>
+    <circle cx="405" cy="450" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="405" y="450" fill="#38bdf8">9</text>
+    <circle cx="555" cy="450" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="555" y="450" fill="#38bdf8">10</text>
+    <circle cx="705" cy="450" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="705" y="450" fill="#38bdf8">11</text>
+
+    <!-- H12..H15 -->
+    <circle cx="255" cy="600" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="255" y="600" fill="#38bdf8">12</text>
+    <circle cx="405" cy="600" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="405" y="600" fill="#38bdf8">13</text>
+    <circle cx="555" cy="600" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="555" y="600" fill="#38bdf8">14</text>
+    <circle cx="705" cy="600" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="705" y="600" fill="#38bdf8">15</text>
+
+    <!-- H16..H19 -->
+    <circle cx="255" cy="772" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="255" y="772" fill="#f59e0b">16</text>
+    <circle cx="405" cy="772" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="405" y="772" fill="#f59e0b">17</text>
+    <circle cx="555" cy="772" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="555" y="772" fill="#f59e0b">18</text>
+    <circle cx="705" cy="772" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="705" y="772" fill="#f59e0b">19</text>
+  </g>
+
+  <!-- Edge Labels (Vertical) -->
+  <g font-family="'Courier New', monospace" font-size="11" font-weight="700" text-anchor="middle" dominant-baseline="central">
+    <!-- V20..V24 -->
+    <circle cx="168" cy="235" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="168" y="235" fill="#f59e0b">20</text>
+    <circle cx="318" cy="235" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="318" y="235" fill="#38bdf8">21</text>
+    <circle cx="468" cy="235" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="468" y="235" fill="#38bdf8">22</text>
+    <circle cx="618" cy="235" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="618" y="235" fill="#38bdf8">23</text>
+    <circle cx="792" cy="235" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="792" y="235" fill="#f59e0b">24</text>
+
+    <!-- V25..V29 -->
+    <circle cx="168" cy="385" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="168" y="385" fill="#f59e0b">25</text>
+    <circle cx="318" cy="385" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="318" y="385" fill="#38bdf8">26</text>
+    <circle cx="468" cy="385" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="468" y="385" fill="#38bdf8">27</text>
+    <circle cx="618" cy="385" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="618" y="385" fill="#38bdf8">28</text>
+    <circle cx="792" cy="385" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="792" y="385" fill="#f59e0b">29</text>
+
+    <!-- V30..V34 -->
+    <circle cx="168" cy="535" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="168" y="535" fill="#f59e0b">30</text>
+    <circle cx="318" cy="535" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="318" y="535" fill="#38bdf8">31</text>
+    <circle cx="468" cy="535" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="468" y="535" fill="#38bdf8">32</text>
+    <circle cx="618" cy="535" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="618" y="535" fill="#38bdf8">33</text>
+    <circle cx="792" cy="535" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="792" y="535" fill="#f59e0b">34</text>
+
+    <!-- V35..V39 -->
+    <circle cx="168" cy="685" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="168" y="685" fill="#f59e0b">35</text>
+    <circle cx="318" cy="685" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="318" y="685" fill="#38bdf8">36</text>
+    <circle cx="468" cy="685" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="468" y="685" fill="#38bdf8">37</text>
+    <circle cx="618" cy="685" r="9" fill="#020617" stroke="#06b6d4" stroke-width="1.5"/>
+    <text x="618" y="685" fill="#38bdf8">38</text>
+    <circle cx="792" cy="685" r="9" fill="#020617" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="792" y="685" fill="#f59e0b">39</text>
+  </g>
+
+  <!-- 25 Lattice Dots -->
+  <g fill="#f8fafc">
+    <!-- Row 0 -->
+    <circle cx="180" cy="160" r="7" /><circle cx="330" cy="160" r="7" /><circle cx="480" cy="160" r="7" /><circle cx="630" cy="160" r="7" /><circle cx="780" cy="160" r="7" />
+    <!-- Row 1 -->
+    <circle cx="180" cy="310" r="7" /><circle cx="330" cy="310" r="7" /><circle cx="480" cy="310" r="7" /><circle cx="630" cy="310" r="7" /><circle cx="780" cy="310" r="7" />
+    <!-- Row 2 -->
+    <circle cx="180" cy="460" r="7" /><circle cx="330" cy="460" r="7" /><circle cx="480" cy="460" r="7" /><circle cx="630" cy="460" r="7" /><circle cx="780" cy="460" r="7" />
+    <!-- Row 3 -->
+    <circle cx="180" cy="610" r="7" /><circle cx="330" cy="610" r="7" /><circle cx="480" cy="610" r="7" /><circle cx="630" cy="610" r="7" /><circle cx="780" cy="610" r="7" />
+    <!-- Row 4 -->
+    <circle cx="180" cy="760" r="7" /><circle cx="330" cy="760" r="7" /><circle cx="480" cy="760" r="7" /><circle cx="630" cy="760" r="7" /><circle cx="780" cy="760" r="7" />
+  </g>
+
+  <!-- Bottom Legend Bar -->
+  <g transform="translate(480, 840)" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <!-- Legend items -->
+    <rect x="-380" y="-22" width="760" height="70" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+
+    <line x1="-330" y1="0" x2="-290" y2="0" stroke="#f59e0b" stroke-width="4" />
+    <text x="-210" y="4" fill="#cbd5e1">Boundary Edges (16)</text>
+
+    <line x1="-100" y1="0" x2="-60" y2="0" stroke="#06b6d4" stroke-width="4" />
+    <text x="20" y="4" fill="#cbd5e1">Interior Edges (24)</text>
+
+    <circle cx="130" cy="0" r="6" fill="#f8fafc" />
+    <text x="210" y="4" fill="#cbd5e1">Dots (25)</text>
+
+    <text x="0" y="32" font-size="12" fill="#94a3b8">
+      Incidence Invariant: 1×(16 Bnd) + 2×(24 Int) = 64 = 4×(16 Boxes) | Exact Draw Score: S₁ = S₂ = 8
+    </text>
+  </g>
+</svg>
