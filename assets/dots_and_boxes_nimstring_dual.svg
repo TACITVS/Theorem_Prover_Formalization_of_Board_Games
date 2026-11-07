@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 960" width="100%" height="100%">
+  <defs>
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#020617" />
+    </radialGradient>
+
+    <!-- Node Glow Filter -->
+    <filter id="nodeGlow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="4" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Deep Background -->
+  <rect width="960" height="960" fill="url(#bgGrad)" />
+
+  <!-- Header Section -->
+  <g transform="translate(480, 50)" text-anchor="middle">
+    <text font-family="'Segoe UI', system-ui, sans-serif" font-size="25" font-weight="800" fill="#f8fafc" letter-spacing="1.2">
+      PLANAR DUAL GRAPH: NIMSTRING EQUIVALENCE
+    </text>
+    <text y="28" font-family="'Segoe UI', system-ui, sans-serif" font-size="14" font-weight="500" fill="#94a3b8">
+      16 Internal 4-Regular Vertices (Boxes) + 1 Ground Face (Exterior) | 40 Dual Edges
+    </text>
+  </g>
+
+  <!-- Outer Ground Boundary Ring (Exterior Face Hub) -->
+  <rect x="100" y="110" width="760" height="710" rx="40" fill="none" stroke="#f59e0b" stroke-width="3" stroke-dasharray="8,6" opacity="0.6"/>
+  <g transform="translate(480, 125)" text-anchor="middle" font-family="'Segoe UI', system-ui, sans-serif">
+    <rect x="-140" y="-14" width="280" height="28" rx="14" fill="#0f172a" stroke="#f59e0b" stroke-width="1.5" />
+    <text y="5" font-size="12" font-weight="700" fill="#f59e0b">EXTERIOR GROUND FACE (𝓔)</text>
+  </g>
+
+  <!-- Dual Grid Coordinates: 4x4 Boxes centered at (255 + c*150, 220 + r*150) -->
+  <!-- Col x: 255, 405, 555, 705 -->
+  <!-- Row y: 220, 370, 520, 670 -->
+
+  <!-- Boundary Connections to Ground Hub (16 edges, Gold #f59e0b) -->
+  <g stroke="#f59e0b" stroke-width="2.5" opacity="0.8" stroke-linecap="round">
+    <!-- Top Row Boundary Connections (to top rail y=110) -->
+    <line x1="255" y1="220" x2="255" y2="125" />
+    <line x1="405" y1="220" x2="405" y2="125" />
+    <line x1="555" y1="220" x2="555" y2="125" />
+    <line x1="705" y1="220" x2="705" y2="125" />
+
+    <!-- Bottom Row Boundary Connections (to bottom rail y=820) -->
+    <line x1="255" y1="670" x2="255" y2="805" />
+    <line x1="405" y1="670" x2="405" y2="805" />
+    <line x1="555" y1="670" x2="555" y2="805" />
+    <line x1="705" y1="670" x2="705" y2="805" />
+
+    <!-- Left Column Boundary Connections (to left rail x=100) -->
+    <line x1="255" y1="220" x2="115" y2="220" />
+    <line x1="255" y1="370" x2="115" y2="370" />
+    <line x1="255" y1="520" x2="115" y2="520" />
+    <line x1="255" y1="670" x2="115" y2="670" />
+
+    <!-- Right Column Boundary Connections (to right rail x=860) -->
+    <line x1="705" y1="220" x2="845" y2="220" />
+    <line x1="705" y1="370" x2="845" y2="370" />
+    <line x1="705" y1="520" x2="845" y2="520" />
+    <line x1="705" y1="670" x2="845" y2="670" />
+  </g>
+
+  <!-- Interior Dual Edges (24 edges, Cyan #06b6d4) -->
+  <g stroke="#06b6d4" stroke-width="3" opacity="0.85" stroke-linecap="round">
+    <!-- Horizontal Internal Dual Edges (12) -->
+    <!-- Row 0: (0,0)-(0,1), (0,1)-(0,2), (0,2)-(0,3) -->
+    <line x1="255" y1="220" x2="405" y2="220" /><line x1="405" y1="220" x2="555" y2="220" /><line x1="555" y1="220" x2="705" y2="220" />
+    <!-- Row 1 -->
+    <line x1="255" y1="370" x2="405" y2="370" /><line x1="405" y1="370" x2="555" y2="370" /><line x1="555" y1="370" x2="705" y2="370" />
+    <!-- Row 2 -->
+    <line x1="255" y1="520" x2="405" y2="520" /><line x1="405" y1="520" x2="555" y2="520" /><line x1="555" y1="520" x2="705" y2="520" />
+    <!-- Row 3 -->
+    <line x1="255" y1="670" x2="405" y2="670" /><line x1="405" y1="670" x2="555" y2="670" /><line x1="555" y1="670" x2="705" y2="670" />
+
+    <!-- Vertical Internal Dual Edges (12) -->
+    <!-- Col 0 -->
+    <line x1="255" y1="220" x2="255" y2="370" /><line x1="255" y1="370" x2="255" y2="520" /><line x1="255" y1="520" x2="255" y2="670" />
+    <!-- Col 1 -->
+    <line x1="405" y1="220" x2="405" y2="370" /><line x1="405" y1="370" x2="405" y2="520" /><line x1="405" y1="520" x2="405" y2="670" />
+    <!-- Col 2 -->
+    <line x1="555" y1="220" x2="555" y2="370" /><line x1="555" y1="370" x2="555" y2="520" /><line x1="555" y1="520" x2="555" y2="670" />
+    <!-- Col 3 -->
+    <line x1="705" y1="220" x2="705" y2="370" /><line x1="705" y1="370" x2="705" y2="520" /><line x1="705" y1="520" x2="705" y2="670" />
+  </g>
+
+  <!-- 16 Dual Box Vertices -->
+  <g font-family="'Segoe UI', system-ui, sans-serif" text-anchor="middle" dominant-baseline="central">
+    <!-- Row 0: y=220 -->
+    <!-- B0 (Corner: 2 Bnd + 2 Int = deg 4) -->
+    <g transform="translate(255, 220)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₀</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <!-- B1 (Edge: 1 Bnd + 3 Int = deg 4) -->
+    <g transform="translate(405, 220)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₁</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <!-- B2 (Edge) -->
+    <g transform="translate(555, 220)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₂</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <!-- B3 (Corner) -->
+    <g transform="translate(705, 220)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₃</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+
+    <!-- Row 1: y=370 -->
+    <g transform="translate(255, 370)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₄</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <!-- B5 (Center: 0 Bnd + 4 Int = deg 4) -->
+    <g transform="translate(405, 370)">
+      <circle r="24" fill="#0369a1" stroke="#38bdf8" stroke-width="3" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="800" fill="#f8fafc">B₅</text>
+      <text y="34" font-size="10" fill="#38bdf8">deg = 4</text>
+    </g>
+    <!-- B6 (Center: 0 Bnd + 4 Int = deg 4) -->
+    <g transform="translate(555, 370)">
+      <circle r="24" fill="#0369a1" stroke="#38bdf8" stroke-width="3" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="800" fill="#f8fafc">B₆</text>
+      <text y="34" font-size="10" fill="#38bdf8">deg = 4</text>
+    </g>
+    <g transform="translate(705, 370)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₇</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+
+    <!-- Row 2: y=520 -->
+    <g transform="translate(255, 520)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₈</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <!-- B9 (Center: deg 4) -->
+    <g transform="translate(405, 520)">
+      <circle r="24" fill="#0369a1" stroke="#38bdf8" stroke-width="3" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="800" fill="#f8fafc">B₉</text>
+      <text y="34" font-size="10" fill="#38bdf8">deg = 4</text>
+    </g>
+    <!-- B10 (Center: deg 4) -->
+    <g transform="translate(555, 520)">
+      <circle r="24" fill="#0369a1" stroke="#38bdf8" stroke-width="3" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="800" fill="#f8fafc">B₁₀</text>
+      <text y="34" font-size="10" fill="#38bdf8">deg = 4</text>
+    </g>
+    <g transform="translate(705, 520)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₁₁</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+
+    <!-- Row 3: y=670 -->
+    <g transform="translate(255, 670)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₁₂</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <g transform="translate(405, 670)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₁₃</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <g transform="translate(555, 670)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₁₄</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+    <g transform="translate(705, 670)">
+      <circle r="22" fill="#1e293b" stroke="#38bdf8" stroke-width="2.5" filter="url(#nodeGlow)"/>
+      <text font-size="13" font-weight="700" fill="#f8fafc">B₁₅</text>
+      <text y="32" font-size="10" fill="#94a3b8">deg = 4</text>
+    </g>
+  </g>
+
+  <!-- Bottom Explanatory Box -->
+  <g transform="translate(480, 885)" font-family="'Segoe UI', system-ui, sans-serif" font-size="13" text-anchor="middle">
+    <rect x="-420" y="-35" width="840" height="60" rx="10" fill="#0f172a" stroke="#334155" stroke-width="1.5" />
+    <text y="-10" fill="#f8fafc" font-weight="600">
+      Dual Regularity Law: ∀ b ∈ {0..15}, deg(B_b) = deg_int(b) + deg_ext(b) = 4
+    </text>
+    <text y="12" fill="#94a3b8" font-size="12">
+      Every move in Dots and Boxes severs one edge in Nimstring. Playing the 3rd edge of a box gives a coin to the opponent.
+    </text>
+  </g>
+</svg>
