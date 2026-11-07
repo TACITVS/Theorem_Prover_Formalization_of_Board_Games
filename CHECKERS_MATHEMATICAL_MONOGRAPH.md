@@ -53,11 +53,11 @@ The standard English Checkers board comprises 32 playable dark squares numbered 
 For any dark square index $s \in \{0, \dots, 31\}$:
 
 $$
-\operatorname{Rank}(s) = \left\lfloor \frac{s}{4} \right\rfloor
+\mathrm{Rank}(s) = \left\lfloor \frac{s}{4} \right\rfloor
 $$
 
 $$
-\operatorname{Col}(s) = \begin{cases} 2 \cdot (s \bmod 4) + 1 & \text{if } \operatorname{Rank}(s) \bmod 2 = 0 \\ 2 \cdot (s \bmod 4) & \text{if } \operatorname{Rank}(s) \bmod 2 = 1 \end{cases}
+\mathrm{Col}(s) = \begin{cases} 2 \cdot (s \bmod 4) + 1 & \text{if } \mathrm{Rank}(s) \bmod 2 = 0 \\ 2 \cdot (s \bmod 4) & \text{if } \mathrm{Rank}(s) \bmod 2 = 1 \end{cases}
 $$
 
 ### 2.3 Bipartite Parity Invariant
@@ -65,7 +65,7 @@ $$
 Every valid square in the playable lattice satisfies strict odd coordinate parity:
 
 $$
-\forall s < 32, \quad (\operatorname{Rank}(s) + \operatorname{Col}(s)) \equiv 1 \pmod 2
+\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \pmod 2
 $$
 
 *Proof.* Proved with zero axioms in Rocq 9.1 ([`CheckersBoard.v`](file:///C:/Rocq-Platform~9.1~2026.01/Math_Proofs/NineMensMorris/CheckersBoard.v#L50-L75)) and Lean 4 ([`lean4/Checkers.lean`](file:///C:/Rocq-Platform~9.1~2026.01/Math_Proofs/NineMensMorris/lean4/Checkers.lean#L25)).
@@ -90,12 +90,12 @@ While diagonal single steps alternate deltas between even ranks ($+4, +5$) and o
 In Rocq 9.1, `jump_fl_offset` proves:
 
 $$
-\forall s, \operatorname{mid}, \operatorname{dest} \in \mathbb{N}, \quad \operatorname{Jump}_{\mathrm{FL}}(s) = \operatorname{Some}(\operatorname{mid}, \operatorname{dest}) \implies \operatorname{dest} = s + 7
+\forall s, \mathrm{mid}, \mathrm{dest} \in \mathbb{N}, \quad \mathrm{Jump}_{\mathrm{FL}}(s) = \mathrm{Some}(\mathrm{mid}, \mathrm{dest}) \implies \mathrm{dest} = s + 7
 $$
 
 *Proof Structure:*
-- When rank $r = s/4$ is even: $\operatorname{Step}_{\mathrm{FL}}(s) = s + 4$. Then $\operatorname{Rank}(s+4) = r + 1$ is odd. The subsequent step is $\operatorname{Step}_{\mathrm{FL}}(s+4) = (s+4) + 3 = s + 7$.
-- When rank $r = s/4$ is odd: $\operatorname{Step}_{\mathrm{FL}}(s) = s + 3$. Then $\operatorname{Rank}(s+3) = r + 1$ is even. The subsequent step is $\operatorname{Step}_{\mathrm{FL}}(s+3) = (s+3) + 4 = s + 7$.
+- When rank $r = s/4$ is even: $\mathrm{Step}_{\mathrm{FL}}(s) = s + 4$. Then $\mathrm{Rank}(s+4) = r + 1$ is odd. The subsequent step is $\mathrm{Step}_{\mathrm{FL}}(s+4) = (s+4) + 3 = s + 7$.
+- When rank $r = s/4$ is odd: $\mathrm{Step}_{\mathrm{FL}}(s) = s + 3$. Then $\mathrm{Rank}(s+3) = r + 1$ is even. The subsequent step is $\mathrm{Step}_{\mathrm{FL}}(s+3) = (s+3) + 4 = s + 7$.
 - In both cases, $(s + 4) + 3 = (s + 3) + 4 = s + 7$. $\square$
 
 ---
@@ -105,20 +105,20 @@ $$
 The automorphism group of the playable dark-square graph is isomorphic to the Klein 4-group $V_4 \cong \mathbb{Z}_2 \times \mathbb{Z}_2$:
 
 $$
-V_4 = \{ \operatorname{id}, \operatorname{rot180}, \operatorname{diag}, \operatorname{antidiag} \}
+V_4 = \{ \mathrm{id}, \mathrm{rot180}, \mathrm{diag}, \mathrm{antidiag} \}
 $$
 
 | [ID] | Symmetry Operation | Geometric Action | Coordinate Transformation | Permutation Invariant |
 |:---:|:---|:---|:---:|:---:|
-| 1 | $\operatorname{id}$ | Identity | $(r, c) \mapsto (r, c)$ | $s \mapsto s$ |
-| 2 | $\operatorname{rot180}$ | 180° Point Inversion | $(r, c) \mapsto (7 - r, 7 - c)$ | $s \mapsto 31 - s$ |
-| 3 | $\operatorname{diag}$ | Main Diagonal Reflection | $(r, c) \mapsto (c, r)$ | Graph Isomorphism |
-| 4 | $\operatorname{antidiag}$ | Anti-Diagonal Reflection | $(r, c) \mapsto (7 - c, 7 - r)$ | $\operatorname{rot180} \circ \operatorname{diag}$ |
+| 1 | $\mathrm{id}$ | Identity | $(r, c) \mapsto (r, c)$ | $s \mapsto s$ |
+| 2 | $\mathrm{rot180}$ | 180° Point Inversion | $(r, c) \mapsto (7 - r, 7 - c)$ | $s \mapsto 31 - s$ |
+| 3 | $\mathrm{diag}$ | Main Diagonal Reflection | $(r, c) \mapsto (c, r)$ | Graph Isomorphism |
+| 4 | $\mathrm{antidiag}$ | Anti-Diagonal Reflection | $(r, c) \mapsto (7 - c, 7 - r)$ | $\mathrm{rot180} \circ \mathrm{diag}$ |
 
 *Group Composition Theorem:*
 
 $$
-\operatorname{rot180} \circ \operatorname{diag} = \operatorname{antidiag}, \quad \operatorname{diag} \circ \operatorname{antidiag} = \operatorname{rot180}, \quad \sigma^2 = \operatorname{id} \quad \forall \sigma \in V_4
+\mathrm{rot180} \circ \mathrm{diag} = \mathrm{antidiag}, \quad \mathrm{diag} \circ \mathrm{antidiag} = \mathrm{rot180}, \quad \sigma^2 = \mathrm{id} \quad \forall \sigma \in V_4
 $$
 
 ---
@@ -126,22 +126,22 @@ $$
 ## 5. Monotonic Rank Potential $\Phi(st)$ & Game Acyclicity
 
 In English Checkers, regular men can only move and jump forward:
-- White men strictly advance: $\operatorname{Rank}(\operatorname{dest}) > \operatorname{Rank}(\operatorname{src})$.
-- Black men strictly advance: $\operatorname{Rank}(\operatorname{dest}) < \operatorname{Rank}(\operatorname{src})$.
+- White men strictly advance: $\mathrm{Rank}(\mathrm{dest}) > \mathrm{Rank}(\mathrm{src})$.
+- Black men strictly advance: $\mathrm{Rank}(\mathrm{dest}) < \mathrm{Rank}(\mathrm{src})$.
 
 ### 5.1 Potential Function Definition
 
 Define the global forward potential function $\Phi : \text{State} \to \mathbb{N}$:
 
 $$
-\Phi(st) = 64 \cdot (24 - \operatorname{TotalPieces}(st)) + \sum_{w \in W_{\mathrm{men}}(st)} \operatorname{Rank}(w) + \sum_{b \in B_{\mathrm{men}}(st)} (7 - \operatorname{Rank}(b))
+\Phi(st) = 64 \cdot (24 - \mathrm{TotalPieces}(st)) + \sum_{w \in W_{\mathrm{men}}(st)} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}(st)} (7 - \mathrm{Rank}(b))
 $$
 
 ### 5.2 Strict Monotonicity Theorem
 
 For any legal move prior to king creation:
 1. **Simple Move:** No pieces are captured. One regular man advances by exactly 1 rank: $\Delta \Phi = +1 > 0$.
-2. **Jump Move:** At least one opponent piece is removed ($\Delta \operatorname{Captured} \ge 1$), contributing $+64$. The jumping man advances by 2 ranks ($\Delta \operatorname{Rank} = +2$): $\Delta \Phi \ge 64 - 2 = 62 > 0$.
+2. **Jump Move:** At least one opponent piece is removed ($\Delta \mathrm{Captured} \ge 1$), contributing $+64$. The jumping man advances by 2 ranks ($\Delta \mathrm{Rank} = +2$): $\Delta \Phi \ge 64 - 2 = 62 > 0$.
 
 ### 5.3 Finiteness Corollary (No Cycles for Men)
 
@@ -215,20 +215,20 @@ All 51 formal theorems across the 5 Rocq modules are verified with zero axioms:
 |:---:|:---|:---|:---|:---:|
 | 1 | `CheckersBoard` | `sq_bounds` | $s < 32 \implies r < 8 \wedge c < 8$ | Closed (0 Axioms) |
 | 2 | `CheckersBoard` | `dark_square_parity` | $(r + c) \bmod 2 = 1$ | Closed (0 Axioms) |
-| 3 | `CheckersBoard` | `step_fl_rank` | $\operatorname{Step}_{\mathrm{FL}}(s) = d \implies r(d) = r(s) + 1$ | Closed (0 Axioms) |
-| 4 | `CheckersBoard` | `step_fr_rank` | $\operatorname{Step}_{\mathrm{FR}}(s) = d \implies r(d) = r(s) + 1$ | Closed (0 Axioms) |
-| 5 | `CheckersBoard` | `step_bl_rank` | $\operatorname{Step}_{\mathrm{BL}}(s) = d \implies r(s) = r(d) + 1$ | Closed (0 Axioms) |
-| 6 | `CheckersBoard` | `step_br_rank` | $\operatorname{Step}_{\mathrm{BR}}(s) = d \implies r(s) = r(d) + 1$ | Closed (0 Axioms) |
-| 7 | `CheckersBoard` | `jump_fl_offset` | $\operatorname{Jump}_{\mathrm{FL}}(s) = (m, d) \implies d = s + 7$ | Closed (0 Axioms) |
-| 8 | `CheckersBoard` | `jump_fr_offset` | $\operatorname{Jump}_{\mathrm{FR}}(s) = (m, d) \implies d = s + 9$ | Closed (0 Axioms) |
-| 9 | `CheckersBoard` | `jump_bl_offset` | $\operatorname{Jump}_{\mathrm{BL}}(s) = (m, d) \implies d = s - 9$ | Closed (0 Axioms) |
-| 10 | `CheckersBoard` | `jump_br_offset` | $\operatorname{Jump}_{\mathrm{BR}}(s) = (m, d) \implies d = s - 7$ | Closed (0 Axioms) |
+| 3 | `CheckersBoard` | `step_fl_rank` | $\mathrm{Step}_{\mathrm{FL}}(s) = d \implies r(d) = r(s) + 1$ | Closed (0 Axioms) |
+| 4 | `CheckersBoard` | `step_fr_rank` | $\mathrm{Step}_{\mathrm{FR}}(s) = d \implies r(d) = r(s) + 1$ | Closed (0 Axioms) |
+| 5 | `CheckersBoard` | `step_bl_rank` | $\mathrm{Step}_{\mathrm{BL}}(s) = d \implies r(s) = r(d) + 1$ | Closed (0 Axioms) |
+| 6 | `CheckersBoard` | `step_br_rank` | $\mathrm{Step}_{\mathrm{BR}}(s) = d \implies r(s) = r(d) + 1$ | Closed (0 Axioms) |
+| 7 | `CheckersBoard` | `jump_fl_offset` | $\mathrm{Jump}_{\mathrm{FL}}(s) = (m, d) \implies d = s + 7$ | Closed (0 Axioms) |
+| 8 | `CheckersBoard` | `jump_fr_offset` | $\mathrm{Jump}_{\mathrm{FR}}(s) = (m, d) \implies d = s + 9$ | Closed (0 Axioms) |
+| 9 | `CheckersBoard` | `jump_bl_offset` | $\mathrm{Jump}_{\mathrm{BL}}(s) = (m, d) \implies d = s - 9$ | Closed (0 Axioms) |
+| 10 | `CheckersBoard` | `jump_br_offset` | $\mathrm{Jump}_{\mathrm{BR}}(s) = (m, d) \implies d = s - 7$ | Closed (0 Axioms) |
 | 11 | `CheckersBoard` | `jump_fl_rank` | $r(d) = r(s) + 2$ | Closed (0 Axioms) |
 | 12 | `CheckersBoard` | `jump_fr_rank` | $r(d) = r(s) + 2$ | Closed (0 Axioms) |
 | 13 | `CheckersBoard` | `jump_bl_rank` | $r(s) = r(d) + 2$ | Closed (0 Axioms) |
 | 14 | `CheckersBoard` | `jump_br_rank` | $r(s) = r(d) + 2$ | Closed (0 Axioms) |
-| 15 | `CheckersBoard` | `rot180_involutive` | $\operatorname{rot180}(\operatorname{rot180}(s)) = s$ | Closed (0 Axioms) |
-| 16 | `CheckersGame` | `step_turn` | $\operatorname{Turn}(st') = \operatorname{Opp}(\operatorname{Turn}(st))$ | Closed (0 Axioms) |
+| 15 | `CheckersBoard` | `rot180_involutive` | $\mathrm{rot180}(\mathrm{rot180}(s)) = s$ | Closed (0 Axioms) |
+| 16 | `CheckersGame` | `step_turn` | $\mathrm{Turn}(st') = \mathrm{Opp}(\mathrm{Turn}(st))$ | Closed (0 Axioms) |
 | 17 | `CheckersGame` | `simple_step_preserves_count` | Simple move preserves total piece count | Closed (0 Axioms) |
 | 18 | `CheckersInvariants` | `white_step_advances_rank` | Forward step strictly increases rank | Closed (0 Axioms) |
 | 19 | `CheckersInvariants` | `black_step_decreases_rank` | Backward step strictly decreases rank | Closed (0 Axioms) |

@@ -36,7 +36,7 @@ Detailed treatise available in [`CHECKERS_MATHEMATICAL_MONOGRAPH.md`](CHECKERS_M
 * **Bipartite Parity Invariant:** Every playable square $s \in \{0, \dots, 31\}$ satisfies:
 
 $$
-\forall s < 32, \quad (\operatorname{Rank}(s) + \operatorname{Col}(s)) \equiv 1 \pmod 2
+\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \pmod 2
 $$
 
 * **Universal Constant Jump Offsets:**
@@ -45,7 +45,7 @@ $$
   - **Forward-Right (FR):** Strictly **$+9$** ($s \mapsto s + 9$)
   - **Backward-Left (BL):** Strictly **$-9$** ($s \mapsto s - 9$)
   - **Backward-Right (BR):** Strictly **$-7$** ($s \mapsto s - 7$)
-* **Symmetry Group:** Automorphism group is the Klein 4-group $V_4 \cong \mathbb{Z}_2 \times \mathbb{Z}_2 = \{ \operatorname{id}, \operatorname{rot180}, \operatorname{diag}, \operatorname{antidiag} \}$.
+* **Symmetry Group:** Automorphism group is the Klein 4-group $V_4 \cong \mathbb{Z}_2 \times \mathbb{Z}_2 = \{ \mathrm{id}, \mathrm{rot180}, \mathrm{diag}, \mathrm{antidiag} \}$.
 
 ---
 
@@ -66,7 +66,7 @@ $$
 For games prior to king promotion, we define the forward rank potential function:
 
 $$
-\Phi(st) = 64 \cdot (24 - \operatorname{TotalPieces}(st)) + \sum_{w \in W_{\mathrm{men}}} \operatorname{Rank}(w) + \sum_{b \in B_{\mathrm{men}}} (7 - \operatorname{Rank}(b))
+\Phi(st) = 64 \cdot (24 - \mathrm{TotalPieces}(st)) + \sum_{w \in W_{\mathrm{men}}} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}} (7 - \mathrm{Rank}(b))
 $$
 
 * **Theorem:** Every legal move strictly increases $\Phi(st)$ ($\Delta \Phi = +1$ on steps, $\Delta \Phi \ge +62$ on jumps).
