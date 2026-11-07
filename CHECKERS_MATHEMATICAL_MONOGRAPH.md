@@ -57,7 +57,7 @@ $$
 $$
 
 $$
-\mathrm{Col}(s) = \begin{cases} 2 \cdot (s \bmod 4) + 1 & \text{if } \mathrm{Rank}(s) \bmod 2 = 0 \\ 2 \cdot (s \bmod 4) & \text{if } \mathrm{Rank}(s) \bmod 2 = 1 \end{cases}
+\mathrm{Col}(s) = \begin{cases} 2 \cdot (s \ \mathrm{mod}\ 4) + 1 & \text{if } \mathrm{Rank}(s) \ \mathrm{mod}\ 2 = 0 \\ 2 \cdot (s \ \mathrm{mod}\ 4) & \text{if } \mathrm{Rank}(s) \ \mathrm{mod}\ 2 = 1 \end{cases}
 $$
 
 ### 2.3 Bipartite Parity Invariant
@@ -65,7 +65,7 @@ $$
 Every valid square in the playable lattice satisfies strict odd coordinate parity:
 
 $$
-\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \pmod 2
+\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \ (\mathrm{mod}\ 2)
 $$
 
 *Proof.* Proved with zero axioms in Rocq 9.1 ([`CheckersBoard.v`](file:///C:/Rocq-Platform~9.1~2026.01/Math_Proofs/NineMensMorris/CheckersBoard.v#L50-L75)) and Lean 4 ([`lean4/Checkers.lean`](file:///C:/Rocq-Platform~9.1~2026.01/Math_Proofs/NineMensMorris/lean4/Checkers.lean#L25)).
@@ -214,7 +214,7 @@ All 51 formal theorems across the 5 Rocq modules are verified with zero axioms:
 | [ID] | Module | Proven Theorem | Mathematical Content | Axiom Status |
 |:---:|:---|:---|:---|:---:|
 | 1 | `CheckersBoard` | `sq_bounds` | $s < 32 \implies r < 8 \wedge c < 8$ | Closed (0 Axioms) |
-| 2 | `CheckersBoard` | `dark_square_parity` | $(r + c) \bmod 2 = 1$ | Closed (0 Axioms) |
+| 2 | `CheckersBoard` | `dark_square_parity` | $(r + c) \ \mathrm{mod}\ 2 = 1$ | Closed (0 Axioms) |
 | 3 | `CheckersBoard` | `step_fl_rank` | $\mathrm{Step}_{\mathrm{FL}}(s) = d \implies r(d) = r(s) + 1$ | Closed (0 Axioms) |
 | 4 | `CheckersBoard` | `step_fr_rank` | $\mathrm{Step}_{\mathrm{FR}}(s) = d \implies r(d) = r(s) + 1$ | Closed (0 Axioms) |
 | 5 | `CheckersBoard` | `step_bl_rank` | $\mathrm{Step}_{\mathrm{BL}}(s) = d \implies r(s) = r(d) + 1$ | Closed (0 Axioms) |
@@ -235,7 +235,7 @@ All 51 formal theorems across the 5 Rocq modules are verified with zero axioms:
 | 20 | `CheckersInvariants` | `man_simple_step_no_self_loop`| $d \ne s$ on simple steps | Closed (0 Axioms) |
 | 21 | `CheckersInvariants` | `man_jump_no_self_loop` | $d \ne s$ on jumps | Closed (0 Axioms) |
 | 22 | `CheckersMicro` | `micro_bounds` | 4x4 squares lie in grid | Closed (0 Axioms) |
-| 23 | `CheckersMicro` | `micro_parity` | $(r + c) \bmod 2 = 1$ on 4x4 | Closed (0 Axioms) |
+| 23 | `CheckersMicro` | `micro_parity` | $(r + c) \ \mathrm{mod}\ 2 = 1$ on 4x4 | Closed (0 Axioms) |
 | 24 | `CheckersMicro` | `micro_initial_piece_count` | Exactly 2 pieces per player | Closed (0 Axioms) |
 | 25 | `CheckersShashkiDiff` | `english_white_man_no_backward_jump` | English White Men cannot capture backward | Closed (0 Axioms) |
 | 26 | `CheckersShashkiDiff` | `english_black_man_no_forward_jump` | English Black Men cannot capture forward | Closed (0 Axioms) |

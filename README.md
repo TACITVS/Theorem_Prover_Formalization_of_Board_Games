@@ -36,7 +36,7 @@ Detailed treatise available in [`CHECKERS_MATHEMATICAL_MONOGRAPH.md`](CHECKERS_M
 * **Bipartite Parity Invariant:** Every playable square $s \in \{0, \dots, 31\}$ satisfies:
 
 $$
-\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \pmod 2
+\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \ (\mathrm{mod}\ 2)
 $$
 
 * **Universal Constant Jump Offsets:**
