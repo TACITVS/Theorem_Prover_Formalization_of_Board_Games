@@ -43,7 +43,7 @@ $$
 Where $\tau(H)$ is the **transversal number** (minimum hitting set size) of the mill hypergraph:
 * For Black to have the theoretical capacity to prevent White from completing any mill, Black must place at least $\tau(H)$ stones.
 * For $r$ concentric rings without diagonals ($d = 0$): $\tau(H) = 4(r - 1)$ for all $r \ge 2$.
-* If $n < \tau(H)$, Black is **transversal insolvent**: White is mathematically guaranteed an unblockable mill.
+* If $n \lt \tau(H)$, Black is **transversal insolvent**: White is mathematically guaranteed an unblockable mill.
 
 ---
 
@@ -53,27 +53,27 @@ $$
 \rho = \frac{2n}{8r} = \frac{n}{4r}
 $$
 
-* **Strictly Sub-Saturated ($\rho < 1$):** At the end of Phase 1, there remain $8r - 2n > 0$ vacant spaces. Players can legally slide in Phase 2 with full topological freedom.
+* **Strictly Sub-Saturated ($\rho \lt 1$):** At the end of Phase 1, there remain $8r - 2n \gt 0$ vacant spaces. Players can legally slide in Phase 2 with full topological freedom.
 * **Completely Saturated ($\rho = 1$):** Exactly $2n = 8r$. If no captures occur in Phase 1, the board is $100\%$ full, causing an immediate deadlock draw unless White forces an opening capture.
 
 ---
 
 ### 2. The Morris Fairness Classification Theorem
 
-> **Theorem (Algebra of Fairness Dichotomy):**  
-> A concentric Morris game $\mathcal{M}(r, d, n)$ with $r \ge 2$ rings is an **Exact Fair Draw** if and only if it satisfies the **Triple Fairness Conjunction**.
+**Theorem (Algebra of Fairness Dichotomy):**  
+A concentric Morris game $\mathcal{M}(r, d, n)$ with $r \ge 2$ rings is an **Exact Fair Draw** if and only if it satisfies the **Triple Fairness Conjunction**:
 
 $$
-\text{Fair}(\mathcal{M}) \iff \begin{cases} 
-d = 0 \iff \Delta_{\mathcal{E}} \le 2 & \text{(Fork-Free Regularity)} \\ 
-n \ge \tau(H) = 4(r - 1) & \text{(Transversal Solvency)} \\ 
-\rho = \dfrac{n}{4r} < 1 \iff n < 4r & \text{(Sub-Saturation Mobility)} 
+\text{Fair}(\mathcal{M}) \iff \begin{cases}
+d = 0 \iff \Delta_{\mathcal{E}} \le 2 & \text{(Fork-Free Regularity)} \\
+n \ge \tau(H) = 4(r - 1) & \text{(Transversal Solvency)} \\
+\rho = \dfrac{n}{4r} \lt 1 \iff n \lt 4r & \text{(Sub-Saturation Mobility)}
 \end{cases}
 $$
 
 If any of these three conditions is violated:
 * If $d = 4$ ($\Delta_{\mathcal{E}} \ge 3$): White exploits the high-degree corner junctions to force an unblockable double-threat fork in Phase 1 $\implies$ **Win White**.
-* If $n < \tau(H)$: Black lacks sufficient stones to cover all lines $\implies$ **Win White**.
+* If $n \lt \tau(H)$: Black lacks sufficient stones to cover all lines $\implies$ **Win White**.
 * If $n \ge 4r$ and $d = 0$: The board deadlocks with zero sliding moves in Phase 2.
 
 ---
@@ -87,7 +87,7 @@ Historically, the classical European tradition assigned $n(r) = 3r$ stones per p
 
 Setting $n = 3r$ with $d = 0$ guarantees that all three conditions hold simultaneously for all $r \ge 2$:
 1. **Regularity:** $\Delta_{\mathcal{E}} = 2$ uniformly everywhere.
-2. **Defensive Solvency:** $\delta(r) = 3r - 4(r - 1) = 4 - r > 0$ for all $r \in \{2, 3\}$.
+2. **Defensive Solvency:** $\delta(r) = 3r - 4(r - 1) = 4 - r \gt 0$ for all $r \in \{2, 3\}$.
 3. **Constant 75% Saturation:** $\rho = \dfrac{3r}{4r} = \dfrac{3}{4} = 75\%$ for all $r \ge 1$. Exactly one-quarter of the board remains open for dynamic Phase 2 maneuvering.
 
 ---
@@ -210,7 +210,7 @@ In Twelve Men's Morris, White's Ply 8 forced-mill win arises from the algebraic 
 In the polynomial ring, their ideal sum factors as:
 
 $$
-P_{m_1}(x) + P_{m_2}(x) = x_6 x_{14} x_{22} + x_8 x_{14} x_{15} = \mathbf{x_{14}} \cdot \left( x_6 x_{22} + x_8 x_{15} \right)
+P_{m_1}(x) + P_{m_2}(x) = x_6 x_{14} x_{22} + x_8 x_{14} x_{15} = \mathbf{x}_{14} \cdot \left( x_6 x_{22} + x_8 x_{15} \right)
 $$
 
 **The Commutative Reduction:**
@@ -262,10 +262,10 @@ $$
 | **Game-Theoretic Value** | **Exact Draw** | **Win White (49 Moves)** | Proven by Ralph Gasser (1993) & Gévay-Danner (2016) |
 | **Mill Degree Regularity** | $\Delta_{\mathcal{E}} = 2$ (Uniform) | $\Delta_{\mathcal{E}} = 3$ (Broken) | Corners have degree $3$ in 12MM, creating fork junctions |
 | **Transversal Number ($\tau$)** | $8$ | $8$ | Minimum stones to intercept all mills |
-| **Defensive Surplus ($\delta$)** | $9 - 8 = \mathbf{+1}$ | $12 - 8 = \mathbf{+4}$ | Resource capacity in Phase 1 |
+| **Defensive Surplus ($\delta$)** | $9 - 8 = +1$ | $12 - 8 = +4$ | Resource capacity in Phase 1 |
 | **Saturation Ratio ($\rho$)** | $18/24 = 75\%$ | $24/24 = 100\%$ | 12MM saturates the board completely |
 | **Adjacency Spectral Radius** | $2\sqrt{2} \approx 2.828$ | $2 + \sqrt{2} \approx 3.414$ | $+20.7\%$ expansion in dynamic connectivity |
 | **Algebraic Connectivity ($\mu_2$)** | $0.4384$ | $0.5858$ | $+33.6\%$ jump in spectral mixing rate |
 | **Dual Gram Matrix Structure** | Strictly $3$-regular cubic | Ring: $5$, Radial: $3$, Diag: $6$ | Diagonals act as degree-$6$ global hubs |
-| **Linear Dependencies ($\dim\ker M^T$)** | $1$ (Alternating Parity) | $4$ | Algebraic conservation laws |
+| **Linear Dependencies ($\dim(\ker(M^T)))$** | $1$ (Alternating Parity) | $4$ | Algebraic conservation laws |
 | **Polynomial Ideal Structure** | Non-factorable single lines | Factors as $x_{14}(x_6 x_{22} + x_8 x_{15})$ | Explains why White forces an opening mill at Ply 8 |

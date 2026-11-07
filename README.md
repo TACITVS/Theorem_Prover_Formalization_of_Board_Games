@@ -87,10 +87,10 @@ See the complete mathematical treatise in [`ALGEBRA_OF_FAIRNESS_AND_SPECTRAL_ANA
 A generalized concentric Morris game $\mathcal{M}(r, d, n)$ is an **Exact Fair Draw** if and only if it satisfies the **Triple Fairness Conjunction**:
 
 $$
-\text{Fair}(\mathcal{M}) \iff \begin{cases} 
-d = 0 \iff \Delta_{\mathcal{E}} \le 2 & \text{(Fork-Free Regularity)} \\ 
-n \ge \tau(H) = 4(r - 1) & \text{(Transversal Solvency)} \\ 
-\rho = \dfrac{n}{4r} < 1 \iff n < 4r & \text{(Sub-Saturation Mobility)} 
+\text{Fair}(\mathcal{M}) \iff \begin{cases}
+d = 0 \iff \Delta_{\mathcal{E}} \le 2 & \text{(Fork-Free Regularity)} \\
+n \ge \tau(H) = 4(r - 1) & \text{(Transversal Solvency)} \\
+\rho = \dfrac{n}{4r} \lt 1 \iff n \lt 4r & \text{(Sub-Saturation Mobility)}
 \end{cases}
 $$
 
@@ -114,7 +114,7 @@ $$
 In the coordinate quotient ring $R = \mathbb{R}[x_0, \dots, x_{23}] / \langle x_i^2 - x_i \rangle$, the double-fork at junction point $14$ factors as:
 
 $$
-P_{\text{fork}}(x) = x_6 x_{14} x_{22} + x_8 x_{14} x_{15} = \mathbf{x_{14}} \cdot (x_6 x_{22} + x_8 x_{15})
+P_{\text{fork}}(x) = x_6 x_{14} x_{22} + x_8 x_{14} x_{15} = \mathbf{x}_{14} \cdot (x_6 x_{22} + x_8 x_{15})
 $$
 
 When White claims $x_6 = 1, x_8 = 1, x_{14} = 1$, the ideal reduces to:
