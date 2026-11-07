@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 670" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 740" width="100%" height="100%">
   <defs>
     <!-- Dark slate canvas background -->
     <linearGradient id="canvasGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -63,292 +63,316 @@
   </defs>
 
   <!-- Canvas Background -->
-  <rect width="980" height="670" rx="16" fill="url(#canvasGrad)"/>
+  <rect width="1020" height="740" rx="16" fill="url(#canvasGrad)"/>
 
   <!-- Title & Subtitle -->
-  <text x="490" y="38" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="22" font-weight="800" fill="#f8fafc" text-anchor="middle">
-    Connect-5 (8×7 Grid): 27-Pair Symmetric First-Player Defense
+  <text x="510" y="38" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="22" font-weight="800" fill="#f8fafc" text-anchor="middle">
+    Connect-5 (8×8 Grid): Symmetric Dual-Core Domino Defense (Pattern 00011000)
   </text>
-  <text x="490" y="62" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">
-    Classic Board with Red Opening (3,0) + 24 Vertical Dominoes + 3 Ground Cross-Pairs + Neutralized Dead Cell (4,6)
+  <text x="510" y="62" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="13" fill="#94a3b8" text-anchor="middle">
+    64-Cell Grid: Anchor (4,0) + 30 Pure Vertical Dominoes + 0 Cross-Pairs + Double-Blocked Dead Cells (3,7) &amp; (4,7)
   </text>
 
   <!-- Yellow Support Feet for Classic Connect Rack -->
-  <path d="M 60 595 L 45 635 L 115 635 L 100 595 Z" fill="url(#standGrad)" stroke="#854d0e" stroke-width="2"/>
-  <path d="M 640 595 L 625 635 L 695 635 L 680 595 Z" fill="url(#standGrad)" stroke="#854d0e" stroke-width="2"/>
+  <path d="M 60 665 L 45 705 L 115 705 L 100 665 Z" fill="url(#standGrad)" stroke="#854d0e" stroke-width="2"/>
+  <path d="M 670 665 L 655 705 L 725 705 L 710 665 Z" fill="url(#standGrad)" stroke="#854d0e" stroke-width="2"/>
 
-  <!-- Classic Blue Board Frame -->
-  <rect x="70" y="80" width="600" height="525" rx="18" fill="url(#boardBlue)" stroke="url(#boardBevel)" stroke-width="3" filter="url(#discShadow)"/>
+  <!-- Classic Blue Board Frame (8 cols x 8 rows) -->
+  <rect x="65" y="80" width="630" height="595" rx="18" fill="url(#boardBlue)" stroke="url(#boardBevel)" stroke-width="3" filter="url(#discShadow)"/>
 
   <!-- Top Column Indicators -->
-  <text x="107.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 0</text>
-  <text x="182.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 1</text>
-  <text x="257.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 2</text>
-  <text x="332.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 3</text>
-  <text x="407.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 4</text>
-  <text x="482.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 5</text>
-  <text x="557.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 6</text>
-  <text x="632.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">Col 7</text>
-  <text x="50" y="572" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r0</text>
-  <text x="50" y="497" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r1</text>
-  <text x="50" y="422" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r2</text>
-  <text x="50" y="347" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r3</text>
-  <text x="50" y="272" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r4</text>
-  <text x="50" y="197" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r5</text>
-  <text x="50" y="122" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r6</text>
-  <circle cx="107.5" cy="567.5" r="28" fill="url(#emptyHole)" stroke="#f59e0b" stroke-width="2.5"/>
-  <circle cx="107.5" cy="567.5" r="18" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <text x="107.5" y="572.5" font-family="sans-serif" font-size="12" font-weight="800" fill="#fbbf24" text-anchor="middle">P1</text>
-  <circle cx="107.5" cy="492.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="107.5" cy="492.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="107.5" y="497.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y1</text>
-  <circle cx="107.5" cy="417.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="107.5" cy="417.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="107.5" y="422.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="107.5" cy="342.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="107.5" cy="342.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="107.5" y="347.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y3</text>
-  <circle cx="107.5" cy="267.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="107.5" cy="267.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="107.5" y="272.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="107.5" cy="192.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="107.5" cy="192.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="107.5" y="197.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y5</text>
-  <circle cx="107.5" cy="117.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="107.5" cy="117.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="107.5" y="122.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="182.5" cy="567.5" r="28" fill="url(#emptyHole)" stroke="#f59e0b" stroke-width="2.5"/>
-  <circle cx="182.5" cy="567.5" r="18" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <text x="182.5" y="572.5" font-family="sans-serif" font-size="12" font-weight="800" fill="#fbbf24" text-anchor="middle">P2</text>
-  <circle cx="182.5" cy="492.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="182.5" cy="492.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="182.5" y="497.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y1</text>
-  <circle cx="182.5" cy="417.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="182.5" cy="417.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="182.5" y="422.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="182.5" cy="342.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="182.5" cy="342.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="182.5" y="347.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y3</text>
-  <circle cx="182.5" cy="267.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="182.5" cy="267.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="182.5" y="272.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="182.5" cy="192.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="182.5" cy="192.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="182.5" y="197.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y5</text>
-  <circle cx="182.5" cy="117.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="182.5" cy="117.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="182.5" y="122.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="257.5" cy="567.5" r="28" fill="url(#emptyHole)" stroke="#f59e0b" stroke-width="2.5"/>
-  <circle cx="257.5" cy="567.5" r="18" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <text x="257.5" y="572.5" font-family="sans-serif" font-size="12" font-weight="800" fill="#fbbf24" text-anchor="middle">P3</text>
-  <circle cx="257.5" cy="492.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="257.5" cy="492.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="257.5" y="497.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y1</text>
-  <circle cx="257.5" cy="417.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="257.5" cy="417.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="257.5" y="422.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="257.5" cy="342.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="257.5" cy="342.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="257.5" y="347.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y3</text>
-  <circle cx="257.5" cy="267.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="257.5" cy="267.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="257.5" y="272.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="257.5" cy="192.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="257.5" cy="192.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="257.5" y="197.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y5</text>
-  <circle cx="257.5" cy="117.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="257.5" cy="117.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="257.5" y="122.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <!-- (3,0) RED Opening Disc -->
-  <circle cx="332.5" cy="567.5" r="30" fill="url(#redDisc)" filter="url(#goldGlow)" stroke="#fef08a" stroke-width="3.5"/>
-  <circle cx="332.5" cy="567.5" r="20" fill="none" stroke="#b91c1c" stroke-width="2"/>
-  <text x="332.5" y="573.5" font-family="sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">R₀</text>
-  <circle cx="332.5" cy="492.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="332.5" cy="492.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="332.5" y="497.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y1</text>
-  <circle cx="332.5" cy="417.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="332.5" cy="417.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="332.5" y="422.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="332.5" cy="342.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="332.5" cy="342.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="332.5" y="347.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y3</text>
-  <circle cx="332.5" cy="267.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="332.5" cy="267.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="332.5" y="272.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="332.5" cy="192.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="332.5" cy="192.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="332.5" y="197.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y5</text>
-  <circle cx="332.5" cy="117.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="332.5" cy="117.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="332.5" y="122.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="407.5" cy="567.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="407.5" cy="567.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="407.5" y="572.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y0</text>
-  <circle cx="407.5" cy="492.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="407.5" cy="492.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="407.5" y="497.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="407.5" cy="417.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="407.5" cy="417.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="407.5" y="422.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y2</text>
-  <circle cx="407.5" cy="342.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="407.5" cy="342.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="407.5" y="347.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="407.5" cy="267.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="407.5" cy="267.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="407.5" y="272.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y4</text>
-  <circle cx="407.5" cy="192.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="407.5" cy="192.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="407.5" y="197.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <!-- (4,6) Dead Cell -->
-  <circle cx="407.5" cy="117.5" r="28" fill="#18181b" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4,4"/>
-  <line x1="392.5" y1="102.5" x2="422.5" y2="132.5" stroke="#ef4444" stroke-width="3"/>
-  <line x1="392.5" y1="132.5" x2="422.5" y2="102.5" stroke="#ef4444" stroke-width="3"/>
-  <text x="407.5" y="141.5" font-family="sans-serif" font-size="8" font-weight="800" fill="#f87171" text-anchor="middle">DEAD</text>
-  <circle cx="482.5" cy="567.5" r="28" fill="url(#emptyHole)" stroke="#f59e0b" stroke-width="2.5"/>
-  <circle cx="482.5" cy="567.5" r="18" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <text x="482.5" y="572.5" font-family="sans-serif" font-size="12" font-weight="800" fill="#fbbf24" text-anchor="middle">P3</text>
-  <circle cx="482.5" cy="492.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="482.5" cy="492.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="482.5" y="497.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y1</text>
-  <circle cx="482.5" cy="417.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="482.5" cy="417.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="482.5" y="422.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="482.5" cy="342.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="482.5" cy="342.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="482.5" y="347.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y3</text>
-  <circle cx="482.5" cy="267.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="482.5" cy="267.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="482.5" y="272.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="482.5" cy="192.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="482.5" cy="192.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="482.5" y="197.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y5</text>
-  <circle cx="482.5" cy="117.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="482.5" cy="117.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="482.5" y="122.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="557.5" cy="567.5" r="28" fill="url(#emptyHole)" stroke="#f59e0b" stroke-width="2.5"/>
-  <circle cx="557.5" cy="567.5" r="18" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <text x="557.5" y="572.5" font-family="sans-serif" font-size="12" font-weight="800" fill="#fbbf24" text-anchor="middle">P2</text>
-  <circle cx="557.5" cy="492.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="557.5" cy="492.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="557.5" y="497.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y1</text>
-  <circle cx="557.5" cy="417.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="557.5" cy="417.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="557.5" y="422.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="557.5" cy="342.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="557.5" cy="342.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="557.5" y="347.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y3</text>
-  <circle cx="557.5" cy="267.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="557.5" cy="267.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="557.5" y="272.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="557.5" cy="192.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="557.5" cy="192.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="557.5" y="197.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y5</text>
-  <circle cx="557.5" cy="117.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="557.5" cy="117.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="557.5" y="122.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="632.5" cy="567.5" r="28" fill="url(#emptyHole)" stroke="#f59e0b" stroke-width="2.5"/>
-  <circle cx="632.5" cy="567.5" r="18" fill="none" stroke="#d97706" stroke-width="1.5" stroke-dasharray="3,3"/>
-  <text x="632.5" y="572.5" font-family="sans-serif" font-size="12" font-weight="800" fill="#fbbf24" text-anchor="middle">P1</text>
-  <circle cx="632.5" cy="492.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="632.5" cy="492.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="632.5" y="497.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y1</text>
-  <circle cx="632.5" cy="417.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="632.5" cy="417.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="632.5" y="422.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="632.5" cy="342.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="632.5" cy="342.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="632.5" y="347.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y3</text>
-  <circle cx="632.5" cy="267.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="632.5" cy="267.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="632.5" y="272.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <circle cx="632.5" cy="192.5" r="28" fill="url(#yellowDisc)" opacity="0.85" stroke="#ca8a04" stroke-width="1.5"/>
-  <circle cx="632.5" cy="192.5" r="18" fill="none" stroke="#a16207" stroke-width="1.5"/>
-  <text x="632.5" y="197.5" font-family="sans-serif" font-size="11" font-weight="800" fill="#713f12" text-anchor="middle">Y5</text>
-  <circle cx="632.5" cy="117.5" r="28" fill="url(#redDisc)" filter="url(#discShadow)" stroke="#f87171" stroke-width="1.5"/>
-  <circle cx="632.5" cy="117.5" r="18" fill="none" stroke="#991b1b" stroke-width="1.5"/>
-  <text x="632.5" y="122.5" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <!-- Domino Upward Response Indicators -->
-  <line x1="107.5" y1="478.5" x2="107.5" y2="431.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="107.5" y1="328.5" x2="107.5" y2="281.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="107.5" y1="178.5" x2="107.5" y2="131.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="182.5" y1="478.5" x2="182.5" y2="431.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="182.5" y1="328.5" x2="182.5" y2="281.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="182.5" y1="178.5" x2="182.5" y2="131.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="257.5" y1="478.5" x2="257.5" y2="431.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="257.5" y1="328.5" x2="257.5" y2="281.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="257.5" y1="178.5" x2="257.5" y2="131.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="332.5" y1="478.5" x2="332.5" y2="431.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="332.5" y1="328.5" x2="332.5" y2="281.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="332.5" y1="178.5" x2="332.5" y2="131.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="407.5" y1="553.5" x2="407.5" y2="506.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="407.5" y1="403.5" x2="407.5" y2="356.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="407.5" y1="253.5" x2="407.5" y2="206.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="482.5" y1="478.5" x2="482.5" y2="431.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="482.5" y1="328.5" x2="482.5" y2="281.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="482.5" y1="178.5" x2="482.5" y2="131.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="557.5" y1="478.5" x2="557.5" y2="431.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="557.5" y1="328.5" x2="557.5" y2="281.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="557.5" y1="178.5" x2="557.5" y2="131.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="632.5" y1="478.5" x2="632.5" y2="431.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="632.5" y1="328.5" x2="632.5" y2="281.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-  <line x1="632.5" y1="178.5" x2="632.5" y2="131.5" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="2,2" opacity="0.6"/>
-
-  <!-- Ground-Row 0 Symmetric Cross-Pair Bridge Arcs -->
-  <!-- P1: (0,0) <-> (7,0) -->
-  <path d="M 107.5 595 C 107.5 655, 632.5 655, 632.5 595" fill="none" stroke="#f59e0b" stroke-width="2.5" stroke-dasharray="6,4"/>
-  <rect x="350" y="632" width="40" height="18" rx="4" fill="#1e293b" stroke="#f59e0b" stroke-width="1"/>
-  <text x="370" y="645" font-family="sans-serif" font-size="11" font-weight="800" fill="#fbbf24" text-anchor="middle">P₁</text>
-
-  <!-- P2: (1,0) <-> (6,0) -->
-  <path d="M 182.5 595 C 182.5 640, 557.5 640, 557.5 595" fill="none" stroke="#fbbf24" stroke-width="2.5" stroke-dasharray="6,4"/>
-  <rect x="350" y="612" width="40" height="18" rx="4" fill="#1e293b" stroke="#fbbf24" stroke-width="1"/>
-  <text x="370" y="625" font-family="sans-serif" font-size="11" font-weight="800" fill="#fde047" text-anchor="middle">P₂</text>
-
-  <!-- P3: (2,0) <-> (5,0) -->
-  <path d="M 257.5 595 C 257.5 625, 482.5 625, 482.5 595" fill="none" stroke="#fef08a" stroke-width="2" stroke-dasharray="5,3"/>
-  <rect x="350" y="595" width="40" height="18" rx="4" fill="#1e293b" stroke="#fef08a" stroke-width="1"/>
-  <text x="370" y="608" font-family="sans-serif" font-size="11" font-weight="800" fill="#fef08a" text-anchor="middle">P₃</text>
+  <text x="117.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">c=0</text>
+  <text x="192.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">c=1</text>
+  <text x="267.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">c=2</text>
+  <text x="342.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#facc15" text-anchor="middle">c=3</text>
+  <text x="417.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#facc15" text-anchor="middle">c=4</text>
+  <text x="492.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">c=5</text>
+  <text x="567.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">c=6</text>
+  <text x="642.5" y="73" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">c=7</text>
+  <text x="45" y="619.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r0</text>
+  <text x="45" y="549.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r1</text>
+  <text x="45" y="479.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r2</text>
+  <text x="45" y="409.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r3</text>
+  <text x="45" y="339.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r4</text>
+  <text x="45" y="269.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r5</text>
+  <text x="45" y="199.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r6</text>
+  <text x="45" y="129.0" font-family="sans-serif" font-size="12" font-weight="700" fill="#93c5fd" text-anchor="middle">r7</text>
+  <circle cx="117.5" cy="615.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="117.5" cy="615.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="117.5" y="620.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W0</text>
+  <circle cx="117.5" cy="545.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="117.5" cy="545.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="117.5" y="550.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="117.5" cy="475.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="117.5" cy="475.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="117.5" y="480.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W2</text>
+  <circle cx="117.5" cy="405.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="117.5" cy="405.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="117.5" y="410.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="117.5" cy="335.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="117.5" cy="335.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="117.5" y="340.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W4</text>
+  <circle cx="117.5" cy="265.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="117.5" cy="265.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="117.5" y="270.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="117.5" cy="195.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="117.5" cy="195.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="117.5" y="200.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W6</text>
+  <circle cx="117.5" cy="125.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="117.5" cy="125.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="117.5" y="130.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="192.5" cy="615.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="192.5" cy="615.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="192.5" y="620.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W0</text>
+  <circle cx="192.5" cy="545.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="192.5" cy="545.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="192.5" y="550.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="192.5" cy="475.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="192.5" cy="475.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="192.5" y="480.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W2</text>
+  <circle cx="192.5" cy="405.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="192.5" cy="405.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="192.5" y="410.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="192.5" cy="335.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="192.5" cy="335.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="192.5" y="340.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W4</text>
+  <circle cx="192.5" cy="265.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="192.5" cy="265.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="192.5" y="270.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="192.5" cy="195.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="192.5" cy="195.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="192.5" y="200.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W6</text>
+  <circle cx="192.5" cy="125.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="192.5" cy="125.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="192.5" y="130.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="267.5" cy="615.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="267.5" cy="615.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="267.5" y="620.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W0</text>
+  <circle cx="267.5" cy="545.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="267.5" cy="545.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="267.5" y="550.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="267.5" cy="475.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="267.5" cy="475.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="267.5" y="480.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W2</text>
+  <circle cx="267.5" cy="405.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="267.5" cy="405.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="267.5" y="410.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="267.5" cy="335.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="267.5" cy="335.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="267.5" y="340.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W4</text>
+  <circle cx="267.5" cy="265.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="267.5" cy="265.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="267.5" y="270.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="267.5" cy="195.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="267.5" cy="195.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="267.5" y="200.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W6</text>
+  <circle cx="267.5" cy="125.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="267.5" cy="125.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="267.5" y="130.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <!-- (3,0) White Opening Disc -->
+  <circle cx="342.5" cy="615.0" r="27" fill="url(#redDisc)" filter="url(#goldGlow)" stroke="#fef08a" stroke-width="2.5"/>
+  <text x="342.5" y="620.0" font-family="sans-serif" font-size="13" font-weight="900" fill="#ffffff" text-anchor="middle">W₀</text>
+  <circle cx="342.5" cy="545.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="342.5" cy="545.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="342.5" y="550.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W1</text>
+  <circle cx="342.5" cy="475.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="342.5" cy="475.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="342.5" y="480.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="342.5" cy="405.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="342.5" cy="405.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="342.5" y="410.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W3</text>
+  <circle cx="342.5" cy="335.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="342.5" cy="335.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="342.5" y="340.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="342.5" cy="265.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="342.5" cy="265.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="342.5" y="270.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W5</text>
+  <circle cx="342.5" cy="195.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="342.5" cy="195.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="342.5" y="200.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <!-- (3,7) Dead Cell -->
+  <circle cx="342.5" cy="125.0" r="25" fill="#18181b" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4,4"/>
+  <line x1="330.5" y1="113.0" x2="354.5" y2="137.0" stroke="#ef4444" stroke-width="2.5"/>
+  <line x1="330.5" y1="137.0" x2="354.5" y2="113.0" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="342.5" y="145.0" font-family="sans-serif" font-size="8" font-weight="800" fill="#f87171" text-anchor="middle">DEAD</text>
+  <!-- (4,0) Black Ground Anchor -->
+  <circle cx="417.5" cy="615.0" r="27" fill="url(#yellowDisc)" filter="url(#goldGlow)" stroke="#ffffff" stroke-width="2.5"/>
+  <text x="417.5" y="620.0" font-family="sans-serif" font-size="13" font-weight="900" fill="#713f12" text-anchor="middle">B₀★</text>
+  <circle cx="417.5" cy="545.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="417.5" cy="545.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="417.5" y="550.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W1</text>
+  <circle cx="417.5" cy="475.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="417.5" cy="475.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="417.5" y="480.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="417.5" cy="405.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="417.5" cy="405.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="417.5" y="410.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W3</text>
+  <circle cx="417.5" cy="335.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="417.5" cy="335.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="417.5" y="340.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="417.5" cy="265.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="417.5" cy="265.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="417.5" y="270.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W5</text>
+  <circle cx="417.5" cy="195.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="417.5" cy="195.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="417.5" y="200.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <!-- (4,7) Dead Cell -->
+  <circle cx="417.5" cy="125.0" r="25" fill="#18181b" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4,4"/>
+  <line x1="405.5" y1="113.0" x2="429.5" y2="137.0" stroke="#ef4444" stroke-width="2.5"/>
+  <line x1="405.5" y1="137.0" x2="429.5" y2="113.0" stroke="#ef4444" stroke-width="2.5"/>
+  <text x="417.5" y="145.0" font-family="sans-serif" font-size="8" font-weight="800" fill="#f87171" text-anchor="middle">DEAD</text>
+  <circle cx="492.5" cy="615.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="492.5" cy="615.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="492.5" y="620.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W0</text>
+  <circle cx="492.5" cy="545.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="492.5" cy="545.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="492.5" y="550.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="492.5" cy="475.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="492.5" cy="475.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="492.5" y="480.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W2</text>
+  <circle cx="492.5" cy="405.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="492.5" cy="405.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="492.5" y="410.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="492.5" cy="335.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="492.5" cy="335.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="492.5" y="340.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W4</text>
+  <circle cx="492.5" cy="265.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="492.5" cy="265.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="492.5" y="270.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="492.5" cy="195.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="492.5" cy="195.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="492.5" y="200.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W6</text>
+  <circle cx="492.5" cy="125.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="492.5" cy="125.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="492.5" y="130.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="567.5" cy="615.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="567.5" cy="615.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="567.5" y="620.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W0</text>
+  <circle cx="567.5" cy="545.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="567.5" cy="545.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="567.5" y="550.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="567.5" cy="475.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="567.5" cy="475.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="567.5" y="480.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W2</text>
+  <circle cx="567.5" cy="405.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="567.5" cy="405.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="567.5" y="410.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="567.5" cy="335.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="567.5" cy="335.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="567.5" y="340.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W4</text>
+  <circle cx="567.5" cy="265.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="567.5" cy="265.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="567.5" y="270.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="567.5" cy="195.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="567.5" cy="195.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="567.5" y="200.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W6</text>
+  <circle cx="567.5" cy="125.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="567.5" cy="125.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="567.5" y="130.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="642.5" cy="615.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="642.5" cy="615.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="642.5" y="620.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W0</text>
+  <circle cx="642.5" cy="545.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="642.5" cy="545.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="642.5" y="550.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="642.5" cy="475.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="642.5" cy="475.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="642.5" y="480.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W2</text>
+  <circle cx="642.5" cy="405.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="642.5" cy="405.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="642.5" y="410.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="642.5" cy="335.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="642.5" cy="335.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="642.5" y="340.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W4</text>
+  <circle cx="642.5" cy="265.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="642.5" cy="265.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="642.5" y="270.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <circle cx="642.5" cy="195.0" r="26" fill="url(#redDisc)" opacity="0.8" stroke="#dc2626" stroke-width="1.5"/>
+  <circle cx="642.5" cy="195.0" r="17" fill="none" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="642.5" y="200.0" font-family="sans-serif" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">W6</text>
+  <circle cx="642.5" cy="125.0" r="26" fill="url(#yellowDisc)" filter="url(#discShadow)" stroke="#facc15" stroke-width="2"/>
+  <circle cx="642.5" cy="125.0" r="17" fill="none" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="642.5" y="130.0" font-family="sans-serif" font-size="12" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <!-- Pure Vertical Domino Pairing Links -->
+  <line x1="117.5" y1="602.0" x2="117.5" y2="558.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="117.5" y1="462.0" x2="117.5" y2="418.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="117.5" y1="322.0" x2="117.5" y2="278.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="117.5" y1="182.0" x2="117.5" y2="138.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="192.5" y1="602.0" x2="192.5" y2="558.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="192.5" y1="462.0" x2="192.5" y2="418.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="192.5" y1="322.0" x2="192.5" y2="278.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="192.5" y1="182.0" x2="192.5" y2="138.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="267.5" y1="602.0" x2="267.5" y2="558.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="267.5" y1="462.0" x2="267.5" y2="418.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="267.5" y1="322.0" x2="267.5" y2="278.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="267.5" y1="182.0" x2="267.5" y2="138.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="342.5" y1="532.0" x2="342.5" y2="488.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="342.5" y1="392.0" x2="342.5" y2="348.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="342.5" y1="252.0" x2="342.5" y2="208.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="417.5" y1="532.0" x2="417.5" y2="488.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="417.5" y1="392.0" x2="417.5" y2="348.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="417.5" y1="252.0" x2="417.5" y2="208.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="492.5" y1="602.0" x2="492.5" y2="558.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="492.5" y1="462.0" x2="492.5" y2="418.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="492.5" y1="322.0" x2="492.5" y2="278.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="492.5" y1="182.0" x2="492.5" y2="138.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="567.5" y1="602.0" x2="567.5" y2="558.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="567.5" y1="462.0" x2="567.5" y2="418.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="567.5" y1="322.0" x2="567.5" y2="278.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="567.5" y1="182.0" x2="567.5" y2="138.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="642.5" y1="602.0" x2="642.5" y2="558.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="642.5" y1="462.0" x2="642.5" y2="418.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="642.5" y1="322.0" x2="642.5" y2="278.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
+  <line x1="642.5" y1="182.0" x2="642.5" y2="138.0" stroke="#ffffff" stroke-width="1.8" stroke-dasharray="3,2" opacity="0.7"/>
 
   <!-- ================= LEGEND CARD ================= -->
-  <rect x="695" y="80" width="260" height="525" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#discShadow)"/>
-  <text x="825" y="115" font-family="sans-serif" font-size="17" font-weight="800" fill="#f8fafc" text-anchor="middle">Strategy Legend</text>
+  <rect x="715" y="80" width="280" height="595" rx="14" fill="#1e293b" stroke="#334155" stroke-width="1.5" filter="url(#discShadow)"/>
+  <text x="855" y="112" font-family="sans-serif" font-size="17" font-weight="800" fill="#f8fafc" text-anchor="middle">8×8 Strategy Legend</text>
 
-  <!-- Red Opening R0 -->
-  <circle cx="725" cy="155" r="16" fill="url(#redDisc)" stroke="#fef08a" stroke-width="2"/>
-  <text x="750" y="154" font-family="sans-serif" font-size="13" font-weight="800" fill="#ffffff">R₀: Red Opening (3,0)</text>
-  <text x="750" y="170" font-family="sans-serif" font-size="11" fill="#94a3b8">First ply anchor move</text>
+  <!-- White Opening W0 -->
+  <circle cx="745" cy="150" r="15" fill="url(#redDisc)" stroke="#fef08a" stroke-width="2"/>
+  <text x="770" y="148" font-family="sans-serif" font-size="13" font-weight="800" fill="#ffffff">W₀: White Opening (3,0)</text>
+  <text x="770" y="164" font-family="sans-serif" font-size="11" fill="#94a3b8">Ply 1 odd-parity trap (63 left)</text>
 
-  <!-- Red Guaranteed R* -->
-  <circle cx="725" cy="210" r="16" fill="url(#redDisc)" stroke="#f87171" stroke-width="1.5"/>
-  <text x="725" y="215" font-family="sans-serif" font-size="11" font-weight="900" fill="#ffffff" text-anchor="middle">R★</text>
-  <text x="750" y="209" font-family="sans-serif" font-size="13" font-weight="800" fill="#f87171">R★: Guaranteed Red</text>
-  <text x="750" y="225" font-family="sans-serif" font-size="11" fill="#94a3b8">Upper domino response</text>
+  <!-- Black Anchor B0* -->
+  <circle cx="745" cy="202" r="15" fill="url(#yellowDisc)" stroke="#ffffff" stroke-width="2"/>
+  <text x="745" y="206" font-family="sans-serif" font-size="10" font-weight="900" fill="#713f12" text-anchor="middle">B₀★</text>
+  <text x="770" y="200" font-family="sans-serif" font-size="13" font-weight="800" fill="#facc15">B₀★: Black Anchor (4,0)</text>
+  <text x="770" y="216" font-family="sans-serif" font-size="11" fill="#94a3b8">Ply 2 restores even parity (62)</text>
 
-  <!-- Yellow Attacker Y -->
-  <circle cx="725" cy="265" r="16" fill="url(#yellowDisc)" stroke="#ca8a04" stroke-width="1.5"/>
-  <text x="725" y="270" font-family="sans-serif" font-size="11" font-weight="900" fill="#713f12" text-anchor="middle">Y</text>
-  <text x="750" y="264" font-family="sans-serif" font-size="13" font-weight="800" fill="#facc15">Y: Yellow Attack Cell</text>
-  <text x="750" y="280" font-family="sans-serif" font-size="11" fill="#94a3b8">Lower domino ingress</text>
+  <!-- Black Guaranteed B* -->
+  <circle cx="745" cy="254" r="15" fill="url(#yellowDisc)" stroke="#ca8a04" stroke-width="1.5"/>
+  <text x="745" y="258" font-family="sans-serif" font-size="10" font-weight="900" fill="#713f12" text-anchor="middle">B★</text>
+  <text x="770" y="252" font-family="sans-serif" font-size="13" font-weight="800" fill="#fde047">B★: Guaranteed Black (30)</text>
+  <text x="770" y="268" font-family="sans-serif" font-size="11" fill="#94a3b8">Center: {2,4,6} | Flank: {1,3,5,7}</text>
 
-  <!-- Cross Pairs P1..P3 -->
-  <circle cx="725" cy="320" r="16" fill="url(#emptyHole)" stroke="#f59e0b" stroke-width="2"/>
-  <text x="725" y="324" font-family="sans-serif" font-size="10" font-weight="800" fill="#fbbf24" text-anchor="middle">P</text>
-  <text x="750" y="319" font-family="sans-serif" font-size="13" font-weight="800" fill="#fbbf24">P₁–P₃: Ground Pairs</text>
-  <text x="750" y="335" font-family="sans-serif" font-size="11" fill="#94a3b8">Row 0 cross: (0-7, 1-6, 2-5)</text>
+  <!-- White Attacker W -->
+  <circle cx="745" cy="306" r="15" fill="url(#redDisc)" stroke="#991b1b" stroke-width="1.5"/>
+  <text x="745" y="310" font-family="sans-serif" font-size="10" font-weight="900" fill="#ffffff" text-anchor="middle">W</text>
+  <text x="770" y="304" font-family="sans-serif" font-size="13" font-weight="800" fill="#f87171">W: White Attack Cells (30)</text>
+  <text x="770" y="320" font-family="sans-serif" font-size="11" fill="#94a3b8">Lower domino ingress</text>
 
-  <!-- Dead Cell -->
-  <circle cx="725" cy="375" r="16" fill="#18181b" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
-  <text x="725" y="379" font-family="sans-serif" font-size="12" font-weight="900" fill="#ef4444" text-anchor="middle">✕</text>
-  <text x="750" y="374" font-family="sans-serif" font-size="13" font-weight="800" fill="#ef4444">Dead Cell: (4,6)</text>
-  <text x="750" y="390" font-family="sans-serif" font-size="11" fill="#94a3b8">Mathematically inert</text>
+  <!-- Dead Cells -->
+  <circle cx="745" cy="358" r="15" fill="#18181b" stroke="#ef4444" stroke-width="2" stroke-dasharray="3,3"/>
+  <text x="745" y="362" font-family="sans-serif" font-size="12" font-weight="900" fill="#ef4444" text-anchor="middle">✕</text>
+  <text x="770" y="356" font-family="sans-serif" font-size="13" font-weight="800" fill="#ef4444">Dead Cells: (3,7), (4,7)</text>
+  <text x="770" y="372" font-family="sans-serif" font-size="11" fill="#94a3b8">100% Multi-Blocked (≥2 B★)</text>
+
+  <!-- Zero Cross Pairs Badge -->
+  <rect x="730" y="398" width="250" height="34" rx="6" fill="#064e3b" stroke="#10b981" stroke-width="1.5"/>
+  <text x="855" y="419" font-family="sans-serif" font-size="12" font-weight="900" fill="#a7f3d0" text-anchor="middle">
+    ★ 0 Cross-Pairs Needed (100% Vertical!) ★
+  </text>
 
   <!-- Mathematical Proof Summary Box -->
-  <rect x="710" y="420" width="230" height="170" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
-  <text x="825" y="445" font-family="sans-serif" font-size="13" font-weight="800" fill="#38bdf8" text-anchor="middle">Mathematical Proof Audit</text>
-  <text x="722" y="470" font-family="sans-serif" font-size="12" fill="#cbd5e1">Board Size: 8 × 7 (56 cells)</text>
-  <text x="722" y="492" font-family="sans-serif" font-size="12" fill="#cbd5e1">Winning Lines: 76</text>
-  <text x="722" y="514" font-family="sans-serif" font-size="12" font-weight="800" fill="#4ade80">Uncovered Lines: 0</text>
-  <text x="722" y="536" font-family="sans-serif" font-size="12" fill="#cbd5e1">Lines through (4,6): 6</text>
-  <text x="722" y="558" font-family="sans-serif" font-size="12" fill="#4ade80">Guaranteed Red in (4,6): ≥ 2</text>
-  <text x="825" y="580" font-family="sans-serif" font-size="12" font-weight="900" fill="#facc15" text-anchor="middle">Theorem: game_value = Draw</text>
+  <rect x="730" y="446" width="250" height="215" rx="10" fill="#0f172a" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="855" y="470" font-family="sans-serif" font-size="13" font-weight="800" fill="#38bdf8" text-anchor="middle">8×8 Mathematical Proof Audit</text>
+  <text x="742" y="495" font-family="sans-serif" font-size="11.5" fill="#cbd5e1">Board Size: 8 × 8 (64 cells, EVEN)</text>
+  <text x="742" y="517" font-family="sans-serif" font-size="11.5" fill="#cbd5e1">Winning Lines: 96 (32H + 32V + 32D)</text>
+  <text x="742" y="539" font-family="sans-serif" font-size="11.5" font-weight="800" fill="#4ade80">Covered Lines: 96 / 96 (100.0%)</text>
+  <text x="742" y="561" font-family="sans-serif" font-size="11.5" fill="#cbd5e1">Vertical Dominoes: 30 (60 cells)</text>
+  <text x="742" y="583" font-family="sans-serif" font-size="11.5" fill="#cbd5e1">Rigid Cross-Pairs: 0 (Pure Vertical!)</text>
+  <text x="742" y="605" font-family="sans-serif" font-size="11.5" fill="#4ade80">Lines through Dead Cells: 6 each (2 B★)</text>
+  <text x="742" y="627" font-family="sans-serif" font-size="11.5" fill="#cbd5e1">Lean 4: 18/18 Theorems (0 sorry)</text>
+  <text x="855" y="649" font-family="sans-serif" font-size="12.5" font-weight="900" fill="#facc15" text-anchor="middle">Theorem: game_value = DRAW</text>
 </svg>

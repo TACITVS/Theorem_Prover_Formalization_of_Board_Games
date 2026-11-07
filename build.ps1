@@ -18,7 +18,7 @@ $files = @(
     "CheckAssumptions.v"
 )
 
-Write-Host "=== Compiling Connect-5 (8x7) Formal Mathematical Proof in Rocq 9.1 ===" -ForegroundColor Cyan
+Write-Host "=== Compiling Connect-5 (8x8) Formal Mathematical Proof in Rocq 9.1 ===" -ForegroundColor Cyan
 $assumptionsOutput = @()
 foreach ($f in $files) {
     Write-Host "Compiling $f..." -NoNewline
@@ -43,12 +43,12 @@ if ($joined -match "Axioms:") {
     Write-Error "Verification failed: unexpected Axioms reported by CheckAssumptions.v!"
     exit 1
 }
-if ($closedMatches -ne 24) {
-    Write-Error "Verification failed: expected 24 'Closed under the global context' reports, got $closedMatches"
+if ($closedMatches -ne 26) {
+    Write-Error "Verification failed: expected 26 'Closed under the global context' reports, got $closedMatches"
     exit 1
 }
 
-Write-Host "`nAll 6 foundational theory files and all 24 theorems verified (" -NoNewline -ForegroundColor Cyan
-Write-Host "$closedMatches/24 Closed under the global context, 0 Axioms, 0 Admits" -NoNewline -ForegroundColor Green
+Write-Host "`nAll 6 foundational theory files and all 26 theorems verified (" -NoNewline -ForegroundColor Cyan
+Write-Host "$closedMatches/26 Closed under the global context, 0 Axioms, 0 Admits" -NoNewline -ForegroundColor Green
 Write-Host ")!" -ForegroundColor Cyan
 

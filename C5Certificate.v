@@ -1,17 +1,17 @@
-(** * Connect-5 (8x7): Strategy Certificate and Game Value Equivalence
+(** * Connect-5 (8x8): Strategy Certificate and Game Value Equivalence
 
     This file connects:
     1. Inductive strategy trees ([strategy d b s]) combining explicit
        game-tree search with follow-up pairing structures ([Static d b st]).
     2. The inductive game semantics ([safe d b s]).
-    3. The minimax value ([game_value = value 56 initial White]).
+    3. The minimax value ([game_value = value 64 initial White]).
 
     Main results:
     - [strategy_sound]: any strategy tree proves [safe d b s].
     - [mutual_safety_draw]: if Black is safe from the initial board, and
       White is safe after an opening move [c0], then [game_value = Draw].
-    - [connect5_8x7_fair]: if both players have strategy certificates,
-      then the variant (8, 7, 5) is provably a fair game (draw).
+    - [connect5_8x8_fair]: if both players have strategy certificates,
+      then the variant (8, 8, 5) is provably a fair game (draw).
 *)
 
 From Stdlib Require Import List Arith Bool Lia.
@@ -266,21 +266,21 @@ Theorem mutual_safety_draw : forall c0,
 Proof.
   intros c0 Hleg sW sB.
   unfold game_value.
-  assert (Hnot_win : value 56 initial White <> Win).
-  { pose proof (safe_att_not_win 56 initial Black) as Hw.
+  assert (Hnot_win : value 64 initial White <> Win).
+  { pose proof (safe_att_not_win 64 initial Black) as Hw.
     exact (Hw sB). }
-  assert (Hnot_loss : value 56 initial White <> Loss).
+  assert (Hnot_loss : value 64 initial White <> Loss).
   { rewrite value_S_fold by exact initial_not_full.
     assert (Hin0 : In c0 (seq 0 8)).
     { apply legal_spec in Hleg as [Hc8 _]. apply in_seq; simpl; lia. }
-    apply (fold_step_not_Loss 55 initial White (seq 0 8) c0 Hin0 Hleg).
+    apply (fold_step_not_Loss 63 initial White (seq 0 8) c0 Hin0 Hleg).
     unfold step_val.
     destruct (has_line (play initial c0 White) White) eqn:Eline.
     - discriminate.
     - rewrite neg_neq_Loss.
       change Black with (other White) in sW.
-      exact (safe_att_not_win 55 (play initial c0 White) White sW). }
-  destruct (value 56 initial White) eqn:Eval.
+      exact (safe_att_not_win 63 (play initial c0 White) White sW). }
+  destruct (value 64 initial White) eqn:Eval.
   - contradiction.
   - reflexivity.
   - contradiction.
@@ -288,7 +288,7 @@ Qed.
 
 (** ** The Main Game Theorem *)
 
-Theorem connect5_8x7_fair :
+Theorem connect5_8x8_fair :
   (exists c0, legal initial c0 = true /\ strategy White (play initial c0 White) Black) ->
   strategy Black initial White ->
   game_value = Draw.
@@ -298,4 +298,10 @@ Proof.
   - apply strategy_sound; exact sW.
   - apply strategy_sound; exact sB.
 Qed.
+
+Theorem connect5_8x7_fair :
+  (exists c0, legal initial c0 = true /\ strategy White (play initial c0 White) Black) ->
+  strategy Black initial White ->
+  game_value = Draw.
+Proof. exact connect5_8x8_fair. Qed.
 

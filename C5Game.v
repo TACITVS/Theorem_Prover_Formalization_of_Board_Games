@@ -1,10 +1,10 @@
-(** * Connect-5 with gravity on an 8-column x 7-row board
+(** * Connect-5 with gravity on an 8-column x 8-row board
 
     This file is the TRUSTED SPECIFICATION: the rules of the game and the
     meaning of "a player can avoid losing".  Everything else in the
     development is proved from these definitions.
 
-    - Columns are numbered 0..7 (left to right), rows 0..6 (bottom to top).
+    - Columns are numbered 0..7 (left to right), rows 0..7 (bottom to top).
     - A board is a list of 8 columns; each column lists its discs from the
       bottom up.  A move drops a disc on top of a non-full column.
     - White moves first.  The first player to own all 5 cells of a winning
@@ -36,7 +36,7 @@ Definition owner (b : board) (x : cell) : option player :=
 
 (** A move in column [c] is legal iff [c] is a column and it is not full. *)
 Definition legal (b : board) (c : nat) : bool :=
-  (c <? 8) && (length (col b c) <? 7).
+  (c <? 8) && (length (col b c) <? 8).
 
 Fixpoint replace {A : Type} (l : list A) (n : nat) (v : A) : list A :=
   match l, n with
@@ -54,17 +54,17 @@ Definition full (b : board) : bool :=
 
 Definition initial : board := repeat [] 8.
 
-(** ** The 76 winning lines *)
+(** ** The 96 winning lines *)
 Definition hline (c r : nat) : list cell := map (fun i => (c + i, r)) (seq 0 5).
 Definition vline (c r : nat) : list cell := map (fun i => (c, r + i)) (seq 0 5).
 Definition dline (c r : nat) : list cell := map (fun i => (c + i, r + i)) (seq 0 5).
 Definition aline (c r : nat) : list cell := map (fun i => (c + i, r + 4 - i)) (seq 0 5).
 
 Definition lines : list (list cell) :=
-     flat_map (fun c => map (hline c) (seq 0 7)) (seq 0 4)    (* 28 horizontal  *)
-  ++ flat_map (fun c => map (vline c) (seq 0 3)) (seq 0 8)    (* 24 vertical    *)
-  ++ flat_map (fun c => map (dline c) (seq 0 3)) (seq 0 4)    (* 12 diagonal /  *)
-  ++ flat_map (fun c => map (aline c) (seq 0 3)) (seq 0 4).   (* 12 diagonal \  *)
+     flat_map (fun c => map (hline c) (seq 0 8)) (seq 0 4)    (* 32 horizontal  *)
+  ++ flat_map (fun c => map (vline c) (seq 0 4)) (seq 0 8)    (* 32 vertical    *)
+  ++ flat_map (fun c => map (dline c) (seq 0 4)) (seq 0 4)    (* 16 diagonal /  *)
+  ++ flat_map (fun c => map (aline c) (seq 0 4)) (seq 0 4).   (* 16 diagonal \  *)
 
 Definition owned_by (b : board) (p : player) (x : cell) : bool :=
   match owner b x with Some q => peqb q p | None => false end.
@@ -120,6 +120,6 @@ Fixpoint value (fuel : nat) (b : board) (s : player) : result :=
              (seq 0 8) Loss
   end.
 
-(** The value of the game: 56 is the number of cells, so the recursion
+(** The value of the game: 64 is the number of cells, so the recursion
     never runs out of fuel before the board is full. *)
-Definition game_value : result := value 56 initial White.
+Definition game_value : result := value 64 initial White.

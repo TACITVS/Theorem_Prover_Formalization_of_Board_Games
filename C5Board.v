@@ -15,9 +15,9 @@ Proof. intros []; reflexivity. Qed.
 Lemma player_dec : forall p q : player, {p = q} + {p <> q}.
 Proof. decide equality. Qed.
 
-(** Well-formed boards: 8 columns of height at most 7. *)
+(** Well-formed boards: 8 columns of height at most 8. *)
 Definition wf (b : board) : Prop :=
-  length b = 8 /\ forall c, length (col b c) <= 7.
+  length b = 8 /\ forall c, length (col b c) <= 8.
 
 Lemma length_replace : forall (A : Type) (l : list A) n v,
   length (replace l n v) = length l.
@@ -33,7 +33,7 @@ Proof.
 Qed.
 
 Lemma legal_spec : forall b c,
-  legal b c = true <-> c < 8 /\ length (col b c) < 7.
+  legal b c = true <-> c < 8 /\ length (col b c) < 8.
 Proof.
   intros b c; unfold legal.
   rewrite andb_true_iff, !Nat.ltb_lt; tauto.
@@ -152,7 +152,7 @@ Qed.
 
 (** ** Number of empty cells *)
 Definition empties (b : board) : nat :=
-  list_sum (map (fun c => 7 - length (col b c)) (seq 0 8)).
+  list_sum (map (fun c => 8 - length (col b c)) (seq 0 8)).
 
 Lemma sum_change : forall (l : list nat) (c : nat) (f g : nat -> nat),
   NoDup l -> In c l ->
