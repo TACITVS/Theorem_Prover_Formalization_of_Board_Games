@@ -128,6 +128,38 @@ Proof. vm_compute. reflexivity. Qed.
 Theorem mnk_15_15_5_gomoku_lines : total_lines_formula 15 15 5 = 572.
 Proof. vm_compute. reflexivity. Qed.
 
+(** The Prime Series (p_{i+2}, p_{i+1}, p_i) Landmark Theorems *)
+
+Theorem mnk_prime_triple_7_5_3_lines : total_lines_formula 7 5 3 = 76.
+Proof. vm_compute. reflexivity. Qed.
+
+Theorem mnk_prime_triple_11_7_5_lines : total_lines_formula 11 7 5 = 124.
+Proof. vm_compute. reflexivity. Qed.
+
+Theorem mnk_prime_triple_13_11_7_lines : total_lines_formula 13 11 7 = 212.
+Proof. vm_compute. reflexivity. Qed.
+
+Theorem mnk_prime_triple_11_7_7_lines : total_lines_formula 11 7 7 = 56.
+Proof. vm_compute. reflexivity. Qed.
+
+Theorem mnk_prime_triple_11_7_7_erdos_bound :
+  total_lines_formula 11 7 7 < 2^(7 - 1).
+Proof. vm_compute. lia. Qed.
+
+Theorem mnk_prime_triple_17_13_11_lines : total_lines_formula 17 13 11 = 184.
+Proof. vm_compute. reflexivity. Qed.
+
+Theorem mnk_prime_triple_17_13_11_erdos_bound :
+  total_lines_formula 17 13 11 < 2^(11 - 1).
+Proof. vm_compute. lia. Qed.
+
+Theorem mnk_prime_triple_19_17_13_lines : total_lines_formula 19 17 13 = 284.
+Proof. vm_compute. reflexivity. Qed.
+
+Theorem mnk_prime_triple_19_17_13_erdos_bound :
+  total_lines_formula 19 17 13 < 2^(13 - 1).
+Proof. vm_compute. lia. Qed.
+
 (** Concrete Line Generators for (3, 4, 3) and (3, 3, 3) *)
 
 Definition lines_3_3_3 : list (list nat) :=

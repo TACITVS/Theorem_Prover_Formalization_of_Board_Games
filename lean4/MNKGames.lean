@@ -65,6 +65,16 @@ theorem mnk_5_5_4_lines : totalLinesFormula 5 5 4 = 28 := by rfl
 theorem mnk_8_8_5_lines : totalLinesFormula 8 8 5 = 96 := by rfl
 theorem mnk_15_15_5_lines : totalLinesFormula 15 15 5 = 572 := by rfl
 
+theorem mnk_prime_triple_7_5_3_lines : totalLinesFormula 7 5 3 = 76 := by rfl
+theorem mnk_prime_triple_11_7_5_lines : totalLinesFormula 11 7 5 = 124 := by rfl
+theorem mnk_prime_triple_13_11_7_lines : totalLinesFormula 13 11 7 = 212 := by rfl
+theorem mnk_prime_triple_11_7_7_lines : totalLinesFormula 11 7 7 = 56 := by rfl
+theorem mnk_prime_triple_11_7_7_erdos_bound : totalLinesFormula 11 7 7 < 2^(7 - 1) := by decide
+theorem mnk_prime_triple_17_13_11_lines : totalLinesFormula 17 13 11 = 184 := by rfl
+theorem mnk_prime_triple_17_13_11_erdos_bound : totalLinesFormula 17 13 11 < 2^(11 - 1) := by decide
+theorem mnk_prime_triple_19_17_13_lines : totalLinesFormula 19 17 13 = 284 := by rfl
+theorem mnk_prime_triple_19_17_13_erdos_bound : totalLinesFormula 19 17 13 < 2^(13 - 1) := by decide
+
 def lines_3_3_3 : List (List Nat) :=
   [ [0, 1, 2], [3, 4, 5], [6, 7, 8],
     [0, 3, 6], [1, 4, 7], [2, 5, 8],
@@ -227,3 +237,12 @@ theorem sharp_phase_transition_3_n_3 (n : Nat) (hn : 4 <= n) :
 #print axioms cert_3_4_3_max_plies
 #print axioms embed_in_bounds
 #print axioms sharp_phase_transition_3_n_3
+#print axioms mnk_prime_triple_7_5_3_lines
+#print axioms mnk_prime_triple_11_7_5_lines
+#print axioms mnk_prime_triple_13_11_7_lines
+#print axioms mnk_prime_triple_11_7_7_lines
+#print axioms mnk_prime_triple_11_7_7_erdos_bound
+#print axioms mnk_prime_triple_17_13_11_lines
+#print axioms mnk_prime_triple_17_13_11_erdos_bound
+#print axioms mnk_prime_triple_19_17_13_lines
+#print axioms mnk_prime_triple_19_17_13_erdos_bound

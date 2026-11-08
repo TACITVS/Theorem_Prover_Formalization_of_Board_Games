@@ -23,6 +23,15 @@ Print Assumptions mnk_8_4_4_lines.
 Print Assumptions mnk_5_5_4_lines.
 Print Assumptions mnk_8_8_5_lines.
 Print Assumptions mnk_15_15_5_gomoku_lines.
+Print Assumptions mnk_prime_triple_7_5_3_lines.
+Print Assumptions mnk_prime_triple_11_7_5_lines.
+Print Assumptions mnk_prime_triple_13_11_7_lines.
+Print Assumptions mnk_prime_triple_11_7_7_lines.
+Print Assumptions mnk_prime_triple_11_7_7_erdos_bound.
+Print Assumptions mnk_prime_triple_17_13_11_lines.
+Print Assumptions mnk_prime_triple_17_13_11_erdos_bound.
+Print Assumptions mnk_prime_triple_19_17_13_lines.
+Print Assumptions mnk_prime_triple_19_17_13_erdos_bound.
 Print Assumptions lines_3_3_3_count.
 Print Assumptions lines_3_4_3_count.
 Print Assumptions lines_3_4_3_all_len_3.

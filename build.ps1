@@ -45,7 +45,7 @@ if ($joined -match "Axioms:") {
     Write-Host "ERROR: Proof contains unproven axioms or assumptions!" -ForegroundColor Red
     exit 1
 } elseif ($joined -match "Closed under the global context") {
-    Write-Host "SUCCESS: 36/36 theorems closed under global context (0 axioms, 0 admits)!" -ForegroundColor Green
+    Write-Host "SUCCESS: 45/45 theorems closed under global context (0 axioms, 0 admits)!" -ForegroundColor Green
 } else {
     Write-Host "WARNING: Unexpected assumptions output format." -ForegroundColor Yellow
 }
