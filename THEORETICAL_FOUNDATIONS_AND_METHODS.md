@@ -4,8 +4,8 @@
 ### **A Comprehensive Mathematical Monograph on Formal Combinatorial Game Theory in Interactive Theorem Provers**
 
 [![Back to Master Landing Page](https://img.shields.io/badge/⬅_Back_to_Master_Portal-README.md-2563eb?style=for-the-badge)](README.md)
-[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-330_Theorems_Closed_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](README.md)
-[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-162_Theorems_Verified_(0_Sorry)-10b981?style=for-the-badge)](README.md)
+[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-371_Theorems_Closed_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](README.md)
+[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-184_Theorems_Verified_(0_Sorry)-10b981?style=for-the-badge)](README.md)
 
 </div>
 
@@ -333,6 +333,7 @@ The entire mathematical formalization—proving the game-theoretic values of 7 m
 
 | Board Game | Dedicated Branch | Rocq 9.1 Theorems | Lean 4.35 Theorems | Total Theorems | Game-Theoretic Value |
 | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Classic 7×6 Connect-Four** | [**`connect4-7x6`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect4-7x6) | **41 Closed** | **22 Verified** | **63 Theorems** | **Win White** |
 | **8×8 English Draughts** | [**`checkers`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | **59 Closed** | **15 Verified** | **74 Theorems** | **Exact Draw** |
 | **9×7 Connect-5 with Gravity** | [**`connect5-9x7`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-9x7) | **25 Closed** | **15 Verified** | **40 Theorems** | **Exact Draw** |
 | **8×8 Connect-5 with Gravity** | [**`connect5-8x8`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | **26 Closed** | **18 Verified** | **44 Theorems** | **Exact Draw** |
@@ -340,4 +341,4 @@ The entire mathematical formalization—proving the game-theoretic values of 7 m
 | **5×5 Dots and Boxes** | [**`dots-and-boxes`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | **46 Closed** | **24 Verified** | **70 Theorems** | **Exact Draw (8–8)** |
 | **Nine Men's Morris** | [**`nine-mens-morris`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | **65 Closed** | **26 Verified** | **91 Theorems** | **Exact Draw** |
 | **Twelve Men's Morris** | [**`twelve-mens-morris`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) | **85 Closed** | **46 Verified** | **131 Theorems** | **Win White (Ply 8)** |
-| **Total Verified Suite** | **All 7 Branches** | **330 Closed (0 Axioms)** | **162 Verified (0 Sorry)** | **492 Machine Proofs** | **100% Machine-Checked** |
+| **Total Verified Suite** | **All 8 Branches** | **371 Closed (0 Axioms)** | **184 Verified (0 Sorry)** | **555 Machine Proofs** | **100% Machine-Checked** |
