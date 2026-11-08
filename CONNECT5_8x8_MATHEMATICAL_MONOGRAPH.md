@@ -14,9 +14,9 @@
 ---
 
 > [!IMPORTANT]
-> **Executive Summary:** This monograph establishes the formal mathematical solution of **Connect-5 on an $8 \times 8$ board with gravity** ($k = 5$), proving unconditionally that the game is an exact **Draw** ($\text{game\_value} = \text{Draw}$) under optimal play. We present a dual formalization across **Rocq 9.1** (26 theorems verified with 0 axioms and 0 admits) and **Lean 4.35.0** (18 theorems verified with 0 `sorry`s, 0 custom axioms, and 0 `Classical.choice`), together with a C11 exhaustive bitboard verification suite ([`solver/audit_c5_8x8.c`](solver/audit_c5_8x8.c)).
+> **Executive Summary:** This monograph establishes the formal mathematical solution of **Connect-5 on an 8 × 8 board with gravity** (k = 5), proving unconditionally that the game is an exact **Draw** (game_value = Draw) under optimal play. We present a dual formalization across **Rocq 9.1** (26 theorems verified with 0 axioms and 0 admits) and **Lean 4.35.0** (18 theorems verified with 0 `sorry`s, 0 custom axioms, and 0 `Classical.choice`), together with a C11 exhaustive bitboard verification suite ([`solver/audit_c5_8x8.c`](solver/audit_c5_8x8.c)).
 >
-> On the $8 \times 8$ grid, column height is **even** ($H = 8$). This induces an **Even-Height Parity Inversion**: while on $8 \times 7$ the defender faced an odd 55-empty trap requiring horizontal cross-pairs, on $8 \times 8$ Black's opening response at $(4, 0)$ establishes an exact **even count of 62 empty cells**. Consequently, **zero rigid cross-pairs are required**: 100% of the 96 winning lines are covered using **pure vertical dominoes** under the Symmetric Dual-Core configuration (Pattern `00011000`).
+> On the 8 × 8 grid, column height is **even** (H = 8). This induces an **Even-Height Parity Inversion**: while on 8 × 7 the defender faced an odd 55-empty trap requiring horizontal cross-pairs, on 8 × 8 Black's opening response at (4, 0) establishes an exact **even count of 62 empty cells**. Consequently, **zero rigid cross-pairs are required**: 100% of the 96 winning lines are covered using **pure vertical dominoes** under the Symmetric Dual-Core configuration (Pattern `00011000`).
 
 <div align="center">
   <img src="assets/c5_8x8_domino_transversal.svg" alt="The Hilbert-Erdos Pen-and-Paper Proof on 8x8: Symmetric Dual-Core Transversal" width="98%"/>
@@ -40,75 +40,75 @@
 
 ## 1. Hypergraph Geometry of the 8×8 Connect-5 Board
 
-We formulate $8 \times 8$ Connect-5 under standard gravity as a 5-uniform hypergraph $\mathcal{H} = (V, \mathcal{E})$, where:
-- The vertex set $V = \{0, 1, \dots, 7\} \times \{0, 1, \dots, 7\}$ contains $|V| = 64$ cells $(c, r)$.
-- The hyperedge set $\mathcal{E}$ consists of all winning lines of 5 consecutive cells in a straight line:
+We formulate 8 × 8 Connect-5 under standard gravity as a 5-uniform hypergraph H = (V, E), where:
+- The vertex set V = {0, 1, ..., 7} × {0, 1, ..., 7} contains |V| = 64 cells (c, r).
+- The hyperedge set E consists of all winning lines of 5 consecutive cells in a straight line:
 
-$$
-\mathcal{E} = \mathcal{E}_{\text{horiz}} \sqcup \mathcal{E}_{\text{vert}} \sqcup \mathcal{E}_{\text{diag}}^+ \sqcup \mathcal{E}_{\text{diag}}^-
-$$
+```text
+E = E_horiz ⊔ E_vert ⊔ E_diag⁺ ⊔ E_diag⁻
+```
 
 The cardinalities of these subsets are computed directly:
-1. **Horizontal lines ($\mathcal{E}_{\text{horiz}}$):** Each of the 8 rows $r \in \{0, \dots, 7\}$ admits $8 - 5 + 1 = 4$ starting columns $c_0 \in \{0, 1, 2, 3\}$. Thus:
+1. **Horizontal lines (E_horiz):** Each of the 8 rows r ∈ {0, ..., 7} admits 8 - 5 + 1 = 4 starting columns c₀ ∈ {0, 1, 2, 3}. Thus:
 
-$$
-|\mathcal{E}_{\text{horiz}}| = 8 \times 4 = 32
-$$
+```text
+|E_horiz| = 8 × 4 = 32
+```
 
-2. **Vertical lines ($\mathcal{E}_{\text{vert}}$):** Each of the 8 columns $c \in \{0, \dots, 7\}$ admits $8 - 5 + 1 = 4$ starting rows $r_0 \in \{0, 1, 2, 3\}$. Thus:
+2. **Vertical lines (E_vert):** Each of the 8 columns c ∈ {0, ..., 7} admits 8 - 5 + 1 = 4 starting rows r₀ ∈ {0, 1, 2, 3}. Thus:
 
-$$
-|\mathcal{E}_{\text{vert}}| = 8 \times 4 = 32
-$$
+```text
+|E_vert| = 8 × 4 = 32
+```
 
-3. **Ascending diagonal lines ($\mathcal{E}_{\text{diag}}^+$):** Defined by slope $s = +1$. Starting coordinates $(c_0, r_0) \in \{0, 1, 2, 3\} \times \{0, 1, 2, 3\}$. Thus:
+3. **Ascending diagonal lines (E_diag⁺):** Defined by slope s = +1. Starting coordinates (c₀, r₀) ∈ {0, 1, 2, 3} × {0, 1, 2, 3}. Thus:
 
-$$
-|\mathcal{E}_{\text{diag}}^+| = 4 \times 4 = 16
-$$
+```text
+|E_diag⁺| = 4 × 4 = 16
+```
 
-4. **Descending diagonal lines ($\mathcal{E}_{\text{diag}}^-$):** Defined by slope $s = -1$. Starting coordinates $(c_0, r_0) \in \{0, 1, 2, 3\} \times \{4, 5, 6, 7\}$. Thus:
+4. **Descending diagonal lines (E_diag⁻):** Defined by slope s = -1. Starting coordinates (c₀, r₀) ∈ {0, 1, 2, 3} × {4, 5, 6, 7}. Thus:
 
-$$
-|\mathcal{E}_{\text{diag}}^-| = 4 \times 4 = 16
-$$
+```text
+|E_diag⁻| = 4 × 4 = 16
+```
 
 Total winning lines:
 
-$$
-|\mathcal{E}| = 32 + 32 + 16 + 16 = 96
-$$
+```text
+|E| = 32 + 32 + 16 + 16 = 96
+```
 
 ---
 
 ## 2. Even-Height Parity Inversion & The Collapse of Cross-Pairs
 
-A central discovery of this investigation is the mathematical structural divergence between odd-height boards (such as $8 \times 7$) and even-height boards (such as $8 \times 8$):
+A central discovery of this investigation is the mathematical structural divergence between odd-height boards (such as 8 × 7) and even-height boards (such as 8 × 8):
 
 ### 2.1 The Odd-Height Parity Dilemma on 8×7
-On an $8 \times 7$ board ($56$ cells):
-- Player 1 (White) opens at $(3, 0)$, leaving $56 - 1 = 55$ empty cells (an **odd** number).
+On an 8 × 7 board (56 cells):
+- Player 1 (White) opens at (3, 0), leaving 56 - 1 = 55 empty cells (an **odd** number).
 - At every subsequent Black turn, the number of empty cells is odd. By the Pigeonhole Principle, an odd set cannot be partitioned into 2-cell dominoes.
 - To maintain parity, White had to create an odd frozen column suffix via Rule R3, and compensate with horizontal cross-pairs on row 0.
 
 ### 2.2 Even-Height Parity Restoration on 8×8
-On the $8 \times 8$ board ($64$ cells):
-- Total board cells $|V| = 64 \equiv 0 \pmod 2$.
-- After White opens at $(3, 0)$, $63$ empty cells remain (odd).
-- Black's opening response claims the adjacent ground cell $(4, 0)$, leaving:
+On the 8 × 8 board (64 cells):
+- Total board cells |V| = 64 ≡ 0 (mod 2).
+- After White opens at (3, 0), 63 empty cells remain (odd).
+- Black's opening response claims the adjacent ground cell (4, 0), leaving:
 
-$$
-64 - 2 = 62 \equiv 0 \pmod 2
-$$
+```text
+64 - 2 = 62 ≡ 0 (mod 2)
+```
 
 At every subsequent Black defense ply, the number of remaining empty cells is **strictly even**:
 
-$$
-E_{2m} = 64 - 2m = 2(32 - m) \equiv 0 \pmod 2
-$$
+```text
+E₂ₘ = 64 - 2m = 2(32 - m) ≡ 0 (mod 2)
+```
 
-Because the column height $H = 8$ is even, every column naturally partitions into $8 / 2 = 4$ vertical dominoes. Hence:
-> **Zero Rigid Cross-Pairs Theorem:** On the $8 \times 8$ grid, 100% of winning lines can be blocked using **pure vertical dominoes alone**, completely eliminating the need for base-row cross-pairs ($\text{s\_rigid} = []$).
+Because the column height H = 8 is even, every column naturally partitions into 8 / 2 = 4 vertical dominoes. Hence:
+> **Zero Rigid Cross-Pairs Theorem:** On the 8 × 8 grid, 100% of winning lines can be blocked using **pure vertical dominoes alone**, completely eliminating the need for base-row cross-pairs (`s_rigid = []`).
 
 ---
 
@@ -122,24 +122,24 @@ To resolve both parity and line coverage simultaneously, Black adopts the **Symm
 
 ### 3.1 Structural Partition
 1. **Central Columns 3 and 4 (Core 11):**
-   - Rows $1 \dots 6$ partition into 3 vertical dominoes each:
-     - Column 3: $\{((3, 1), (3, 2)), ((3, 3), (3, 4)), ((3, 5), (3, 6))\}$
-     - Column 4: $\{((4, 1), (4, 2)), ((4, 3), (4, 4)), ((4, 5), (4, 6))\}$
-   - Upper guaranteed cells: $r \in \{2, 4, 6\}$ (even rows).
-   - Ground anchor: $(4, 0)$ claimed by Black at Ply 2.
-   - Dead cells: $(3, 7)$ and $(4, 7)$ left unassigned at the top of the columns.
+   - Rows 1 ... 6 partition into 3 vertical dominoes each:
+     - Column 3: {((3, 1), (3, 2)), ((3, 3), (3, 4)), ((3, 5), (3, 6))}
+     - Column 4: {((4, 1), (4, 2)), ((4, 3), (4, 4)), ((4, 5), (4, 6))}
+   - Upper guaranteed cells: r ∈ {2, 4, 6} (even rows).
+   - Ground anchor: (4, 0) claimed by Black at Ply 2.
+   - Dead cells: (3, 7) and (4, 7) left unassigned at the top of the columns.
 
 2. **Flank Columns 0, 1, 2, 5, 6, 7 (Wings 000...000):**
-   - Rows $0 \dots 7$ partition into 4 vertical dominoes each:
-     - $\{((c, 0), (c, 1)), ((c, 2), (c, 3)), ((c, 4), (c, 5)), ((c, 6), (c, 7))\}$
-   - Upper guaranteed cells: $r \in \{1, 3, 5, 7\}$ (odd rows).
+   - Rows 0 ... 7 partition into 4 vertical dominoes each:
+     - {((c, 0), (c, 1)), ((c, 2), (c, 3)), ((c, 4), (c, 5)), ((c, 6), (c, 7))}
+   - Upper guaranteed cells: r ∈ {1, 3, 5, 7} (odd rows).
 
 3. **Cell Budget Accounting:**
-   - 30 vertical dominoes $\times 2 = 60$ cells.
-   - White opening stone at $(3, 0)$: 1 cell.
-   - Black ground anchor at $(4, 0)$: 1 cell.
-   - Unassigned dead cells $(3, 7)$ and $(4, 7)$: 2 cells.
-   - Total: $60 + 1 + 1 + 2 = 64$ cells.
+   - 30 vertical dominoes × 2 = 60 cells.
+   - White opening stone at (3, 0): 1 cell.
+   - Black ground anchor at (4, 0): 1 cell.
+   - Unassigned dead cells (3, 7) and (4, 7): 2 cells.
+   - Total: 60 + 1 + 1 + 2 = 64 cells.
 
 ---
 
@@ -148,37 +148,37 @@ To resolve both parity and line coverage simultaneously, Black adopts the **Symm
 We present the complete analytic proof that the Symmetric Dual-Core structure blocks all 96 winning lines without machine enumeration:
 
 ### Step 1: Vertical Domino Transversal Lemma
-Any vertical winning line spans 5 consecutive rows $[r_0, r_0 + 4]$ with $0 \le r_0 \le 3$:
-- For $r_0 \in \{0, 1, 2, 3\}$, the interval $[r_0, r_0 + 4]$ unconditionally contains $\{3, 4\}$.
-- In central columns 3 and 4, the domino $((c, 3), (c, 4))$ has upper cell $(c, 4)$.
-- In flank columns, the domino $((c, 2), (c, 3))$ has upper cell $(c, 3)$, and $((c, 4), (c, 5))$ has upper cell $(c, 5)$.
+Any vertical winning line spans 5 consecutive rows [r₀, r₀ + 4] with 0 ≤ r₀ ≤ 3:
+- For r₀ ∈ {0, 1, 2, 3}, the interval [r₀, r₀ + 4] unconditionally contains {3, 4}.
+- In central columns 3 and 4, the domino ((c, 3), (c, 4)) has upper cell (c, 4).
+- In flank columns, the domino ((c, 2), (c, 3)) has upper cell (c, 3), and ((c, 4), (c, 5)) has upper cell (c, 5).
 - Therefore, every vertical line in every column contains a full domino and is blocked.
 
 ### Step 2: 5-Column Window Pigeonhole Lemma
-Every non-vertical line spans 5 consecutive columns $[c_0, c_0 + 4]$ for $c_0 \in \{0, 1, 2, 3\}$:
-- Since $c_0 \le 3 < 4 \le c_0 + 4$, every line crosses Column 3 and Column 4.
-- If $c_0 \le 2$, then $2 \in [c_0, c_0 + 4]$ (the line crosses Flank Column 2).
-- If $c_0 = 3$, then $[c_0, c_0 + 4] = [3, 7]$, so $6 \in [3, 7]$ (the line crosses Flank Column 6).
-- Thus, every non-vertical line crosses Column 4 and at least one of $\{2, 6\}$.
+Every non-vertical line spans 5 consecutive columns [c₀, c₀ + 4] for c₀ ∈ {0, 1, 2, 3}:
+- Since c₀ ≤ 3 < 4 ≤ c₀ + 4, every line crosses Column 3 and Column 4.
+- If c₀ ≤ 2, then 2 ∈ [c₀, c₀ + 4] (the line crosses Flank Column 2).
+- If c₀ = 3, then [c₀, c₀ + 4] = [3, 7], so 6 ∈ [3, 7] (the line crosses Flank Column 6).
+- Thus, every non-vertical line crosses Column 4 and at least one of {2, 6}.
 
 ### Step 3: Modulo-2 Parity Split on Column 4 Intercept
-Along any affine line $r(c) = r_4 + s(c - 4)$ with slope $s \in \{-1, 0, 1\}$:
-- **Case A ($r_4$ is EVEN):**
-  Since $0 \le r_4 \le 7$ and $r_4$ is even, $r_4 \in \{0, 2, 4, 6\}$:
-  - If $r_4 = 0$, the line passes through $(4, 0)$, which is Black's ground anchor!
-  - If $r_4 \in \{2, 4, 6\}$, $(4, r_4)$ is an upper cell of a central vertical domino!
+Along any affine line r(c) = r₄ + s(c - 4) with slope s ∈ {-1, 0, 1}:
+- **Case A (r₄ is EVEN):**
+  Since 0 ≤ r₄ ≤ 7 and r₄ is even, r₄ ∈ {0, 2, 4, 6}:
+  - If r₄ = 0, the line passes through (4, 0), which is Black's ground anchor!
+  - If r₄ ∈ {2, 4, 6}, (4, r₄) is an upper cell of a central vertical domino!
   - Thus, 100% of even-intercept lines are blocked directly at Column 4!
-- **Case B ($r_4$ is ODD):**
-  At distance $|c - 4| = 2$ (Columns 2 and 6), the row coordinate is:
+- **Case B (r₄ is ODD):**
+  At distance |c - 4| = 2 (Columns 2 and 6), the row coordinate is:
 
-$$
-r(c) = r_4 \pm 2s \equiv r_4 \equiv 1 \pmod 2
-$$
+```text
+r(c) = r₄ ± 2s ≡ r₄ ≡ 1 (mod 2)
+```
 
   The row coordinate remains strictly **ODD**!
-  - In Flank Columns 2 and 6, Black's upper domino cells are precisely the odd rows $\{1, 3, 5, 7\}$.
-  - By Step 2, the line crosses Column 2 (if $c_0 \le 2$) or Column 6 (if $c_0 = 3$).
-  - Because $0 \le r(c) \le 7$ for all cells of a valid line, $r(c) \in \{1, 3, 5, 7\}$.
+  - In Flank Columns 2 and 6, Black's upper domino cells are precisely the odd rows {1, 3, 5, 7}.
+  - By Step 2, the line crosses Column 2 (if c₀ ≤ 2) or Column 6 (if c₀ = 3).
+  - Because 0 ≤ r(c) ≤ 7 for all cells of a valid line, r(c) ∈ {1, 3, 5, 7}.
   - Thus, 100% of odd-intercept lines are blocked by the flank upper domino cells!
 
 ### Step 4: Completeness
@@ -188,42 +188,42 @@ Every winning line is either vertical (blocked by Step 1), even-intercept non-ve
 
 ## 5. Multi-Blocking of Dead Cells (3, 7) and (4, 7)
 
-Because cells $(3, 7)$ and $(4, 7)$ are left unassigned, we must verify that White cannot exploit them to complete a 5-in-a-row.
+Because cells (3, 7) and (4, 7) are left unassigned, we must verify that White cannot exploit them to complete a 5-in-a-row.
 
 Each dead cell participates in exactly 6 winning lines:
-1. One vertical line: rows $3 \dots 7$ in that column.
-2. Four horizontal lines: row 7, starting at $c_0 \in \{0, 1, 2, 3\}$.
-3. One diagonal line: slope $s = +1$ (for $(4, 7)$, starting at $(0, 3)$).
+1. One vertical line: rows 3 ... 7 in that column.
+2. Four horizontal lines: row 7, starting at c₀ ∈ {0, 1, 2, 3}.
+3. One diagonal line: slope s = +1 (for (4, 7), starting at (0, 3)).
 
-We prove analytically that every single line passing through $(4, 7)$ is **double-blocked** (contains $\ge 2$ guaranteed Black cells):
-- **Vertical line (rows 3..7 in Col 4):** Contains both $(4, 4)$ and $(4, 6)$ from Black's upper domino set.
+We prove analytically that every single line passing through (4, 7) is **double-blocked** (contains ≥ 2 guaranteed Black cells):
+- **Vertical line (rows 3..7 in Col 4):** Contains both (4, 4) and (4, 6) from Black's upper domino set.
 - **Horizontal lines at row 7:**
-  - If $c_0 \le 1$: contains $(1, 7)$ and $(2, 7)$ from flank upper dominoes.
-  - If $c_0 \ge 2$: contains $(5, 7)$ and $(6, 7)$ from flank upper dominoes.
-- **Diagonal line ($s = +1$ through $(4, 7)$):** Cells are $(0, 3), (1, 4), (2, 5), (3, 6), (4, 7)$. Contains $(0, 3)$ (flank odd), $(2, 5)$ (flank odd), and $(3, 6)$ (center even)—triple-blocked!
+  - If c₀ ≤ 1: contains (1, 7) and (2, 7) from flank upper dominoes.
+  - If c₀ ≥ 2: contains (5, 7) and (6, 7) from flank upper dominoes.
+- **Diagonal line (s = +1 through (4, 7)):** Cells are (0, 3), (1, 4), (2, 5), (3, 6), (4, 7). Contains (0, 3) (flank odd), (2, 5) (flank odd), and (3, 6) (center even)—triple-blocked!
 
-By horizontal reflection symmetry, the identical property holds for $(3, 7)$.
+By horizontal reflection symmetry, the identical property holds for (3, 7).
 
 ---
 
 ## 6. The Balanced 16-Move Midgame State b_r2
 
-To provide concrete, machine-verified witnesses of `check_static = true` and `safe` on reachable positions, we construct the balanced 16-move position $b_{r2}$:
+To provide concrete, machine-verified witnesses of `check_static = true` and `safe` on reachable positions, we construct the balanced 16-move position b_r2:
 
-$$
-b_{r2} = \text{play}^*(\text{initial}, \text{moves}_{16})
-$$
+```text
+b_r2 = play*(initial, moves₁₆)
+```
 
-Where central columns 3 and 4 are filled to capacity ($8$ discs each, alternating colors White/Black such that no player ever achieves 2 discs in a row):
+Where central columns 3 and 4 are filled to capacity (8 discs each, alternating colors White/Black such that no player ever achieves 2 discs in a row):
 - Columns 3 and 4: completely full (16 discs).
-- Flank columns 0, 1, 2, 5, 6, 7: completely empty ($6 \times 8 = 48$ cells).
-- Remaining empty cells: $64 - 16 = 48 \equiv 0 \pmod 2$.
+- Flank columns 0, 1, 2, 5, 6, 7: completely empty (6 × 8 = 48 cells).
+- Remaining empty cells: 64 - 16 = 48 ≡ 0 (mod 2).
 
-The 48 empty cells partition into $24$ pure vertical dominoes with zero unassigned cells, validating `check_static` for **both** White and Black simultaneously:
+The 48 empty cells partition into 24 pure vertical dominoes with zero unassigned cells, validating `check_static` for **both** White and Black simultaneously:
 
-$$
-\text{check\_static}(\text{White}, b_{r2}, \text{struct}_{24}) = \text{true} \land \text{check\_static}(\text{Black}, b_{r2}, \text{struct}_{24}) = \text{true}
-$$
+```text
+check_static(White, b_r2, struct₂₄) = true ∧ check_static(Black, b_r2, struct₂₄) = true
+```
 
 ---
 
@@ -266,7 +266,7 @@ All 6 foundational theory files and all 26 theorems verified (26/26 Closed under
 | `book_step3_horizontal_parity_split` | `C5CertChecker.v` | Step 3 horizontal parity split via `lia` | Closed (0 Axioms) |
 | `book_step4_diagonal_parity_alternation` | `C5CertChecker.v` | Step 4 diagonal parity alternation via `lia` | Closed (0 Axioms) |
 | `book_central_wall_decomposition` | `C5CertChecker.v` | 47/64 central wall + 17 flank lines | Closed (0 Axioms) |
-| `book_step5_r3_parity_law_lia` | `C5CertChecker.v` | Parity law $64 - 2k = 2(32 - k)$ | Closed (0 Axioms) |
+| `book_step5_r3_parity_law_lia` | `C5CertChecker.v` | Parity law 64 - 2k = 2(32 - k) | Closed (0 Axioms) |
 | `r3_concrete_check_static_true` | `C5CertChecker.v` | Concrete 48-empty board check_static = true | Closed (0 Axioms) |
 | `r3_concrete_Static` | `C5CertChecker.v` | Unconditional Static witness on 48-empty board | Closed (0 Axioms) |
 | `r3_concrete_cert_safe` | `C5CertChecker.v` | Unconditional safe on 48-empty board | Closed (0 Axioms) |
@@ -324,10 +324,10 @@ An independent C11 verification tool [`solver/audit_c5_8x8.c`](solver/audit_c5_8
 
 ## 🏁 Conclusion
 
-Connect-5 on an $8 \times 8$ board with gravity is a mathematically fair game:
+Connect-5 on an 8 × 8 board with gravity is a mathematically fair game:
 
-$$
-\text{game\_value}(8 \times 8, \text{Connect-5}) = \text{Draw}
-$$
+```text
+game_value(8 × 8, Connect-5) = Draw
+```
 
 The proof is completely machine-verified in **Rocq 9.1** and **Lean 4.35.0** with **zero axioms**, **zero admits**, and **zero sorrys**, standing as a definitive landmark in computational game theory and formal mathematics.
