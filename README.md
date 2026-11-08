@@ -155,6 +155,7 @@ Total On-Disk Storage Footprint          : 0.45 MB
 
 | Board Game | Dedicated Branch | Rocq Theorems | Lean Theorems | Total Proofs | Game Value |
 | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Qubic (4×4×4 3D Tic-Tac-Toe)** | [**`qubic-4x4x4`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/qubic-4x4x4) | **72 Closed** | **27 Verified** | **99 Proofs** | **WIN WHITE** |
 | **Classic 7×6 Connect-Four** *(This Work)* | [**`connect4-7x6`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect4-7x6) | **41 Closed** | **22 Verified** | **63 Proofs** | **WIN WHITE** |
 | **8×8 English Draughts** | [**`checkers`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | **59 Closed** | **15 Verified** | **74 Proofs** | **Exact Draw** |
 | **9×7 Connect-5 with Gravity** | [**`connect5-9x7`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-9x7) | **25 Closed** | **15 Verified** | **40 Proofs** | **Exact Draw** |
@@ -163,7 +164,7 @@ Total On-Disk Storage Footprint          : 0.45 MB
 | **5×5 Dots and Boxes** | [**`dots-and-boxes`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | **46 Closed** | **24 Verified** | **70 Proofs** | **Exact Draw (8–8)** |
 | **Nine Men's Morris** | [**`nine-mens-morris`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | **65 Closed** | **26 Verified** | **91 Proofs** | **Exact Draw** |
 | **Twelve Men's Morris** | [**`twelve-mens-morris`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) | **85 Closed** | **46 Verified** | **131 Proofs** | **Win White (Ply 8)** |
-| **Total Verified Suite** | **All 8 Branches** | **371 Closed (0 Axioms)** | **184 Verified (0 Sorry)** | **555 Machine Proofs** | **100% Machine-Checked** |
+| **Total Verified Suite** | **All 9 Branches** | **443 Closed (0 Axioms)** | **211 Verified (0 Sorry)** | **654 Machine Proofs** | **100% Machine-Checked** |
 
 ---
 
