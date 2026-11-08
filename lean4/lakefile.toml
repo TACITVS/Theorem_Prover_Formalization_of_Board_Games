@@ -1,0 +1,6 @@
+name = "Qubic4x4x4"
+version = "0.1.0"
+defaultTargets = ["Qubic4x4x4"]
+
+[[lean_lib]]
+name = "Qubic4x4x4"

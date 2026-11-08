@@ -1,0 +1,6 @@
+-Q . Qubic
+QubicBoard.v
+QubicSymmetry.v
+QubicThreat.v
+QubicTheorem.v
+CheckAssumptions.v

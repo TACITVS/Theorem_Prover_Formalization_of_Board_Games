@@ -1,0 +1,12 @@
+*.vo
+*.vok
+*.vos
+*.glob
+.coq-native/
+.coqdeps.d
+*.exe
+*.o
+*.lake/
+lean4/.lake/
+.*.aux
+.lia.cache
