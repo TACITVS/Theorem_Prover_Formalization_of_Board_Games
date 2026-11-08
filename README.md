@@ -122,17 +122,17 @@ Our project introduces a **dual formalization methodology** that eliminates trus
 
 ## 🏆 Master Comparative Taxonomy of Verified Board Games
 
-| Dimension / Metric | Classic 7×6 Connect-Four | 8×8 Checkers | 9×7 Connect-5 | 8×8 Connect-5 | 8×7 Connect-5 | 5×5 Dots & Boxes | Nine Men's Morris | Twelve Men's Morris |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Grid / Topology** | 7×6 Grid (42 cells) | 32 Dark Squares | 9×7 Grid (63 cells) | 8×8 Grid (64 cells) | 8×7 Grid (56 cells) | 5×5 Dots (16 Boxes) | 24 Points (3 Rings) | 24 Points (+4 Diags) |
-| **State Space Size** | `~4.53 × 10¹²` | `~5.00 × 10²⁰` | `~8.1 × 10²⁹` | `~3.4 × 10³⁰` | `~1.4 × 10²⁶` | `~1.2 × 10¹¹` | `~1.0 × 10¹⁰` | `~1.5 × 10¹¹` |
-| **Game Value** | **Win White** | **Exact Draw** | **Exact Draw** | **Exact Draw** | **Exact Draw** | **Exact Draw (8–8)** | **Exact Draw** | **Win White** |
-| **Original Solver** | Allen / Allis (1988) | Schaeffer (2007) | *This Work (2026)* | *This Work (2026)* | *This Work (2026)* | Conway/Berlekamp | Gasser (1993) | *This Work (2026)* |
-| **Rocq 9.1 Theorems** | **41 Closed** | **59 Closed** | **25 Closed** | **26 Closed** | **24 Closed** | **46 Closed** | **65 Closed** | **85 Closed** |
-| **Lean 4.35 Theorems** | **22 Verified** | **15 Verified** | **15 Verified** | **18 Verified** | **18 Verified** | **24 Verified** | **26 Verified** | **46 Verified** |
-| **Symmetry Group** | Reflection `x ↔ 6-x` | `V₄` (180° Inversion) | Reflection `x ↔ 8-x` | Reflection `x ↔ 7-x` | Reflection `x ↔ 7-x` | `D₄` (Order 8) | `D₄` (Order 8) | `D₄` (Order 8) |
-| **Axioms / Admits** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** |
-| **Dedicated Branch** | [`connect4-7x6`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect4-7x6) | [`checkers`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | [`connect5-9x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-9x7) | [`connect5-8x8`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) | [`dots-and-boxes`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) |
+| Dimension / Metric | Qubic (4×4×4) | Classic 7×6 Connect-Four | 8×8 Checkers | 9×7 Connect-5 | 8×8 Connect-5 | 8×7 Connect-5 | 5×5 Dots & Boxes | Nine Men's Morris | Twelve Men's Morris |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Grid / Topology** | 4×4×4 Cube (64 cells) | 7×6 Grid (42 cells) | 32 Dark Squares | 9×7 Grid (63 cells) | 8×8 Grid (64 cells) | 8×7 Grid (56 cells) | 5×5 Dots (16 Boxes) | 24 Points (3 Rings) | 24 Points (+4 Diags) |
+| **State Space Size** | `~3.43 × 10³⁰` | `~4.53 × 10¹²` | `~5.00 × 10²⁰` | `~8.1 × 10²⁹` | `~3.4 × 10³⁰` | `~1.4 × 10²⁶` | `~1.2 × 10¹¹` | `~1.0 × 10¹⁰` | `~1.5 × 10¹¹` |
+| **Game Value** | **Win White** | **Win White** | **Exact Draw** | **Exact Draw** | **Exact Draw** | **Exact Draw** | **Exact Draw (8–8)** | **Exact Draw** | **Win White** |
+| **Original Solver** | Patashnik (1980) | Allen / Allis (1988) | Schaeffer (2007) | *This Work (2026)* | *This Work (2026)* | *This Work (2026)* | Conway/Berlekamp | Gasser (1993) | *This Work (2026)* |
+| **Rocq 9.1 Theorems** | **72 Closed** | **41 Closed** | **59 Closed** | **25 Closed** | **26 Closed** | **24 Closed** | **46 Closed** | **65 Closed** | **85 Closed** |
+| **Lean 4.35 Theorems** | **27 Verified** | **22 Verified** | **15 Verified** | **15 Verified** | **18 Verified** | **18 Verified** | **24 Verified** | **26 Verified** | **46 Verified** |
+| **Symmetry Group** | `O_h` (Order 48) | Reflection `x ↔ 6-x` | `V₄` (180° Inversion) | Reflection `x ↔ 8-x` | Reflection `x ↔ 7-x` | Reflection `x ↔ 7-x` | `D₄` (Order 8) | `D₄` (Order 8) | `D₄` (Order 8) |
+| **Axioms / Admits** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** |
+| **Dedicated Branch** | [`qubic-4x4x4`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/qubic-4x4x4) | [`connect4-7x6`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect4-7x6) | [`checkers`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | [`connect5-9x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-9x7) | [`connect5-8x8`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) | [`dots-and-boxes`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) |
 
 ---
 
