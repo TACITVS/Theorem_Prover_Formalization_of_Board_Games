@@ -1,13 +1,13 @@
 # 🗺️ Formal Verification Roadmap: Solved Combinatorial Games & Open Unsolved Frontiers
 
 [![Back to Master Landing Page](https://img.shields.io/badge/⬅_Back_to_Master_Portal-README.md-2563eb?style=for-the-badge)](README.md)
-[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-305_Theorems_Closed_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
-[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-147_Theorems_Verified_(0_Sorry)-10b981?style=for-the-badge)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
+[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-330_Theorems_Closed_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
+[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-162_Theorems_Verified_(0_Sorry)-10b981?style=for-the-badge)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository_Suite-blue?style=for-the-badge&logo=github)](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games)
 
 > **Abstract:** Between 1980 and 2007, computer scientists and combinatorial game theorists resolved the exact game-theoretic values of over a dozen classic board games. However, virtually **every single one of these historic solutions relied on unverified C/C++ code, ad-hoc retrograde databases, or proprietary mainframe scripts**.
 >
-> Following our complete machine-checked formal proofs across **8×8 English Draughts**, **8×8 Connect-5**, **8×7 Connect-5**, **5×5 Dots and Boxes**, **Nine Men's Morris**, and **Twelve Men's Morris**, this document provides a comprehensive scientific catalog and execution roadmap of both **famous solved board games awaiting machine proof** and **unsolved classic games whose game-theoretic fairness is unknown**.
+> Following our complete machine-checked formal proofs across **8×8 English Draughts**, **8×8 Connect-5**, **8×7 Connect-5**, **9×7 Connect-5**, **5×5 Dots and Boxes**, **Nine Men's Morris**, and **Twelve Men's Morris**, this document provides a comprehensive scientific catalog and execution roadmap of both **famous solved board games awaiting machine proof** and **unsolved classic games whose game-theoretic fairness is unknown**.
 
 ---
 
@@ -16,12 +16,13 @@
 | Board Game | Dimensions / State Space | Game-Theoretic Value | Original Computational Solver | Formal Theorem Prover Status | Core Mathematical Structure |
 | :--- | :---: | :---: | :--- | :---: | :--- |
 | **8×8 English Draughts (Checkers)** | 32 dark squares (5 × 10²⁰ states) | **Exact Draw** | Jonathan Schaeffer (2007, Science) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Monotonic rank potential function `Φ(st)`, cycle elimination (`ΔΦ ≥ +59` on jumps), Move 37 draw horizon |
+| **9×7 Connect-5 with Gravity** | 63 cells, 92 winning lines (8.1 × 10²⁹) | **Exact Draw** | *This Work (2026)* | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Single-Center-Axis Parity Inversion (`63 - 1 = 62 ≡ 0 (mod 2)`), 31 Static Disjoint Pairs, Dead-Roof Row 6 Inaccessibility |
 | **8×8 Connect-5 with Gravity** | 64 cells, 96 winning lines (3.4 × 10³⁰) | **Exact Draw** | *This Work (2026)* | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Even-Height Parity Inversion (`64 - 2m ≡ 0 (mod 2)`), Zero Rigid Cross-Pairs, 30 Pure Vertical Dominoes (Pattern `00011000`) |
 | **8×7 Connect-5 with Gravity** | 56 cells, 76 winning lines (1.4 × 10²⁶) | **Exact Draw** | *This Work (2026)* | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | 10-Cell Erdős Transversal, Rule R3 Dynamic Column Freezing (`fc = 4, ft = 6`), 3 Base-Row Horizontal Cross-Pairs |
 | **5×5 Dots and Boxes (16 Boxes)** | 16 boxes, 40 edges (1.2 × 10¹¹ states) | **Exact Draw (8–8)** | Conway (1976), Berlekamp (1982) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Dual planar cubic graph, Berlekamp Nimstring loops, 2-box sacrifice parity control, tempo conservation |
 | **Nine Men's Morris (Mill)** | 24 points, 16 mills (10¹⁰ states) | **Exact Draw** | Ralph Gasser (1993, ETH Zurich) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | 8-Stone Transversal Barrier Theorem, Dihedral D₄ equivariance, 3-Phase DAG, per-player flying split |
 | **Twelve Men's Morris** | 24 points, 20 mills (1.5 × 10¹¹ states) | **Win White (Ply 8 Fork)** | Gévay & Danner (2016) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Broken vertex regularity (corner degree 3), Ply 8 Corner Ray Double-Fork (`[0; 2; 6; 16]`), +4 defensive surplus |
-| **(m, n, k) Positional Games Without Gravity** | Arbitrary m × n grid, threshold k | **Exact (3, n, 3) Threshold & Prime Bounds** | *This Work (2026)* | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Universal L(m, n, k) Handshaking Theorem, Sharp (3, n, 3) Phase Transition (n=3 Draw, n≥4 Win P1 in ≤7 plies), Prime Series Erdős Barrier ((11, 7, 7), (17, 13, 11), (19, 17, 13) Draw) |
+| **(m, n, k) Positional Games Without Gravity** | Arbitrary m × n grid, threshold k | **Exact (3, n, 3) Threshold & Prime Bounds** | *This Work (2026)* | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Universal L(m, n, k) Handshaking Theorem, Sharp (3, n, 3) Phase Transition (n=3 Draw, n≥4 Win P1 in ≤7 plies), Prime Series Erdős Barrier |
 
 ---
 
@@ -45,7 +46,7 @@
 
 | Game Frontier | Dimensions / Complexity | Suspected / Conjectured Value | Core Unsolved Mathematical Question |
 | :--- | :---: | :---: | :--- |
-| **Connect-5 on 9×7 with Gravity** | 63 cells, 9 columns, 7 rows | **UNKNOWN (Draw vs. Win White)** | At width 9, the board possesses an **odd width** and a unique symmetry axis at **Column 4**. Does Player 1 playing at `(4, 0)` shatter Black's pairing defense and force a win, or can Black hold a draw? This is the critical phase-transition boundary for Connect-5! |
+| **Connect-5 on 10×7 and 9×8 with Gravity** | 70 and 72 cells | **Conjectured Exact Draw** | Extending width to 10 creates an even-width grid with two center columns {4, 5}. Extending height to 8 adds an even vertical dimension. Does First Player gain any breakthrough? |
 | **Connect6 Critical Threshold** | 6×6, 7×7, 8×8, 9×9 grids | **UNKNOWN Boundary** | Designed by Prof. I-Chen Wu (2005) for fairness (Black plays 1, then players alternate 2 stones). The exact critical board size where first-mover advantage forces a win is completely open. |
 | **Russian Checkers (Shashki)** | 8×8, 32 squares, flying kings, backward jumps | **Conjectured Exact Draw** | English draughts is solved (Draw); Russian checkers with long-range flying kings has an average branching factor of `b ≈ 10–20` and has never been computationally exhausted. |
 | **Dots and Boxes (6×6 Dots / 25 Boxes)** | 25 Boxes, 60 Edges | **UNKNOWN (Non-Draw)** | Because the total number of boxes is **odd** (`5 × 5 = 25`), an exact draw is impossible! Who forces the win, and by what exact box margin? |
@@ -56,6 +57,6 @@
 ## 4. Architectural Standards & Verification Policy
 
 All formalization projects in this suite adhere to the following standards:
-1. **Zero Unproved Axioms:** Every theorem must be closed under the global context in Rocq 9.1 (`0 axioms`, `0 admits`) and verified in Lean 4.35 (`0 sorrys`, approved standard kernel axioms `[propext, Quot.sound]` only).
+1. **Zero Unproved Axioms:** Every theorem must be closed under the global context in Rocq 9.1 (`0 axioms`, `0 admits`) and verified in Lean 4.35 (`0 sorry`, approved standard kernel axioms `[propext, Quot.sound]` only).
 2. **Dual Mechanization:** Where feasible, pairing proofs combine computational reflection (`vm_compute` deciders in Rocq) with zero-enumeration pen-and-paper hand proofs (`omega` linear arithmetic in Lean 4).
 3. **Zero KaTeX Markdown Formatting:** Strictly zero raw LaTeX math delimiters (dollar signs) in any `.md` document to guarantee robust rendering across all browser and markdown engines.

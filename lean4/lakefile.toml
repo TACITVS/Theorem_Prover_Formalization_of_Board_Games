@@ -1,0 +1,6 @@
+name = "Connect5_9x7"
+version = "0.1.0"
+defaultTargets = ["Connect5_9x7"]
+
+[[lean_lib]]
+name = "Connect5_9x7"
