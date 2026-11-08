@@ -230,6 +230,8 @@ Explore the sibling formalizations across dedicated branches in this repository:
 
 | Branch | Game | Value | Provers | Key Result |
 | :--- | :--- | :---: | :---: | :--- |
+| [**`qubic-4x4x4`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/qubic-4x4x4) | Qubic (4×4×4 3D Tic-Tac-Toe) | Win White | Rocq 9.1 + Lean 4 | O_h Symmetry Orbits, Transversal tau >= 11, Double-Threat Fork |
+| [**`connect4-7x6`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect4-7x6) | Classic 7×6 Connect-Four | Win White | Rocq 9.1 + Lean 4 | Claimeven 57-Line Kill, Center Col 3 Pigeonhole, Zugzwang Parity |
 | [**`checkers`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | 8×8 English Checkers | Draw | Rocq 9.1 + Lean 4 | Monotonic Lyapunov Rank Potential `Phi(st)` (`Delta Phi >= +59`) |
 | [**`connect5-8x8`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | 8×8 Connect-5 with Gravity | Draw | Rocq 9.1 + Lean 4 | Even-Height Parity Inversion, Zero Cross-Pairs (Pattern `00011000`) |
 | [**`connect5-8x7`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) | 8×7 Connect-5 with Gravity | Draw | Rocq 9.1 + Lean 4 | 10-Cell Erdős Transversal, Rule R3 Freezing (`fc = 4, ft = 6`) |
