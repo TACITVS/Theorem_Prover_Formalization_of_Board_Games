@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5x5x5 3D Tic-Tac-Toe: Interactive Board &amp; Graph Viewer</title>
+  <style>
+    :root {
+      --bg: #030712;
+      --card-bg: rgba(15, 23, 42, 0.85);
+      --border: #334155;
+      --text: #f8fafc;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    /* Sticky Top Control Toolbar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .header-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .controls-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+    .control-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #94a3b8;
+    }
+    button {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent);
+      color: #ffffff;
+    }
+    input[type="range"] {
+      accent-color: var(--accent);
+      cursor: pointer;
+      width: 110px;
+    }
+    .val-badge {
+      display: inline-block;
+      min-width: 44px;
+      text-align: right;
+      font-family: monospace;
+      color: var(--accent);
+    }
+    /* Viewer Container */
+    #viewer-container {
+      flex: 1;
+      width: 100%;
+      overflow: auto;
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      background: radial-gradient(circle at 50% 20%, #0c152e 0%, #030712 80%);
+    }
+    #svg-wrapper {
+      transform-origin: top center;
+      transition: transform 0.15s ease-out;
+      width: 100%;
+      max-width: 1800px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    #svg-wrapper object,
+    #svg-wrapper svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    footer {
+      background: #090d16;
+      border-top: 1px solid #1e293b;
+      padding: 12px 24px;
+      font-size: 0.8rem;
+      color: #64748b;
+      text-align: center;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="header-title">
+      <span>🎲 5x5x5 3D Tic-Tac-Toe Board Topography</span>
+    </div>
+
+    <div class="controls-group">
+      <!-- Zoom Controls -->
+      <div class="control-item">
+        <label for="zoomSlider">🔍 Graph Zoom:</label>
+        <button id="zoomOutBtn">-</button>
+        <input type="range" id="zoomSlider" min="50" max="250" value="100" step="5">
+        <button id="zoomInBtn">+</button>
+        <span class="val-badge" id="zoomVal">100%</span>
+      </div>
+
+      <!-- Reset -->
+      <button id="resetBtn">↺ Reset</button>
+
+      <!-- Lettering Scale -->
+      <div class="control-item">
+        <label for="fontSlider">🔤 Lettering Scale:</label>
+        <input type="range" id="fontSlider" min="70" max="180" value="100" step="5">
+        <span class="val-badge" id="fontVal">100%</span>
+      </div>
+
+      <!-- Fullscreen -->
+      <button id="fullscreenBtn">⛶ Fullscreen</button>
+    </div>
+  </header>
+
+  <main id="viewer-container">
+    <div id="svg-wrapper">
+      <object id="boardObj" data="qubic_5x5x5_board.svg" type="image/svg+xml" width="100%"></object>
+    </div>
+  </main>
+
+  <footer>
+    Dual Formal Verification: Rocq 9.1 (65 Theorems, 0 Axioms) &amp; Lean 4.35 (26 Theorems, 0 Sorry) |
+    Branch: <a href="https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/qubic-5x5x5" target="_blank"><code>qubic-5x5x5</code></a>
+  </footer>
+
+  <script>
+    const zoomSlider = document.getElementById('zoomSlider');
+    const zoomVal = document.getElementById('zoomVal');
+    const zoomInBtn = document.getElementById('zoomInBtn');
+    const zoomOutBtn = document.getElementById('zoomOutBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const fontSlider = document.getElementById('fontSlider');
+    const fontVal = document.getElementById('fontVal');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const svgWrapper = document.getElementById('svg-wrapper');
+    const boardObj = document.getElementById('boardObj');
+
+    let currentZoom = 100;
+
+    function applyZoom(z) {
+      currentZoom = Math.max(50, Math.min(250, z));
+      zoomSlider.value = currentZoom;
+      zoomVal.textContent = currentZoom + '%';
+      svgWrapper.style.transform = `scale(${currentZoom / 100})`;
+      svgWrapper.style.width = currentZoom > 100 ? `${currentZoom}%` : '100%';
+    }
+
+    zoomSlider.addEventListener('input', (e) => applyZoom(Number(e.target.value)));
+    zoomInBtn.addEventListener('click', () => applyZoom(currentZoom + 15));
+    zoomOutBtn.addEventListener('click', () => applyZoom(currentZoom - 15));
+    resetBtn.addEventListener('click', () => {
+      applyZoom(100);
+      applyFontScale(100);
+    });
+
+    function applyFontScale(fs) {
+      fontSlider.value = fs;
+      fontVal.textContent = fs + '%';
+      try {
+        const svgDoc = boardObj.contentDocument;
+        if (svgDoc) {
+          const texts = svgDoc.querySelectorAll('text');
+          texts.forEach(t => {
+            if (!t.dataset.origSize) {
+              const cs = window.getComputedStyle(t).fontSize;
+              t.dataset.origSize = parseFloat(cs) || 14;
+            }
+            const orig = parseFloat(t.dataset.origSize);
+            t.style.fontSize = (orig * (fs / 100)) + 'px';
+          });
+        }
+      } catch (err) {
+        console.warn('SVG DOM access restricted by origin policy:', err);
+      }
+    }
+
+    fontSlider.addEventListener('input', (e) => applyFontScale(Number(e.target.value)));
+
+    boardObj.addEventListener('load', () => {
+      applyFontScale(100);
+    });
+
+    fullscreenBtn.addEventListener('click', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => console.error(err));
+        fullscreenBtn.textContent = '✕ Exit Fullscreen';
+      } else {
+        document.exitFullscreen().catch(err => console.error(err));
+        fullscreenBtn.textContent = '⛶ Fullscreen';
+      }
+    });
+
+    document.addEventListener('fullscreenchange', () => {
+      if (!document.fullscreenElement) {
+        fullscreenBtn.textContent = '⛶ Fullscreen';
+      }
+    });
+  </script>
+</body>
+</html>
