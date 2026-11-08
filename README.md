@@ -497,6 +497,24 @@ cp connect5_8x7_fairness.pdf connect5_8x7_fairness_ACS.pdf
 
 ---
 
+## 🌐 Cross-Branch Game Suite Portal
+
+Explore the sibling formalizations across dedicated branches in this repository:
+
+| Branch | Game | Value | Provers | Key Result |
+| :--- | :--- | :---: | :---: | :--- |
+| [**`qubic-4x4x4`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/qubic-4x4x4) | Qubic (4×4×4 3D Tic-Tac-Toe) | Win White | Rocq 9.1 + Lean 4 | O_h Symmetry Orbits, Transversal tau >= 11, Double-Threat Fork |
+| [**`connect4-7x6`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect4-7x6) | Classic 7×6 Connect-Four | Win White | Rocq 9.1 + Lean 4 | Claimeven 57-Line Kill, Center Col 3 Pigeonhole, Zugzwang Parity |
+| [**`connect5-9x7`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-9x7) | 9×7 Connect-5 with Gravity | Draw | Rocq 9.1 + Lean 4 | Single-Center-Axis Parity Inversion, 31 Static Pairs |
+| [**`connect5-8x8`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | 8×8 Connect-5 with Gravity | Draw | Rocq 9.1 + Lean 4 | Even-Height Parity Inversion, Zero Cross-Pairs (Pattern `00011000`) |
+| [**`connect5-8x7`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) *(This Branch)* | **8×7 Connect-5 with Gravity** | **Draw** | **Rocq 9.1 + Lean 4** | **10-Cell Erdős Transversal, Rule R3 Freezing (`fc = 4, ft = 6`)** |
+| [**`dots-and-boxes`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | 5×5 Dots and Boxes | Draw (8–8) | Rocq 9.1 + Lean 4 | Berlekamp Double-Deal Sacrifice, Planar Cubic Graph Duality |
+| [**`checkers`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | 8×8 English Checkers | Draw | Rocq 9.1 + Lean 4 | Monotonic Lyapunov Rank Potential `Phi(st)` (`Delta Phi >= +59`) |
+| [**`twelve-mens-morris`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) | Twelve Men's Morris | Win White | Rocq 9.1 + Lean 4 | Broken Regularity, Ply 8 Forced Opening Mill Double-Fork |
+| [**`nine-mens-morris`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | Nine Men's Morris | Draw | Rocq 9.1 + Lean 4 | 8-Stone Transversal Barrier Theorem, Dihedral D₄ Equivariance |
+
+---
+
 ## 📚 Citation & License
 
 ### BibTeX
