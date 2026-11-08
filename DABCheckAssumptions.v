@@ -11,7 +11,7 @@
 
 From DAB Require Import DABUniversal DAB16Graph DABGame.
 
-(** Universal n x n Theorems *)
+(** Universal n x n Theorems (20) *)
 Print Assumptions euler_characteristic_universal.
 Print Assumptions edge_decomposition_universal.
 Print Assumptions box_incidence_sum_universal.
@@ -33,8 +33,10 @@ Print Assumptions dab_6x6_tempo_surplus.
 Print Assumptions berlekamp_double_deal_sacrifice.
 Print Assumptions berlekamp_parity_control.
 
-(** 5x5 Dots / 4x4 Boxes Grid Graph Theorems *)
+(** 5x5 Dots / 4x4 Boxes Grid Graph Theorems (15) *)
 Print Assumptions box_edges_length.
+Print Assumptions box_edges_nodup.
+Print Assumptions box_edges_bound.
 Print Assumptions rot_edge_bound.
 Print Assumptions rot_order_4.
 Print Assumptions refl_edge_bound.
@@ -43,13 +45,20 @@ Print Assumptions dihedral_relation.
 Print Assumptions boundary_list_length.
 Print Assumptions boundary_count_matches_universal.
 Print Assumptions interior_count_matches_universal.
+Print Assumptions rot_preserves_boundary.
+Print Assumptions refl_preserves_boundary.
 Print Assumptions dual_box_degree_4.
 Print Assumptions total_box_edge_incidences_16.
 
-(** Operational Semantics & Inductive Game Invariants *)
+(** Operational Semantics & Inductive Game Invariants (11) *)
 Print Assumptions step_edge_monotonic.
 Print Assumptions step_distinct_edges.
 Print Assumptions initial_state_empty.
 Print Assumptions step_score_monotonic.
-Print Assumptions step_score_sum.
+Print Assumptions max_two_boxes_per_edge.
 Print Assumptions max_game_depth_40.
+Print Assumptions step_score_sum.
+Print Assumptions completed_boxes_step.
+Print Assumptions step_score_equals_completed_boxes.
+Print Assumptions all_edges_complete_all_boxes.
+Print Assumptions terminal_score_sum_16.

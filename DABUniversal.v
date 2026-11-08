@@ -9,10 +9,11 @@
     1. Planar Euler characteristic theorem: V(n) - E(n) + F(n) = 2.
     2. Edge decomposition: Boundary edges + Interior edges = Total edges.
     3. Box incidence double-counting law: 1*Bnd + 2*Int = 4*Boxes.
-    4. Planar dual graph degree regularity.
-    5. Game score conservation law: Score1 + Score2 = n^2.
+    4. Planar dual graph vertex, edge, and box degree identities.
+    5. Game score bounds from score conservation (s1 + s2 = n^2).
     6. Parity dichotomy: Odd n strictly forbids draws; Even n admits draws.
     7. Move tempo conservation: e0 - e2 = n*(n + 2).
+    8. Berlekamp long-chain double-dealing sacrifice arithmetic invariants.
     
     Zero unproven axioms, zero admissions (Closed under global context).
     ************************************************************************** *)
@@ -95,7 +96,7 @@ Qed.
 Definition dual_vertices (n : nat) : nat := boxes_count n + 1.
 Definition dual_edges (n : nat) : nat := edges_count n.
 
-(** Dual graph has exactly the same number of edges as the primal graph. *)
+(** Dual graph has the same number of edges as the primal grid graph. *)
 Theorem dual_edges_equal_primal : forall n : nat,
   dual_edges n = edges_count n.
 Proof.
@@ -109,14 +110,14 @@ Proof.
   intros n. reflexivity.
 Qed.
 
-(** In the dual graph, every interior box vertex has degree 4. *)
+(** Constant representing the 4 bounding edges of each unit box. *)
 Definition box_degree : nat := 4.
 
 Theorem box_regular_degree : box_degree = 4.
 Proof. reflexivity. Qed.
 
 (** **************************************************************************
-    5. Game Score Conservation Law
+    5. Game Score Bounds under Score Conservation
     ************************************************************************** *)
 
 Inductive player : Type := White | Black.
@@ -130,7 +131,7 @@ Definition opp (p : player) : player :=
 Lemma opp_involutive : forall p : player, opp (opp p) = p.
 Proof. destruct p; reflexivity. Qed.
 
-(** In any completed game, the sum of boxes captured equals n^2. *)
+(** Given terminal score conservation s1 + s2 = n^2, each player's score is bounded by n^2. *)
 Theorem score_conservation_universal : forall (n s1 s2 : nat),
   s1 + s2 = boxes_count n ->
   s1 <= boxes_count n /\ s2 <= boxes_count n.
@@ -252,13 +253,12 @@ Proof.
 Qed.
 
 (** **************************************************************************
-    8. Berlekamp Long-Chain Parity Invariant
+    8. Berlekamp Long-Chain Sacrifice Arithmetic Invariants
     ************************************************************************** *)
 
 (** Let C be the number of long chains (k >= 3) and L be the number of loops.
-    Each double-deal sacrifices 2 boxes per long chain and 4 boxes per loop.
-    The controller captures the remaining boxes:
-    B_controlled = B_total - 2*C - 4*L + (final chain retention). *)
+    Each double-deal sacrifices 2 boxes per long chain and 4 boxes per loop,
+    giving total sacrificed boxes 2*C + 4*L = 2*(C + 2*L). *)
 Theorem berlekamp_double_deal_sacrifice : forall (C L : nat),
   2 * C + 4 * L = 2 * (C + 2 * L).
 Proof.

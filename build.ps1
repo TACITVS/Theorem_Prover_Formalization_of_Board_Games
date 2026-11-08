@@ -27,7 +27,12 @@ foreach ($f in $files) {
     Write-Host " OK" -ForegroundColor Green
     if ($f -eq "DABCheckAssumptions.v") {
         $closed_count = ($output | Select-String "Closed under the global context").Count
-        Write-Host "Closed under the global context ($closed_count/37 theorems audited)" -ForegroundColor Yellow
+        $expected_count = (Select-String -Path "DABCheckAssumptions.v" -Pattern "^Print Assumptions").Count
+        Write-Host "Closed under the global context ($closed_count/$expected_count theorems audited)" -ForegroundColor Yellow
+        if ($closed_count -ne $expected_count) {
+            Write-Error "Expected $expected_count closed theorems, got $closed_count"
+            exit 1
+        }
     }
 }
 

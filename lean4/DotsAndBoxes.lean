@@ -6,14 +6,15 @@
      - Planar Euler characteristic: V(n) - E(n) + F(n) = 2.
      - Edge classification: 4n boundary edges + 2n(n-1) interior edges = 2n(n+1) total edges.
      - Box incidence double-counting: 1*Bnd + 2*Int = 4*Boxes.
-     - Game score conservation: Score1 + Score2 = n^2.
+     - Game score bounds from score conservation: s1 + s2 = n^2 -> s1 <= n^2 /\ s2 <= n^2.
      - Parity dichotomy: Odd n strictly forbids draws; Even n admits draws.
      - Tempo surplus conservation: e0 - e2 = n*(n + 2).
-     - Berlekamp long-chain double-dealing sacrifice principle.
+     - Berlekamp long-chain double-dealing sacrifice arithmetic invariants.
   2. Concrete 5x5 dots / 4x4 boxes grid graph (25 dots, 40 edges, 16 boxes):
-     - Exact edge coordinates (20 horizontal, 20 vertical).
-     - D4 dihedral automorphism group: rotation order 4, reflection order 2, dihedral commutation.
-     - Dual graph 4-regularity for all 16 boxes.
+     - Exact edge coordinates (20 horizontal, 20 vertical) and 4-edge box boundaries.
+     - D4 dihedral automorphism group: rotation order 4, reflection order 2, dihedral commutation,
+       and invariance of boundary vs. interior edge classification.
+     - Dual graph 4-regularity and distinctness of the 4 bounding edges for all 16 boxes.
   
   Zero 'sorry' keywords, approved kernel axioms only: [propext, Quot.sound].
 -/
@@ -97,7 +98,7 @@ theorem box_incidence_sum_universal (n : Nat) (_hn : n ≥ 1) :
     omega
   omega
 
-/-- Score Conservation: In any completed play, sum of scores equals n^2. -/
+/-- Score Bounds under Conservation: If s1 + s2 = n^2, both scores are bounded by n^2. -/
 theorem score_conservation_universal (n s1 s2 : Nat) (h : s1 + s2 = boxesCount n) :
     s1 ≤ boxesCount n ∧ s2 ≤ boxesCount n := by
   omega
@@ -175,6 +176,21 @@ def numBoxes : Nat := 16
 def hEdge (r c : Nat) : Nat := 4 * r + c
 def vEdge (r c : Nat) : Nat := 20 + 5 * r + c
 
+def boxEdges (b : Nat) : List Nat :=
+  let r := b / 4
+  let c := b % 4
+  [hEdge r c, hEdge (r + 1) c, vEdge r c, vEdge r (c + 1)]
+
+/-- Every box in the 4x4 grid has 4 bounding edges (dual degree 4). -/
+theorem dual_box_degree_4 (b : Nat) : (boxEdges b).length = 4 := rfl
+
+theorem box_edges_pairwise_fin : ∀ (b : Fin 16), List.Pairwise (· ≠ ·) (boxEdges b.val) := by
+  decide
+
+/-- For every box b < 16, its 4 incident edges are pairwise distinct. -/
+theorem box_edges_nodup (b : Nat) (h : b < 16) : List.Pairwise (· ≠ ·) (boxEdges b) :=
+  box_edges_pairwise_fin ⟨b, h⟩
+
 def rotEdge (e : Nat) : Nat :=
   if e < 20 then
     let r := e / 4
@@ -222,6 +238,30 @@ theorem dihedral_commutation (e : Nat) (h : e < 40) :
     rotEdge (reflEdge e) = reflEdge (rotEdge (rotEdge (rotEdge e))) :=
   dihedral_commutation_fin ⟨e, h⟩
 
+def isBoundaryEdge (e : Nat) : Bool :=
+  match e with
+  | 0 | 1 | 2 | 3 | 16 | 17 | 18 | 19 => true
+  | 20 | 24 | 25 | 29 | 30 | 34 | 35 | 39 => true
+  | _ => false
+
+theorem rot_preserves_boundary_fin : ∀ (e : Fin 40),
+    isBoundaryEdge (rotEdge e.val) = isBoundaryEdge e.val := by
+  decide
+
+/-- 90-degree rotation preserves boundary vs. interior edge classification. -/
+theorem rot_preserves_boundary (e : Nat) (h : e < 40) :
+    isBoundaryEdge (rotEdge e) = isBoundaryEdge e :=
+  rot_preserves_boundary_fin ⟨e, h⟩
+
+theorem refl_preserves_boundary_fin : ∀ (e : Fin 40),
+    isBoundaryEdge (reflEdge e.val) = isBoundaryEdge e.val := by
+  decide
+
+/-- Vertical reflection preserves boundary vs. interior edge classification. -/
+theorem refl_preserves_boundary (e : Nat) (h : e < 40) :
+    isBoundaryEdge (reflEdge e) = isBoundaryEdge e :=
+  refl_preserves_boundary_fin ⟨e, h⟩
+
 /-- 4x4 Grid has exactly 16 boundary edges. -/
 theorem boundary_count_16 : boundaryEdges 4 = 16 := by
   unfold boundaryEdges
@@ -240,7 +280,7 @@ theorem total_incidences_64 : numBoxes * 4 = 64 := by
 end DotsAndBoxes
 
 -- ============================================================================
--- Axiom Audits
+-- Axiom Audits (24 Theorems)
 -- ============================================================================
 
 #print axioms DotsAndBoxes.euler_characteristic_universal
@@ -257,9 +297,13 @@ end DotsAndBoxes
 #print axioms DotsAndBoxes.dab_6x6_tempo_surplus
 #print axioms DotsAndBoxes.berlekamp_double_deal_sacrifice
 #print axioms DotsAndBoxes.berlekamp_parity_control
+#print axioms DotsAndBoxes.dual_box_degree_4
+#print axioms DotsAndBoxes.box_edges_nodup
 #print axioms DotsAndBoxes.rot_order_4
 #print axioms DotsAndBoxes.refl_order_2
 #print axioms DotsAndBoxes.dihedral_commutation
+#print axioms DotsAndBoxes.rot_preserves_boundary
+#print axioms DotsAndBoxes.refl_preserves_boundary
 #print axioms DotsAndBoxes.boundary_count_16
 #print axioms DotsAndBoxes.interior_count_24
 #print axioms DotsAndBoxes.total_incidences_64

@@ -6,13 +6,13 @@
     
     Covers:
     1. Canonical coordinate indexing: 20 horizontal edges, 20 vertical edges.
-    2. 16 boxes with exact 4-edge boundaries.
+    2. 16 boxes with exact 4-edge boundaries and pairwise distinctness (NoDup).
     3. Partition into 16 boundary edges and 24 interior edges.
     4. D4 dihedral automorphism group:
        - 90-degree rotation R (order 4)
        - Vertical reflection S (order 2)
        - Dihedral commutation relation: R * S = S * R^3
-    5. Invariance of box boundaries under D4 automorphisms.
+    5. Invariance of boundary vs. interior classification under D4 actions.
     6. Dual graph 4-regularity for all 16 boxes.
     
     Zero unproven axioms, zero admissions (Closed under global context).
@@ -46,6 +46,28 @@ Theorem box_edges_length : forall b : nat,
   length (box_edges b) = 4.
 Proof.
   intros b. unfold box_edges. reflexivity.
+Qed.
+
+(** Every box b < 16 has 4 pairwise distinct incident edges. *)
+Theorem box_edges_nodup : forall b : nat,
+  b < 16 -> NoDup (box_edges b).
+Proof.
+  intros b Hb.
+  do 16 (destruct b as [|b]; [
+    unfold box_edges, h_edge, v_edge; simpl;
+    repeat (constructor; [simpl; intuition discriminate|]);
+    apply NoDup_nil
+  |]).
+  lia.
+Qed.
+
+(** Every incident edge of a box b < 16 is a valid edge index < 40. *)
+Theorem box_edges_bound : forall b e : nat,
+  b < 16 -> In e (box_edges b) -> e < 40.
+Proof.
+  intros b e Hb Hin.
+  do 16 (destruct b as [|b]; [vm_compute in Hin; intuition lia|]).
+  lia.
 Qed.
 
 (** **************************************************************************
@@ -136,7 +158,7 @@ Proof.
 Qed.
 
 (** **************************************************************************
-    5. Boundary vs. Interior Edge Classification
+    5. Boundary vs. Interior Edge Classification & D4 Invariance
     ************************************************************************** *)
 
 Definition is_boundary_edge (e : nat) : bool :=
@@ -164,11 +186,31 @@ Proof.
   unfold num_edges, boundary_list, interior_edges. simpl. reflexivity.
 Qed.
 
+(** 90-degree rotation preserves boundary vs. interior edge classification. *)
+Theorem rot_preserves_boundary : forall e : nat,
+  e < 40 ->
+  is_boundary_edge (rot_edge e) = is_boundary_edge e.
+Proof.
+  intros e He.
+  do 40 (destruct e as [|e]; [vm_compute; reflexivity|]).
+  lia.
+Qed.
+
+(** Vertical reflection preserves boundary vs. interior edge classification. *)
+Theorem refl_preserves_boundary : forall e : nat,
+  e < 40 ->
+  is_boundary_edge (refl_edge e) = is_boundary_edge e.
+Proof.
+  intros e He.
+  do 40 (destruct e as [|e]; [vm_compute; reflexivity|]).
+  lia.
+Qed.
+
 (** **************************************************************************
     6. Dual Graph 4-Regularity Theorem
     ************************************************************************** *)
 
-(** In the dual graph, every box is bounded by 4 edges. *)
+(** In the dual graph, every box is bounded by 4 distinct edges. *)
 Theorem dual_box_degree_4 : forall b : nat,
   b < 16 -> length (box_edges b) = 4.
 Proof.

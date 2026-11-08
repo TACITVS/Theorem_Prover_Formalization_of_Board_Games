@@ -21,11 +21,10 @@
     <style type="text/css">
       <![CDATA[
       /* Timeline: 16s infinite loop */
-      /* 0s - 3s: Setup of 3-box chain */
-      /* 3s - 6s: Greedy Trap Demonstration */
-      /* 6s - 10s: Berlekamp Step 1 (Capture Box 1) */
-      /* 10s - 13s: Berlekamp Step 2 (The Double-Deal Sacrifice Move) */
-      /* 13s - 16s: P2 Forced Handout and Parity Retained */
+      /* 0s - 3s: Setup of 3-box chain (x=340, x=480, x=620 open) */
+      /* 3s - 6s: Move 1 (P1 draws x=340, captures Box 1, earns bonus turn) */
+      /* 6s - 10s: Move 2 (P1 SACRIFICE draws far outer edge x=620, leaving x=480 as a doubleton) */
+      /* 10s - 16s: Move 3 (P2 ACCEPT draws dividing edge x=480, capturing Box 2 & Box 3, forced to open next chain) */
 
       .txt-title { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 800; fill: #f8fafc; }
       .txt-sub   { font-family: 'Segoe UI', system-ui, sans-serif; font-weight: 500; fill: #94a3b8; }
@@ -33,41 +32,38 @@
 
       /* Animation keyframes */
       @keyframes animEdgeB1 {
-        0%, 30% { opacity: 0; stroke-dashoffset: 140; }
-        35%, 100% { opacity: 1; stroke-dashoffset: 0; stroke: #38bdf8; }
+        0%, 20% { opacity: 0; stroke-dashoffset: 140; }
+        26%, 100% { opacity: 1; stroke-dashoffset: 0; stroke: #38bdf8; }
       }
       @keyframes animFillB1 {
-        0%, 34% { opacity: 0; transform: scale(0.8); }
-        38%, 100% { opacity: 0.85; transform: scale(1); }
+        0%, 24% { opacity: 0; transform: scale(0.8); }
+        30%, 100% { opacity: 0.85; transform: scale(1); }
       }
       @keyframes animEdgeSacrifice {
-        0%, 55% { opacity: 0; stroke-dashoffset: 140; }
-        60%, 100% { opacity: 1; stroke-dashoffset: 0; stroke: #f43f5e; }
+        0%, 42% { opacity: 0; stroke-dashoffset: 140; }
+        48%, 100% { opacity: 1; stroke-dashoffset: 0; stroke: #f59e0b; }
+      }
+      @keyframes animEdgeAccept {
+        0%, 66% { opacity: 0; stroke-dashoffset: 140; }
+        72%, 100% { opacity: 1; stroke-dashoffset: 0; stroke: #f43f5e; }
       }
       @keyframes animFillB2B3 {
-        0%, 75% { opacity: 0; transform: scale(0.8); }
-        80%, 100% { opacity: 0.85; transform: scale(1); }
-      }
-      @keyframes animStatusText {
-        0%, 25% { opacity: 1; }
-        26%, 29% { opacity: 0; }
-        30%, 54% { opacity: 1; }
-        55%, 59% { opacity: 0; }
-        60%, 100% { opacity: 1; }
+        0%, 71% { opacity: 0; transform: scale(0.8); }
+        77%, 100% { opacity: 0.85; transform: scale(1); }
       }
       @keyframes animGreedyAlert {
-        0%, 5% { opacity: 0; transform: translateY(-10px); }
-        10%, 26% { opacity: 1; transform: translateY(0); }
-        30%, 100% { opacity: 0; transform: translateY(10px); }
+        0%, 3% { opacity: 0; transform: translateY(-10px); }
+        8%, 22% { opacity: 1; transform: translateY(0); }
+        26%, 100% { opacity: 0; transform: translateY(10px); }
       }
       @keyframes animBerlekampAlert {
-        0%, 32% { opacity: 0; transform: translateY(-10px); }
-        36%, 70% { opacity: 1; transform: translateY(0); }
-        75%, 100% { opacity: 0; transform: translateY(10px); }
+        0%, 26% { opacity: 0; transform: translateY(-10px); }
+        31%, 64% { opacity: 1; transform: translateY(0); }
+        68%, 100% { opacity: 0; transform: translateY(10px); }
       }
       @keyframes animParityWinAlert {
-        0%, 73% { opacity: 0; transform: translateY(-10px); }
-        78%, 95% { opacity: 1; transform: translateY(0); }
+        0%, 68% { opacity: 0; transform: translateY(-10px); }
+        73%, 95% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(10px); }
       }
 
@@ -83,8 +79,12 @@
         stroke-dasharray: 140;
         animation: animEdgeSacrifice 16s infinite ease-in-out;
       }
+      .edge-accept {
+        stroke-dasharray: 140;
+        animation: animEdgeAccept 16s infinite ease-in-out;
+      }
       .fill-b2b3 {
-        transform-origin: 550px 300px;
+        transform-origin: 480px 300px;
         animation: animFillB2B3 16s infinite cubic-bezier(0.34, 1.56, 0.64, 1);
       }
 
@@ -118,23 +118,23 @@
     <g class="alert-greedy">
       <rect x="-320" y="-18" width="640" height="36" rx="18" fill="#7f1d1d" stroke="#ef4444" stroke-width="1.5" />
       <text y="5" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#fecaca">
-        ⚠️ GREEDY TRAP: Taking all 3 boxes forces you to open the next chain, losing tempo!
+        GREEDY TRAP: Taking all 3 boxes forces you to open the next chain, losing tempo!
       </text>
     </g>
 
     <!-- State 2: Berlekamp Move Announced -->
     <g class="alert-berlekamp">
-      <rect x="-340" y="-18" width="680" height="36" rx="18" fill="#064e3b" stroke="#10b981" stroke-width="1.5" />
+      <rect x="-360" y="-18" width="720" height="36" rx="18" fill="#064e3b" stroke="#10b981" stroke-width="1.5" />
       <text y="5" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#a7f3d0">
-        ✨ BERLEKAMP DOUBLE-DEAL: P1 captures Box 1, then sacrifices Box 2 &amp; Box 3!
+        BERLEKAMP DOUBLE-DEAL: P1 takes Box 1 (x=340), then plays far edge (x=620) leaving a doubleton!
       </text>
     </g>
 
     <!-- State 3: Parity Retained Victory -->
     <g class="alert-parity">
-      <rect x="-350" y="-18" width="700" height="36" rx="18" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" />
+      <rect x="-360" y="-18" width="720" height="36" rx="18" fill="#1e1b4b" stroke="#6366f1" stroke-width="1.5" />
       <text y="5" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#e0e7ff">
-        🎯 PARITY RETAINED: P2 must take 2 boxes and is FORCED to open the next chain!
+        PARITY RETAINED: P2 draws dividing edge (x=480) for 2 boxes and MUST open the next chain!
       </text>
     </g>
   </g>
@@ -143,22 +143,25 @@
   <!-- Box 1: (200, 230) to (340, 370) [w=140, h=140] -->
   <!-- Box 2: (340, 230) to (480, 370) [w=140, h=140] -->
   <!-- Box 3: (480, 230) to (620, 370) [w=140, h=140] -->
-  <!-- Outer dead end at right or top -->
   <g transform="translate(80, 0)">
-    <!-- Base Chain Existing Edges (Pre-played, Gray #475569) -->
-    <!-- Box 1 Edges: Top, Bottom, Left existing; Right (340, 230-370) open initially -->
+    <!-- Initially Open Vertical Edges (Dashed Guides at x=340, x=480, x=620) -->
+    <line x1="340" y1="230" x2="340" y2="370" stroke="#334155" stroke-width="2" stroke-dasharray="6,6" />
+    <line x1="480" y1="230" x2="480" y2="370" stroke="#334155" stroke-width="2" stroke-dasharray="6,6" />
+    <line x1="620" y1="230" x2="620" y2="370" stroke="#334155" stroke-width="2" stroke-dasharray="6,6" />
+
+    <!-- Base Chain Existing Edges (Pre-played, Solid Gray #475569) -->
+    <!-- Box 1 Existing Edges: Top, Bottom, Left (Right x=340 is open initially) -->
     <line x1="200" y1="230" x2="340" y2="230" stroke="#475569" stroke-width="4" stroke-linecap="round" />
     <line x1="200" y1="370" x2="340" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round" />
     <line x1="200" y1="230" x2="200" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round" />
 
-    <!-- Box 2 Edges: Top, Bottom existing -->
+    <!-- Box 2 Existing Edges: Top, Bottom (Left x=340 and Right x=480 are open initially) -->
     <line x1="340" y1="230" x2="480" y2="230" stroke="#475569" stroke-width="4" stroke-linecap="round" />
     <line x1="340" y1="370" x2="480" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round" />
 
-    <!-- Box 3 Edges: Top, Bottom, Right existing -->
+    <!-- Box 3 Existing Edges: Top, Bottom (Left x=480 and Far Outer Right x=620 are open initially) -->
     <line x1="480" y1="230" x2="620" y2="230" stroke="#475569" stroke-width="4" stroke-linecap="round" />
     <line x1="480" y1="370" x2="620" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round" />
-    <line x1="620" y1="230" x2="620" y2="370" stroke="#475569" stroke-width="4" stroke-linecap="round" />
 
     <!-- Box 1 Captured Fill (P1 Cyan) -->
     <rect class="fill-b1" x="204" y="234" width="132" height="132" rx="8" fill="#0284c7" opacity="0" />
@@ -166,7 +169,7 @@
       P1 (+1)
     </text>
 
-    <!-- Box 2 & Box 3 Sacrificed Fill (P2 Rose) -->
+    <!-- Box 2 & Box 3 Sacrificed Doubleton Fill (P2 Rose) -->
     <g class="fill-b2b3" opacity="0">
       <rect x="344" y="234" width="132" height="132" rx="8" fill="#be123c" opacity="0.85" />
       <text class="txt-title" x="410" y="308" font-size="20" text-anchor="middle" fill="#f8fafc">
@@ -179,12 +182,14 @@
       </text>
     </g>
 
-    <!-- Move 1 (P1 completes Box 1 at x=340, y=230..370): Blue glowing line -->
+    <!-- Move 1 (P1 completes Box 1 at x=340, y=230..370, earning a bonus turn): Cyan glowing line -->
     <line class="edge-b1" x1="340" y1="230" x2="340" y2="370" stroke="#38bdf8" stroke-width="6" stroke-linecap="round" filter="url(#glowCyan)" />
 
-    <!-- Move 2 (P1 Double-Deal Sacrifice: instead of playing vertical dividing line, plays horizontal or dividing boundary) -->
-    <!-- In standard 3-box chain double-deal: P1 plays dividing line x=480, creating a doubleton! -->
-    <line class="edge-sacrifice" x1="480" y1="230" x2="480" y2="370" stroke="#f43f5e" stroke-width="6" stroke-linecap="round" filter="url(#glowRose)" />
+    <!-- Move 2 (P1 SACRIFICE draws far outer edge x=620, leaving dividing edge x=480 open as a doubleton): Amber glowing line -->
+    <line class="edge-sacrifice" x1="620" y1="230" x2="620" y2="370" stroke="#f59e0b" stroke-width="6" stroke-linecap="round" filter="url(#glowAmber)" />
+
+    <!-- Move 3 (P2 ACCEPT draws dividing edge x=480, capturing both Box 2 and Box 3 simultaneously): Rose glowing line -->
+    <line class="edge-accept" x1="480" y1="230" x2="480" y2="370" stroke="#f43f5e" stroke-width="6" stroke-linecap="round" filter="url(#glowRose)" />
 
     <!-- Dot Lattice (4x2 = 8 dots) -->
     <g fill="#f8fafc">
@@ -193,16 +198,19 @@
     </g>
 
     <!-- Annotation Labels -->
-    <text x="270" y="405" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#38bdf8" text-anchor="middle">Box 1</text>
-    <text x="410" y="405" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#cbd5e1" text-anchor="middle">Box 2</text>
-    <text x="550" y="405" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#cbd5e1" text-anchor="middle">Box 3</text>
+    <text x="270" y="405" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#38bdf8" text-anchor="middle">Box 1 (P1)</text>
+    <text x="410" y="405" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#cbd5e1" text-anchor="middle">Box 2 (Doubleton)</text>
+    <text x="550" y="405" font-family="'Segoe UI', sans-serif" font-size="13" font-weight="700" fill="#cbd5e1" text-anchor="middle">Box 3 (Doubleton)</text>
 
     <!-- Move Indicator Labels -->
-    <g transform="translate(340, 215)" text-anchor="middle">
-      <text font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Move 1 (P1)</text>
+    <g transform="translate(340, 210)" text-anchor="middle">
+      <text font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Move 1: P1 (+1)</text>
     </g>
-    <g transform="translate(480, 215)" text-anchor="middle">
-      <text font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#f43f5e">Move 2: SACRIFICE (P1)</text>
+    <g transform="translate(480, 210)" text-anchor="middle">
+      <text font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#f43f5e">Move 3: ACCEPT (P2 +2)</text>
+    </g>
+    <g transform="translate(620, 210)" text-anchor="middle">
+      <text font-family="'Segoe UI', sans-serif" font-size="11" font-weight="700" fill="#f59e0b">Move 2: SACRIFICE (P1)</text>
     </g>
   </g>
 
@@ -213,10 +221,10 @@
       Berlekamp's Parity Theorem: S = (2·C + 4·L) Total Sacrificed Boxes
     </text>
     <text y="5" font-size="12" fill="#94a3b8">
-      In every long chain (length ≥ 3), sacrificing exactly 2 boxes hands the final-capture turn back to the opponent.
+      In a 3-box chain, P1 takes Box 1 (x=340) and draws the far edge (x=620), leaving the shared divider (x=480) open.
     </text>
     <text y="28" font-size="12" font-weight="600" fill="#38bdf8">
-      The opponent scores 2 points, but is compelled to open the next closed territory, securing the game for the double-dealer.
+      P2 captures the 2-box doubleton at x=480 (+2 points), but is compelled to open the next closed chain!
     </text>
   </g>
 </svg>

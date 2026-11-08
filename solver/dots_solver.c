@@ -5,10 +5,11 @@
  * Implements:
  * 1. Exact 40-bit edge bitboards and 16-bit box completion detection.
  * 2. Strict Double-Turn bonus move operational semantics.
- * 3. Zobrist transposition table with depth-preferred replacement.
- * 4. Alpha-Beta minimax solver with move ordering (captures first).
- * 5. Berlekamp chain detection and double-dealing sacrifice evaluation.
- * 6. Endgame depth-solving benchmarks and 8-8 draw certificate generator.
+ * 3. Transposition table keyed on remaining position (edges, turn) with explicit
+ *    validity/bound flags (TT_EMPTY, TT_EXACT, TT_LOWER, TT_UPPER).
+ * 4. Alpha-Beta minimax solver computing remaining score differential from
+ *    `edges` onward (path-independent).
+ * 5. Cross-verification against TT-free negamax search and Berlekamp sacrifice.
  */
 
 #include <stdio.h>
@@ -32,6 +33,8 @@ static uint64_t box_edges[NUM_BOXES];
 static uint16_t edge_boxes_mask[NUM_EDGES]; // Which boxes contain edge e
 
 static void init_dab_tables(void) {
+    memset(box_edges, 0, sizeof(box_edges));
+    memset(edge_boxes_mask, 0, sizeof(edge_boxes_mask));
     for (int r = 0; r < N; r++) {
         for (int c = 0; c < N; c++) {
             int b = 4 * r + c;
@@ -41,10 +44,10 @@ static void init_dab_tables(void) {
             uint32_t rt = v_edge(r, c + 1);
 
             box_edges[b] = (1ULL << t) | (1ULL << bt) | (1ULL << l) | (1ULL << rt);
-            edge_boxes_mask[t] |= (1U << b);
-            edge_boxes_mask[bt] |= (1U << b);
-            edge_boxes_mask[l] |= (1U << b);
-            edge_boxes_mask[rt] |= (1U << b);
+            edge_boxes_mask[t] |= (uint16_t)(1U << b);
+            edge_boxes_mask[bt] |= (uint16_t)(1U << b);
+            edge_boxes_mask[l] |= (uint16_t)(1U << b);
+            edge_boxes_mask[rt] |= (uint16_t)(1U << b);
         }
     }
 }
@@ -53,12 +56,19 @@ static void init_dab_tables(void) {
 #define TT_SIZE (1 << 22) // 4M entries (~64MB)
 #define TT_MASK (TT_SIZE - 1)
 
+enum {
+    TT_EMPTY = 0,
+    TT_EXACT = 1,
+    TT_LOWER = 2,
+    TT_UPPER = 3
+};
+
 typedef struct {
     uint64_t edge_key;
     int8_t depth;
     int8_t turn;
-    int8_t score_diff; // (score[turn] - score[1 - turn]) from this point onward
-    uint8_t flag;      // 0 = EXACT, 1 = LOWERBOUND, 2 = UPPERBOUND
+    int8_t score_diff; // remaining (score[turn] - score[1 - turn]) from `edges` onward
+    uint8_t flag;      // TT_EMPTY = 0, TT_EXACT = 1, TT_LOWER = 2, TT_UPPER = 3
 } TTEntry;
 
 static TTEntry tt[TT_SIZE];
@@ -90,8 +100,9 @@ static int generate_moves(uint64_t edges, Move moves[NUM_EDGES]) {
 
         while (bmask) {
             int b = __builtin_ctz(bmask);
-            bmask &= bmask - 1;
-            if ((new_edges & box_edges[b]) == box_edges[b]) {
+            bmask &= (uint16_t)(bmask - 1U);
+            if ((edges & box_edges[b]) != box_edges[b] &&
+                (new_edges & box_edges[b]) == box_edges[b]) {
                 captured++;
             }
         }
@@ -101,7 +112,7 @@ static int generate_moves(uint64_t edges, Move moves[NUM_EDGES]) {
         bmask = edge_boxes_mask[e];
         while (bmask) {
             int b = __builtin_ctz(bmask);
-            bmask &= bmask - 1;
+            bmask &= (uint16_t)(bmask - 1U);
             int pop = __builtin_popcountll(new_edges & box_edges[b]);
             if (pop == 3) {
                 danger++;
@@ -128,22 +139,24 @@ static int generate_moves(uint64_t edges, Move moves[NUM_EDGES]) {
     return count;
 }
 
-// Alpha-Beta Search for remaining score margin from current position:
+// Alpha-Beta Search for remaining score margin from current `edges` position onward:
 // Returns: max achievable (current_player_remaining_score - opponent_remaining_score)
 static int solve_position(uint64_t edges, int p1_score, int p2_score, int turn, int alpha, int beta, int depth) {
+    (void)p1_score;
+    (void)p2_score;
     total_nodes++;
 
     if (edges == ALL_EDGES_MASK) {
-        return (turn == 0) ? (p1_score - p2_score) : (p2_score - p1_score);
+        return 0;
     }
 
-    // Lookup TT
-    uint32_t tt_idx = (uint32_t)((edges ^ (turn ? 0xAAAAAAAAAAAAAAAAULL : 0)) & TT_MASK);
+    // Lookup TT (path-independent: depends strictly on `edges` and `turn`)
+    uint32_t tt_idx = (uint32_t)((edges ^ (turn ? 0xAAAAAAAAAAAAAAAAULL : 0ULL)) & TT_MASK);
     TTEntry *ent = &tt[tt_idx];
-    if (ent->edge_key == edges && ent->turn == turn && ent->depth >= depth) {
-        if (ent->flag == 0) return ent->score_diff;
-        if (ent->flag == 1 && ent->score_diff > alpha) alpha = ent->score_diff;
-        if (ent->flag == 2 && ent->score_diff < beta) beta = ent->score_diff;
+    if (ent->flag != TT_EMPTY && ent->edge_key == edges && ent->turn == turn) {
+        if (ent->flag == TT_EXACT) return ent->score_diff;
+        if (ent->flag == TT_LOWER && ent->score_diff > alpha) alpha = ent->score_diff;
+        if (ent->flag == TT_UPPER && ent->score_diff < beta) beta = ent->score_diff;
         if (alpha >= beta) return ent->score_diff;
     }
 
@@ -162,8 +175,7 @@ static int solve_position(uint64_t edges, int p1_score, int p2_score, int turn, 
         uint16_t bmask = edge_boxes_mask[e];
         while (bmask) {
             int b = __builtin_ctz(bmask);
-            bmask &= bmask - 1;
-            // Only count if box was NOT completed before and IS completed now
+            bmask &= (uint16_t)(bmask - 1U);
             if ((edges & box_edges[b]) != box_edges[b] &&
                 (next_edges & box_edges[b]) == box_edges[b]) {
                 captured++;
@@ -173,13 +185,10 @@ static int solve_position(uint64_t edges, int p1_score, int p2_score, int turn, 
         int val;
         if (captured > 0) {
             // Bonus move: same player moves again (DOUBLE-TURN RULE)
-            int np1 = p1_score + (turn == 0 ? captured : 0);
-            int np2 = p2_score + (turn == 1 ? captured : 0);
-            val = solve_position(next_edges, np1, np2, turn, alpha, beta, depth + 1);
+            val = captured + solve_position(next_edges, 0, 0, turn, alpha - captured, beta - captured, depth + 1);
         } else {
             // Turn switches to opponent
-            int next_val = solve_position(next_edges, p1_score, p2_score, 1 - turn, -beta, -alpha, depth + 1);
-            val = -next_val;
+            val = -solve_position(next_edges, 0, 0, 1 - turn, -beta, -alpha, depth + 1);
         }
 
         if (val > best_val) {
@@ -198,10 +207,45 @@ static int solve_position(uint64_t edges, int p1_score, int p2_score, int turn, 
     ent->depth = (int8_t)depth;
     ent->turn = (int8_t)turn;
     ent->score_diff = (int8_t)best_val;
-    if (best_val <= orig_alpha) ent->flag = 2; // UPPERBOUND
-    else if (best_val >= beta) ent->flag = 1;  // LOWERBOUND
-    else ent->flag = 0;                        // EXACT
+    if (best_val <= orig_alpha) ent->flag = TT_UPPER;
+    else if (best_val >= beta) ent->flag = TT_LOWER;
+    else ent->flag = TT_EXACT;
 
+    return best_val;
+}
+
+// Reference negamax without TT for cross-verification on shallow endgames
+static int solve_no_tt(uint64_t edges, int turn, int alpha, int beta) {
+    if (edges == ALL_EDGES_MASK) {
+        return 0;
+    }
+    Move moves[NUM_EDGES];
+    int nmoves = generate_moves(edges, moves);
+    int best_val = -100;
+
+    for (int i = 0; i < nmoves; i++) {
+        int e = moves[i].edge;
+        uint64_t next_edges = edges | (1ULL << e);
+        int captured = 0;
+        uint16_t bmask = edge_boxes_mask[e];
+        while (bmask) {
+            int b = __builtin_ctz(bmask);
+            bmask &= (uint16_t)(bmask - 1U);
+            if ((edges & box_edges[b]) != box_edges[b] &&
+                (next_edges & box_edges[b]) == box_edges[b]) {
+                captured++;
+            }
+        }
+        int val;
+        if (captured > 0) {
+            val = captured + solve_no_tt(next_edges, turn, alpha - captured, beta - captured);
+        } else {
+            val = -solve_no_tt(next_edges, 1 - turn, -beta, -alpha);
+        }
+        if (val > best_val) best_val = val;
+        if (val > alpha) alpha = val;
+        if (alpha >= beta) break;
+    }
     return best_val;
 }
 
@@ -216,27 +260,34 @@ int main(void) {
 
     // Benchmark 1: Test Endgame Solution with 10 edges remaining
     printf("[Benchmark 1] Solving Endgame with 10 Edges Remaining (Depth 30/40)...\n");
-    // Pre-play 30 edges randomly or symmetrically
     uint64_t test_edges = 0;
     // Set 30 edges: all horizontal except top 2, and 12 vertical edges
     for (int i = 0; i < 18; i++) test_edges |= (1ULL << i);
     for (int i = 20; i < 32; i++) test_edges |= (1ULL << i);
 
-    int init_p1 = 0, init_p2 = 0;
+    int init_p1 = 0, init_p2 = 0, init_boxes = 0;
     for (int b = 0; b < NUM_BOXES; b++) {
         if ((test_edges & box_edges[b]) == box_edges[b]) {
-            if (b % 2 == 0) init_p1++; else init_p2++;
+            if (init_boxes % 2 == 0) init_p1++; else init_p2++;
+            init_boxes++;
         }
     }
 
     clock_t t0 = clock();
-    int result = solve_position(test_edges, init_p1, init_p2, 0, -16, 16, 0);
+    int rem_diff = solve_position(test_edges, 0, 0, 0, -16, 16, 0);
     clock_t t1 = clock();
     double secs = (double)(t1 - t0) / CLOCKS_PER_SEC;
 
-    printf("  -> Result (P1 margin): %+d\n", result);
-    printf("  -> Nodes searched: %llu\n", (unsigned long long)total_nodes);
-    printf("  -> Time: %.4f seconds (%.0f nodes/sec)\n\n", secs, secs > 0 ? total_nodes / secs : 0);
+    int ref_diff = solve_no_tt(test_edges, 0, -16, 16);
+    assert(rem_diff == ref_diff);
+
+    int total_margin = (init_p1 - init_p2) + rem_diff;
+    printf("  -> Remaining boxes margin (P1 - P2): %+d (cross-checked with TT-free search: %+d)\n",
+           rem_diff, ref_diff);
+    printf("  -> Total game margin (including %d pre-completed boxes): %+d\n",
+           init_boxes, total_margin);
+    printf("  -> Nodes searched (with TT): %llu\n", (unsigned long long)total_nodes);
+    printf("  -> Time: %.4f seconds\n\n", secs);
 
     // Benchmark 2: Symmetrical 8-8 Draw Certificate
     printf("[Benchmark 2] Verifying Parity Admissibility & Draw Equivalence...\n");

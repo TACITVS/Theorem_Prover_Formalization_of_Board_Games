@@ -1,7 +1,7 @@
-name = "NineMensMorris"
+name = "DotsAndBoxes"
 version = "0.1.0"
-defaultTargets = ["NineMensMorris"]
+defaultTargets = ["DotsAndBoxes"]
 
 [[lean_lib]]
-name = "NineMensMorris"
+name = "DotsAndBoxes"
 srcDir = "."
