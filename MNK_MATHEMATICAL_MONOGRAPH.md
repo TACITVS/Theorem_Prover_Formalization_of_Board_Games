@@ -1,76 +1,74 @@
-# Universal Formalization, Hypergraph Geometry, and the Sharp Phase Transition of (m, n, k) Games Without Gravity
+# Universal Formalization, Hypergraph Geometry, and the Sharp Phase Transition of $(m, n, k)$ Games Without Gravity
 
 **Authors:** Formal Mathematics & Combinatorial Game Theory Research Initiative  
 **System Verification:** Rocq Prover 9.1 (45 / 45 Theorems Closed) | Lean 4.35.0 (26 / 26 Theorems Verified)  
 **Computational Engine:** 64-bit Bitboard Negamax Verifier with Transposition Table  
-**Typography Standard:** Universal Zero-Dollar Delimiter Standard (100% KaTeX Browser-Safe)
+**Typography Standard:** Classic LaTeX Mathematical Typesetting (Native MathJax / KaTeX)
 
 ---
 
 ## 1. Abstract & Novel Breakthrough Summary
 
-We present the complete formalization of the universal family of positional maker-maker (m, n, k) games without gravity in both the **Rocq Prover 9.1** and **Lean 4.35.0**. Unlike games with piece removal, captures, or directional gravity constraints, (m, n, k) games possess monotone winning sets: stones placed on the board are permanent, and extra stones can never harm the player who placed them.
+We present the complete formalization of the universal family of positional maker-maker $(m, n, k)$ games without gravity in both the **Rocq Prover 9.1** and **Lean 4.35.0**. Unlike games with piece removal, captures, or directional gravity constraints, $(m, n, k)$ games possess monotone winning sets: stones placed on the board are permanent, and extra stones can never harm the player who placed them.
 
 ### Master Novel Contributions:
 1. **The Sharp Dimension-Threshold Theorem for Width-3 Boards:**
-   We establish and formally verify the exact critical dimension threshold for width-3 positional grids:
-   ```text
-   Value(3, n, 3) = DRAW                       for n = 3  (Classic Tic-Tac-Toe)
-   Value(3, n, 3) = WIN FOR PLAYER 1 (<= 7 plies) for all n >= 4
-   ```
-   Adding a single column to the drawn 3x3 Tic-Tac-Toe grid triggers an immediate, irreversible phase transition to a forced First-Player Win.
+   We establish and formally verify the exact critical dimension threshold for width-$3$ positional grids:
+
+   $$
+   \begin{aligned}
+   \mathrm{Value}(3, n, 3) &= \mathrm{DRAW} & (n = 3, \text{ Classic Tic-Tac-Toe}) \\
+   \mathrm{Value}(3, n, 3) &= \mathrm{WIN}_{P1} \quad (\le 7 \text{ plies}) & (\forall n \ge 4)
+   \end{aligned}
+   $$
+
+   Adding a single column to the drawn $3 \times 3$ Tic-Tac-Toe grid triggers an immediate, irreversible phase transition to a forced First-Player Win.
 2. **The 132-Node Machine-Checked Certificate:**
-   For (3, 4, 3), we synthesize and formally verify an exhaustive 132-node winning strategy certificate tree that accounts for 100% of Player 2's legal responses, proving that Player 1 guarantees victory at or before Ply 7.
+   For $(3, 4, 3)$, we synthesize and formally verify an exhaustive 132-node winning strategy certificate tree that accounts for 100% of Player 2's legal responses, proving that Player 1 guarantees victory at or before Ply 7.
 3. **The Subgrid Monotone Projection Theorem:**
-   We prove that Player 1's 7-ply winning strategy on 3x4 projects into any 3xn board (for all n >= 4). Because any response by Player 2 outside the 3x4 core has column c >= 4, it intersects exactly zero winning lines of the 3x4 core. Therefore, Player 1 ignores exterior moves as wasted dummy turns, establishing a uniform 7-ply upper bound for the entire infinite family (3, n, 3) for all n >= 4.
+   We prove that Player 1's 7-ply winning strategy on $3 \times 4$ projects into any $3 \times n$ board (for all $n \ge 4$). Because any response by Player 2 outside the $3 \times 4$ core has column $c \ge 4$, it intersects exactly zero winning lines of the $3 \times 4$ core. Therefore, Player 1 ignores exterior moves as wasted dummy turns, establishing a uniform 7-ply upper bound for the entire infinite family $(3, n, 3)$ for all $n \ge 4$.
 4. **Universal Hypergraph Line-Counting & Handshaking Identity:**
-   We formalize the exact closed-form line counting formula L(m, n, k) and prove the Hypergraph Handshaking Lemma:
-   ```text
-   Sum_{r=0}^{m-1} Sum_{c=0}^{n-1} deg(r, c) = k * L(m, n, k)
-   ```
-   verifying landmark instances from 3x3 (8 lines) to 15x15 Gomoku (572 lines).
+   We formalize the exact closed-form line counting formula $\mathcal{L}(m, n, k)$ and prove the Hypergraph Handshaking Lemma:
+
+   $$
+   \sum_{r=0}^{m-1} \sum_{c=0}^{n-1} \deg(r, c) = k \cdot \mathcal{L}(m, n, k)
+   $$
+
+   verifying landmark instances from $3 \times 3$ (8 lines) to $15 \times 15$ Gomoku (572 lines).
 5. **Prime Dimensions & The Asymptotic Prime Triple Fair-Game Law:**
-   We establish the relationship between prime dimensions and game-theoretic value, formally verifying that consecutive prime triples (p_{i+2}, p_{i+1}, p_i) transition from First-Player Wins at p_i = 3 to provable, unconditional Fair Games (Exact Draws) for all p_i >= 11 via the Erdős-Selfridge pairing barrier.
+   We establish the relationship between prime dimensions and game-theoretic value, formally verifying that consecutive prime triples $(p_{i+2}, p_{i+1}, p_i)$ transition from First-Player Wins at $p_i = 3$ to provable, unconditional Fair Games (Exact Draws) for all $p_i \ge 11$ via the Erdős-Selfridge pairing barrier.
 
 ---
 
 ## 2. Hypergraph Topology & Line Counting
 
-An (m, n, k) game is played on a rectangular grid of m rows and n columns. Two players, P1 and P2, alternately claim unoccupied cells. The first player to complete an unbroken straight line of k consecutive stones (horizontal, vertical, or diagonal) wins immediately.
+An $(m, n, k)$ game is played on a rectangular grid of $m$ rows and $n$ columns. Two players, P1 and P2, alternately claim unoccupied cells. The first player to complete an unbroken straight line of $k$ consecutive stones (horizontal, vertical, or diagonal) wins immediately.
 
-```text
-+-------------------------------------------------------------------------------+
-|                    LINE CATEGORIES IN AN (m, n, k) GRID                       |
-+-------------------+-----------------------------+-----------------------------+
-| Direction         | Valid Start Intervals       | Exact Line Count Formula    |
-+-------------------+-----------------------------+-----------------------------+
-| Horizontal        | r in [0, m), c <= n - k     | m * (n - k + 1)             |
-| Vertical          | r <= m - k, c in [0, n)     | n * (m - k + 1)             |
-| Main Diagonal     | r <= m - k, c <= n - k      | (m - k + 1) * (n - k + 1)   |
-| Anti-Diagonal     | k - 1 <= r < m, c <= n - k  | (m - k + 1) * (n - k + 1)   |
-+-------------------+-----------------------------+-----------------------------+
-| TOTAL LINES L     | m, n >= k                   | m(n-k+1) + n(m-k+1) +       |
-|                   |                             | 2(m-k+1)(n-k+1)             |
-+-------------------+-----------------------------+-----------------------------+
-```
+| Direction | Valid Start Range | Exact Line Count Formula |
+| :--- | :--- | :--- |
+| **Horizontal** | $r \in [0, m), \; c \le n - k$ | $m(n - k + 1)$ |
+| **Vertical** | $r \le m - k, \; c \in [0, n)$ | $n(m - k + 1)$ |
+| **Main Diagonal ($\searrow$)** | $r \le m - k, \; c \le n - k$ | $(m - k + 1)(n - k + 1)$ |
+| **Anti-Diagonal ($\nearrow$)** | $k - 1 \le r < m, \; c \le n - k$ | $(m - k + 1)(n - k + 1)$ |
+| **TOTAL LINES $\mathcal{L}(m, n, k)$** | $m, n \ge k$ | $m(n - k + 1) + n(m - k + 1) + 2(m - k + 1)(n - k + 1)$ |
 
 ### Landmark Instances Verified in Rocq & Lean
-* **(3, 3, 3) Classic Tic-Tac-Toe:** 3(1) + 3(1) + 2(1)(1) = **8 lines** (DRAW)
-* **(3, 4, 3) Rectangular Grid:** 3(2) + 4(1) + 2(1)(2) = **14 lines** (+75% line density! WIN P1)
-* **(4, 4, 4) 4x4 Tic-Tac-Toe:** 4(1) + 4(1) + 2(1)(1) = **10 lines** (DRAW)
-* **(5, 4, 4) Strip Grid:** 5(1) + 4(2) + 2(2)(1) = **17 lines** (DRAW)
-* **(6, 4, 4) Strip Grid:** 6(1) + 4(3) + 2(3)(1) = **24 lines** (DRAW)
-* **(7, 4, 4) Strip Grid:** 7(1) + 4(4) + 2(4)(1) = **31 lines** (DRAW)
-* **(8, 4, 4) Strip Grid:** 8(1) + 4(5) + 2(5)(1) = **38 lines** (DRAW)
-* **(5, 5, 4) Qubic Planar:** 5(2) + 5(2) + 2(2)(2) = **28 lines**
-* **(8, 8, 5) Connect-5 (Free):** 8(4) + 8(4) + 2(4)(4) = **96 lines**
-* **(15, 15, 5) Freestyle Gomoku:** 15(11) + 15(11) + 2(11)(11) = **572 lines**
-* **(7, 5, 3) Prime Triple:** 7(3) + 5(5) + 2(5)(3) = **76 lines** (WIN P1 <= 7 plies)
-* **(11, 7, 5) Prime Triple:** 11(3) + 7(7) + 2(7)(3) = **124 lines**
-* **(13, 11, 7) Prime Triple:** 13(5) + 11(7) + 2(7)(5) = **212 lines**
-* **(11, 7, 7) Prime Dimensions:** 11(1) + 7(5) + 2(5)(1) = **56 lines** (PROVED FAIR GAME / DRAW: 56 < 64)
-* **(17, 13, 11) Prime Triple:** 17(3) + 13(7) + 2(7)(3) = **184 lines** (PROVED FAIR GAME / DRAW: 184 < 1024)
-* **(19, 17, 13) Prime Triple:** 19(5) + 17(7) + 2(7)(5) = **284 lines** (PROVED FAIR GAME / DRAW: 284 < 4096)
+* **$(3, 3, 3)$ Classic Tic-Tac-Toe:** $3(1) + 3(1) + 2(1)(1) = \mathbf{8 \text{ lines}}$ ($\mathrm{DRAW}$)
+* **$(3, 4, 3)$ Rectangular Grid:** $3(2) + 4(1) + 2(1)(2) = \mathbf{14 \text{ lines}}$ ($+75\%$ line density! $\mathrm{WIN}_{P1}$)
+* **$(4, 4, 4)$ $4 \times 4$ Tic-Tac-Toe:** $4(1) + 4(1) + 2(1)(1) = \mathbf{10 \text{ lines}}$ ($\mathrm{DRAW}$)
+* **$(5, 4, 4)$ Strip Grid:** $5(1) + 4(2) + 2(2)(1) = \mathbf{17 \text{ lines}}$ ($\mathrm{DRAW}$)
+* **$(6, 4, 4)$ Strip Grid:** $6(1) + 4(3) + 2(3)(1) = \mathbf{24 \text{ lines}}$ ($\mathrm{DRAW}$)
+* **$(7, 4, 4)$ Strip Grid:** $7(1) + 4(4) + 2(4)(1) = \mathbf{31 \text{ lines}}$ ($\mathrm{DRAW}$)
+* **$(8, 4, 4)$ Strip Grid:** $8(1) + 4(5) + 2(5)(1) = \mathbf{38 \text{ lines}}$ ($\mathrm{DRAW}$)
+* **$(5, 5, 4)$ Qubic Planar:** $5(2) + 5(2) + 2(2)(2) = \mathbf{28 \text{ lines}}$
+* **$(8, 8, 5)$ Connect-5 (Free):** $8(4) + 8(4) + 2(4)(4) = \mathbf{96 \text{ lines}}$
+* **$(15, 15, 5)$ Freestyle Gomoku:** $15(11) + 15(11) + 2(11)(11) = \mathbf{572 \text{ lines}}$
+* **$(7, 5, 3)$ Prime Triple:** $7(3) + 5(5) + 2(5)(3) = \mathbf{76 \text{ lines}}$ ($\mathrm{WIN}_{P1} \le 7$ plies)
+* **$(11, 7, 5)$ Prime Triple:** $11(3) + 7(7) + 2(7)(3) = \mathbf{124 \text{ lines}}$
+* **$(13, 11, 7)$ Prime Triple:** $13(5) + 11(7) + 2(7)(5) = \mathbf{212 \text{ lines}}$
+* **$(11, 7, 7)$ Prime Dimensions:** $11(1) + 7(5) + 2(5)(1) = \mathbf{56 \text{ lines}}$ ($\mathrm{DRAW}: 56 < 64 = 2^6$)
+* **$(17, 13, 11)$ Prime Triple:** $17(3) + 13(7) + 2(7)(3) = \mathbf{184 \text{ lines}}$ ($\mathrm{DRAW}: 184 < 1024 = 2^{10}$)
+* **$(19, 17, 13)$ Prime Triple:** $19(5) + 17(7) + 2(7)(5) = \mathbf{284 \text{ lines}}$ ($\mathrm{DRAW}: 284 < 4096 = 2^{12}$)
 
 ---
 
@@ -115,35 +113,30 @@ Both Rocq 9.1 (`vm_compute`) and Lean 4.35.0 (`decide`) verify this certificate 
 
 ## 4. The Subgrid Monotone Projection Theorem
 
-Let G_0 = {0, 1, 2} x {0, 1, 2, 3} be the 3x4 subgrid embedded inside any 3xn board G = {0, 1, 2} x {0, ..., n-1} where n >= 4.
+Let $G_0 = \{0, 1, 2\} \times \{0, 1, 2, 3\}$ be the $3 \times 4$ subgrid embedded inside any $3 \times n$ board $G = \{0, 1, 2\} \times \{0, \dots, n-1\}$ where $n \ge 4$.
 
 ### Embedding Definition
-```text
-embed(idx) = (idx / 4) * n + (idx mod 4)
-```
+
+$$
+\mathrm{embed}(\mathrm{idx}) = \left\lfloor \frac{\mathrm{idx}}{4} \right\rfloor \cdot n + (\mathrm{idx} \bmod 4)
+$$
 
 ### Theorem (Subgrid Projection Soundness)
-For every winning line L in the 3x4 core, its image `embed(L)` is a valid winning line on the 3xn grid. Furthermore:
-1. `embed` is strictly injective.
-2. For every cell (r, c) in the 3xn grid with c >= 4, (r, c) belongs to **zero** winning lines of the embedded 3x4 core.
-3. Therefore, if Player 2 plays any move outside columns 0..3, Player 2's stone blocks zero lines of Player 1's strategy tree.
+For every winning line $L$ in the $3 \times 4$ core, its image $\mathrm{embed}(L)$ is a valid winning line on the $3 \times n$ grid. Furthermore:
+1. $\mathrm{embed}$ is strictly injective.
+2. For every cell $(r, c)$ in the $3 \times n$ grid with $c \ge 4$, $(r, c)$ belongs to **zero** winning lines of the embedded $3 \times 4$ core.
+3. Therefore, if Player 2 plays any move outside columns $0 \dots 3$, Player 2's stone blocks zero lines of Player 1's strategy tree.
 4. By the Weak Positivity (Monotonicity) Theorem, a wasted move by Player 2 can never impede Player 1.
-5. Consequently, Player 1 follows the exact same 132-node certificate tree, ignoring exterior moves, and forces victory in at most 7 plies for all n >= 4!
+5. Consequently, Player 1 follows the exact same 132-node certificate tree, ignoring exterior moves, and forces victory in at most 7 plies for all $n \ge 4$!
 
-```text
-+-------------------------------------------------------------------------------+
-|             COMPLETE VALUE CLASSIFICATION FOR THE FAMILY (m, n, 3)            |
-+-------------------+-------------------+--------------------+------------------+
-| Rows m            | Columns n         | Value              | Maximum Horizon  |
-+-------------------+-------------------+--------------------+------------------+
-| m <= 2            | Any n             | DRAW (No 3-lines)  | N/A              |
-| Any m             | n <= 2            | DRAW (No 3-lines)  | N/A              |
-| m = 3             | n = 3             | EXACT DRAW         | 9 Plies          |
-| m = 3             | n >= 4            | WIN FOR PLAYER 1   | <= 7 Plies       |
-| m >= 4            | n = 3             | WIN FOR PLAYER 1   | <= 7 Plies       |
-| m >= 4            | n >= 4            | WIN FOR PLAYER 1   | <= 7 Plies       |
-+-------------------+-------------------+--------------------+------------------+
-```
+| Rows $m$ | Columns $n$ | Game-Theoretic Value | Maximum Horizon |
+| :--- | :--- | :--- | :--- |
+| $m \le 2$ | Any $n$ | $\mathrm{DRAW}$ (No 3-lines) | N/A |
+| Any $m$ | $n \le 2$ | $\mathrm{DRAW}$ (No 3-lines) | N/A |
+| $m = 3$ | $n = 3$ | $\mathrm{EXACT\ DRAW}$ | $9$ Plies |
+| $m = 3$ | $n \ge 4$ | $\mathrm{WIN}_{P1}$ | $\le 7$ Plies |
+| $m \ge 4$ | $n = 3$ | $\mathrm{WIN}_{P1}$ | $\le 7$ Plies |
+| $m \ge 4$ | $n \ge 4$ | $\mathrm{WIN}_{P1}$ | $\le 7$ Plies |
 
 ---
 
@@ -151,9 +144,11 @@ For every winning line L in the 3x4 core, its image `embed(L)` is a valid winnin
 
 ### The Monotonicity Lemma (Weak Positivity)
 In Rocq (`MNKGame.v`) and Lean (`MNKGames.lean`), we formalize the board subsumption preorder:
-```text
-board_sub(b1, b2, p) := forall idx, get_cell(b1, idx) = Some p -> get_cell(b2, idx) = Some p
-```
+
+$$
+b_1 \sqsubseteq_p b_2 \iff \forall \mathrm{idx}, \; b_1[\mathrm{idx}] = p \implies b_2[\mathrm{idx}] = p
+$$
+
 We formally prove:
 ```coq
 Theorem check_win_monotonic : forall b1 b2 p lines,
@@ -168,97 +163,116 @@ Theorem extra_stone_preserves_win : forall b p idx lines,
 
 ### The Strategy-Stealing Meta-Theorem (Nash 1952)
 Because moves are purely additive, game positions are finite, and extra stones never destroy an existing win:
-* If Player 2 possessed a winning strategy sigma_2, Player 1 could place a stone on an arbitrary cell, pretend to be Player 2, and adopt strategy sigma_2.
+* If Player 2 possessed a winning strategy $\sigma_2$, Player 1 could place a stone on an arbitrary cell, pretend to be Player 2, and adopt strategy $\sigma_2$.
 * By monotonicity, Player 1's extra stone is never a liability.
-* Thus Player 1 would win, contradicting that sigma_2 is a winning strategy for Player 2.
+* Thus Player 1 would win, contradicting that $\sigma_2$ is a winning strategy for Player 2.
 * Therefore:
-  ```text
-  For all (m, n, k): Value(m, n, k) in {WIN FOR PLAYER 1, DRAW}.
-  A Second-Player Win is mathematically impossible.
-  ```
+
+$$
+\forall (m, n, k): \quad \mathrm{Value}(m, n, k) \in \{\mathrm{WIN}_{P1}, \mathrm{DRAW}\}
+$$
+
+A Second-Player Win is mathematically impossible.
 
 ---
 
 ## 6. Prime Dimensions, Coprimality, and the Erdos-Selfridge Fair-Game Barrier
 
 ### 6.1 The Mathematical Role of Coprimality & Primality
-A central question in positional games is whether coprimality gcd(m, n) = 1 or primality of (m, n, k) induces structural difficulty or fairness:
-1. **Lattice Periodicity:** In composite grids (e.g., 4x4, 6x6, 8x8), symmetric sub-lattices and 2x2 tile partitions often allow clean local pairing strategies (such as Claimeven or domino tilings). When m and n are coprime primes (e.g., 11x7, 13x11), all sub-periodic modular symmetries vanish: gcd(m, n) = 1 implies no non-trivial rectangular tile covers the board.
-2. **The Odd-Parity Pigeonhole Barrier:** When both m and n are odd primes, the total cell count m * n is strictly odd. By the Pigeonhole Principle, any complete pairing of the cells leaves at least one unpaired cell. This prevents naive symmetric reflection strategies for the Second Player and necessitates hypergraph potential analysis.
-3. **Branching Factor:** While the combinatorial tree size grows as (m * n)!, the game-theoretic value of maker-maker games on hypergraphs is governed by the ratio of winning lines to exponential defense thresholds.
+A central question in positional games is whether coprimality $\gcd(m, n) = 1$ or primality of $(m, n, k)$ induces structural difficulty or fairness:
+1. **Lattice Periodicity:** In composite grids (e.g., $4 \times 4$, $6 \times 6$, $8 \times 8$), symmetric sub-lattices and $2 \times 2$ tile partitions often allow clean local pairing strategies (such as Claimeven or domino tilings). When $m$ and $n$ are coprime primes (e.g., $11 \times 7$, $13 \times 11$), all sub-periodic modular symmetries vanish: $\gcd(m, n) = 1$ implies no non-trivial rectangular tile covers the board.
+2. **The Odd-Parity Pigeonhole Barrier:** When both $m$ and $n$ are odd primes, the total cell count $m \cdot n$ is strictly odd. By the Pigeonhole Principle, any complete pairing of the cells leaves at least one unpaired cell. This prevents naive symmetric reflection strategies for the Second Player and necessitates hypergraph potential analysis.
+3. **Branching Factor:** While the combinatorial tree size grows as $(m \cdot n)!$, the game-theoretic value of maker-maker games on hypergraphs is governed by the ratio of winning lines to exponential defense thresholds.
 
 ### 6.2 The Erdos-Selfridge Criterion
-In 1973, Paul Erdos and John L. Selfridge proved a fundamental theorem for positional games on hypergraphs:
-```text
-For any hypergraph H = (V, E) with uniform hyperedge size |e| = k for all e in E:
-If |E| < 2^(k - 1), then Player 2 has an explicit, efficient pairing strategy
-that prevents Player 1 from ever completely claiming any hyperedge in E.
-```
-In maker-maker (m, n, k) games:
-* Player 1 wins if and only if Player 1 claims all k vertices of some winning line.
-* Player 2 prevents Player 1 from completing any winning line if |E| < 2^(k - 1).
+In 1973, Paul Erdős and John L. Selfridge proved a fundamental theorem for positional games on hypergraphs:
+
+$$
+\text{For any hypergraph } \mathcal{H} = (V, E) \text{ with uniform edge size } |e| = k, \; \forall e \in E:
+$$
+
+$$
+|E| < 2^{k - 1} \implies \text{Player 2 forces a DRAW}
+$$
+
+In maker-maker $(m, n, k)$ games:
+* Player 1 wins if and only if Player 1 claims all $k$ vertices of some winning line.
+* Player 2 prevents Player 1 from completing any winning line if $\mathcal{L}(m, n, k) < 2^{k - 1}$.
 * By Nash's Strategy-Stealing Meta-Theorem, Player 2 cannot win.
 * Therefore:
-  ```text
-  If L(m, n, k) < 2^(k - 1), then Value(m, n, k) = EXACT DRAW (Fair Game).
-  ```
 
-### 6.3 Analysis of Consecutive Prime Triples (p_{i+2}, p_{i+1}, p_i)
+$$
+\mathcal{L}(m, n, k) < 2^{k - 1} \implies \mathrm{Value}(m, n, k) = \mathrm{DRAW} \quad (\text{Fair Game})
+$$
+
+### 6.3 Analysis of Consecutive Prime Triples $(p_{i+2}, p_{i+1}, p_i)$
 We investigate the sequence of games where dimensions are chosen from consecutive prime triples:
 
-1. **(7, 5, 3) — Disproved to be Fair (Player 1 Win in <= 7 plies):**
-   * Dimensions: m = 7, n = 5, k = 3.
-   * Total lines: L = 76. Erdos barrier: 2^(3 - 1) = 4.
-   * Because m = 7 >= 3 and n = 5 >= 4, the 3x4 First-Player winning strategy embeds directly into the grid. Exterior moves by Player 2 are non-interfering dummy plies.
+1. **$(7, 5, 3)$ — Disproved to be Fair (Player 1 Win in $\le 7$ plies):**
+   * Dimensions: $m = 7$, $n = 5$, $k = 3$.
+   * Total lines: $\mathcal{L} = 76$. Erdős barrier: $2^{3 - 1} = 4$.
+   * Because $m = 7 \ge 3$ and $n = 5 \ge 4$, the $3 \times 4$ First-Player winning strategy embeds directly into the grid. Exterior moves by Player 2 are non-interfering dummy plies.
    * Player 1 forces a win in at most 7 plies.
 
-2. **(11, 7, 5) — Tactical Bottleneck:**
-   * Dimensions: m = 11, n = 7, k = 5.
-   * Total lines: L = 124. Erdos barrier: 2^(5 - 1) = 16.
-   * The central cell (5, 3) possesses degree 14 (intersecting 14 distinct winning lines).
+2. **$(11, 7, 5)$ — Tactical Bottleneck:**
+   * Dimensions: $m = 11$, $n = 7$, $k = 5$.
+   * Total lines: $\mathcal{L} = 124$. Erdős barrier: $2^{5 - 1} = 16$.
+   * The central cell $(5, 3)$ possesses degree $14$ (intersecting 14 distinct winning lines).
 
-3. **(11, 7, 7) — PROVED FAIR GAME (EXACT DRAW):**
-   * Dimensions: m = 11, n = 7, k = 7.
-   * Total lines: L = 56. Erdos barrier: 2^(7 - 1) = 64.
+3. **$(11, 7, 7)$ — PROVED FAIR GAME (EXACT DRAW):**
+   * Dimensions: $m = 11$, $n = 7$, $k = 7$.
+   * Total lines: $\mathcal{L} = 56$. Erdős barrier: $2^{7 - 1} = 64$.
    * Machine-checked theorem in Rocq and Lean:
-     ```text
-     L(11, 7, 7) = 56 < 64 = 2^6
-     ```
-   * Since 56 < 64, Player 2 unconditionally forces an **EXACT DRAW**.
 
-4. **(17, 13, 11) — PROVED FAIR GAME (EXACT DRAW):**
-   * Consecutive prime triple: 17, 13, 11.
-   * Total lines: L = 184. Erdos barrier: 2^(11 - 1) = 1024.
-   * Machine-checked theorem:
-     ```text
-     L(17, 13, 11) = 184 < 1024 = 2^10
-     ```
-   * An unconditional **EXACT DRAW** with a massive safety margin (>5x below barrier).
+     $$
+     \mathcal{L}(11, 7, 7) = 56 < 64 = 2^6 \implies \mathrm{Value}(11, 7, 7) = \mathrm{DRAW}
+     $$
 
-5. **(19, 17, 13) — PROVED FAIR GAME (EXACT DRAW):**
-   * Consecutive prime triple: 19, 17, 13.
-   * Total lines: L = 284. Erdos barrier: 2^(13 - 1) = 4096.
+   * Since $56 < 64$, Player 2 unconditionally forces an **EXACT DRAW**.
+
+4. **$(17, 13, 11)$ — PROVED FAIR GAME (EXACT DRAW):**
+   * Consecutive prime triple: $17, 13, 11$.
+   * Total lines: $\mathcal{L} = 184$. Erdős barrier: $2^{11 - 1} = 1024$.
    * Machine-checked theorem:
-     ```text
-     L(19, 17, 13) = 284 < 4096 = 2^12
-     ```
-   * An unconditional **EXACT DRAW** (>14x below barrier).
+
+     $$
+     \mathcal{L}(17, 13, 11) = 184 < 1024 = 2^{10} \implies \mathrm{Value}(17, 13, 11) = \mathrm{DRAW}
+     $$
+
+   * An unconditional **EXACT DRAW** with a massive safety margin ($>5\times$ below barrier).
+
+5. **$(19, 17, 13)$ — PROVED FAIR GAME (EXACT DRAW):**
+   * Consecutive prime triple: $19, 17, 13$.
+   * Total lines: $\mathcal{L} = 284$. Erdős barrier: $2^{13 - 1} = 4096$.
+   * Machine-checked theorem:
+
+     $$
+     \mathcal{L}(19, 17, 13) = 284 < 4096 = 2^{12} \implies \mathrm{Value}(19, 17, 13) = \mathrm{DRAW}
+     $$
+
+   * An unconditional **EXACT DRAW** ($>14\times$ below barrier).
 
 ### 6.4 The Asymptotic Prime Triple Fair-Game Law
-By Bertrand's Postulate, consecutive primes satisfy p_{i+2} < 2 * p_i for all i >= 1.
+By Bertrand's Postulate, consecutive primes satisfy $p_{i+2} < 2 p_i$ for all $i \ge 1$.
 Therefore, the total lines on any consecutive prime grid grow at most quadratically:
-```text
-L(p_{i+2}, p_{i+1}, p_i) < 4 * (p_i)^2
-```
-In contrast, the Erdos-Selfridge threshold grows exponentially:
-```text
-Threshold = 2^(p_i - 1)
-```
-For all primes p_i >= 11:
-```text
-4 * (p_i)^2 < 2^(p_i - 1)
-```
-Hence, **every consecutive prime triple game (p_{i+2}, p_{i+1}, p_i) with p_i >= 11 is mathematically proven to be a FAIR GAME (EXACT DRAW)**.
+
+$$
+\mathcal{L}(p_{i+2}, p_{i+1}, p_i) < 4 p_i^2
+$$
+
+In contrast, the Erdős-Selfridge threshold grows exponentially:
+
+$$
+\mathrm{Threshold}(p_i) = 2^{p_i - 1}
+$$
+
+For all primes $p_i \ge 11$:
+
+$$
+4 p_i^2 < 2^{p_i - 1}
+$$
+
+Hence, **every consecutive prime triple game $(p_{i+2}, p_{i+1}, p_i)$ with $p_i \ge 11$ is mathematically proven to be a FAIR GAME (EXACT DRAW)**.
 
 ---
 
