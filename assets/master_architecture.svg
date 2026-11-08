@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 410" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgP" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="boxRocq" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="boxGPU" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#065f46"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="boxCert" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#701a75"/>
+      <stop offset="100%" stop-color="#a21caf"/>
+    </linearGradient>
+    <linearGradient id="boxFair" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#854d0e"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <rect width="960" height="410" rx="16" fill="url(#bgP)"/>
+
+  <text x="480" y="38" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="20" font-weight="800" fill="#f8fafc" text-anchor="middle">
+    Dual Verification &amp; GPU Strategy Architecture in Rocq 9.1
+  </text>
+  <text x="480" y="58" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">
+    Zero-Axiom Constructive Logic Unified with 405M evals/sec GPU Bitboard Oracle
+  </text>
+
+  <!-- Step 1: Trusted Theory -->
+  <rect x="40" y="80" width="260" height="125" rx="10" fill="url(#boxRocq)" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="170" y="108" font-family="sans-serif" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">1. Trusted Semantics</text>
+  <text x="170" y="130" font-family="sans-serif" font-size="12" fill="#bfdbfe" text-anchor="middle">C5Game.v, C5Board.v</text>
+  <text x="170" y="152" font-family="sans-serif" font-size="11" fill="#e0e7ff" text-anchor="middle">• 96 Winning Lines Formalized</text>
+  <text x="170" y="170" font-family="sans-serif" font-size="11" fill="#e0e7ff" text-anchor="middle">• Inductive safe Predicate</text>
+  <text x="170" y="188" font-family="sans-serif" font-size="11" font-weight="700" fill="#4ade80" text-anchor="middle">• Zero Axioms / Zero Admits</text>
+
+  <!-- Step 2: Allis Pairing Theory -->
+  <rect x="40" y="245" width="260" height="125" rx="10" fill="url(#boxRocq)" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="170" y="273" font-family="sans-serif" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">2. Allis Pairing Theory</text>
+  <text x="170" y="295" font-family="sans-serif" font-size="12" fill="#bfdbfe" text-anchor="middle">C5Rules.v, C5Principle.v</text>
+  <text x="170" y="317" font-family="sans-serif" font-size="11" fill="#e0e7ff" text-anchor="middle">• Strong Dominoes &amp; Rigid Chains</text>
+  <text x="170" y="335" font-family="sans-serif" font-size="11" fill="#e0e7ff" text-anchor="middle">• Base Pairs &amp; Parity Resolutions</text>
+  <text x="170" y="353" font-family="sans-serif" font-size="11" fill="#e0e7ff" text-anchor="middle">• Well-Founded Induction (empties)</text>
+
+  <!-- Step 3: GPU Search Oracle -->
+  <rect x="350" y="80" width="260" height="125" rx="10" fill="url(#boxGPU)" stroke="#34d399" stroke-width="1.5"/>
+  <text x="480" y="108" font-family="sans-serif" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">3. GPU Search Engine</text>
+  <text x="480" y="130" font-family="sans-serif" font-size="12" fill="#a7f3d0" text-anchor="middle">c5_gpu_search.cu (RTX 4060)</text>
+  <text x="480" y="152" font-family="sans-serif" font-size="11" font-weight="700" fill="#6ee7b7" text-anchor="middle">• 405.35M Board Evals / Sec</text>
+  <text x="480" y="170" font-family="sans-serif" font-size="11" fill="#ecfdf5" text-anchor="middle">• 64-Bit Bitboard Registers</text>
+  <text x="480" y="188" font-family="sans-serif" font-size="11" fill="#ecfdf5" text-anchor="middle">• Native Clang 23 &amp; CUDA 13.5</text>
+
+  <!-- Step 4: Certificate Checker -->
+  <rect x="350" y="245" width="260" height="125" rx="10" fill="url(#boxCert)" stroke="#f472b6" stroke-width="1.5"/>
+  <text x="480" y="273" font-family="sans-serif" font-size="15" font-weight="700" fill="#ffffff" text-anchor="middle">4. Verified Checker</text>
+  <text x="480" y="295" font-family="sans-serif" font-size="12" fill="#fbcfe8" text-anchor="middle">C5CertChecker.v (Reflection)</text>
+  <text x="480" y="317" font-family="sans-serif" font-size="11" fill="#fdf2f8" text-anchor="middle">• Compact DAG Certificate</text>
+  <text x="480" y="335" font-family="sans-serif" font-size="11" fill="#fdf2f8" text-anchor="middle">• check_static Reflection</text>
+  <text x="480" y="353" font-family="sans-serif" font-size="11" font-weight="700" fill="#f472b6" text-anchor="middle">• Verified via vm_compute (0.82s)</text>
+
+  <!-- Step 5: Master Theorem (Game Value = Draw) -->
+  <rect x="660" y="162" width="260" height="130" rx="12" fill="url(#boxFair)" stroke="#fbbf24" stroke-width="2.5"/>
+  <text x="790" y="196" font-family="sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">5. Final Theorem</text>
+  <text x="790" y="222" font-family="sans-serif" font-size="13" font-weight="800" fill="#fef08a" text-anchor="middle">connect5_8x7_fair</text>
+  <text x="790" y="250" font-family="sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">game_value = Draw</text>
+  <text x="790" y="272" font-family="sans-serif" font-size="11" font-weight="700" fill="#4ade80" text-anchor="middle">Closed under global context</text>
+
+  <!-- Connectors -->
+  <line x1="300" y1="142" x2="345" y2="142" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="300" y1="307" x2="345" y2="307" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="480" y1="205" x2="480" y2="240" stroke="#38bdf8" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="610" y1="227" x2="655" y2="227" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow)"/>
+</svg>

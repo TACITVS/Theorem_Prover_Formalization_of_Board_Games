@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 510" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgTime" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0b1329"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="cardHist" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="cardNovel" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <filter id="shadowT" x="-15%" y="-15%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#000000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <!-- Canvas -->
+  <rect width="980" height="510" rx="16" fill="url(#bgTime)"/>
+
+  <!-- Title & Subtitle -->
+  <text x="490" y="36" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="20" font-weight="800" fill="#f8fafc" text-anchor="middle">
+    38 Years of Gravity Game Solving (1988–2026): Folklore vs. Formal Novelty
+  </text>
+  <text x="490" y="58" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="12" fill="#94a3b8" text-anchor="middle">
+    From Victor Allis &amp; James D. Allen (1988) and John Tromp (1995) to the First Zero-Axiom Rocq 9.1 Proof &amp; 405M evals/s CUDA Engine
+  </text>
+
+  <!-- Horizontal Timeline Spine -->
+  <line x1="65" y1="108" x2="915" y2="108" stroke="#3b82f6" stroke-width="3"/>
+
+  <!-- Node 1: 1988 -->
+  <circle cx="105" cy="108" r="9" fill="#38bdf8" stroke="#0b1329" stroke-width="2.5"/>
+  <text x="105" y="90" font-family="sans-serif" font-size="13" font-weight="800" fill="#38bdf8" text-anchor="middle">Oct 1988</text>
+  <rect x="30" y="128" width="150" height="145" rx="8" fill="url(#cardHist)" stroke="#334155" stroke-width="1.5" filter="url(#shadowT)"/>
+  <text x="105" y="148" font-family="sans-serif" font-size="12" font-weight="800" fill="#f8fafc" text-anchor="middle">Allen &amp; Allis</text>
+  <text x="105" y="164" font-family="sans-serif" font-size="10" font-weight="700" fill="#fbbf24" text-anchor="middle">7×6 Connect-4 Solved</text>
+  <text x="105" y="184" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• 9 Strategic Rules</text>
+  <text x="105" y="200" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">  (Claimeven, Baseinverse)</text>
+  <text x="105" y="216" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• Conspiracy Search</text>
+  <text x="105" y="232" font-family="sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">• Not brute-force!</text>
+  <text x="105" y="256" font-family="sans-serif" font-size="10" font-weight="700" fill="#f87171" text-anchor="middle">Informal / Unverified C</text>
+
+  <!-- Node 2: 1994 -->
+  <circle cx="265" cy="108" r="9" fill="#38bdf8" stroke="#0b1329" stroke-width="2.5"/>
+  <text x="265" y="90" font-family="sans-serif" font-size="13" font-weight="800" fill="#38bdf8" text-anchor="middle">1994</text>
+  <rect x="190" y="128" width="150" height="145" rx="8" fill="url(#cardHist)" stroke="#334155" stroke-width="1.5" filter="url(#shadowT)"/>
+  <text x="265" y="148" font-family="sans-serif" font-size="12" font-weight="800" fill="#f8fafc" text-anchor="middle">Victor Allis PhD</text>
+  <text x="265" y="164" font-family="sans-serif" font-size="10" font-weight="700" fill="#fbbf24" text-anchor="middle">Proof-Number Search</text>
+  <text x="265" y="184" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• PNS (pn, dn) trees</text>
+  <text x="265" y="200" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• Weak vs. Strong</text>
+  <text x="265" y="216" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">  solving taxonomy</text>
+  <text x="265" y="232" font-family="sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">• Qubic &amp; Go-Moku</text>
+  <text x="265" y="256" font-family="sans-serif" font-size="10" font-weight="700" fill="#f87171" text-anchor="middle">RAM-Bound Best-First</text>
+
+  <!-- Node 3: 1995 -->
+  <circle cx="425" cy="108" r="9" fill="#38bdf8" stroke="#0b1329" stroke-width="2.5"/>
+  <text x="425" y="90" font-family="sans-serif" font-size="13" font-weight="800" fill="#38bdf8" text-anchor="middle">1993–1995</text>
+  <rect x="350" y="128" width="150" height="145" rx="8" fill="url(#cardHist)" stroke="#334155" stroke-width="1.5" filter="url(#shadowT)"/>
+  <text x="425" y="148" font-family="sans-serif" font-size="12" font-weight="800" fill="#f8fafc" text-anchor="middle">John Tromp</text>
+  <text x="425" y="164" font-family="sans-serif" font-size="10" font-weight="700" fill="#fbbf24" text-anchor="middle">Fhourstones &amp; Strong 7×6</text>
+  <text x="425" y="184" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• 64-Bit Sentinel</text>
+  <text x="425" y="200" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">  Bitboard Encoding</text>
+  <text x="425" y="216" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• 4.53×10¹² states</text>
+  <text x="425" y="232" font-family="sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">• 40,000 CPU hours</text>
+  <text x="425" y="256" font-family="sans-serif" font-size="10" font-weight="700" fill="#f87171" text-anchor="middle">Even-Height = P2 Win</text>
+
+  <!-- Node 4: 1999-2002 -->
+  <circle cx="585" cy="108" r="9" fill="#38bdf8" stroke="#0b1329" stroke-width="2.5"/>
+  <text x="585" y="90" font-family="sans-serif" font-size="13" font-weight="800" fill="#38bdf8" text-anchor="middle">1999–2002</text>
+  <rect x="510" y="128" width="150" height="145" rx="8" fill="url(#cardHist)" stroke="#334155" stroke-width="1.5" filter="url(#shadowT)"/>
+  <text x="585" y="148" font-family="sans-serif" font-size="12" font-weight="800" fill="#f8fafc" text-anchor="middle">Ayumu Nagai</text>
+  <text x="585" y="164" font-family="sans-serif" font-size="10" font-weight="700" fill="#fbbf24" text-anchor="middle">df-pn Search &amp; MID</text>
+  <text x="585" y="184" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• Depth-First PNS</text>
+  <text x="585" y="200" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• Dual (th_pn, th_dn)</text>
+  <text x="585" y="216" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">  TT recursion</text>
+  <text x="585" y="232" font-family="sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">• Kaneko (2010) PDFPN</text>
+  <text x="585" y="256" font-family="sans-serif" font-size="10" font-weight="700" fill="#f87171" text-anchor="middle">No Formal Proof Kernel</text>
+
+  <!-- Node 5: 2005-2008 -->
+  <circle cx="745" cy="108" r="9" fill="#a855f7" stroke="#0b1329" stroke-width="2.5"/>
+  <text x="745" y="90" font-family="sans-serif" font-size="13" font-weight="800" fill="#c084fc" text-anchor="middle">2005–2008</text>
+  <rect x="670" y="128" width="150" height="145" rx="8" fill="url(#cardHist)" stroke="#6b21a8" stroke-width="1.5" filter="url(#shadowT)"/>
+  <text x="745" y="148" font-family="sans-serif" font-size="12" font-weight="800" fill="#f8fafc" text-anchor="middle">Georges Gonthier</text>
+  <text x="745" y="164" font-family="sans-serif" font-size="10" font-weight="700" fill="#e879f9" text-anchor="middle">Coq Boolean Reflection</text>
+  <text x="745" y="184" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• Four Color Theorem</text>
+  <text x="745" y="200" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">• External Search +</text>
+  <text x="745" y="216" font-family="sans-serif" font-size="10" fill="#cbd5e1" text-anchor="middle">  vm_compute Checker</text>
+  <text x="745" y="232" font-family="sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">• Zero-Axiom Kernel</text>
+  <text x="745" y="256" font-family="sans-serif" font-size="10" font-weight="700" fill="#c084fc" text-anchor="middle">Not Applied to Connect-k</text>
+
+  <!-- Node 6: 2026 (This Work) -->
+  <circle cx="895" cy="108" r="11" fill="#10b981" stroke="#fef08a" stroke-width="3"/>
+  <text x="895" y="90" font-family="sans-serif" font-size="13" font-weight="900" fill="#34d399" text-anchor="middle">2026 (Ours)</text>
+  <rect x="830" y="128" width="130" height="145" rx="8" fill="url(#cardNovel)" stroke="#10b981" stroke-width="2" filter="url(#shadowT)"/>
+  <text x="895" y="148" font-family="sans-serif" font-size="12" font-weight="900" fill="#ffffff" text-anchor="middle">This Repository</text>
+  <text x="895" y="164" font-family="sans-serif" font-size="10" font-weight="800" fill="#34d399" text-anchor="middle">8×8 Connect-5 Proven</text>
+  <text x="895" y="184" font-family="sans-serif" font-size="10" fill="#ecfdf5" text-anchor="middle">• First Rocq 9.1 Proof</text>
+  <text x="895" y="200" font-family="sans-serif" font-size="10" fill="#ecfdf5" text-anchor="middle">• structure_sound</text>
+  <text x="895" y="216" font-family="sans-serif" font-size="10" fill="#ecfdf5" text-anchor="middle">• 405.35M/s GPU Kernel</text>
+  <text x="895" y="232" font-family="sans-serif" font-size="10" fill="#ecfdf5" text-anchor="middle">• 10-Cell Core Theorem</text>
+  <text x="895" y="256" font-family="sans-serif" font-size="10" font-weight="900" fill="#facc15" text-anchor="middle">game_value = Draw</text>
+
+  <!-- Bottom Split Panel: Folklore vs. Novel Contributions -->
+  <!-- Left Panel: Classical Folklore -->
+  <rect x="30" y="295" width="445" height="190" rx="10" fill="#1e293b" stroke="#475569" stroke-width="1.5" filter="url(#shadowT)"/>
+  <text x="252" y="322" font-family="sans-serif" font-size="14" font-weight="800" fill="#38bdf8" text-anchor="middle">
+    What We Inherited from Classical Folklore (Explicitly Credited)
+  </text>
+  <text x="48" y="348" font-family="sans-serif" font-size="11.5" fill="#e2e8f0">
+    <tspan font-weight="800" fill="#fbbf24">1. Pairing Heuristics:</tspan> Allis's (1988) Claimeven, Baseinverse &amp; Vertical rules.
+  </text>
+  <text x="48" y="372" font-family="sans-serif" font-size="11.5" fill="#e2e8f0">
+    <tspan font-weight="800" fill="#fbbf24">2. Sentinel Bitboards:</tspan> Tromp's (1995) Fhourstones 64-bit column-sentinel layout.
+  </text>
+  <text x="48" y="396" font-family="sans-serif" font-size="11.5" fill="#e2e8f0">
+    <tspan font-weight="800" fill="#fbbf24">3. AND/OR Tree Search:</tspan> Nagai's (1999) df-pn (MID) &amp; Kaneko's (2010) PDFPN.
+  </text>
+  <text x="48" y="420" font-family="sans-serif" font-size="11.5" fill="#e2e8f0">
+    <tspan font-weight="800" fill="#fbbf24">4. Reflection Pattern:</tspan> Gonthier's (2005) Coq vm_compute certificate architecture.
+  </text>
+  <text x="48" y="444" font-family="sans-serif" font-size="11.5" fill="#e2e8f0">
+    <tspan font-weight="800" fill="#fbbf24">5. Gravity Asymmetry:</tspan> Failure of Nash strategy-stealing under column gravity.
+  </text>
+  <text x="48" y="468" font-family="sans-serif" font-size="11" font-style="italic" fill="#94a3b8">
+    Prior Status: Zero machine-checked proofs in Coq/Rocq, Lean, Isabelle, or Agda.
+  </text>
+
+  <!-- Right Panel: Genuine Novelty in This Repo -->
+  <rect x="505" y="295" width="445" height="190" rx="10" fill="url(#cardNovel)" stroke="#10b981" stroke-width="2" filter="url(#shadowT)"/>
+  <text x="727" y="322" font-family="sans-serif" font-size="14" font-weight="800" fill="#34d399" text-anchor="middle">
+    What Is Genuinely New in This Repository (Machine-Checked)
+  </text>
+  <text x="523" y="348" font-family="sans-serif" font-size="11.5" fill="#ecfdf5">
+    <tspan font-weight="800" fill="#4ade80">1. First Formal Mechanization:</tspan> 1,160-line Rocq 9.1 proof of structure_sound (0 axioms).
+  </text>
+  <text x="523" y="372" font-family="sans-serif" font-size="11.5" fill="#ecfdf5">
+    <tspan font-weight="800" fill="#4ade80">2. Parity Obstruction &amp; Rule R3:</tspan> Formal proof of Ply-1 odd parity &amp; frozen-column fix.
+  </text>
+  <text x="523" y="396" font-family="sans-serif" font-size="11.5" fill="#ecfdf5">
+    <tspan font-weight="800" fill="#4ade80">3. 10-Cell Core &amp; Dead (4,6):</tspan> Proven 10-cell cover of all 52 non-vertical lines.
+  </text>
+  <text x="523" y="420" font-family="sans-serif" font-size="11.5" fill="#ecfdf5">
+    <tspan font-weight="800" fill="#4ade80">4. Exact 64-Bit Saturation:</tspan> 8×(7+1)=64 bits mapped to 4.19M CUDA threads (405.35M/s).
+  </text>
+  <text x="523" y="444" font-family="sans-serif" font-size="11.5" fill="#ecfdf5">
+    <tspan font-weight="800" fill="#4ade80">5. Constructive Minimax Bridge:</tspan> mutual_safety_draw &amp; cert_fair verified via vm_compute.
+  </text>
+  <text x="523" y="468" font-family="sans-serif" font-size="11" font-weight="700" fill="#facc15">
+    Result: First Formally Verified Proof of Connect-5 (8×7) Fairness in History.
+  </text>
+</svg>

@@ -1,7 +1,0 @@
-name = "Checkers"
-version = "0.1.0"
-defaultTargets = ["Checkers"]
-
-[[lean_lib]]
-name = "Checkers"
-srcDir = "."
