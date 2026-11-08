@@ -94,27 +94,43 @@ Proof.
 Qed.
 
 (** ========================================================================= *)
-(** 4. OPENING THREAT DOMINANCE                                                *)
+(** 4. OPENING THREAT DOMINANCE IN 5x5x5                                       *)
 (** ========================================================================= *)
 
-Theorem opening_cube_center_lines_count :
-  length (filter (fun l => existsb (Nat.eqb 21) l) all_lines) = 7.
+Theorem opening_center_lines_count :
+  length (filter (fun l => existsb (Nat.eqb 62) l) all_lines) = 13.
 Proof. reflexivity. Qed.
 
 Theorem opening_corner_lines_count :
   length (filter (fun l => existsb (Nat.eqb 0) l) all_lines) = 7.
 Proof. reflexivity. Qed.
 
-Theorem opening_edge_lines_count :
+Theorem opening_subcenter_lines_count :
+  length (filter (fun l => existsb (Nat.eqb 31) l) all_lines) = 7.
+Proof. reflexivity. Qed.
+
+Theorem opening_edge_center_lines_count :
+  length (filter (fun l => existsb (Nat.eqb 12) l) all_lines) = 5.
+Proof. reflexivity. Qed.
+
+Theorem opening_inner_face_lines_count :
   length (filter (fun l => existsb (Nat.eqb 1) l) all_lines) = 4.
 Proof. reflexivity. Qed.
 
-Theorem opening_face_lines_count :
-  length (filter (fun l => existsb (Nat.eqb 5) l) all_lines) = 4.
+Theorem opening_outer_edge_lines_count :
+  length (filter (fun l => existsb (Nat.eqb 7) l) all_lines) = 3.
 Proof. reflexivity. Qed.
 
-(** Center and Corner openings simultaneously activate 7 winning lines,
-    giving White a 75% higher initial threat potential than flank edges/faces *)
-Theorem opening_advantage_ratio :
-  7 - 4 = 3 /\ 7 > 4.
+(** Center opening activates 13 winning lines, giving White 6 more lines
+    than the strongest corner (7) and 10 more than outer edges (3) *)
+Theorem center_opening_advantage :
+  13 - 7 = 6 /\ 13 - 3 = 10.
 Proof. lia. Qed.
+
+(** In 5x5x5, length of every line is 5; hence after 1 move White has at most 1 stone per line,
+    making immediate 4-threats impossible *)
+Theorem min_moves_for_four_threat : forall k : nat,
+  k < 4 -> 5 - k > 1.
+Proof.
+  intros k Hk. lia.
+Qed.

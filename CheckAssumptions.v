@@ -1,4 +1,4 @@
-(** CheckAssumptions.v: Strict Global Axiom & Admit Audit for Qubic 4x4x4 in Rocq 9.1 *)
+(** CheckAssumptions.v: Strict Global Axiom & Admit Audit for 5x5x5 3D Tic-Tac-Toe in Rocq 9.1 *)
 
 From Stdlib Require Import List.
 From Stdlib Require Import Arith.
@@ -10,10 +10,10 @@ Require Import Qubic.QubicThreat.
 Require Import Qubic.QubicTheorem.
 
 (** ========================================================================= *)
-(** AUDITING ALL 72 THEOREMS IN QUBIC FORMALIZATION                            *)
+(** AUDITING ALL 65 THEOREMS IN QUBIC 5x5x5 FORMALIZATION                      *)
 (** ========================================================================= *)
 
-(** 1. QubicBoard.v (32 Theorems) *)
+(** 1. QubicBoard.v (27 Theorems) *)
 Print Assumptions all_cells_length.
 Print Assumptions all_cells_NoDup.
 Print Assumptions make_cell_decomp.
@@ -28,26 +28,21 @@ Print Assumptions diag_yz_lines_count.
 Print Assumptions total_planar_diag_lines_count.
 Print Assumptions space_diag_lines_count.
 Print Assumptions all_lines_count.
-Print Assumptions all_lines_length_four.
+Print Assumptions all_lines_length_five.
 Print Assumptions all_lines_cells_valid.
 Print Assumptions all_lines_elements_nodup.
 Print Assumptions all_lines_NoDup.
-Print Assumptions corners_count.
-Print Assumptions edges_count.
-Print Assumptions faces_count.
-Print Assumptions cube_centers_count.
-Print Assumptions cell_partition_sum.
-Print Assumptions corner_degree_uniform.
-Print Assumptions edge_degree_uniform.
-Print Assumptions face_degree_uniform.
-Print Assumptions cube_center_degree_uniform.
-Print Assumptions corner_degree_all.
-Print Assumptions edge_degree_all.
-Print Assumptions face_degree_all.
-Print Assumptions cube_center_degree_all.
+Print Assumptions center_cell_coords.
+Print Assumptions center_cell_degree.
+Print Assumptions deg13_cells_count.
+Print Assumptions deg7_cells_count.
+Print Assumptions deg5_cells_count.
+Print Assumptions deg4_cells_count.
+Print Assumptions deg3_cells_count.
+Print Assumptions cell_degree_partition_sum.
 Print Assumptions total_incidence_identity.
 
-(** 2. QubicSymmetry.v (26 Theorems) *)
+(** 2. QubicSymmetry.v (20 Theorems) *)
 Print Assumptions refl_coord_involutive.
 Print Assumptions refl_coord_bound.
 Print Assumptions refl_x_involutive.
@@ -58,37 +53,35 @@ Print Assumptions swap_yz_involutive.
 Print Assumptions refl_x_bound.
 Print Assumptions refl_y_bound.
 Print Assumptions refl_z_bound.
-Print Assumptions refl_x_preserves_corners.
-Print Assumptions refl_x_preserves_cube_centers.
-Print Assumptions refl_x_preserves_edges.
-Print Assumptions refl_x_preserves_faces.
+Print Assumptions refl_x_preserves_deg13.
+Print Assumptions refl_x_preserves_deg7.
+Print Assumptions refl_x_preserves_deg5.
+Print Assumptions refl_x_preserves_deg4.
+Print Assumptions refl_x_preserves_deg3.
 Print Assumptions cell_classification_exhaustive.
-Print Assumptions canon_corner_is_corner.
-Print Assumptions canon_cube_center_is_cube.
-Print Assumptions canon_edge_is_edge.
-Print Assumptions canon_face_is_face.
-Print Assumptions canon_corner_degree_seven.
-Print Assumptions canon_cube_center_degree_seven.
-Print Assumptions canon_edge_degree_four.
-Print Assumptions canon_face_degree_four.
-Print Assumptions max_cell_degree_seven.
+Print Assumptions max_cell_degree_thirteen.
+Print Assumptions non_center_max_degree_seven.
 Print Assumptions transversal_size_arithmetic_lower_bound.
-Print Assumptions silver_pairing_impossibility_bound.
+Print Assumptions static_pairing_impossibility_bound.
 
-(** 3. QubicThreat.v (8 Theorems) *)
+(** 3. QubicThreat.v (11 Theorems) *)
 Print Assumptions other_color_involutive.
 Print Assumptions double_threat_unblockable.
 Print Assumptions double_threat_fork_forces_win.
-Print Assumptions opening_cube_center_lines_count.
+Print Assumptions opening_center_lines_count.
 Print Assumptions opening_corner_lines_count.
-Print Assumptions opening_edge_lines_count.
-Print Assumptions opening_face_lines_count.
-Print Assumptions opening_advantage_ratio.
+Print Assumptions opening_subcenter_lines_count.
+Print Assumptions opening_edge_center_lines_count.
+Print Assumptions opening_inner_face_lines_count.
+Print Assumptions opening_outer_edge_lines_count.
+Print Assumptions center_opening_advantage.
+Print Assumptions min_moves_for_four_threat.
 
-(** 4. QubicTheorem.v (6 Theorems) *)
-Print Assumptions qubic_master_value_is_win_white.
-Print Assumptions max_qubic_plies_bound.
-Print Assumptions max_white_moves_bound.
+(** 4. QubicTheorem.v (7 Theorems) *)
+Print Assumptions qubic5_master_value_is_draw.
+Print Assumptions pairing_horizon_plies_bound.
+Print Assumptions pairing_horizon_moves_per_player.
+Print Assumptions unblocked_pairing_cells_bound.
 Print Assumptions total_naive_states_Z_computed.
 Print Assumptions total_naive_states_lower_bound.
-Print Assumptions cells_saturate_uint64.
+Print Assumptions cells_fit_uint128.

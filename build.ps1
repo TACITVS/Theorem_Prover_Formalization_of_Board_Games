@@ -1,4 +1,4 @@
-# Automated Rocq 9.1 Build & Strict Axiom Audit for Qubic (4x4x4 3D Tic-Tac-Toe)
+# Automated Rocq 9.1 Build & Strict Axiom Audit for 5x5x5 3D Tic-Tac-Toe
 $ErrorActionPreference = "Stop"
 
 $coqcBin = "C:\Rocq-Platform~9.1~2026.01\bin\coqc.exe"
@@ -6,7 +6,7 @@ if (-not (Test-Path $coqcBin)) {
     $coqcBin = "coqc"
 }
 
-Write-Host "=== Compiling Qubic 4x4x4 3D Tic-Tac-Toe Formal Verification in Rocq 9.1 ===" -ForegroundColor Cyan
+Write-Host "=== Compiling 5x5x5 3D Tic-Tac-Toe Formal Verification in Rocq 9.1 ===" -ForegroundColor Cyan
 & $coqcBin --version
 
 $files = @(
@@ -31,10 +31,10 @@ Write-Host "`n=== Auditing Assumptions in CheckAssumptions.v ===" -ForegroundCol
 $auditOutput = & $coqcBin -Q . Qubic CheckAssumptions.v 2>&1
 $closedCount = ($auditOutput | Select-String -Pattern "Closed under the global context").Count
 
-if ($closedCount -eq 72) {
-    Write-Host "`n[Audit Result] 72 / 72 Theorems strictly Closed under global context (0 Axioms, 0 Admits)!" -ForegroundColor Green
+if ($closedCount -eq 65) {
+    Write-Host "`n[Audit Result] 65 / 65 Theorems strictly Closed under global context (0 Axioms, 0 Admits)!" -ForegroundColor Green
 } else {
-    Write-Host "`n[Warning] Found $closedCount closed theorems (expected 72)." -ForegroundColor Yellow
+    Write-Host "`n[Warning] Found $closedCount closed theorems (expected 65)." -ForegroundColor Yellow
 }
 
 Write-Host "Total compilation time: $([math]::Round($sw.Elapsed.TotalSeconds, 2)) seconds." -ForegroundColor Cyan
