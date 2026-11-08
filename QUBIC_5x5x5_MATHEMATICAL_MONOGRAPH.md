@@ -25,6 +25,12 @@ This formalization establishes the complete game-theoretic resolution of 5×5×5
 
 ## 2. Hypergraph Geometry and Degree Topography
 
+<p align="center">
+  <a href="assets/qubic_5x5x5_board.svg">
+    <img src="assets/qubic_5x5x5_board.svg" alt="5x5x5 3D Tic-Tac-Toe Board Topography and Degree Spectrum" width="100%"/>
+  </a>
+</p>
+
 The 5×5×5 board is modeled as an almost-disjoint (linear) 5-uniform hypergraph H = (V, F):
 - Vertex set: V = {0, 1, ..., 124}, with |V| = 5³ = 125 cells.
 - Coordinate representation: (x, y, z) with x, y, z in {0, 1, 2, 3, 4}, mapped bijectively via:
