@@ -167,11 +167,12 @@ Definition legal_placement (s : game_state) (dst : nat) (cap : option nat) : boo
   | _ => false
   end.
 
-(** 2. Movement Phase Move *)
+(** 2. Movement Phase Move (sliding along an edge when player has > 3 stones) *)
 Definition legal_slide (s : game_state) (src dst : nat) (cap : option nat) : bool :=
   match current_phase s with
-  | PhaseMovement =>
+  | PhaseMovement | PhaseFlying =>
       let mover := current_turn s in
+      (3 <? count_stones (current_board s) mover) &&
       in_nat_list src (player_stones (current_board s) mover) &&
       is_point dst &&
       negb (is_occupied (current_board s) dst) &&
@@ -187,10 +188,10 @@ Definition legal_slide (s : game_state) (src dst : nat) (cap : option nat) : boo
   | _ => false
   end.
 
-(** 3. Flying Phase Move (when player has exactly 3 stones) *)
+(** 3. Flying Phase Move (jumping to any vacant point when player has = 3 stones) *)
 Definition legal_fly (s : game_state) (src dst : nat) (cap : option nat) : bool :=
   match current_phase s with
-  | PhaseFlying =>
+  | PhaseMovement | PhaseFlying =>
       let mover := current_turn s in
       (count_stones (current_board s) mover =? 3) &&
       in_nat_list src (player_stones (current_board s) mover) &&
@@ -275,5 +276,38 @@ Definition is_terminal_loss (s : game_state) (p : color) : bool :=
   | _ =>
       (count_stones (current_board s) p <? 3)
   end.
+
+(** Post-Placement Mobility Split Theorem:
+    In both PhaseMovement and PhaseFlying, mobility is determined per-player
+    by their stone count: a player with > 3 stones slides along adjacent edges
+    (and cannot fly), while a player with = 3 stones flies to any vacant point
+    (and cannot slide). This eliminates any phase deadlock when one player has
+    3 stones and the opponent has > 3 stones.
+*)
+Theorem post_placement_mobility_split : forall c b src dst cap,
+  (3 < count_stones b c ->
+    legal_fly (mkState c PhaseMovement b) src dst cap = false /\
+    legal_fly (mkState c PhaseFlying b) src dst cap = false /\
+    legal_slide (mkState c PhaseFlying b) src dst cap =
+    legal_slide (mkState c PhaseMovement b) src dst cap) /\
+  (count_stones b c = 3 ->
+    legal_slide (mkState c PhaseMovement b) src dst cap = false /\
+    legal_slide (mkState c PhaseFlying b) src dst cap = false /\
+    legal_fly (mkState c PhaseMovement b) src dst cap =
+    legal_fly (mkState c PhaseFlying b) src dst cap).
+Proof.
+  intros c b src dst cap.
+  split.
+  - intros Hgt3.
+    assert (Hneq : (count_stones b c =? 3) = false).
+    { apply Nat.eqb_neq. lia. }
+    unfold legal_fly, legal_slide. simpl.
+    rewrite Hneq. simpl.
+    repeat split; reflexivity.
+  - intros Heq3.
+    unfold legal_slide, legal_fly. simpl.
+    rewrite Heq3. simpl.
+    repeat split; reflexivity.
+Qed.
 
 End NMMOperationalSemantics.

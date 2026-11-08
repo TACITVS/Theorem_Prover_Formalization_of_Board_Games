@@ -4,23 +4,11 @@
 #include <time.h>
 #include "nmm_bitboard.h"
 
-#define VALUE_UNKNOWN 0
-#define VALUE_WIN     1
-#define VALUE_LOSS    2
-#define VALUE_DRAW    3
-
-/* State representation for retrograde analysis */
-typedef struct {
-    bitboard_t white;
-    bitboard_t black;
-    uint8_t turn; /* 0 = White to move, 1 = Black to move */
-} state_t;
-
-/* Generate all combinations of k elements out of n */
+/* Generate all combinations of 3 elements out of 24 */
 static int combinations_24_3[2024];
 static int num_comb3 = 0;
 
-void init_combinations() {
+void init_combinations(void) {
     num_comb3 = 0;
     for (int i = 0; i < 24; i++) {
         for (int j = i + 1; j < 24; j++) {
@@ -82,10 +70,10 @@ void canonicalize_state(bitboard_t *w, bitboard_t *b) {
     *b = min_b;
 }
 
-int main() {
+int main(void) {
     printf("======================================================================\n");
-    printf("Nine Men's Morris - Retrograde Analysis Engine (Endgame Phase 3: 3v3)\n");
-    printf("Computing exact game-theoretic values under D4 Dihedral Symmetry\n");
+    printf("Nine Men's Morris - 3v3 Flying Endgame State-Space & D4 Orbit Analyzer\n");
+    printf("Enumerating exact legal 3v3 positions and D4 canonical equivalence classes\n");
     printf("======================================================================\n");
 
     init_combinations();
@@ -139,8 +127,8 @@ int main() {
     printf("Canonical States containing active White Mills: %llu\n", (unsigned long long)white_mills);
     printf("Canonical States containing active Black Mills: %llu\n", (unsigned long long)black_mills);
 
-    printf("\nConclusion: The 3v3 Flying Endgame space is strictly bounded and finite,\n");
-    printf("confirming Gasser's (1993) exact draw retrograde equilibrium!\n");
+    printf("\nConclusion: The 3v3 Flying Endgame space has 2,691,920 raw states and\n");
+    printf("338,120 D4 orbits with exact White/Black mill symmetry (2,749 each)!\n");
     printf("======================================================================\n");
     return 0;
 }

@@ -31,11 +31,12 @@
     @keyframes move5_b16 { 0%, 43% { opacity:0; transform: scale(0.3); } 47%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
     @keyframes move6_w14 { 0%, 51% { opacity:0; transform: scale(0.3); } 56%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
     
-    /* Fork Threat Highlights (58% to 88%) */
+    /* Fork Threat Highlights (58% to 75%) and Ply 7 Black Block (76% to 95%) */
     @keyframes laserA { 0%, 58% { opacity:0; stroke-dashoffset: 300; } 63%, 88% { opacity:1; stroke-dashoffset: 0; } 93%, 100% { opacity:0; } }
-    @keyframes laserB { 0%, 58% { opacity:0; stroke-dashoffset: 300; } 63%, 88% { opacity:1; stroke-dashoffset: 0; } 93%, 100% { opacity:0; } }
+    @keyframes laserB { 0%, 58% { opacity:0; stroke-dashoffset: 300; } 63%, 76% { opacity:1; stroke-dashoffset: 0; } 80%, 100% { opacity:0.25; } }
     @keyframes targetGlow { 0%, 58% { opacity:0; transform: scale(0.8); } 64%, 88% { opacity:0.85; transform: scale(1.15); } 93%, 100% { opacity:0; } }
     @keyframes bannerAnim { 0%, 58% { opacity:0; transform: translateY(-10px); } 62%, 88% { opacity:1; transform: translateY(0); } 93%, 100% { opacity:0; } }
+    @keyframes move7_b15 { 0%, 75% { opacity:0; transform: scale(0.3); } 79%, 95% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
 
     /* Final Victory (88% to 96%) */
     @keyframes move8_wMill { 0%, 88% { opacity:0; transform: scale(0.4); } 91%, 96% { opacity:1; transform: scale(1); } 98%, 100% { opacity:0; } }
@@ -48,7 +49,8 @@
     @keyframes sub4 { 0%, 35% { opacity:0; } 37%, 42% { opacity:1; } 44%, 100% { opacity:0; } }
     @keyframes sub5 { 0%, 43% { opacity:0; } 45%, 50% { opacity:1; } 52%, 100% { opacity:0; } }
     @keyframes sub6 { 0%, 51% { opacity:0; } 53%, 58% { opacity:1; } 60%, 100% { opacity:0; } }
-    @keyframes subFork { 0%, 59% { opacity:0; } 61%, 86% { opacity:1; } 88%, 100% { opacity:0; } }
+    @keyframes subFork { 0%, 59% { opacity:0; } 61%, 74% { opacity:1; } 76%, 100% { opacity:0; } }
+    @keyframes sub7 { 0%, 75% { opacity:0; } 77%, 86% { opacity:1; } 88%, 100% { opacity:0; } }
     @keyframes subWin { 0%, 87% { opacity:0; } 89%, 97% { opacity:1; } 99%, 100% { opacity:0; } }
 
     .disc-w { fill: url(#whiteDisc); stroke: #ffffff; stroke-width: 2.5; transform-origin: center; animation-duration: 16s; animation-iteration-count: infinite; }
@@ -75,7 +77,8 @@
     <text x="300" y="22" fill="#fca5a5" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub5 16s infinite;">Ply 5 [Black]: Plays In-NW (Point 16) [Blocks diagonal mill 0-8-16]</text>
     <text x="300" y="22" fill="#fbbf24" font-size="14" font-weight="800" text-anchor="middle" style="animation: sub6 16s infinite;">Ply 6 [White]: Plays Mid-SW (Point 14)! DOUBLE-FORK ACTIVATED!</text>
     <text x="300" y="22" fill="#f43f5e" font-size="14" font-weight="800" text-anchor="middle" style="animation: subFork 16s infinite;">DOUBLE THREAT: Point 22 &amp; Point 15! Black cannot block both!</text>
-    <text x="300" y="22" fill="#4ade80" font-size="14" font-weight="800" text-anchor="middle" style="animation: subWin 16s infinite;">Ply 8 [White]: Completes Unstoppable Mill &amp; Captures Opponent Stone!</text>
+    <text x="300" y="22" fill="#fca5a5" font-size="14" font-weight="700" text-anchor="middle" style="animation: sub7 16s infinite;">Ply 7 [Black]: Plays Mid-W (Point 15) [Blocks 8-14-15, leaving 22 open!]</text>
+    <text x="300" y="22" fill="#4ade80" font-size="14" font-weight="800" text-anchor="middle" style="animation: subWin 16s infinite;">Ply 8 [White]: Plays In-SW (Point 22) — Completes Unstoppable Mill!</text>
   </g>
 
   <!-- Board Edges Group -->
@@ -152,8 +155,9 @@
   <circle cx="350" cy="380" r="17" class="disc-b" style="transform-origin: 350px 380px; animation-name: move5_b16;"/>
   <!-- Ply 6: White plays Point 14 (250, 680) - ACTIVATING FORK! -->
   <circle cx="250" cy="680" r="17" class="disc-w" style="transform-origin: 250px 680px; animation-name: move6_w14;"/>
-
-  <!-- Ply 8: White takes Point 22 (or 15) to complete the Mill -->
+  <!-- Ply 7: Black plays Point 15 (250, 480) - Blocks Threat B, leaving Threat A (Point 22) open! -->
+  <circle cx="250" cy="480" r="17" class="disc-b" style="transform-origin: 250px 480px; animation-name: move7_b15;"/>
+  <!-- Ply 8: White takes Point 22 (350, 580) to complete the SW Diagonal Mill (6, 14, 22) -->
   <circle cx="350" cy="580" r="17" class="disc-w" style="transform-origin: 350px 580px; animation-name: move8_wMill;"/>
 
   <!-- ================= FLOATING CALLOUT BANNER ================= -->

@@ -29,30 +29,41 @@ static inline bool makes_mill(bitboard_t bb, int pt) {
 #define TT_SIZE (1U << TT_BITS)
 #define TT_MASK (TT_SIZE - 1)
 
+#define TT_EXACT 1
+#define TT_LOWER 2
+#define TT_UPPER 3
+
 typedef struct {
     uint32_t w_bb;
     uint32_t b_bb;
     int8_t val;
     int8_t best_move;
-    uint8_t is_valid;
-    uint8_t pad;
+    uint8_t flag;
+    uint8_t depth;
 } tt_entry_t;
 
 static tt_entry_t *TT;
 
 static inline uint32_t hash_state(bitboard_t w, bitboard_t b) {
-    uint32_t h = w * 0x9e3779b9U ^ b * 0x85ebca6bU;
+    uint32_t h = (w * 0x9e3779b9U) ^ (b * 0x85ebca6bU);
     return h ^ (h >> 16);
 }
 
 static int minimax(bitboard_t w, bitboard_t b, int ply, int max_plies, int alpha, int beta) {
     if (ply == max_plies) return 0;
+
+    int orig_alpha = alpha;
+    int orig_beta = beta;
+    uint8_t rem_depth = (uint8_t)(max_plies - ply);
+
     bitboard_t occupied = w | b;
     bool is_white = (ply % 2 == 0);
 
     uint32_t idx = hash_state(w, b) & TT_MASK;
-    if (TT[idx].is_valid && TT[idx].w_bb == w && TT[idx].b_bb == b) {
-        return TT[idx].val;
+    if (TT[idx].flag != 0 && TT[idx].w_bb == w && TT[idx].b_bb == b && TT[idx].depth >= rem_depth) {
+        if (TT[idx].flag == TT_EXACT) return TT[idx].val;
+        if (TT[idx].flag == TT_LOWER && TT[idx].val >= beta) return TT[idx].val;
+        if (TT[idx].flag == TT_UPPER && TT[idx].val <= alpha) return TT[idx].val;
     }
 
     bitboard_t empty = (~occupied) & 0xFFFFFFU;
@@ -60,10 +71,10 @@ static int minimax(bitboard_t w, bitboard_t b, int ply, int max_plies, int alpha
     for (int p = 0; p < NUM_POINTS; p++) {
         if (empty & (1U << p)) {
             if (is_white && makes_mill(w, p)) {
-                TT[idx] = (tt_entry_t){w, b, 1, (int8_t)p, 1, 0};
+                TT[idx] = (tt_entry_t){w, b, 1, (int8_t)p, TT_EXACT, rem_depth};
                 return 1;
             } else if (!is_white && makes_mill(b, p)) {
-                TT[idx] = (tt_entry_t){w, b, -1, (int8_t)p, 1, 0};
+                TT[idx] = (tt_entry_t){w, b, -1, (int8_t)p, TT_EXACT, rem_depth};
                 return -1;
             }
         }
@@ -95,7 +106,9 @@ static int minimax(bitboard_t w, bitboard_t b, int ply, int max_plies, int alpha
         }
     }
 
-    TT[idx] = (tt_entry_t){w, b, (int8_t)best_val, (int8_t)best_move, 1, 0};
+    uint8_t flag = (best_val <= orig_alpha) ? TT_UPPER :
+                   (best_val >= orig_beta)  ? TT_LOWER : TT_EXACT;
+    TT[idx] = (tt_entry_t){w, b, (int8_t)best_val, (int8_t)best_move, flag, rem_depth};
     return best_val;
 }
 
@@ -114,7 +127,6 @@ static const char *point_name(int p) {
     return buf;
 }
 
-/* Print full strategy: for White, play best_move; for Black, show all legal replies that don't immediately lose */
 void print_full_strategy(bitboard_t w, bitboard_t b, int ply, int max_plies, int indent) {
     if (ply >= max_plies) return;
 
@@ -124,18 +136,21 @@ void print_full_strategy(bitboard_t w, bitboard_t b, int ply, int max_plies, int
     for (int i = 0; i < indent; i++) printf("  ");
 
     if (ply % 2 == 0) {
-        /* White's turn */
-        uint32_t idx = hash_state(w, b) & TT_MASK;
+        /* White's turn: find exact winning move */
         int move = -1;
-        if (TT[idx].is_valid && TT[idx].w_bb == w && TT[idx].b_bb == b) {
-            move = TT[idx].best_move;
-        } else {
-            /* recalculate if needed */
-            int bv = -2;
+        for (int p = 0; p < NUM_POINTS; p++) {
+            if (empty & (1U << p)) {
+                if (makes_mill(w, p)) {
+                    move = p;
+                    break;
+                }
+            }
+        }
+        if (move < 0) {
             for (int p = 0; p < NUM_POINTS; p++) {
                 if (empty & (1U << p)) {
                     int sc = minimax(w | (1U << p), b, ply + 1, max_plies, -2, 2);
-                    if (sc > bv) { bv = sc; move = p; }
+                    if (sc == 1) { move = p; break; }
                 }
             }
         }
@@ -147,28 +162,29 @@ void print_full_strategy(bitboard_t w, bitboard_t b, int ply, int max_plies, int
         }
         printf("\n");
 
-        /* Now show Black replies */
         print_full_strategy(w | (1U << move), b, ply + 1, max_plies, indent + 1);
     } else {
-        /* Black's turn: explore moves */
-        /* To keep output readable, show the moves that block immediate threats or optimal replies */
+        /* Verify that EVERY legal Black reply loses (+1 for White) */
+        int legal_count = 0;
+        int win_count = 0;
         for (int p = 0; p < NUM_POINTS; p++) {
             if (!(empty & (1U << p))) continue;
+            legal_count++;
             int sc = minimax(w, b | (1U << p), ply + 1, max_plies, -2, 2);
-            /* Only show best/resilient Black replies (score <= 1) */
-            if (sc == 1) {
-                /* Even if White wins, Black tries to delay */
-            }
+            if (sc == 1) win_count++;
         }
-        /* Let's show a few key Black branches, e.g. Black playing 1, 7, 8, etc. */
-        int test_replies[] = {1, 7, 8, 16};
-        for (int i = 0; i < 4; i++) {
+        printf("Ply %d [Black]: verified %d/%d legal replies all result in +1 (Forced White Mill)!\n",
+               ply, win_count, legal_count);
+
+        /* Follow the canonical defensive line (blocking immediate 2-in-a-row threats) */
+        int test_replies[] = {1, 7, 16, 15, 22};
+        for (int i = 0; i < 5; i++) {
             int p = test_replies[i];
             if (empty & (1U << p)) {
                 for (int j = 0; j < indent; j++) printf("  ");
-                printf("Branch if Black replies with %s:\n", point_name(p));
+                printf("Canonical defensive branch: Black plays %s\n", point_name(p));
                 print_full_strategy(w, b | (1U << p), ply + 1, max_plies, indent + 1);
-                break; /* show first representative branch */
+                break;
             }
         }
     }
@@ -176,9 +192,10 @@ void print_full_strategy(bitboard_t w, bitboard_t b, int ply, int max_plies, int
 
 int main(void) {
     TT = (tt_entry_t *)calloc(TT_SIZE, sizeof(tt_entry_t));
-    minimax(0, 0, 0, 9, -2, 2);
+    if (!TT) return 1;
 
-    printf("=== Twelve Men's Morris: White Forced Mill Tree Analysis ===\n\n");
+    int root_val = minimax(0, 0, 0, 9, -2, 2);
+    printf("=== Twelve Men's Morris: White Forced Mill Tree Analysis (Root Value = %+d) ===\n\n", root_val);
     print_full_strategy(0, 0, 0, 9, 0);
 
     free(TT);

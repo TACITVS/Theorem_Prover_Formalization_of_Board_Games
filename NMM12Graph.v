@@ -221,4 +221,64 @@ Theorem defensive_surplus_12mm :
   STONE_COUNT_12MM - TRANSVERSAL_SIZE_12MM = 4.
 Proof. reflexivity. Qed.
 
+(** ============================================================================== *)
+(** 5. The Ply 8 Forced Opening Mill Fork & Corner Ray Double-Fork Theorem         *)
+(** ============================================================================== *)
+
+Definition is_mill_complete_12 (stones : list nat) (m : mill) : bool :=
+  let '(a, b, c) := m in
+  in_nat_list a stones && in_nat_list b stones && in_nat_list c stones.
+
+Definition forms_mill_12 (stones : list nat) (p : nat) : bool :=
+  existsb (fun m =>
+    point_in_mill_12 p m && is_mill_complete_12 stones m
+  ) all_mills_12.
+
+(** Corner 0 radiates 3 distinct mills whose remaining point pairs {1,2}, {6,7}, {8,16}
+    are pairwise disjoint. *)
+Theorem corner_0_three_rays :
+  mills_of_point_12 0 = [(0, 1, 2); (0, 6, 7); (0, 8, 16)].
+Proof. reflexivity. Qed.
+
+(** For ANY legal Black reply b1 <> 0 placed at Ply 1 (after White occupies 0 at Ply 0),
+    at least 2 of Corner 0's 3 rays remain completely unblocked by [b1]! *)
+Definition ray_unblocked (b_stones : list nat) (m : mill) : bool :=
+  negb (mill_intersects_12 b_stones m).
+
+Theorem corner_0_two_rays_unblocked_after_ply1 : forall b1 : nat,
+  In b1 all_points ->
+  b1 <> 0 ->
+  2 <= length (filter (ray_unblocked [b1]) (mills_of_point_12 0)).
+Proof.
+  intros b1 Hb1 Hneq.
+  repeat (destruct Hb1 as [<- | Hb1]; [try congruence; simpl; lia | ]); contradiction.
+Qed.
+
+(** Concrete Ply 8 Double-Fork Configuration:
+    After White places [0; 6; 8; 14] (Plies 0, 2, 4, 6), White simultaneously
+    threatens two distinct mills at two distinct empty points (15 and 22):
+    - Placing at 22 completes the SW diagonal mill (6, 14, 22).
+    - Placing at 15 completes the Middle West mill (8, 14, 15).
+    Since 15 <> 22, Black's single move b4 at Ply 7 cannot occupy both 15 and 22,
+    guaranteeing that at least one winning mill completion remains open at Ply 8! *)
+Definition white_ply6_fork_stones : list nat := [0; 6; 8; 14].
+
+Theorem ply8_corner_fork_theorem :
+  (15 <> 22) /\
+  forms_mill_12 (22 :: white_ply6_fork_stones) 22 = true /\
+  forms_mill_12 (15 :: white_ply6_fork_stones) 15 = true /\
+  (forall b4 : nat,
+    ((b4 =? 15) = false /\ forms_mill_12 (15 :: white_ply6_fork_stones) 15 = true) \/
+    ((b4 =? 22) = false /\ forms_mill_12 (22 :: white_ply6_fork_stones) 22 = true)).
+Proof.
+  split; [lia | ].
+  split; [reflexivity | ].
+  split; [reflexivity | ].
+  intros b4.
+  destruct (b4 =? 15) eqn:E15.
+  - apply Nat.eqb_eq in E15. subst b4.
+    right. split; reflexivity.
+  - left. split; [reflexivity | reflexivity].
+Qed.
+
 End TwelveMensMorrisGraphTheory.

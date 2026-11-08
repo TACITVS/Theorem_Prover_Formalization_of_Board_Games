@@ -14,6 +14,12 @@ typedef struct {
     bitboard_t black;
 } nmm_board_t;
 
+typedef struct {
+    bitboard_t white;
+    bitboard_t black;
+    uint8_t turn; /* 0 = White to move, 1 = Black to move */
+} state_t;
+
 /* 16 Precomputed Mill Bitmasks */
 static const bitboard_t MILL_MASKS[16] = {
     7U,        /* (0, 1, 2)   - Ring 0 Top */

@@ -50,7 +50,45 @@ Definition eq_state (s1 s2 : game_state) : bool :=
   eq_phase (current_phase s1) (current_phase s2) &&
   eq_board (current_board s1) (current_board s2).
 
-(** Verified computational certificate validator *)
+(** Reflexivity of state equality *)
+Lemma eq_list_nat_refl : forall l,
+  eq_list_nat l l = true.
+Proof.
+  intros l. unfold eq_list_nat.
+  rewrite Nat.eqb_refl. simpl.
+  assert (Hall : forallb (fun x => in_nat_list x l) l = true).
+  { apply forallb_forall. intros x Hx. apply in_nat_list_iff. assumption. }
+  rewrite Hall. reflexivity.
+Qed.
+
+Lemma eq_board_refl : forall b,
+  eq_board b b = true.
+Proof.
+  intros b. unfold eq_board.
+  rewrite !eq_list_nat_refl. reflexivity.
+Qed.
+
+Lemma eq_phase_refl : forall p,
+  eq_phase p p = true.
+Proof.
+  intros [w b | | ]; simpl; rewrite ?Nat.eqb_refl; reflexivity.
+Qed.
+
+Lemma color_eqb_refl : forall c,
+  color_eqb c c = true.
+Proof.
+  intros []; reflexivity.
+Qed.
+
+Theorem eq_state_refl : forall s,
+  eq_state s s = true.
+Proof.
+  intros s. unfold eq_state.
+  rewrite color_eqb_refl, eq_phase_refl, eq_board_refl.
+  reflexivity.
+Qed.
+
+(** Verified computational certificate validator (wiring eq_state transition check) *)
 Fixpoint check_cert (c : color) (ct : cert) : bool :=
   match ct with
   | LeafDrawn s =>
@@ -59,12 +97,15 @@ Fixpoint check_cert (c : color) (ct : cert) : bool :=
       color_eqb (current_turn s) c &&
       negb (is_terminal_loss s c) &&
       is_legal_move s m &&
+      eq_state (cert_state next) (apply_move s m) &&
       check_cert c next
   | AttackerBranch s branches =>
       color_eqb (current_turn s) (opp c) &&
       negb (is_terminal_loss s c) &&
       forallb (fun '(m, next) =>
-        is_legal_move s m && check_cert c next
+        is_legal_move s m &&
+        eq_state (cert_state next) (apply_move s m) &&
+        check_cert c next
       ) branches
   end.
 
@@ -87,6 +128,17 @@ Proof.
   intros c.
   unfold check_cert, initial_cert, initial_state, is_terminal_loss.
   destruct c; reflexivity.
+Qed.
+
+(** Concrete 1-step DefenderMove certificate verifying state transition checking *)
+Definition opening_move_cert : cert :=
+  let m := PlaceMove 0 None in
+  DefenderMove initial_state m (LeafDrawn (apply_move initial_state m)).
+
+Theorem opening_move_cert_checks :
+  check_cert White opening_move_cert = true.
+Proof.
+  reflexivity.
 Qed.
 
 (** Certificate Soundness: check_cert = true guarantees non-terminal status *)

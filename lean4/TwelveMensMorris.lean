@@ -149,6 +149,76 @@ def TRANSVERSAL_SIZE_12 : Nat := 8
 
 theorem defensive_surplus_12mm_law : STONES_12MM - TRANSVERSAL_SIZE_12 = 4 := by rfl
 
+/- ============================================================================== -/
+/- D4 Dihedral Symmetry Automorphism on All 20 Mills                              -/
+/- ============================================================================== -/
+
+def ring_of (p : Nat) : Nat := p / 8
+def pos_of (p : Nat) : Nat := p % 8
+def rot (p : Nat) : Nat := 8 * ring_of p + ((pos_of p + 2) % 8)
+def refl (p : Nat) : Nat := 8 * ring_of p + ((10 - pos_of p) % 8)
+
+def sort3 (a b c : Nat) : Nat × Nat × Nat :=
+  let (x1, x2) := if a <= b then (a, b) else (b, a)
+  if x2 <= c then (x1, x2, c)
+  else if x1 <= c then (x1, c, x2)
+  else (c, x1, x2)
+
+def transform_mill (f : Nat → Nat) (m : Nat × Nat × Nat) : Nat × Nat × Nat :=
+  let (a, b, c) := m
+  sort3 (f a) (f b) (f c)
+
+def is_canonical_mill_12 (m : Nat × Nat × Nat) : Bool :=
+  all_mills_12.contains m
+
+theorem rot_preserves_all_20_mills :
+  (all_mills_12.all (fun m => is_canonical_mill_12 (transform_mill rot m))) = true := by
+  decide
+
+theorem refl_preserves_all_20_mills :
+  (all_mills_12.all (fun m => is_canonical_mill_12 (transform_mill refl m))) = true := by
+  decide
+
+/- ============================================================================== -/
+/- The Ply 8 Forced Opening Mill Fork & Corner Ray Double-Fork Theorem            -/
+/- ============================================================================== -/
+
+def is_mill_complete_12 (stones : List Nat) (m : Nat × Nat × Nat) : Bool :=
+  let (a, b, c) := m
+  stones.contains a && stones.contains b && stones.contains c
+
+def forms_mill_12 (stones : List Nat) (p : Nat) : Bool :=
+  all_mills_12.any (fun m => point_in_mill p m && is_mill_complete_12 stones m)
+
+/-- Corner 0 radiates 3 distinct mills whose non-zero points {1,2}, {6,7}, {8,16} are disjoint -/
+theorem corner_0_three_rays :
+  mills_of_point_12 0 = [(0, 1, 2), (0, 6, 7), (0, 8, 16)] := by rfl
+
+def ray_unblocked (b_stones : List Nat) (m : Nat × Nat × Nat) : Bool :=
+  !(mill_intersects b_stones m)
+
+/-- For every legal Black reply b1 != 0 at Ply 1 (after White occupies 0 at Ply 0),
+    at least 2 of Corner 0's 3 rays remain completely unblocked -/
+theorem corner_0_two_rays_unblocked_after_ply1 :
+  (all_points.all (fun b1 =>
+    (b1 == 0) || (2 <= ((mills_of_point_12 0).filter (ray_unblocked [b1])).length))) = true := by
+  decide
+
+def white_ply6_fork_stones : List Nat := [0, 6, 8, 14]
+
+/-- Concrete Ply 8 Double-Fork Theorem:
+    White's configuration [0, 6, 8, 14] simultaneously threatens a mill at 22 ((6,14,22))
+    and a mill at 15 ((8,14,15)). For every Black move b4 at Ply 7, at least one of the
+    two distinct empty targets {15, 22} remains unblocked and forms a mill at Ply 8! -/
+theorem ply8_corner_fork_theorem :
+  ((15 != 22) &&
+   forms_mill_12 (22 :: white_ply6_fork_stones) 22 &&
+   forms_mill_12 (15 :: white_ply6_fork_stones) 15 &&
+   all_points.all (fun b4 =>
+     ((b4 != 15) && forms_mill_12 (15 :: white_ply6_fork_stones) 15) ||
+     ((b4 != 22) && forms_mill_12 (22 :: white_ply6_fork_stones) 22))) = true := by
+  decide
+
 end TwelveMensMorris
 
 -- Axiom audits
@@ -167,3 +237,8 @@ end TwelveMensMorris
 #print axioms TwelveMensMorris.transversal_12_8_length
 #print axioms TwelveMensMorris.transversal_12_8_covers_all_20_mills
 #print axioms TwelveMensMorris.defensive_surplus_12mm_law
+#print axioms TwelveMensMorris.rot_preserves_all_20_mills
+#print axioms TwelveMensMorris.refl_preserves_all_20_mills
+#print axioms TwelveMensMorris.corner_0_three_rays
+#print axioms TwelveMensMorris.corner_0_two_rays_unblocked_after_ply1
+#print axioms TwelveMensMorris.ply8_corner_fork_theorem

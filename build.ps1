@@ -1,4 +1,4 @@
-# Build and verify script for Rocq 9.1 Nine Men's Morris formal proof
+# Build and verify script for Rocq 9.1 Twelve Men's Morris & Nine Men's Morris formal proof
 $ErrorActionPreference = "Stop"
 
 $rocq = "C:\Rocq-Platform~9.1~2026.01\bin\rocq.exe"
@@ -21,7 +21,7 @@ $files = @(
     "CheckAssumptions.v"
 )
 
-Write-Host "=== Compiling Nine Men's Morris Formal Mathematical Proof in Rocq 9.1 ===" -ForegroundColor Cyan
+Write-Host "=== Compiling Twelve Men's Morris & Nine Men's Morris Formal Proofs in Rocq 9.1 ===" -ForegroundColor Cyan
 $assumptionsOutput = @()
 foreach ($f in $files) {
     Write-Host "Compiling $f..." -NoNewline
