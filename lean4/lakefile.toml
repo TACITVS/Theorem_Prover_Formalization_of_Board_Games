@@ -1,0 +1,7 @@
+name = "MNKGames"
+version = "0.1.0"
+defaultTargets = ["MNKGames"]
+
+[[lean_lib]]
+name = "MNKGames"
+srcDir = "."
