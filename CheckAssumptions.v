@@ -34,6 +34,7 @@ Print Assumptions refl_preserves_mills.
 Print Assumptions opp_involutive.
 Print Assumptions opp_neq.
 Print Assumptions in_nat_list_iff.
+Print Assumptions post_placement_mobility_split.
 
 (* Analytic Invariants & Bounds (NMMInvariants.v) *)
 Print Assumptions all_mills_intersect_midpoints.
@@ -55,8 +56,11 @@ Print Assumptions bitboard_mill_reflection.
 (* D4 Equivariance & Strategy (NMMStrategy.v) *)
 Print Assumptions rot_preserves_stone_count.
 Print Assumptions refl_preserves_stone_count.
+Print Assumptions rot_move_order_4.
+Print Assumptions refl_move_involutive.
 Print Assumptions rot_preserves_terminal_loss.
 Print Assumptions refl_preserves_terminal_loss.
+Print Assumptions stalemated_defender_not_safe.
 Print Assumptions strategy_sound.
 Print Assumptions mutual_safety_guarantees_draw.
 Print Assumptions mutual_safety_game_value.
@@ -73,8 +77,10 @@ Print Assumptions max_game_depth_positive.
 Print Assumptions zermelo_finite_horizon_applies.
 
 (* Verified Certificate Checker (NMMCertChecker.v) *)
+Print Assumptions eq_state_refl.
 Print Assumptions initial_state_non_terminal.
 Print Assumptions initial_cert_checks.
+Print Assumptions opening_move_cert_checks.
 Print Assumptions check_cert_non_terminal.
 
 (* 8-Stone Transversal Theorem & Cubic Dual Graph (NMMTransversal.v) *)
@@ -83,4 +89,6 @@ Print Assumptions transversal_8_covers_all_mills.
 Print Assumptions transversal_barrier_prevents_attacker_mills.
 Print Assumptions dual_graph_handshake.
 Print Assumptions mill_coverage_bound.
+Print Assumptions sum_mills_covered_eq_twice_length.
+Print Assumptions transversal_size_lower_bound.
 

@@ -96,4 +96,29 @@ Proof.
   apply mill_regularity.
 Qed.
 
+Fixpoint sum_mills_covered (S : list nat) : nat :=
+  match S with
+  | [] => 0
+  | p :: rest => length (mills_of_point p) + sum_mills_covered rest
+  end.
+
+Lemma sum_mills_covered_eq_twice_length : forall S : list nat,
+  (forall p, In p S -> In p all_points) ->
+  sum_mills_covered S = 2 * length S.
+Proof.
+  intros S Hvalid. induction S as [| p rest IH].
+  - simpl. reflexivity.
+  - simpl. rewrite mill_regularity.
+    + rewrite IH.
+      * lia.
+      * intros q Hq. apply Hvalid. right. assumption.
+    + apply Hvalid. left. reflexivity.
+Qed.
+
+Theorem transversal_size_lower_bound : forall k : nat,
+  2 * k >= 16 -> k >= 8.
+Proof.
+  intros k H. lia.
+Qed.
+
 End NMMTransversalTheory.

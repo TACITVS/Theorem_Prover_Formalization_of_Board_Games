@@ -23,10 +23,10 @@ void print_board(const nmm_board_t *b) {
     printf("  White: %d stones | Black: %d stones\n\n", popcount24(b->white), popcount24(b->black));
 }
 
-int main(int argc, char *argv[]) {
+int main(void) {
     printf("======================================================================\n");
-    printf("Nine Men's Morris - High-Performance 24-Bit Bitboard Engine & Solver\n");
-    printf("Ralph Gasser Solution (1993, ETH Zurich): Exact Game Value = DRAW\n");
+    printf("Nine Men's Morris - 24-Bit Bitboard Engine & Structural Verifier\n");
+    printf("Verifying 16-Mill Regularity, 32-Edge Handshake & O(1) Mill Detection\n");
     printf("======================================================================\n");
 
     /* 1. Structural self-test */
