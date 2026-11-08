@@ -4,8 +4,8 @@
 ### **Foundational Constructive Game Theory, Exact Minimax Equilibria, and Zero-Axiom Proofs in Rocq 9.1 and Lean 4.35**
 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository_Suite-2563eb?style=for-the-badge&logo=github)](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games)
-[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-305_Theorems_Closed_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
-[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-147_Theorems_Verified_(0_Sorry)-10b981?style=for-the-badge)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
+[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-330_Theorems_Closed_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
+[![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-162_Theorems_Verified_(0_Sorry)-10b981?style=for-the-badge)](THEORETICAL_FOUNDATIONS_AND_METHODS.md)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
 <br/>
@@ -32,6 +32,7 @@ Navigate directly to the dedicated branches for each machine-verified game:
 | Game | Board & Rules | Formal Status & Branch Link | Game Value | Core Mathematical Invariant | Theorems (Rocq / Lean) |
 | :--- | :--- | :---: | :---: | :--- | :---: |
 | **8×8 English Draughts (Checkers)** | 32 dark squares, 24 men, mandatory forward captures | [**`checkers`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | **Exact Draw** | Monotonic rank potential function `Φ(st)`, cycle elimination (`ΔΦ ≥ +59` on jumps), Move 37 draw horizon | **59 Rocq / 15 Lean** |
+| **9×7 Connect-5 with Gravity** | 9 columns, 7 rows, 92 winning 5-lines | [**`connect5-9x7`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-9x7) | **Exact Draw** | Single-Center-Axis Parity Inversion (`63 - 1 = 62 ≡ 0 (mod 2)`), 31 Static Disjoint Pairs, Dead-Roof Row 6 Inaccessibility | **25 Rocq / 15 Lean** |
 | **8×8 Connect-5 with Gravity** | 8 columns, 8 rows, 96 winning 5-lines | [**`connect5-8x8`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | **Exact Draw** | Even-Height Parity Inversion (`64 - 2m ≡ 0 (mod 2)`), Zero Rigid Cross-Pairs, 30 Pure Vertical Dominoes (Pattern `00011000`) | **26 Rocq / 18 Lean** |
 | **8×7 Connect-5 with Gravity** | 8 columns, 7 rows, 76 winning 5-lines | [**`connect5-8x7`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) | **Exact Draw** | 10-Cell Erdős Transversal, Rule R3 Dynamic Column Freezing (`fc = 4, ft = 6`), 3 Base-Row Horizontal Cross-Pairs | **24 Rocq / 18 Lean** |
 | **5×5 Dots and Boxes** | 16 Boxes, 40 Edges, double-deal sacrifices | [**`dots-and-boxes`**](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | **Exact Draw (8–8)** | Dual planar cubic graph, Berlekamp Nimstring loops, 2-box sacrifice parity control, tempo conservation | **46 Rocq / 24 Lean** |
@@ -50,53 +51,48 @@ The formalizations across all branches are unified by six foundational pillars o
 </p>
 
 ### 1. The Algebra of Fairness & Zermelo Minimax Reductions
-In finite two-player zero-sum games with perfect information, Zermelo's Theorem (1913) guarantees that every board state possesses an exact theoretical value $\mathrm{Value}(s) \in \{\mathrm{WinWhite}, \mathrm{Draw}, \mathrm{WinBlack}\}$. In our framework, we establish fairness ($\mathrm{Value} = \mathrm{Draw}$) through **Mutual Defensive Safety**:
+In finite two-player zero-sum games with perfect information, Zermelo's Theorem (1913) guarantees that every board state possesses an exact theoretical value `Value(s) ∈ {WinWhite, Draw, WinBlack}`. In our framework, we establish fairness (`Value = Draw`) through **Mutual Defensive Safety**:
 
-$$
-\mathrm{safe}(\mathrm{White}, s, \mathrm{Black}) \land \mathrm{safe}(\mathrm{Black}, s, \mathrm{White}) \implies \mathrm{Value}(s) = \mathrm{Draw}
-$$
+```text
+safe(White, s, Black) ∧ safe(Black, s, White) ⟹ Value(s) = Draw
+```
 
-Rather than exhaustively computing the astronomical state space ($10^{10}$ to $10^{20}$ positions), the proof constructs an inductive pairing strategy ensuring neither player can ever be forced into a losing leaf.
+Rather than exhaustively computing astronomical state spaces (10¹⁰ to 10²⁰ positions), the proof constructs an inductive pairing strategy ensuring neither player can ever be forced into a losing leaf.
 
 ### 2. Hypergraph Transversals & Modulo-2 Parity Inversion
-Positional games (Connect-5, Qubic, Gomoku) are formulated as uniform hypergraphs $\mathcal{H} = (V, E)$. A defensive strategy seeks a **transversal** $T \subseteq V$ intersecting every winning hyperedge $e \in E$.
-- **Odd-Height Boards (e.g., 8×7):** Player 1's opening move leaves an odd number of empty cells ($56 - 1 = 55 \equiv 1 \pmod{2}$). By the Pigeonhole Principle, 55 cells cannot be partitioned into 2-cell dominoes. Parity must be dynamically restored by poisoning a column via **Rule R3** (frozen threat suffixes).
-- **Even-Height Boards (e.g., 8×8):** Player 1's move leaves 63 empty cells; Player 2's adjacent response claims cell $(4, 0)$, leaving an exact even number of empty cells:
-
-$$
-E_{2m} = 64 - 2m = 2(32 - m) \equiv 0 \pmod{2}
-$$
-
-Because the column height $H = 8$ is even, every column naturally partitions into pure vertical dominoes, triggering the **Zero Rigid Cross-Pairs Theorem**: 100% of winning lines are blocked with pure vertical dominoes alone!
+Positional games (Connect-5, Qubic, Gomoku) are formulated as uniform hypergraphs H = (V, E). A defensive strategy seeks a **transversal** T ⊆ V intersecting every winning hyperedge e ∈ E.
+- **Odd-Height Boards (e.g., 8×7):** Player 1's opening move leaves an odd number of empty cells (56 - 1 = 55 ≡ 1 (mod 2)). By the Pigeonhole Principle, 55 cells cannot be partitioned into 2-cell dominoes. Parity must be dynamically restored by poisoning a column via **Rule R3** (holding an unblockable 4-threat at an even row above an empty poison cell).
+- **Even-Height Boards (e.g., 8×8):** Player 1's move leaves 63 empty cells; Player 2's adjacent response claims cell (4, 0), leaving an exact even number of empty cells:
+  ```text
+  E = 64 - 2 = 62 ≡ 0 (mod 2)
+  ```
+  Because column height H = 8 is even, every column naturally partitions into pure vertical dominoes, triggering the **Zero Rigid Cross-Pairs Theorem**: 100% of winning lines are blocked with pure vertical dominoes alone!
+- **Odd-Width Boards (e.g., 9×7):** Total cells = 63 (odd). White opens at the central mirror axis (4, 0), leaving 62 empty cells (even). White's opening move spontaneously restores even parity to Black, enabling an unconditional **31-pair static partition** that blocks 100% of winning lines with **zero dynamic column freezing needed**!
 
 ### 3. Spatial Symmetry Groups & Broken Regularity
 Boards with spatial geometry are governed by transformation automorphism groups:
-- **Dihedral Group $D_4$ (Order 8):** In Nine Men's Morris and Dots and Boxes, rotations $\mathrm{rot}_{90}$ (order 4) and reflections $\mathrm{refl}$ (order 2) act on the point and edge universes, preserving adjacency, mills, and boundary status.
-- **Klein 4-Group $V_4$ & 180° Inversion:** In 8×8 Checkers, board coordinates are invariant under 180° rotation $\mathrm{rot}_{180}(s) = 31 - s$, which preserves rank/column deltas and dark-square parity.
+- **Dihedral Group D₄ (Order 8):** In Nine Men's Morris and Dots and Boxes, rotations `rot_90` (order 4) and reflections `refl` (order 2) act on the point and edge universes, preserving adjacency, mills, and boundary status.
+- **Klein 4-Group V₄ & 180° Inversion:** In 8×8 Checkers, board coordinates are invariant under 180° rotation `rot_180(s) = 31 - s`, which preserves rank/column deltas and dark-square parity.
 - **Broken Regularity in Twelve Men's Morris:** Adding 4 diagonal mills breaks the 2-regular mill incidence of Nine Men's Morris. Corners jump to mill degree 3, allowing White's opening placement at Point 0 to radiate 3 disjoint mill rays simultaneously—guaranteeing White an unblockable double-threat fork at Ply 8!
 
 ### 4. Monotonic Lyapunov Potentials & Cycle Elimination
-In games with capture mechanics and directional movement (Checkers), cyclic repetitions are prevented by establishing a strictly monotonic **Lyapunov Rank Potential Function** $\Phi(\mathrm{st})$:
+In games with capture mechanics and directional movement (Checkers), cyclic repetitions are prevented by establishing a strictly monotonic **Lyapunov Rank Potential Function** Φ(st):
 
-$$
-\Phi(\mathrm{st}) = 64 \cdot (24 - \mathrm{TotalPieces}(\mathrm{st})) + \sum_{w \in W_{\mathrm{men}}} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}} (7 - \mathrm{Rank}(b))
-$$
+```text
+Φ(st) = 64 · (24 - TotalPieces(st)) + ∑_{w ∈ W_men} Rank(w) + ∑_{b ∈ B_men} (7 - Rank(b))
+```
 
-- **Quiet Step:** $\Delta \Phi = +1$ (advancing a man one rank).
-- **Capture Jump:** $\Delta \Phi \ge +59$ ($+64$ piece removal, $+2$ rank advance, $\le 7$ opponent rank loss).
+- **Quiet Step:** ΔΦ = +1 (advancing a man one rank).
+- **Capture Jump:** ΔΦ ≥ +59 (+64 piece removal, +2 rank advance, ≤ 7 opponent rank loss).
 
-Because $\Phi(\mathrm{st})$ is strictly increasing and bounded by $1{,}704$, men-only play is provably **acyclic and terminates unconditionally**.
+Because Φ(st) is strictly increasing and bounded by 1,704, men-only play is provably **acyclic and terminates unconditionally**.
 
 ### 5. Combinatorial Game Theory & Nimstring Duality
 In Dots and Boxes, the primal square grid is isomorphic to a dual planar cubic graph with a single boundary component. By Berlekamp's **Double-Dealing Principle**, offering a hard-hearted handout of 2 boxes in a long chain controls the tempo:
 
-$$
-\text{Total Boxes } B \ge 2C + 4L \implies \text{Parity Control Guaranteed}
-$$
-
-$$
-2C + 4L = 2(C + 2L)
-$$
+```text
+Total Boxes B ≥ 2C + 4L ⟹ Parity Control Guaranteed
+```
 
 allowing Player 2 to maintain parity control and force an exact **8–8 Draw** on the 16-box board.
 
@@ -126,33 +122,34 @@ Our project introduces a **dual formalization methodology** that eliminates trus
 
 ## 🏆 Master Comparative Taxonomy of Verified Board Games
 
-| Dimension / Metric | 8×8 Checkers | 8×8 Connect-5 | 8×7 Connect-5 | 5×5 Dots & Boxes | Nine Men's Morris | Twelve Men's Morris |
-| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
-| **Grid / Topology** | 32 Dark Squares | 8×8 Grid (64 cells) | 8×7 Grid (56 cells) | 5×5 Dots (16 Boxes) | 24 Points (3 Rings) | 24 Points (+4 Diags) |
-| **State Space Size** | `~5.00 × 10²⁰` | `~3.4 × 10³⁰` | `~1.4 × 10²⁶` | `~1.2 × 10¹¹` | `~1.0 × 10¹⁰` | `~1.5 × 10¹¹` |
-| **Game Value** | **Exact Draw** | **Exact Draw** | **Exact Draw** | **Exact Draw (8–8)** | **Exact Draw** | **Win White** |
-| **Original Solver** | Schaeffer (2007) | *This Work (2026)* | *This Work (2026)* | Conway/Berlekamp | Gasser (1993) | *This Work (2026)* |
-| **Rocq 9.1 Theorems** | **59 Closed** | **26 Closed** | **24 Closed** | **46 Closed** | **65 Closed** | **85 Closed** |
-| **Lean 4.35 Theorems** | **15 Verified** | **18 Verified** | **18 Verified** | **24 Verified** | **26 Verified** | **46 Verified** |
-| **Symmetry Group** | `V₄` (180° Inversion) | Reflection `x ↔ 7-x` | Reflection `x ↔ 7-x` | `D₄` (Order 8) | `D₄` (Order 8) | `D₄` (Order 8) |
-| **Axioms / Admits** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** |
-| **Dedicated Branch** | [`checkers`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | [`connect5-8x8`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) | [`dots-and-boxes`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) |
+| Dimension / Metric | 8×8 Checkers | 9×7 Connect-5 | 8×8 Connect-5 | 8×7 Connect-5 | 5×5 Dots & Boxes | Nine Men's Morris | Twelve Men's Morris |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Grid / Topology** | 32 Dark Squares | 9×7 Grid (63 cells) | 8×8 Grid (64 cells) | 8×7 Grid (56 cells) | 5×5 Dots (16 Boxes) | 24 Points (3 Rings) | 24 Points (+4 Diags) |
+| **State Space Size** | `~5.00 × 10²⁰` | `~8.1 × 10²⁹` | `~3.4 × 10³⁰` | `~1.4 × 10²⁶` | `~1.2 × 10¹¹` | `~1.0 × 10¹⁰` | `~1.5 × 10¹¹` |
+| **Game Value** | **Exact Draw** | **Exact Draw** | **Exact Draw** | **Exact Draw** | **Exact Draw (8–8)** | **Exact Draw** | **Win White** |
+| **Original Solver** | Schaeffer (2007) | *This Work (2026)* | *This Work (2026)* | *This Work (2026)* | Conway/Berlekamp | Gasser (1993) | *This Work (2026)* |
+| **Rocq 9.1 Theorems** | **59 Closed** | **25 Closed** | **26 Closed** | **24 Closed** | **46 Closed** | **65 Closed** | **85 Closed** |
+| **Lean 4.35 Theorems** | **15 Verified** | **15 Verified** | **18 Verified** | **18 Verified** | **24 Verified** | **26 Verified** | **46 Verified** |
+| **Symmetry Group** | `V₄` (180° Inversion) | Reflection `x ↔ 8-x` | Reflection `x ↔ 7-x` | Reflection `x ↔ 7-x` | `D₄` (Order 8) | `D₄` (Order 8) | `D₄` (Order 8) |
+| **Axioms / Admits** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** | **0 / 0** |
+| **Dedicated Branch** | [`checkers`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/checkers) | [`connect5-9x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-9x7) | [`connect5-8x8`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x8) | [`connect5-8x7`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/connect5-8x7) | [`dots-and-boxes`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/dots-and-boxes) | [`nine-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/nine-mens-morris) | [`twelve-mens-morris`](https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games/tree/twelve-mens-morris) |
 
 ---
 
 ## 🔮 Unsolved Game Frontiers & Ongoing Research
 
-With 6 landmark games formalized and verified, the repository's open research roadmap targets the remaining unsolved game frontiers:
+With 7 landmark games formalized and verified, the repository's open research roadmap targets the remaining unsolved game frontiers:
 
-1. **Connect-5 on 9×7 with Gravity (The Odd-Width Boundary):**
-   - On 8×7 and 8×8, the width is even (8), so the defensive burden is shared symmetrically between Columns 3 and 4.
-   - On **9×7**, the width is **odd**: there is a unique symmetry axis at **Column 4**. Does White playing at `(4, 0)` break Black's pairing defense and force a First-Player Win, or can Black hold a Draw?
+1. **Connect-5 on 10×7 and 9×8 with Gravity:**
+   - Width 10 creates an even-width grid with two central columns {4, 5}. Height 8 creates an even vertical dimension. Does First Player gain any forced breakthrough?
 2. **Connect6 on Small Bounded Grids (6×6, 7×7, 8×8):**
    - Invented by Prof. I-Chen Wu in 2005 to neutralize first-mover advantage by having players place 2 stones per turn. The exact fairness boundary on small grids remains an open combinatorial problem.
 3. **Russian Checkers (Shashki) on 8×8:**
    - Features **flying kings** (sliding arbitrarily far along open diagonals) and **backward captures for regular men**. The resulting high branching factor (b ≈ 10–20) and deep tactical combinations have prevented standard retrograde exhaustion.
 4. **Dots and Boxes (6×6 Dots / 25 Boxes):**
    - Because the box count is **odd** (5 × 5 = 25), an exact draw is impossible! Which player forces the win, and by what exact margin?
+5. **Breakthrough (8×8 Grid):**
+   - Dan Troyka (2001). Pieces advance diagonally or straight, capture diagonally. Solved on 6×6; exact value on 8×8 is open.
 
 For the complete technical specifications and literature analysis, see [**`UNPROVED_GAMES_FORMAL_ROADMAP.md`**](UNPROVED_GAMES_FORMAL_ROADMAP.md) and [**`THEORETICAL_FOUNDATIONS_AND_METHODS.md`**](THEORETICAL_FOUNDATIONS_AND_METHODS.md).
 
