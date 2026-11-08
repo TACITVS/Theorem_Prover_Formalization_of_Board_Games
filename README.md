@@ -134,6 +134,10 @@ We executed an intensive **10-minute exploration run** on the NVIDIA GeForce RTX
 
 #### Forward Reachable Frontier Expansion (Plies 0 to 14)
 
+<p align="center">
+  <img src="assets/checkers_frontier_tree.svg" alt="Forward Reachable Frontier & Search Tree Expansion (Plies 0 to 14)" width="100%"/>
+</p>
+
 | [ID] | Ply `d` | Unique Canonical States `|F_d|` | Reachable Successors `|F_{d+1}|` | Effective Branching `b_eff` | Ply Compute Time | Checkpoint Size |
 |:---:|:---:|:---:|:---:|:---:|:---:|:---:|
 | 1 | **Ply 00** | 1 | 7 | 7.00× | 0.000 s | 0.2 KB |

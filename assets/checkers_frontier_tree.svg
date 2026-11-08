@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 540" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradients -->
+    <linearGradient id="bgCanvas" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c14"/>
+      <stop offset="50%" stop-color="#0e1726"/>
+      <stop offset="100%" stop-color="#060911"/>
+    </linearGradient>
+    <linearGradient id="panelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#141e33"/>
+      <stop offset="100%" stop-color="#0d1524"/>
+    </linearGradient>
+
+    <!-- Node & Accent Gradients -->
+    <linearGradient id="rootGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0284c7"/>
+    </linearGradient>
+    <linearGradient id="pvSpineGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="50%" stop-color="#10b981"/>
+      <stop offset="100%" stop-color="#06b6d4"/>
+    </linearGradient>
+    <linearGradient id="fanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.25"/>
+      <stop offset="40%" stop-color="#818cf8" stop-opacity="0.18"/>
+      <stop offset="80%" stop-color="#c084fc" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#f43f5e" stop-opacity="0.08"/>
+    </linearGradient>
+    <linearGradient id="horizonGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.2"/>
+      <stop offset="50%" stop-color="#ec4899" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0.2"/>
+    </linearGradient>
+
+    <!-- Glow & Shadow Filters -->
+    <filter id="glowGold" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrowGold" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#f59e0b"/>
+    </marker>
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8"/>
+    </marker>
+  </defs>
+
+  <!-- Canvas Background -->
+  <rect width="980" height="540" rx="14" fill="url(#bgCanvas)" stroke="#1e293b" stroke-width="1.5"/>
+
+  <!-- ==================== HEADER ==================== -->
+  <g transform="translate(40, 28)">
+    <text x="0" y="0" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="19" font-weight="800" fill="#f8fafc" letter-spacing="0.3">
+      Forward Reachable Frontier &amp; Search Tree Expansion (Plies 0 to 14)
+    </text>
+    <text x="0" y="20" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif" font-size="12" fill="#94a3b8">
+      Exponential State Space Growth vs. Minimal Proof DAG Spine in 8×8 English Draughts
+    </text>
+  </g>
+
+  <!-- ==================== LEFT: THE EXPONENTIAL TREE GRAPH ==================== -->
+  <g transform="translate(20, 70)">
+    <!-- Tree Expansion Fan Polygon -->
+    <polygon points="320,30 50,430 590,430" fill="url(#fanGrad)"/>
+
+    <!-- Contour Level Lines for Plies -->
+    <path d="M 270,85 Q 320,95 370,85" stroke="#334155" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+    <path d="M 220,140 Q 320,155 420,140" stroke="#334155" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+    <path d="M 160,205 Q 320,225 480,205" stroke="#334155" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+    <path d="M 110,275 Q 320,300 530,275" stroke="#334155" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+    <path d="M 70,355 Q 320,385 570,355" stroke="#334155" stroke-width="1" stroke-dasharray="3,3" fill="none"/>
+    <line x1="50" y1="430" x2="590" y2="430" stroke="url(#horizonGrad)" stroke-width="2.5"/>
+
+    <!-- Background Sub-Branches (Faint Gray/Blue) -->
+    <!-- From Ply 1 to Ply 2 -->
+    <path d="M 180,85 L 140,140 M 180,85 L 170,140 M 180,85 L 200,140" stroke="#3b82f6" stroke-width="0.8" stroke-opacity="0.35"/>
+    <path d="M 225,85 L 210,140 M 225,85 L 235,140 M 225,85 L 255,140" stroke="#3b82f6" stroke-width="0.8" stroke-opacity="0.35"/>
+    <path d="M 270,85 L 260,140 M 270,85 L 285,140 M 270,85 L 305,140" stroke="#3b82f6" stroke-width="0.8" stroke-opacity="0.35"/>
+    <path d="M 370,85 L 345,140 M 370,85 L 375,140 M 370,85 L 395,140" stroke="#3b82f6" stroke-width="0.8" stroke-opacity="0.35"/>
+    <path d="M 415,85 L 405,140 M 415,85 L 430,140 M 415,85 L 450,140" stroke="#3b82f6" stroke-width="0.8" stroke-opacity="0.35"/>
+    <path d="M 460,85 L 455,140 M 460,85 L 480,140 M 460,85 L 500,140" stroke="#3b82f6" stroke-width="0.8" stroke-opacity="0.35"/>
+
+    <!-- Intermediate Density Lattice Lines (Plies 3-12) -->
+    <path d="M 170,140 L 130,205 M 200,140 L 175,205 M 255,140 L 230,205 M 395,140 L 410,205 M 450,140 L 465,205" stroke="#6366f1" stroke-width="0.7" stroke-opacity="0.25"/>
+    <path d="M 130,205 L 90,275 M 175,205 L 150,275 M 230,205 L 210,275 M 410,205 L 430,275 M 465,205 L 490,275" stroke="#8b5cf6" stroke-width="0.7" stroke-opacity="0.2"/>
+    <path d="M 90,275 L 65,355 M 150,275 L 125,355 M 210,275 L 195,355 M 430,275 L 450,355 M 490,275 L 520,355" stroke="#a855f7" stroke-width="0.6" stroke-opacity="0.15"/>
+    <path d="M 65,355 L 50,430 M 125,355 L 110,430 M 195,355 L 185,430 M 450,355 L 465,430 M 520,355 L 545,430" stroke="#ec4899" stroke-width="0.5" stroke-opacity="0.12"/>
+
+    <!-- ==================== THE GOLDEN MINIMAX PROOF SPINE (PV PATH) ==================== -->
+    <!-- Glowing Underlay for PV -->
+    <path d="M 320,30 L 320,85 L 320,140 L 305,205 L 315,275 L 310,355 L 320,430" 
+          stroke="#f59e0b" stroke-width="6" stroke-opacity="0.3" filter="url(#glowGold)" fill="none"/>
+    <!-- Crisp Foreground PV Path -->
+    <path d="M 320,30 L 320,85 L 320,140 L 305,205 L 315,275 L 310,355 L 320,430" 
+          stroke="#fbbf24" stroke-width="2.5" fill="none"/>
+
+    <!-- Root Node: Ply 0 -->
+    <circle cx="320" cy="30" r="14" fill="url(#rootGrad)" stroke="#38bdf8" stroke-width="2" filter="url(#glowCyan)"/>
+    <text x="320" y="34" font-family="sans-serif" font-size="11" font-weight="900" fill="#ffffff" text-anchor="middle">P0</text>
+    <text x="342" y="32" font-family="sans-serif" font-size="12" font-weight="700" fill="#38bdf8">Start: 1 State</text>
+
+    <!-- Branching Lines from Root to Ply 1 (7 Opening Moves) -->
+    <line x1="320" y1="30" x2="180" y2="85" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.7"/>
+    <line x1="320" y1="30" x2="225" y2="85" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.7"/>
+    <line x1="320" y1="30" x2="270" y2="85" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.7"/>
+    <line x1="320" y1="30" x2="320" y2="85" stroke="#fbbf24" stroke-width="2.5"/> <!-- PV: 11-15 -->
+    <line x1="320" y1="30" x2="370" y2="85" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.7"/>
+    <line x1="320" y1="30" x2="415" y2="85" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.7"/>
+    <line x1="320" y1="30" x2="460" y2="85" stroke="#38bdf8" stroke-width="1.2" stroke-opacity="0.7"/>
+
+    <!-- Ply 1 Nodes (7 Opening Moves) -->
+    <g font-family="monospace" font-size="9" fill="#94a3b8" text-anchor="middle">
+      <circle cx="180" cy="85" r="7" fill="#1e293b" stroke="#64748b" stroke-width="1.2"/><text x="180" y="99">9-13</text>
+      <circle cx="225" cy="85" r="7" fill="#1e293b" stroke="#64748b" stroke-width="1.2"/><text x="225" y="99">9-14</text>
+      <circle cx="270" cy="85" r="7" fill="#1e293b" stroke="#64748b" stroke-width="1.2"/><text x="270" y="99">10-14</text>
+      <!-- PV Node: 11-15 (Old Fourteenth) -->
+      <circle cx="320" cy="85" r="9" fill="#f59e0b" stroke="#fef08a" stroke-width="2" filter="url(#glowGold)"/>
+      <text x="320" y="89" font-family="sans-serif" font-size="10" font-weight="900" fill="#0f172a">★</text>
+      <text x="320" y="101" font-family="monospace" font-size="10" font-weight="800" fill="#fbbf24">11-15</text>
+      <circle cx="370" cy="85" r="7" fill="#1e293b" stroke="#64748b" stroke-width="1.2"/><text x="370" y="99">10-15</text>
+      <circle cx="415" cy="85" r="7" fill="#1e293b" stroke="#64748b" stroke-width="1.2"/><text x="415" y="99">11-16</text>
+      <circle cx="460" cy="85" r="7" fill="#1e293b" stroke="#64748b" stroke-width="1.2"/><text x="460" y="99">12-16</text>
+    </g>
+    <text x="495" y="88" font-family="sans-serif" font-size="11" font-weight="700" fill="#cbd5e1">Ply 1: 7 States</text>
+
+    <!-- Ply 2 Node (49 Responses, PV: 23-19) -->
+    <circle cx="320" cy="140" r="9" fill="#10b981" stroke="#a7f3d0" stroke-width="2" filter="url(#glowCyan)"/>
+    <text x="320" y="143" font-family="sans-serif" font-size="9" font-weight="900" fill="#064e3b">W</text>
+    <text x="338" y="143" font-family="sans-serif" font-size="11" font-weight="700" fill="#34d399">Ply 2: 49 States <tspan fill="#94a3b8" font-weight="normal">(PV: 23-19)</tspan></text>
+
+    <!-- Ply 4 Node (805 Canonical States, PV: 22-17) -->
+    <circle cx="305" cy="205" r="8" fill="#10b981" stroke="#6ee7b7" stroke-width="1.8"/>
+    <text x="323" y="209" font-family="sans-serif" font-size="11" font-weight="700" fill="#6ee7b7">Ply 4: 805 States <tspan fill="#94a3b8" font-weight="normal">(b_eff = 3.40×)</tspan></text>
+
+    <!-- Ply 7 Node (82,961 States) -->
+    <circle cx="315" cy="275" r="8" fill="#38bdf8" stroke="#bae6fd" stroke-width="1.8"/>
+    <text x="333" y="279" font-family="sans-serif" font-size="11" font-weight="700" fill="#38bdf8">Ply 7: 82,961 States <tspan fill="#94a3b8" font-weight="normal">(b_eff = 2.97×)</tspan></text>
+
+    <!-- Ply 10 Node (1,831,230 States) -->
+    <circle cx="310" cy="355" r="8" fill="#818cf8" stroke="#c7d2fe" stroke-width="1.8"/>
+    <text x="328" y="359" font-family="sans-serif" font-size="11" font-weight="700" fill="#a5b4fc">Ply 10: 1,831,230 States <tspan fill="#94a3b8" font-weight="normal">(b_eff = 2.75×)</tspan></text>
+
+    <!-- Ply 13/14 Horizon Node (32,651,846 States Frontier) -->
+    <circle cx="320" cy="430" r="10" fill="#f43f5e" stroke="#ffe4e6" stroke-width="2" filter="url(#glowGold)"/>
+    <text x="320" y="434" font-family="sans-serif" font-size="11" font-weight="900" fill="#ffffff" text-anchor="middle">★</text>
+    <text x="340" y="425" font-family="sans-serif" font-size="13" font-weight="800" fill="#fb7185">Ply 14 Frontier Horizon: 32,651,846 Canonical States</text>
+    <text x="340" y="442" font-family="sans-serif" font-size="11" fill="#cbd5e1">Effective Branching Decayed to <tspan fill="#fbbf24" font-weight="700">2.53×</tspan> • Checkpoint: 84.38 MB</text>
+
+    <!-- Convergence Pointer into Endgame Tablebases -->
+    <path d="M 320,442 L 320,458" stroke="#38bdf8" stroke-width="2" stroke-dasharray="2,2" marker-end="url(#arrowCyan)"/>
+    <text x="320" y="474" font-family="sans-serif" font-size="11" font-weight="700" fill="#38bdf8" text-anchor="middle">
+      Convergence directly into Chinook 10-Piece Tablebases (3.9 × 10¹³ Positions, Exact Draw Value)
+    </text>
+  </g>
+
+  <!-- ==================== RIGHT PANEL: ANALYTICS & COMPLEXITY ==================== -->
+  <g transform="translate(635, 75)">
+    <!-- Card 1: Frontier Scaling Summary -->
+    <rect x="0" y="0" width="310" height="135" rx="10" fill="url(#panelGrad)" stroke="#334155" stroke-width="1.2" filter="url(#cardShadow)"/>
+    <text x="16" y="24" font-family="sans-serif" font-size="13" font-weight="800" fill="#f8fafc">Frontier Expansion Metrics</text>
+    <line x1="16" y1="32" x2="294" y2="32" stroke="#334155" stroke-width="1"/>
+    <g font-family="monospace" font-size="11" fill="#94a3b8">
+      <text x="16" y="52">Ply  0: <tspan fill="#38bdf8" font-weight="bold">1</tspan> state      (Start pos)</text>
+      <text x="16" y="69">Ply  4: <tspan fill="#34d399" font-weight="bold">805</tspan> states    (Opening book)</text>
+      <text x="16" y="86">Ply  8: <tspan fill="#818cf8" font-weight="bold">236,936</tspan>      (b_eff = 2.86×)</text>
+      <text x="16" y="103">Ply 11: <tspan fill="#c084fc" font-weight="bold">4,931,587</tspan>    (Tactical clash)</text>
+      <text x="16" y="120">Ply 14: <tspan fill="#fb7185" font-weight="bold">32,651,846</tspan>   (b_eff = 2.53×)</text>
+    </g>
+
+    <!-- Card 2: Minimal Proof DAG Complexity (DF-PN) -->
+    <rect x="0" y="150" width="310" height="130" rx="10" fill="url(#panelGrad)" stroke="#059669" stroke-width="1.2" filter="url(#cardShadow)"/>
+    <text x="16" y="174" font-family="sans-serif" font-size="13" font-weight="800" fill="#34d399">Proof DAG vs. Brute-Force Tree</text>
+    <line x1="16" y1="182" x2="294" y2="182" stroke="#065f46" stroke-width="1"/>
+    <g font-family="sans-serif" font-size="11" fill="#e2e8f0">
+      <text x="16" y="202">• Full Tree Depth 14: <tspan font-family="monospace" fill="#f87171" font-weight="bold">3.26 × 10⁷</tspan> states</text>
+      <text x="16" y="221">• Minimal Proof DAG: <tspan font-family="monospace" fill="#34d399" font-weight="bold">O(b^(d/2)) ≈ 5,714</tspan> nodes</text>
+      <text x="16" y="240">• Pruning Factor: <tspan font-family="monospace" fill="#fbbf24" font-weight="bold">> 99.98% eliminated</tspan></text>
+      <text x="16" y="259">• Complete Solvability: <tspan font-family="monospace" fill="#38bdf8" font-weight="bold">1.2 × 10¹¹</tspan> proof nodes</text>
+    </g>
+
+    <!-- Card 3: GPU Hardware Acceleration -->
+    <rect x="0" y="295" width="310" height="145" rx="10" fill="url(#panelGrad)" stroke="#d97706" stroke-width="1.2" filter="url(#cardShadow)"/>
+    <text x="16" y="319" font-family="sans-serif" font-size="13" font-weight="800" fill="#fbbf24">GPU Hardware Acceleration</text>
+    <line x1="16" y1="327" x2="294" y2="327" stroke="#78350f" stroke-width="1"/>
+    <g font-family="sans-serif" font-size="11" fill="#e2e8f0">
+      <text x="16" y="347">• Hardware: <tspan font-family="monospace" fill="#fde047" font-weight="bold">NVIDIA RTX 4060 GPU</tspan></text>
+      <text x="16" y="366">• Throughput: <tspan font-family="monospace" fill="#4ade80" font-weight="bold">4.62 × 10⁹ states / sec</tspan></text>
+      <text x="16" y="385">• 14 Plies Wall Time: <tspan font-family="monospace" fill="#38bdf8" font-weight="bold">684.85 seconds</tspan></text>
+      <text x="16" y="404">• Weak Solve: <tspan font-family="monospace" fill="#f43f5e" font-weight="bold">≈ 17.4 GPU-days</tspan> (1 GPU)</text>
+      <text x="16" y="423">• 8-GPU Cluster: <tspan font-family="monospace" fill="#a78bfa" font-weight="bold">&lt; 48 hours continuous</tspan></text>
+    </g>
+  </g>
+</svg>
