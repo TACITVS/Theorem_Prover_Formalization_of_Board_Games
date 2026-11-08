@@ -2,9 +2,9 @@
 
 [![Rocq 9.1](https://img.shields.io/badge/Rocq%20Prover-9.1.0-blue.svg)](https://rocq-prover.org/)
 [![Lean 4.35.0](https://img.shields.io/badge/Lean-4.35.0-brightgreen.svg)](https://leanprover.github.io/)
-[![Theorems Closed](https://img.shields.io/badge/Rocq%20Theorems-45%20Closed%20(0%20adm)-success.svg)]()
-[![Lean Theorems](https://img.shields.io/badge/Lean%20Theorems-26%20Verified%20(0%20sorry)-success.svg)]()
-[![LaTeX Math](https://img.shields.io/badge/LaTeX-Native%20MathJax%20%2F%20KaTeX-blue.svg)]()
+[![Theorems Closed](https://img.shields.io/badge/Rocq%20Theorems-45%20Closed%20(0%20adm)-success.svg)](CheckAssumptions.v)
+[![Lean Theorems](https://img.shields.io/badge/Lean%20Theorems-26%20Verified%20(0%20sorry)-success.svg)](lean4/MNKGames.lean)
+[![LaTeX Math](https://img.shields.io/badge/LaTeX-Mathematical%20Monograph-blue.svg)](MNK_MATHEMATICAL_MONOGRAPH.md)
 
 Universal mathematical formalization and verified game-theoretic solution of the generalized family of **$(m, n, k)$ games without gravity** (the generalized Tic-Tac-Toe / Gomoku family) in **Rocq 9.1** and **Lean 4.35.0**.
 
