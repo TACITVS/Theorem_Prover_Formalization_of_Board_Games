@@ -1,0 +1,26 @@
+# Build artifacts
+*.vo
+*.vos
+*.vok
+*.glob
+.*.aux
+.*.cache
+.vfiles
+.coq-native/
+.coqdeps.d
+*.o
+*.obj
+*.exe
+*.dll
+
+# Lean artifacts
+.lake/
+lake-packages/
+
+# Python artifacts
+__pycache__/
+*.pyc
+
+# Large state exploration frontier dumps (manifest and tablebases preserved)
+checkpoints_*/frontiers/
+checkpoints_test/
