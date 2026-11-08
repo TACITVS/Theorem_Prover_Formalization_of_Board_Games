@@ -35,7 +35,7 @@ This repository contains the complete dual theorem-prover formalization and algo
 ## 2. Board Architecture & Vector Graphics
 
 <p align="center">
-  <img src="assets/qubic_5x5x5_board.svg" width="100%" alt="5x5x5 3D Tic-Tac-Toe Board Topography and Degree Spectrum"/>
+  <img src="./assets/qubic_5x5x5_board.svg" width="100%" alt="5x5x5 3D Tic-Tac-Toe Board Topography and Degree Spectrum"/>
 </p>
 
 > [!TIP]

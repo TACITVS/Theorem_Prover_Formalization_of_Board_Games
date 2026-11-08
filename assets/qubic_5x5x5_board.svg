@@ -25,7 +25,6 @@
       .axis-label { font-family: monospace; font-size: 12px; fill: #64748b; font-weight: 700; text-anchor: middle; dominant-baseline: central; }
       .legend-title { font-family: sans-serif; font-size: 15px; font-weight: 700; fill: #f1f5f9; }
       .panel-head { font-family: sans-serif; font-size: 22px; font-weight: 800; fill: #f8fafc; letter-spacing: 1px; }
-      .panel-body { font-family: sans-serif; font-size: 15px; fill: #cbd5e1; line-height: 1.6; }
     </style>
   </defs>
   <!-- Background -->
@@ -471,11 +470,11 @@
     <text x="35" y="90" font-family="sans-serif" font-size="15" font-weight="800" fill="#fbbf24">• Beck Danger Potential Function Trajectory</text>
     <text x="35" y="114" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  In Maker-Breaker hypergraph game theory, the Beck potential measures cumulative threat:</text>
     <text x="35" y="138" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  D(t) = Σ 2^(-unoccupied(L)) across surviving lines. Initial Danger D(0) = 109/32 = 3.40625.</text>
-    <text x="35" y="162" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  Beck's Theorem: If Breaker drives D(t) < 1.0, Breaker wins Maker-Breaker (forces Draw in Tic-Tac-Toe).</text>
-    <text x="35" y="186" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  Host Simulation: Greedy defensive play forces D(27) = 0.9375 (< 1.000) at Round 27 (ply 54)!</text>
+    <text x="35" y="162" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  Beck's Theorem: If Breaker drives D(t) &lt; 1.0, Breaker wins Maker-Breaker (forces Draw in Tic-Tac-Toe).</text>
+    <text x="35" y="186" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  Host Simulation: Greedy defensive play forces D(27) = 0.9375 (&lt; 1.000) at Round 27 (ply 54)!</text>
     <text x="35" y="234" font-family="sans-serif" font-size="15" font-weight="800" fill="#38bdf8">• Rocq 9.1 Interactive Theorem Prover (40.31s Build)</text>
     <text x="35" y="258" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  - QubicBoard.v (27 Theorems): 125 cells, 109 lines, 5-uniformity, degree spectrum, incidences.</text>
-    <text x="35" y="282" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  - QubicSymmetry.v (20 Theorems): O_h involutions, orbit preservation, transversal tau >= 15.</text>
+    <text x="35" y="282" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  - QubicSymmetry.v (20 Theorems): O_h involutions, orbit preservation, transversal tau &gt;= 15.</text>
     <text x="35" y="306" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  - QubicThreat.v (11 Theorems): Threat space, Double-Threat Fork Resolution, min-moves bound.</text>
     <text x="35" y="330" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  - QubicTheorem.v (7 Theorems): Master Value Draw, horizon bound, 3^125 Z complexity.</text>
     <text x="35" y="354" font-family="sans-serif" font-size="14" font-weight="400" fill="#cbd5e1">  - CheckAssumptions.v: 65 / 65 Theorems Closed under Global Context (0 Axioms, 0 Admits)!</text>
