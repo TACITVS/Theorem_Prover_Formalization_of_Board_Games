@@ -21,6 +21,7 @@
 | **5×5 Dots and Boxes (16 Boxes)** | 16 boxes, 40 edges (1.2 × 10¹¹ states) | **Exact Draw (8–8)** | Conway (1976), Berlekamp (1982) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Dual planar cubic graph, Berlekamp Nimstring loops, 2-box sacrifice parity control, tempo conservation |
 | **Nine Men's Morris (Mill)** | 24 points, 16 mills (10¹⁰ states) | **Exact Draw** | Ralph Gasser (1993, ETH Zurich) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | 8-Stone Transversal Barrier Theorem, Dihedral D₄ equivariance, 3-Phase DAG, per-player flying split |
 | **Twelve Men's Morris** | 24 points, 20 mills (1.5 × 10¹¹ states) | **Win White (Ply 8 Fork)** | Gévay & Danner (2016) | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Broken vertex regularity (corner degree 3), Ply 8 Corner Ray Double-Fork (`[0; 2; 6; 16]`), +4 defensive surplus |
+| **(m, n, k) Positional Games Without Gravity** | Arbitrary m × n grid, threshold k | **Exact (3, n, 3) Threshold** | *This Work (2026)* | ✅ **VERIFIED (Rocq 9.1 & Lean 4)** | Universal L(m, n, k) Handshaking Theorem, Sharp (3, n, 3) Phase Transition (n=3 Draw, n≥4 Win P1 in ≤7 plies via Subgrid Monotone Projection) |
 
 ---
 
