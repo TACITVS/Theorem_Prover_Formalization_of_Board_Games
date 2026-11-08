@@ -50,42 +50,55 @@ The formalizations across all branches are unified by six foundational pillars o
 </p>
 
 ### 1. The Algebra of Fairness & Zermelo Minimax Reductions
-In finite two-player zero-sum games with perfect information, Zermelo's Theorem (1913) guarantees that every board state possesses an exact theoretical value `V(s) ∈ {WinWhite, Draw, WinBlack}`. In our framework, we establish fairness (`game_value = Draw`) through **Mutual Defensive Safety**:
-```text
-(safe White s Black) ∧ (safe Black s White) ⟹ game_value(s) = Draw
-```
-Rather than exhaustively computing the astronomical state space (10¹⁰ to 10²⁰ positions), the proof constructs an inductive pairing strategy ensuring neither player can ever be forced into a losing leaf.
+In finite two-player zero-sum games with perfect information, Zermelo's Theorem (1913) guarantees that every board state possesses an exact theoretical value $\mathrm{Value}(s) \in \{\mathrm{WinWhite}, \mathrm{Draw}, \mathrm{WinBlack}\}$. In our framework, we establish fairness ($\mathrm{Value} = \mathrm{Draw}$) through **Mutual Defensive Safety**:
+
+$$
+\mathrm{safe}(\mathrm{White}, s, \mathrm{Black}) \land \mathrm{safe}(\mathrm{Black}, s, \mathrm{White}) \implies \mathrm{Value}(s) = \mathrm{Draw}
+$$
+
+Rather than exhaustively computing the astronomical state space ($10^{10}$ to $10^{20}$ positions), the proof constructs an inductive pairing strategy ensuring neither player can ever be forced into a losing leaf.
 
 ### 2. Hypergraph Transversals & Modulo-2 Parity Inversion
-Positional games (Connect-5, Qubic, Gomoku) are formulated as uniform hypergraphs `H = (V, E)`. A defensive strategy seeks a **transversal** `T ⊆ V` intersecting every winning hyperedge `e ∈ E`.
-- **Odd-Height Boards (e.g., 8×7):** Player 1's opening move leaves an odd number of empty cells (`56 - 1 = 55 ≡ 1 (mod 2)`). By the Pigeonhole Principle, 55 cells cannot be partitioned into 2-cell dominoes. Parity must be dynamically restored by poisoning a column via **Rule R3** (frozen threat suffixes).
-- **Even-Height Boards (e.g., 8×8):** Player 1's move leaves 63 empty cells; Player 2's adjacent response claims cell `(4, 0)`, leaving an exact even number of empty cells:
-```text
-E₂ₘ = 64 - 2m = 2(32 - m) ≡ 0 (mod 2)
-```
-Because the column height `H = 8` is even, every column naturally partitions into pure vertical dominoes, triggering the **Zero Rigid Cross-Pairs Theorem**: 100% of winning lines are blocked with pure vertical dominoes alone!
+Positional games (Connect-5, Qubic, Gomoku) are formulated as uniform hypergraphs $\mathcal{H} = (V, E)$. A defensive strategy seeks a **transversal** $T \subseteq V$ intersecting every winning hyperedge $e \in E$.
+- **Odd-Height Boards (e.g., 8×7):** Player 1's opening move leaves an odd number of empty cells ($56 - 1 = 55 \equiv 1 \pmod{2}$). By the Pigeonhole Principle, 55 cells cannot be partitioned into 2-cell dominoes. Parity must be dynamically restored by poisoning a column via **Rule R3** (frozen threat suffixes).
+- **Even-Height Boards (e.g., 8×8):** Player 1's move leaves 63 empty cells; Player 2's adjacent response claims cell $(4, 0)$, leaving an exact even number of empty cells:
+
+$$
+E_{2m} = 64 - 2m = 2(32 - m) \equiv 0 \pmod{2}
+$$
+
+Because the column height $H = 8$ is even, every column naturally partitions into pure vertical dominoes, triggering the **Zero Rigid Cross-Pairs Theorem**: 100% of winning lines are blocked with pure vertical dominoes alone!
 
 ### 3. Spatial Symmetry Groups & Broken Regularity
 Boards with spatial geometry are governed by transformation automorphism groups:
-- **Dihedral Group D₄ (Order 8):** In Nine Men's Morris and Dots and Boxes, rotations `rot90` (order 4) and reflections `refl` (order 2) act on the point and edge universes, preserving adjacency, mills, and boundary status.
-- **Klein 4-Group V₄ & 180° Inversion:** In 8×8 Checkers, board coordinates are invariant under 180° rotation `rot180(s) = 31 - s`, which preserves rank/column deltas and dark-square parity.
+- **Dihedral Group $D_4$ (Order 8):** In Nine Men's Morris and Dots and Boxes, rotations $\mathrm{rot}_{90}$ (order 4) and reflections $\mathrm{refl}$ (order 2) act on the point and edge universes, preserving adjacency, mills, and boundary status.
+- **Klein 4-Group $V_4$ & 180° Inversion:** In 8×8 Checkers, board coordinates are invariant under 180° rotation $\mathrm{rot}_{180}(s) = 31 - s$, which preserves rank/column deltas and dark-square parity.
 - **Broken Regularity in Twelve Men's Morris:** Adding 4 diagonal mills breaks the 2-regular mill incidence of Nine Men's Morris. Corners jump to mill degree 3, allowing White's opening placement at Point 0 to radiate 3 disjoint mill rays simultaneously—guaranteeing White an unblockable double-threat fork at Ply 8!
 
 ### 4. Monotonic Lyapunov Potentials & Cycle Elimination
-In games with capture mechanics and directional movement (Checkers), cyclic repetitions are prevented by establishing a strictly monotonic **Lyapunov Rank Potential Function** `Φ(st)`:
-```text
-Φ(st) = 64 · (24 - TotalPieces(st)) + ∑_{w ∈ W_men} Rank(w) + ∑_{b ∈ B_men} (7 - Rank(b))
-```
-- **Quiet Step:** `ΔΦ = +1` (advancing a man one rank).
-- **Capture Jump:** `ΔΦ ≥ +59` (`+64` piece removal, `+2` rank advance, `≤ 7` opponent rank loss).
-Because `Φ(st)` is strictly increasing and bounded by 1,704, men-only play is provably **acyclic and terminates unconditionally**.
+In games with capture mechanics and directional movement (Checkers), cyclic repetitions are prevented by establishing a strictly monotonic **Lyapunov Rank Potential Function** $\Phi(\mathrm{st})$:
+
+$$
+\Phi(\mathrm{st}) = 64 \cdot (24 - \mathrm{TotalPieces}(\mathrm{st})) + \sum_{w \in W_{\mathrm{men}}} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}} (7 - \mathrm{Rank}(b))
+$$
+
+- **Quiet Step:** $\Delta \Phi = +1$ (advancing a man one rank).
+- **Capture Jump:** $\Delta \Phi \ge +59$ ($+64$ piece removal, $+2$ rank advance, $\le 7$ opponent rank loss).
+
+Because $\Phi(\mathrm{st})$ is strictly increasing and bounded by $1{,}704$, men-only play is provably **acyclic and terminates unconditionally**.
 
 ### 5. Combinatorial Game Theory & Nimstring Duality
 In Dots and Boxes, the primal square grid is isomorphic to a dual planar cubic graph with a single boundary component. By Berlekamp's **Double-Dealing Principle**, offering a hard-hearted handout of 2 boxes in a long chain controls the tempo:
-```text
-Total Boxes B ≥ 2C + 4L ⟹ Parity Control Guaranteed
-```
-Allowing Player 2 to maintain parity control and force an exact **8–8 Draw** on the 16-box board.
+
+$$
+\text{Total Boxes } B \ge 2C + 4L \implies \text{Parity Control Guaranteed}
+$$
+
+$$
+2C + 4L = 2(C + 2L)
+$$
+
+allowing Player 2 to maintain parity control and force an exact **8–8 Draw** on the 16-box board.
 
 ---
 

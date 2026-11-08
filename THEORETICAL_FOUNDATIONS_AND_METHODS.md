@@ -44,91 +44,109 @@ Every single one of these landmark historical achievements suffered from a share
 
 ## 2. Pillar I: The Algebra of Fairness & Zermelo Minimax Reductions
 
-Consider a finite two-player zero-sum game of perfect information `G = (S, s₀, Moves, Turn, Terminal, Utility)`.
+Consider a finite two-player zero-sum game of perfect information $G = (S, s_0, \mathrm{Moves}, \mathrm{Turn}, \mathrm{Terminal}, \mathrm{Utility})$.
 
-By **Zermelo's Theorem (1913)**, backward induction guarantees every state `s ∈ S` possesses a unique game-theoretic value:
-```text
-Value(s) ∈ {WinWhite, Draw, WinBlack}
-```
+By **Zermelo's Theorem (1913)**, backward induction guarantees every state $s \in S$ possesses a unique game-theoretic value:
+
+$$
+\mathrm{Value}(s) \in \{\mathrm{WinWhite}, \mathrm{Draw}, \mathrm{WinBlack}\}
+$$
 
 ### The Mutual Defensive Safety Theorem
-Calculating `Value(s₀)` by full minimax expansion requires exploring `O(b^d)` nodes, which is computationally intractable for `b^d ≥ 10²⁰`.
+Calculating $\mathrm{Value}(s_0)$ by full minimax expansion requires exploring $\mathcal{O}(b^d)$ nodes, which is computationally intractable for $b^d \ge 10^{20}$.
 
 Instead, we formalize the **Mutual Defensive Safety Principle**:
-1. Define the inductive predicate `safe (d : player) (s : board) (att : player)`:
-   - At terminal states, `d` has not lost (`Utility(s) ≥ 0`).
-   - On defender `d`'s turn, there exists at least one legal move `m` transitioning to `s'` such that `safe d s' att`.
-   - On attacker `att`'s turn, for **all** legal moves `m`, the transition `s'` satisfies `safe d s' att`.
+1. Define the inductive predicate $\mathrm{safe}(d, s, \mathrm{att})$:
+   - At terminal states, defender $d$ has not lost ($\mathrm{Utility}(s) \ge 0$).
+   - On defender $d$'s turn, there exists at least one legal move $m$ transitioning to $s'$ such that $\mathrm{safe}(d, s', \mathrm{att})$.
+   - On attacker $\mathrm{att}$'s turn, for **all** legal moves $m$, the transition $s'$ satisfies $\mathrm{safe}(d, s', \mathrm{att})$.
 2. **Equilibrium Duality Lemma:**
-```text
+```coq
 Theorem mutual_safety_draw :
   forall s : board,
     safe White s Black ->
     safe Black s White ->
     game_value(s) = Draw.
 ```
-If both White and Black possess an inductive defensive strategy guaranteeing they cannot be forced into a loss, the game-theoretic value of the root is unconditionally an **exact Draw**.
+If both White and Black possess an inductive defensive strategy guaranteeing they cannot be forced into a loss, the game-theoretic value of the root is unconditionally an **exact Draw**:
+
+$$
+\mathrm{safe}(\mathrm{White}, s, \mathrm{Black}) \land \mathrm{safe}(\mathrm{Black}, s, \mathrm{White}) \implies \mathrm{Value}(s) = \mathrm{Draw}
+$$
 
 ---
 
 ## 3. Pillar II: Modulo-2 Hypergraph Transversals & Even-Height Parity Inversion
 
-Let `H = (V, E)` be an `r`-uniform hypergraph where `V` is the grid of board cells and `E` is the collection of winning lines of length `k`.
+Let $\mathcal{H} = (V, E)$ be an $r$-uniform hypergraph where $V$ is the grid of board cells and $E$ is the collection of winning lines of length $k$.
 
-A defensive pairing structure `P = {p₁, p₂, ..., pₘ}` is a set of disjoint 2-cell dominoes `pᵢ = {cᵢ₁, cᵢ₂}`. Under the **Allis Follow-Up Strategy**, whenever the attacker claims `cᵢ₁`, the defender immediately responds by claiming `cᵢ₂`.
+A defensive pairing structure $\mathcal{P} = \{p_1, p_2, \dots, p_m\}$ is a set of disjoint 2-cell dominoes $p_i = \{c_{i1}, c_{i2}\}$. Under the **Allis Follow-Up Strategy**, whenever the attacker claims $c_{i1}$, the defender immediately responds by claiming $c_{i2}$.
 
 ### The Modulo-2 Parity Dilemma on Odd-Height Grids (8×7)
-On an 8-column, 7-row grid (`|V| = 56`):
-- White opens at `(3, 0)`, leaving `56 - 1 = 55` empty cells (an **odd** number).
+On an 8-column, 7-row grid ($|V| = 56$):
+- White opens at $(3, 0)$, leaving $56 - 1 = 55$ empty cells (an **odd** number).
 - At every subsequent Black turn, the number of empty cells is odd. By the Pigeonhole Principle, an odd set cannot be partitioned into 2-cell dominoes.
-- To maintain parity, White is forced to dynamically poison a column via **Rule R3**: holding an unblockable 4-threat at an even row `ft` above an empty poison cell `ft - 1`, freezing an odd column suffix of length `7 - (ft - 1) = 8 - ft` (odd) and restoring even parity to the remaining freezone.
+- To maintain parity, White is forced to dynamically poison a column via **Rule R3**: holding an unblockable 4-threat at an even row $f_t$ above an empty poison cell $f_t - 1$, freezing an odd column suffix of length $7 - (f_t - 1) = 8 - f_t$ (odd) and restoring even parity to the remaining freezone.
 
 ### The Even-Height Parity Inversion Theorem (8×8)
-On an 8-column, 8-row grid (`|V| = 64`):
-- Total board cells `|V| = 64 ≡ 0 (mod 2)`.
-- White opens at `(3, 0)`, leaving 63 empty cells (odd).
-- Black claims the adjacent ground cell `(4, 0)`, leaving:
-```text
-64 - 2 = 62 ≡ 0 (mod 2)
-```
-- At every subsequent Black defense ply, the number of remaining empty cells is **strictly even**:
-```text
-E₂ₘ = 64 - 2m = 2(32 - m) ≡ 0 (mod 2)
-```
-Because the column height `H = 8` is even, every column naturally partitions into `8 / 2 = 4` vertical dominoes.
+On an 8-column, 8-row grid ($|V| = 64$):
+- Total board cells $|V| = 64 \equiv 0 \pmod{2}$.
+- White opens at $(3, 0)$, leaving $63$ empty cells (odd).
+- Black claims the adjacent ground cell $(4, 0)$, leaving:
 
-> **Zero Rigid Cross-Pairs Theorem:** On an 8×8 grid with gravity, 100% of the 96 winning lines are blocked using **pure vertical dominoes alone** under the Symmetric Dual-Core configuration (Pattern `00011000`). Base-row horizontal cross-pairs are completely eliminated (`s_rigid = []`)!
+$$
+64 - 2 = 62 \equiv 0 \pmod{2}
+$$
+
+- At every subsequent Black defense ply, the number of remaining empty cells is **strictly even**:
+
+$$
+E_{2m} = 64 - 2m = 2(32 - m) \equiv 0 \pmod{2}
+$$
+
+Because the column height $H = 8$ is even, every column naturally partitions into $8 / 2 = 4$ vertical dominoes.
+
+> **Zero Rigid Cross-Pairs Theorem:** On an 8×8 grid with gravity, 100% of the 96 winning lines are blocked using **pure vertical dominoes alone** under the Symmetric Dual-Core configuration (Pattern `00011000`). Base-row horizontal cross-pairs are completely eliminated ($s_{\mathrm{rigid}} = \emptyset$)!
 
 ---
 
 ## 4. Pillar III: Graph Automorphisms, Dihedral Symmetries & Broken Regularity
 
-### The Dihedral Group D₄ (Order 8)
-In games played on concentric square rings (Nine Men's Morris) or square grids (Dots and Boxes), the board is invariant under the Dihedral Group `D₄ = ⟨r, s | r⁴ = 1, s² = 1, srs = r⁻¹⟩`.
+### The Dihedral Group $D_4$ (Order 8)
+In games played on concentric square rings (Nine Men's Morris) or square grids (Dots and Boxes), the board is invariant under the Dihedral Group:
+
+$$
+D_4 = \langle r, s \mid r^4 = 1, \; s^2 = 1, \; srs = r^{-1} \rangle
+$$
+
 - In Nine Men's Morris, 24 vertices are arranged into 3 concentric rings of 8 vertices each.
 - In Rocq 9.1 (`NMMGraph.v`) and Lean 4.35 (`NineMensMorris.lean`), we formally prove that rotation by 90° (`rot_point`) and reflection (`refl_point`) are graph automorphisms:
-```text
-is_adjacent (rot_point p1) (rot_point p2) = is_adjacent p1 p2
-is_mill (rot_point a) (rot_point b) (rot_point c) = is_mill a b c
-```
+
+$$
+\begin{aligned}
+\mathrm{is\_adjacent}(\mathrm{rot}(p_1), \mathrm{rot}(p_2)) &= \mathrm{is\_adjacent}(p_1, p_2) \\
+\mathrm{is\_mill}(\mathrm{rot}(a), \mathrm{rot}(b), \mathrm{rot}(c)) &= \mathrm{is\_mill}(a, b, c)
+\end{aligned}
+$$
+
 This symmetry reduces the state space of Nine Men's Morris by a factor of 8 under quotient types.
 
 ### Broken Regularity in Twelve Men's Morris
-Nine Men's Morris has exact **2-regular mill incidence**: every point belongs to exactly 2 mills (`length (mills_of_point p) = 2`).
+Nine Men's Morris has exact **2-regular mill incidence**: every point belongs to exactly 2 mills ($\deg_M(p) = 2$).
 In Twelve Men's Morris, adding 4 diagonal corner mills breaks this regularity:
 - The 12 midpoint vertices retain mill degree 2.
-- The 12 corner vertices jump to **mill degree 3** (`Delta_E = 3`).
+- The 12 corner vertices jump to **mill degree 3** ($\Delta_E = 3$).
 
-```text
-Handshake Lemma for 12MM: 12 × 3 + 12 × 2 = 60 = 20 × 3
-```
+$$
+\text{Handshake Lemma for 12MM: } 12 \times 3 + 12 \times 2 = 60 = 20 \times 3
+$$
 
 **The Ply 8 Corner Double-Fork Theorem:**
-Because Corner 0 belongs to 3 distinct mills `{0,1,2}`, `{0,7,6}`, `{0,8,16}` whose non-zero points are pairwise disjoint:
+Because Corner 0 belongs to 3 distinct mills $\{0,1,2\}$, $\{0,7,6\}$, $\{0,8,16\}$ whose non-zero points are pairwise disjoint:
 1. White plays Point 0 at Ply 0.
 2. Black's single stone at Ply 1 can block at most 1 ray, leaving at least 2 rays completely unblocked.
-3. White develops along the open rays to form board `[0; 2; 6; 16]`.
-4. At Ply 8, White holds simultaneous winning placements at Point 1 and Point 7. Because `1 ≠ 7`, Black can block at most one, guaranteeing White an opening mill and a forced win!
+3. White develops along the open rays to form board $[0, 2, 6, 16]$.
+4. At Ply 8, White holds simultaneous winning placements at Point 1 and Point 7. Because $1 \ne 7$, Black can block at most one, guaranteeing White an opening mill and a forced win!
 
 ---
 
@@ -136,22 +154,22 @@ Because Corner 0 belongs to 3 distinct mills `{0,1,2}`, `{0,7,6}`, `{0,8,16}` wh
 
 In games with captures and piece promotions (such as 8×8 English Draughts), the state transition graph contains directed cycles if kings are allowed to move backward and forward without capture.
 
-However, prior to king promotion, the game is strictly directed and acyclic. We formalize this by constructing an integer-valued **Lyapunov Rank Potential Function** `Φ : GameState → ℕ`:
+However, prior to king promotion, the game is strictly directed and acyclic. We formalize this by constructing an integer-valued **Lyapunov Rank Potential Function** $\Phi : \mathrm{GameState} \to \mathbb{N}$:
 
-```text
-Φ(st) = 64 · (24 - TotalPieces(st)) + ∑_{w ∈ W_men} Rank(w) + ∑_{b ∈ B_men} (7 - Rank(b))
-```
+$$
+\Phi(\mathrm{st}) = 64 \cdot (24 - \mathrm{TotalPieces}(\mathrm{st})) + \sum_{w \in W_{\mathrm{men}}} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}} (7 - \mathrm{Rank}(b))
+$$
 
 ### Monotonic Potential Step Lemmas in Rocq 9.1
 In [`CheckersInvariants.v`](CheckersInvariants.v), we prove:
-1. **Simple Advance:** A peaceful white step `(r, c) → (r+1, c±1)` strictly increments rank:
-```text
+1. **Simple Advance:** A peaceful white step $(r, c) \to (r+1, c \pm 1)$ strictly increments rank:
+```coq
 Theorem white_step_potential_inc :
   forall r, r < 7 -> (r + 1) = r + 1.
 ```
-Contributing `ΔΦ = +1`.
-2. **Jump Capture Net Gain:** A capture jump removes at least 1 piece (`+64` to the first term), advances the jumping piece by 2 ranks (`+2`), and decreases the opponent's rank sum by at most 7:
-```text
+Contributing $\Delta \Phi = +1$.
+2. **Jump Capture Net Gain:** A capture jump removes at least 1 piece ($+64$ to the first term), advances the jumping piece by 2 ranks ($+2$), and decreases the opponent's rank sum by at most 7:
+```coq
 Theorem jump_capture_potential_net_gain :
   forall delta_cap delta_rank opp_loss,
     delta_cap >= 1 ->
@@ -159,16 +177,20 @@ Theorem jump_capture_potential_net_gain :
     opp_loss <= 7 ->
     64 * delta_cap + delta_rank - opp_loss >= 59.
 ```
-Contributing `ΔΦ ≥ 64 + 2 - 7 = +59 > 0`.
+Contributing:
+
+$$
+\Delta \Phi \ge 64 + 2 - 7 = +59 > 0
+$$
 
 **Acyclicity Corollary:**
-Because `Φ(st)` increases strictly on every half-move and the maximum possible value of `Φ` is bounded by `64 × 24 + 24 × 7 = 1,704`, **men-only play can never repeat a position or enter a cycle**, guaranteeing finite termination in at most 1,704 plies.
+Because $\Phi(\mathrm{st})$ increases strictly on every half-move and the maximum possible value of $\Phi$ is bounded by $64 \times 24 + 24 \times 7 = 1{,}704$, **men-only play can never repeat a position or enter a cycle**, guaranteeing finite termination in at most 1,704 plies.
 
 ---
 
 ## 6. Pillar V: Combinatorial Game Theory, Dual Graphs & Berlekamp Nimstrings
 
-In Dots and Boxes on an `m × n` grid of dots, players draw edges to capture `(m-1) × (n-1)` square boxes.
+In Dots and Boxes on an $m \times n$ grid of dots, players draw edges to capture $(m-1) \times (n-1)$ square boxes.
 
 ### Dual Planar Graph Isomorphism
 In [`DABUniversal.v`](DABUniversal.v) and [`DAB16Graph.v`](DAB16Graph.v):
@@ -178,16 +200,16 @@ In [`DABUniversal.v`](DABUniversal.v) and [`DAB16Graph.v`](DAB16Graph.v):
 - Because every box has 4 sides, the dual graph is planar and 4-regular in its interior.
 
 ### Berlekamp's Double-Dealing Sacrifice Principle
-Elwyn Berlekamp (1982) demonstrated that naive greedy capture in Dots and Boxes leads to catastrophic loss of control. In long chains of boxes (`k ≥ 3`), the optimal strategy is a **hard-hearted handout**:
-1. When offered a long chain, capture `k - 2` boxes greedily.
-2. For the final 2 boxes, deliberately draw the far exterior edge of box `k`, sacrificing 2 boxes to the opponent.
+Elwyn Berlekamp (1982) demonstrated that naive greedy capture in Dots and Boxes leads to catastrophic loss of control. In long chains of boxes ($k \ge 3$), the optimal strategy is a **hard-hearted handout**:
+1. When offered a long chain, capture $k - 2$ boxes greedily.
+2. For the final 2 boxes, deliberately draw the far exterior edge of box $k$, sacrificing 2 boxes to the opponent.
 3. Because the opponent is forced to capture the final 2 boxes, the opponent must then open the next chain!
 
-```text
-Theorem berlekamp_double_deal_sacrifice :
-  forall C L : nat, 2 * C + 4 * L = 2 * (C + 2 * L).
-```
-On a 16-box board (`4 × 4` boxes, 40 edges), this parity control ensures Player 2 can restrict Player 1 to at most 8 boxes, forcing an exact **8–8 Draw**.
+$$
+2C + 4L = 2(C + 2L)
+$$
+
+On a 16-box board ($4 \times 4$ boxes, 40 edges), this parity control ensures Player 2 can restrict Player 1 to at most 8 boxes, forcing an exact **8–8 Draw**.
 
 ---
 
