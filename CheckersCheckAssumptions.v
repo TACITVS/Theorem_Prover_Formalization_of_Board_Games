@@ -34,6 +34,7 @@ Print Assumptions jump_br_rank.
 Print Assumptions rot180_involutive.
 Print Assumptions rot180_valid.
 Print Assumptions rot180_rank.
+Print Assumptions rot180_col.
 
 (** 2. CheckersGame Assumptions *)
 Print Assumptions player_eqb_spec.
@@ -57,14 +58,21 @@ Print Assumptions white_man_jump_delta.
 Print Assumptions black_man_jump_delta.
 Print Assumptions man_simple_step_no_self_loop.
 Print Assumptions man_jump_no_self_loop.
+Print Assumptions white_step_potential_inc.
+Print Assumptions black_step_potential_inc.
+Print Assumptions jump_capture_potential_net_gain.
 
 (** 4. CheckersMicro Assumptions *)
 Print Assumptions micro_bounds.
 Print Assumptions micro_parity.
 Print Assumptions micro_step_fl_rank.
+Print Assumptions micro_step_fl_col.
 Print Assumptions micro_step_fr_rank.
+Print Assumptions micro_step_fr_col.
 Print Assumptions micro_step_bl_rank.
+Print Assumptions micro_step_bl_col.
 Print Assumptions micro_step_br_rank.
+Print Assumptions micro_step_br_col.
 Print Assumptions micro_jump_forward_rank.
 Print Assumptions micro_jump_backward_rank.
 Print Assumptions micro_initial_piece_count.

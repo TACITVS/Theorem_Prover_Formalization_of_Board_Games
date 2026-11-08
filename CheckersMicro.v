@@ -74,20 +74,20 @@ Definition micro_step_fr (s : nat) : option nat :=
 
 Definition micro_step_bl (s : nat) : option nat :=
   match s with
-  | 2 => Some 0
-  | 3 => Some 1
+  | 3 => Some 0
   | 4 => Some 2
-  | 6 => Some 4
-  | 7 => Some 5
+  | 5 => Some 3
+  | 7 => Some 4
   | _ => None
   end.
 
 Definition micro_step_br (s : nat) : option nat :=
   match s with
-  | 3 => Some 0
+  | 2 => Some 0
+  | 3 => Some 1
   | 4 => Some 3
-  | 5 => Some 3
-  | 7 => Some 4
+  | 6 => Some 4
+  | 7 => Some 5
   | _ => None
   end.
 
@@ -120,10 +120,19 @@ Definition micro_jump_br (s : nat) : option (nat * nat) :=
   | _ => None
   end.
 
-(** Theorem 3: Forward steps increase micro_rank by exactly 1 *)
+(** Theorem 3: Forward steps increase micro_rank by 1 and change micro_col by -1 / +1 *)
 Theorem micro_step_fl_rank : forall s dst,
   micro_step_fl s = Some dst ->
   micro_rank dst = micro_rank s + 1.
+Proof.
+  intros s dst H.
+  destruct s as [|[|[|[|[|[|[|[|?]]]]]]]]; simpl in H; try discriminate;
+  injection H as Heq; subst dst; reflexivity.
+Qed.
+
+Theorem micro_step_fl_col : forall s dst,
+  micro_step_fl s = Some dst ->
+  micro_col s = micro_col dst + 1.
 Proof.
   intros s dst H.
   destruct s as [|[|[|[|[|[|[|[|?]]]]]]]]; simpl in H; try discriminate;
@@ -139,7 +148,16 @@ Proof.
   injection H as Heq; subst dst; reflexivity.
 Qed.
 
-(** Theorem 4: Backward steps decrease micro_rank by exactly 1 *)
+Theorem micro_step_fr_col : forall s dst,
+  micro_step_fr s = Some dst ->
+  micro_col dst = micro_col s + 1.
+Proof.
+  intros s dst H.
+  destruct s as [|[|[|[|[|[|[|[|?]]]]]]]]; simpl in H; try discriminate;
+  injection H as Heq; subst dst; reflexivity.
+Qed.
+
+(** Theorem 4: Backward steps decrease micro_rank by 1 and change micro_col by -1 / +1 *)
 Theorem micro_step_bl_rank : forall s dst,
   micro_step_bl s = Some dst ->
   micro_rank s = micro_rank dst + 1.
@@ -149,9 +167,27 @@ Proof.
   injection H as Heq; subst dst; reflexivity.
 Qed.
 
+Theorem micro_step_bl_col : forall s dst,
+  micro_step_bl s = Some dst ->
+  micro_col s = micro_col dst + 1.
+Proof.
+  intros s dst H.
+  destruct s as [|[|[|[|[|[|[|[|?]]]]]]]]; simpl in H; try discriminate;
+  injection H as Heq; subst dst; reflexivity.
+Qed.
+
 Theorem micro_step_br_rank : forall s dst,
   micro_step_br s = Some dst ->
   micro_rank s = micro_rank dst + 1.
+Proof.
+  intros s dst H.
+  destruct s as [|[|[|[|[|[|[|[|?]]]]]]]]; simpl in H; try discriminate;
+  injection H as Heq; subst dst; reflexivity.
+Qed.
+
+Theorem micro_step_br_col : forall s dst,
+  micro_step_br s = Some dst ->
+  micro_col dst = micro_col s + 1.
 Proof.
   intros s dst H.
   destruct s as [|[|[|[|[|[|[|[|?]]]]]]]]; simpl in H; try discriminate;

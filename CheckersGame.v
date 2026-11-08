@@ -272,7 +272,6 @@ Definition apply_single_jump_sub (st : state) (p : player) (src mid dst : nat) :
 (** Simple Move Relation *)
 
 Definition legal_simple_step (st : state) (src dst : nat) : Prop :=
-  turn st = turn st /\
   has_any_jump st (turn st) = false /\
   is_player_piece (turn st) src st = true /\
   negb (occupied dst st) = true /\

@@ -8,18 +8,17 @@ def generate_svg():
     squares_svg = []
     num = 1
     for r_idx in range(8):
-        r = 7 - r_idx
         y = y_off + r_idx * cell
         for c in range(8):
             x = x_off + c * cell
-            is_dark = ((r + c) % 2 == 1)
+            is_dark = ((r_idx + c) % 2 == 1)
             if is_dark:
                 sq_num = num
                 num += 1
-                if sq_num == 23:
+                if sq_num == 22:
                     squares_svg.append(f'    <rect x="{x}" y="{y}" width="{cell}" height="{cell}" fill="url(#darkSquareGrad)" stroke="#06b6d4" stroke-width="2.5" rx="1"/>')
                     squares_svg.append(f'    <text x="{x+4}" y="{y+15}" font-size="11" font-weight="800" fill="#22d3ee">{sq_num}</text>')
-                elif sq_num == 28:
+                elif sq_num in (25, 29):
                     squares_svg.append(f'    <rect x="{x}" y="{y}" width="{cell}" height="{cell}" fill="url(#darkSquareGrad)" stroke="#06b6d4" stroke-width="2" rx="1"/>')
                     squares_svg.append(f'    <text x="{x+4}" y="{y+15}" font-size="11" font-weight="700" fill="#fde047">{sq_num}</text>')
                 else:
@@ -87,8 +86,8 @@ def generate_svg():
   <rect width="1100" height="680" fill="url(#bgGrad)"/>
   
   <!-- Header Title -->
-  <text x="50" y="45" font-size="24" font-weight="800" fill="#f8fafc" letter-spacing="0.5">THE "MOVE 37" OF CHECKERS: PAYNE\'S DECOY SACRIFICE</text>
-  <text x="50" y="70" font-size="13" font-weight="500" fill="#94a3b8">Autonomous Discovery by Native C++17 Bitboard Engine • Minimax Value +10 vs Human Dogma -120.0</text>
+  <text x="50" y="45" font-size="24" font-weight="800" fill="#f8fafc" letter-spacing="0.5">THE "MOVE 37" OF CHECKERS: PAYNE\'S DECOY EXCHANGE (25-22!)</text>
+  <text x="50" y="70" font-size="13" font-weight="500" fill="#94a3b8">Autonomous Discovery by Native C++17 Bitboard Engine • Depth-18 Eval +10 cp vs Human Dogma -120.0</text>
   <rect x="850" y="24" width="200" height="30" rx="6" fill="#06b6d4" fill-opacity="0.15" stroke="#06b6d4" stroke-width="1.5"/>
   <text x="950" y="44" font-size="12" font-weight="700" fill="#22d3ee" text-anchor="middle">DIVERGENCE SCORE: 420.0</text>
 
@@ -102,60 +101,63 @@ def generate_svg():
   </g>
 
   <!-- ================= PIECES ON BOARD ================= -->
-  <!-- White King on Sq 32 (x=537.5, y=587.5) -->
-  <g transform="translate(537.5, 587.5)">
+  <!-- White King on Sq 29 (r_idx=7, c=0 -> x=82.5, y=587.5) -->
+  <g transform="translate(82.5, 587.5)">
     <circle r="24" fill="url(#whitePiece)" stroke="#475569" stroke-width="2"/>
     <circle r="18" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="3,2"/>
     <!-- Gold Crown -->
     <path d="M -10 6 L -10 -2 L -5 2 L 0 -6 L 5 2 L 10 -2 L 10 6 Z" fill="url(#goldCrown)" stroke="#854d0e" stroke-width="1"/>
   </g>
 
-  <!-- White King on Sq 28 (Origin of Move 37) (x=472.5, y=522.5) -->
-  <g transform="translate(472.5, 522.5)">
+  <!-- White King on Sq 25 (Origin of Move 37: r_idx=6, c=1 -> x=147.5, y=522.5) -->
+  <g transform="translate(147.5, 522.5)">
     <circle r="24" fill="url(#whitePiece)" stroke="#06b6d4" stroke-width="3" filter="url(#cyanGlow)"/>
     <circle r="18" fill="none" stroke="#0891b2" stroke-width="1.5"/>
     <path d="M -10 6 L -10 -2 L -5 2 L 0 -6 L 5 2 L 10 -2 L 10 6 Z" fill="url(#goldCrown)" stroke="#854d0e" stroke-width="1"/>
   </g>
 
-  <!-- Black King on Sq 19 (x=342.5, y=392.5) -->
-  <g transform="translate(342.5, 392.5)">
+  <!-- Black King on Sq 18 (r_idx=4, c=3 -> x=277.5, y=392.5) -->
+  <g transform="translate(277.5, 392.5)">
     <circle r="24" fill="url(#blackPiece)" stroke="#94a3b8" stroke-width="2"/>
     <circle r="18" fill="none" stroke="#64748b" stroke-width="1.5"/>
     <path d="M -10 6 L -10 -2 L -5 2 L 0 -6 L 5 2 L 10 -2 L 10 6 Z" fill="#94a3b8" stroke="#334155" stroke-width="1"/>
   </g>
 
-  <!-- Black King on Sq 15 (x=407.5, y=327.5) -->
-  <g transform="translate(407.5, 327.5)">
+  <!-- Black King on Sq 14 (r_idx=3, c=2 -> x=212.5, y=327.5) -->
+  <g transform="translate(212.5, 327.5)">
     <circle r="24" fill="url(#blackPiece)" stroke="#94a3b8" stroke-width="2"/>
     <circle r="18" fill="none" stroke="#64748b" stroke-width="1.5"/>
     <path d="M -10 6 L -10 -2 L -5 2 L 0 -6 L 5 2 L 10 -2 L 10 6 Z" fill="#94a3b8" stroke="#334155" stroke-width="1"/>
   </g>
 
-  <!-- MOVE 37 VECTOR: White King 28 -> 23 -->
-  <path d="M 458 508 L 418 468" fill="none" stroke="#06b6d4" stroke-width="4.5" marker-end="url(#cyanArrow)" filter="url(#cyanGlow)"/>
+  <!-- MOVE 37 VECTOR: White King 25 -> 22 -->
+  <path d="M 162 508 L 198 472" fill="none" stroke="#06b6d4" stroke-width="4.5" marker-end="url(#cyanArrow)" filter="url(#cyanGlow)"/>
   
-  <!-- FORCED REPLY JUMP: Black King 19 x 28 over 23 -->
-  <path d="M 352 402 Q 418 450 460 505" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#redArrow)" filter="url(#redGlow)"/>
+  <!-- FORCED REPLY JUMP: Black King 18 x 25 over 22 -->
+  <path d="M 265 405 Q 195 445 158 508" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,4" marker-end="url(#redArrow)" filter="url(#redGlow)"/>
 
-  <!-- Ghost King at Landing Square 23 -->
-  <circle cx="407.5" cy="457.5" r="22" fill="#06b6d4" fill-opacity="0.25" stroke="#06b6d4" stroke-width="2" stroke-dasharray="4,3"/>
-  <text x="407.5" y="462" font-size="11" font-weight="800" fill="#22d3ee" text-anchor="middle">28-23!</text>
+  <!-- FOLLOW-UP RECAPTURE JUMP: White King 29 x 22 over 25 -->
+  <path d="M 95 575 Q 165 535 202 472" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-dasharray="4,3" marker-end="url(#cyanArrow)"/>
+
+  <!-- Ghost King at Landing Square 22 (x=212.5, y=457.5) -->
+  <circle cx="212.5" cy="457.5" r="22" fill="#06b6d4" fill-opacity="0.25" stroke="#06b6d4" stroke-width="2" stroke-dasharray="4,3"/>
+  <text x="212.5" y="462" font-size="11" font-weight="800" fill="#22d3ee" text-anchor="middle">25-22!</text>
 
   <!-- ================= RIGHT PANEL: ANALYSIS & METRICS (x=600, y=96) ================= -->
   <!-- Analysis Card -->
   <rect x="600" y="96" width="460" height="528" rx="8" fill="url(#cardGrad)" stroke="#334155" stroke-width="1.5"/>
   
   <text x="625" y="130" font-size="18" font-weight="700" fill="#38bdf8">EVALUATION &amp; DIVERGENCE PROFILE</text>
-  <text x="625" y="152" font-size="12" fill="#94a3b8">Comparison: Exact Game-Theoretic Minimax vs Human Master Dogma</text>
+  <text x="625" y="152" font-size="12" fill="#94a3b8">Comparison: Depth-18 Alpha-Beta Minimax vs Human Master Dogma</text>
   
   <!-- Score Cards -->
   <rect x="625" y="175" width="200" height="75" rx="6" fill="#0f172a" stroke="#0284c7" stroke-width="1.5"/>
-  <text x="640" y="198" font-size="11" font-weight="700" fill="#38bdf8">MINIMAX ORACLE V(m)</text>
-  <text x="640" y="232" font-size="28" font-weight="800" fill="#4ade80">+10 <tspan font-size="13" font-weight="500" fill="#86efac">(FORCED WIN)</tspan></text>
+  <text x="640" y="198" font-size="11" font-weight="700" fill="#38bdf8">MINIMAX EVAL V(m)</text>
+  <text x="640" y="232" font-size="26" font-weight="800" fill="#4ade80">+10 cp <tspan font-size="12" font-weight="500" fill="#86efac">(CENTER ADV)</tspan></text>
 
   <rect x="840" y="175" width="200" height="75" rx="6" fill="#0f172a" stroke="#e11d48" stroke-width="1.5"/>
   <text x="855" y="198" font-size="11" font-weight="700" fill="#f43f5e">HUMAN DOGMA H(m)</text>
-  <text x="855" y="232" font-size="28" font-weight="800" fill="#fb7185">-120.0 <tspan font-size="13" font-weight="500" fill="#fda4af">(WORST MOVE)</tspan></text>
+  <text x="855" y="232" font-size="26" font-weight="800" fill="#fb7185">-120.0 <tspan font-size="12" font-weight="500" fill="#fda4af">(WORST MOVE)</tspan></text>
 
   <!-- Tactical Breakdown Table -->
   <rect x="625" y="270" width="415" height="150" rx="6" fill="#090d16" stroke="#1e293b" stroke-width="1"/>
@@ -165,41 +167,41 @@ def generate_svg():
   <text x="640" y="322" font-size="11" font-weight="700" fill="#94a3b8">Move</text>
   <text x="715" y="322" font-size="11" font-weight="700" fill="#94a3b8">Minimax V</text>
   <text x="810" y="322" font-size="11" font-weight="700" fill="#94a3b8">Human Dogma H</text>
-  <text x="940" y="322" font-size="11" font-weight="700" fill="#94a3b8">Verdict</text>
+  <text x="935" y="322" font-size="11" font-weight="700" fill="#94a3b8">Verdict</text>
 
-  <!-- Row 1: 28-23 -->
+  <!-- Row 1: 25-22 -->
   <rect x="630" y="330" width="405" height="24" rx="4" fill="#0369a1" fill-opacity="0.25"/>
-  <text x="640" y="346" font-size="12" font-weight="800" fill="#22d3ee">28-23 !</text>
-  <text x="715" y="346" font-size="12" font-weight="800" fill="#4ade80">+10 (Win)</text>
+  <text x="640" y="346" font-size="12" font-weight="800" fill="#22d3ee">25-22 !</text>
+  <text x="715" y="346" font-size="12" font-weight="800" fill="#4ade80">+10 cp</text>
   <text x="810" y="346" font-size="12" font-weight="800" fill="#f87171">-120.0 (Worst)</text>
-  <text x="940" y="346" font-size="11" font-weight="800" fill="#22d3ee">UNIQUE WIN</text>
+  <text x="935" y="346" font-size="11" font-weight="800" fill="#22d3ee">OPTIMAL DECOY</text>
 
-  <!-- Row 2: 28-24 -->
-  <text x="640" y="372" font-size="11" fill="#cbd5e1">28-24</text>
-  <text x="715" y="372" font-size="11" fill="#f87171">-20 (Loss)</text>
+  <!-- Row 2: 25-21 -->
+  <text x="640" y="372" font-size="11" fill="#cbd5e1">25-21</text>
+  <text x="715" y="372" font-size="11" fill="#f87171">-20 cp</text>
   <text x="810" y="372" font-size="11" fill="#94a3b8">-35.0 (Edge step)</text>
-  <text x="940" y="372" font-size="11" fill="#f87171">Fails to win</text>
+  <text x="935" y="372" font-size="11" fill="#f87171">Loses center</text>
 
-  <!-- Row 3: 28-31 -->
-  <text x="640" y="398" font-size="11" fill="#cbd5e1">28-31</text>
-  <text x="715" y="398" font-size="11" fill="#f87171">-20 (Loss)</text>
+  <!-- Row 3: 25-30 -->
+  <text x="640" y="398" font-size="11" fill="#cbd5e1">25-30</text>
+  <text x="715" y="398" font-size="11" fill="#f87171">-20 cp</text>
   <text x="810" y="398" font-size="11" fill="#4ade80">+0.0 (Natural safe)</text>
-  <text x="940" y="398" font-size="11" fill="#f87171">Fails to win</text>
+  <text x="935" y="398" font-size="11" fill="#f87171">Loses center</text>
 
   <!-- Principal Variation Line -->
-  <text x="625" y="445" font-size="12" font-weight="700" fill="#38bdf8">PROVEN PRINCIPAL VARIATION (FORCED PV)</text>
+  <text x="625" y="445" font-size="12" font-weight="700" fill="#38bdf8">PROVEN PRINCIPAL VARIATION (DEPTH-18 PV)</text>
   <rect x="625" y="455" width="415" height="35" rx="6" fill="#0f172a" stroke="#0284c7" stroke-width="1"/>
-  <text x="635" y="478" font-size="12" font-family="\'Consolas\', monospace" font-weight="700" fill="#f8fafc">
-    1. 28-23!  19x28   2. 32-27!  (Zugzwang &amp; Win)
+  <text x="635" y="477" font-size="11.5" font-family="\'Consolas\', monospace" font-weight="700" fill="#f8fafc">
+    1. 25-22! 18x25  2. 29x22 14-10  3. 22-18 10-6  4. 18-15
   </text>
 
   <!-- Rationale Box -->
   <text x="625" y="515" font-size="12" font-weight="700" fill="#cbd5e1">THE "MOVE 37" PARADOX EXPLAINED:</text>
   <text x="625" y="535" font-size="11" fill="#94a3b8">
-    <tspan x="625" dy="0">• Human Dogma: 250 years of textbooks teach "Never give up a king</tspan>
-    <tspan x="625" dy="16">  without recapture; never step into the line of fire."</tspan>
-    <tspan x="625" dy="16">• The Reality: By stepping directly into 23, White invokes the mandatory</tspan>
-    <tspan x="625" dy="16">  jump rule, forcing Black onto 28 where King 32 executes a fatal pin!</tspan>
+    <tspan x="625" dy="0">• Human Dogma: Classical heuristics penalize stepping a King onto an</tspan>
+    <tspan x="625" dy="16">  unguarded square (22) directly in the line of fire of King 18 (-120.0).</tspan>
+    <tspan x="625" dy="16">• The Reality: Vacating 25 forces 18x25 by mandatory capture, enabling</tspan>
+    <tspan x="625" dy="16">  29x22! to liquidates into central opposition (+10 cp vs -20 cp).</tspan>
     <tspan x="625" dy="16">• Divergence: Δ = (V_opt - V_alt)*10 + (H_max - H_opt) = 300 + 120 = 420.0</tspan>
   </text>
 

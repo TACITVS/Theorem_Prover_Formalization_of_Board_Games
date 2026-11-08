@@ -136,4 +136,63 @@ Proof.
     intros Heq; subst dst. lia.
 Qed.
 
+(** Global Forward Potential Function Phi(st) *)
+
+Definition GameState := state.
+
+Fixpoint sum_white_ranks (l : list nat) : nat :=
+  match l with
+  | [] => 0
+  | s :: tl => sq_rank s + sum_white_ranks tl
+  end.
+
+Fixpoint sum_black_ranks (l : list nat) : nat :=
+  match l with
+  | [] => 0
+  | s :: tl => (7 - sq_rank s) + sum_black_ranks tl
+  end.
+
+Definition men_rank_potential (st : GameState) : nat :=
+  sum_white_ranks (white_men st) + sum_black_ranks (black_men st).
+
+Definition Phi (st : GameState) : nat :=
+  64 * (24 - total_pieces st) + men_rank_potential st.
+
+(** Theorem 7: A single White man advancing increases sum_white_ranks by +1 *)
+Theorem white_step_potential_inc : forall s dst tl,
+  (step_fl s = Some dst \/ step_fr s = Some dst) ->
+  sum_white_ranks (dst :: tl) = sum_white_ranks (s :: tl) + 1.
+Proof.
+  intros s dst tl H.
+  apply white_step_advances_rank in H.
+  cbn [sum_white_ranks]. lia.
+Qed.
+
+(** Theorem 8: A single Black man advancing increases sum_black_ranks by +1 *)
+Theorem black_step_potential_inc : forall s dst tl,
+  s < 32 ->
+  (step_bl s = Some dst \/ step_br s = Some dst) ->
+  sum_black_ranks (dst :: tl) = sum_black_ranks (s :: tl) + 1.
+Proof.
+  intros s dst tl Hs H.
+  apply black_step_decreases_rank in H.
+  assert (Hb := sq_bounds s Hs).
+  destruct Hb as [Hr _].
+  cbn [sum_black_ranks]. lia.
+Qed.
+
+(** Theorem 9: A capture jump increases 64*(24 - total_pieces) by >= +64
+    while changing rank potential by at least +2 - 7 = -5, yielding net gain >= +59 *)
+Theorem jump_capture_potential_net_gain : forall p_old p_new r_before r_adv r_cap,
+  p_old <= 24 ->
+  p_new + 1 <= p_old ->
+  r_adv >= 2 ->
+  r_cap <= 7 ->
+  r_cap <= r_before ->
+  64 * (24 - p_new) + (r_before + r_adv - r_cap) >= 64 * (24 - p_old) + r_before + 59.
+Proof.
+  intros p_old p_new r_before r_adv r_cap Hp1 Hp2 Hadv Hcap Hle.
+  lia.
+Qed.
+
 End CheckersInvariants.

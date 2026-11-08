@@ -42,7 +42,7 @@ def stepFR (s : Nat) : Option Nat :=
   else none
 
 def stepBL (s : Nat) : Option Nat :=
-  if 4 <= s then
+  if 4 <= s && s < 32 then
     let r := sqRank s
     let c := s % 4
     if r % 2 == 0 then
@@ -51,12 +51,31 @@ def stepBL (s : Nat) : Option Nat :=
   else none
 
 def stepBR (s : Nat) : Option Nat :=
-  if 4 <= s then
+  if 4 <= s && s < 32 then
     let r := sqRank s
     let c := s % 4
     if r % 2 == 0 then some (s - 4)
     else if c < 3 then some (s - 3) else none
   else none
+
+def stepFL_valid (s : Nat) : Bool :=
+  match stepFL s with
+  | some dest => sqRank dest == sqRank s + 1
+  | none => true
+
+def stepFR_valid (s : Nat) : Bool :=
+  match stepFR s with
+  | some dest => sqRank dest == sqRank s + 1
+  | none => true
+
+def stepBL_valid (s : Nat) : Bool :=
+  match stepBL s with
+  | some dest => sqRank s == sqRank dest + 1
+  | none => true
+
+theorem stepFL_rank_inc : ∀ s < 32, stepFL_valid s = true := by decide
+theorem stepFR_rank_inc : ∀ s < 32, stepFR_valid s = true := by decide
+theorem stepBL_rank_dec : ∀ s < 32, stepBL_valid s = true := by decide
 
 def jumpFL (s : Nat) : Option (Nat × Nat) :=
   match stepFL s with
@@ -119,6 +138,8 @@ theorem rot180_valid : ∀ s < 32, rot180 s < 32 := by decide
 
 theorem rot180_rank : ∀ s < 32, sqRank (rot180 s) = 7 - sqRank s := by decide
 
+theorem rot180_col : ∀ s < 32, sqCol (rot180 s) = 7 - sqCol s := by decide
+
 -- 4x4 Micro-Checkers
 def microRank (s : Nat) : Nat := s / 2
 
@@ -131,3 +152,20 @@ def microCol (s : Nat) : Nat :=
 theorem microBounds : ∀ s < 8, microRank s < 4 ∧ microCol s < 4 := by decide
 
 theorem microParity : ∀ s < 8, (microRank s + microCol s) % 2 = 1 := by decide
+
+-- Kernel Axiom Audit for all 15 Theorems
+#print axioms darkSquareParity
+#print axioms sqBounds
+#print axioms stepFL_rank_inc
+#print axioms stepFR_rank_inc
+#print axioms stepBL_rank_dec
+#print axioms jumpFL_all_valid
+#print axioms jumpFR_all_valid
+#print axioms jumpBL_all_valid
+#print axioms jumpBR_all_valid
+#print axioms rot180_involutive
+#print axioms rot180_valid
+#print axioms rot180_rank
+#print axioms rot180_col
+#print axioms microBounds
+#print axioms microParity

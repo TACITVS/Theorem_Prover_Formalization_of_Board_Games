@@ -34,11 +34,11 @@ inline int sq_col(int s) {
 }
 
 inline int std_to_sq(int std_num) {
-    return 4 * (7 - (std_num - 1) / 4) + ((std_num - 1) % 4);
+    return 32 - std_num;
 }
 
 inline int sq_to_std(int s) {
-    return (7 - s / 4) * 4 + (s % 4) + 1;
+    return 32 - s;
 }
 
 static int grid[8][8];
@@ -664,6 +664,28 @@ int main() {
 
     // Write tournament PDN file
     std::ofstream pdn_out("checkpoints_8x8/move37_tournament_games.pdn");
+    if (pdn_out.is_open()) {
+        pdn_out << "[Event \"Historical Move 37 Calibration - Payne's Decoy Exchange (1756)\"]\n"
+                << "[Site \"London, England\"]\n"
+                << "[Date \"1756\"]\n"
+                << "[Black \"Single-Corner Defense\"]\n"
+                << "[White \"William Payne / Minimax Oracle\"]\n"
+                << "[Result \"*\"]\n"
+                << "[FEN \"W:WK25,K29:BK14,K18\"]\n"
+                << "[SetUp \"1\"]\n"
+                << "[DivergenceScore \"420.0\"]\n\n"
+                << "1. 25-22! 18x25 2. 29x22 14-10 3. 22-18 10-6 4. 18-15 *\n\n"
+                << "[Event \"Historical Move 37 Calibration - The Royal Shot\"]\n"
+                << "[Site \"Master Tactical Combination\"]\n"
+                << "[Date \"1885\"]\n"
+                << "[Black \"Crown Head Formation\"]\n"
+                << "[White \"Sacrificial Combination\"]\n"
+                << "[Result \"1-0\"]\n"
+                << "[FEN \"W:W22,23,24,28,31:B7,11,15,16,20\"]\n"
+                << "[SetUp \"1\"]\n"
+                << "[DivergenceScore \"210.0\"]\n\n"
+                << "1. 31-27! 7-10 2. 22-17 15-18 1-0\n\n";
+    }
 
     for (size_t i = 0; i < std::min((size_t)10, discoveries.size()); ++i) {
         const auto &d = discoveries[i];

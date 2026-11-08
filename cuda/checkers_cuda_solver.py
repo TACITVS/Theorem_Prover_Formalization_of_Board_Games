@@ -365,33 +365,92 @@ def run_benchmarks():
                 res.append((frozenset(n_wm), frozenset(n_bm), frozenset(n_wk), frozenset(n_bk), 1 - turn))
         return res
 
+    def m_solve_retrograde(root_state):
+        # 1. Discover all reachable states via BFS and build predecessor graph
+        from collections import deque
+        q = deque([root_state])
+        reachable = {root_state}
+        succ_map = {}
+        pred_map = {root_state: []}
+        while q:
+            u = q.popleft()
+            succs = m_next_states(u)
+            succ_map[u] = succs
+            for v in succs:
+                if v not in reachable:
+                    reachable.add(v)
+                    pred_map[v] = []
+                    q.append(v)
+                pred_map[v].append(u)
+
+        # 2. Exact path-independent Zermelo retrograde analysis (zero GHI ambiguity)
+        rem_deg = {u: len(succ_map[u]) for u in reachable}
+        retro_val = {}
+        rq = deque()
+        for u in reachable:
+            if rem_deg[u] == 0:
+                retro_val[u] = -1
+                rq.append(u)
+
+        while rq:
+            v = rq.popleft()
+            val_v = retro_val[v]
+            for u in pred_map[v]:
+                if u in retro_val:
+                    continue
+                if val_v == -1:
+                    retro_val[u] = 1
+                    rq.append(u)
+                elif val_v == 1:
+                    rem_deg[u] -= 1
+                    if rem_deg[u] == 0:
+                        retro_val[u] = -1
+                        rq.append(u)
+
+        for u in reachable:
+            if u not in retro_val:
+                retro_val[u] = 0
+        return retro_val
+
     def m_solve(state):
-        if state in memo: return memo[state]
-        if state in vis: return 0  # Draw by loop
+        if state in memo:
+            return memo[state], False
+        if state in vis:
+            # Path-dependent loop draw: do NOT cache in memo (prevents GHI pollution)
+            return 0, True
         vis.add(state)
         succs = m_next_states(state)
         if not succs:
             vis.remove(state)
             memo[state] = -1
-            return -1
+            return -1, False
         best = -1
         has_draw = False
+        used_loop = False
         for s in succs:
-            v = -m_solve(s)
+            child_v, child_loop = m_solve(s)
+            v = -child_v
             if v == 1:
                 best = 1
+                used_loop = child_loop
                 break
             elif v == 0:
                 has_draw = True
+                used_loop = used_loop or child_loop
+            else:
+                used_loop = used_loop or child_loop
         if best != 1 and has_draw:
             best = 0
         vis.remove(state)
-        memo[state] = best
-        return best
+        if not used_loop:
+            memo[state] = best
+        return best, used_loop
 
     t0 = time.perf_counter()
     init_state = (frozenset([0, 1]), frozenset([6, 7]), frozenset(), frozenset(), 0)
-    micro_val = m_solve(init_state)
+    retro_table = m_solve_retrograde(init_state)
+    memo.update(retro_table)
+    micro_val, _ = m_solve(init_state)
     t_micro = time.perf_counter() - t0
 
     res_str = {1: "White Win", -1: "Black Win", 0: "DRAW (0)"}[micro_val]

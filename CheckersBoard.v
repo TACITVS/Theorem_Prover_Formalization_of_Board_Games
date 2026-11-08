@@ -234,7 +234,7 @@ Definition step_fr (s : nat) : option nat :=
   else None.
 
 Definition step_bl (s : nat) : option nat :=
-  if 4 <=? s then
+  if (4 <=? s) && (s <? 32) then
     let r := sq_rank s in
     let c := s mod 4 in
     if Nat.even r then
@@ -243,7 +243,7 @@ Definition step_bl (s : nat) : option nat :=
   else None.
 
 Definition step_br (s : nat) : option nat :=
-  if 4 <=? s then
+  if (4 <=? s) && (s <? 32) then
     let r := sq_rank s in
     let c := s mod 4 in
     if Nat.even r then Some (s - 4)
@@ -285,7 +285,8 @@ Theorem step_bl_rank : forall s dest : nat,
 Proof.
   intros s dest H.
   unfold step_bl, sq_rank in *.
-  destruct (4 <=? s) eqn:H4; [|discriminate].
+  destruct ((4 <=? s) && (s <? 32)) eqn:H4; [|discriminate].
+  apply andb_true_iff in H4. destruct H4 as [H4 _].
   apply Nat.leb_le in H4.
   destruct (Nat.even (s / 4)).
   - destruct ((0 <? s mod 4) && (5 <=? s)) eqn:Hc; [|discriminate].
@@ -305,7 +306,8 @@ Theorem step_br_rank : forall s dest : nat,
 Proof.
   intros s dest H.
   unfold step_br, sq_rank in *.
-  destruct (4 <=? s) eqn:H4; [|discriminate].
+  destruct ((4 <=? s) && (s <? 32)) eqn:H4; [|discriminate].
+  apply andb_true_iff in H4. destruct H4 as [H4 _].
   apply Nat.leb_le in H4.
   destruct (Nat.even (s / 4)).
   - injection H as Heq; subst dest.
@@ -427,18 +429,20 @@ Proof.
   injection H as Hmid Hdest; subst m d.
   unfold step_bl, sq_rank in *.
   cbn zeta in *.
-  destruct (4 <=? s) eqn:Hs4; [|discriminate].
+  destruct ((4 <=? s) && (s <? 32)) eqn:Hs4; [|discriminate].
+  apply andb_true_iff in Hs4. destruct Hs4 as [Hs4 _].
   apply Nat.leb_le in Hs4.
   destruct (Nat.even (s / 4)) eqn:Hre.
   - destruct ((0 <? s mod 4) && (5 <=? s)) eqn:Hc; [|discriminate].
     apply andb_true_iff in Hc. destruct Hc as [Hc1 Hc2].
     apply Nat.ltb_lt in Hc1. apply Nat.leb_le in Hc2.
     injection Hm as Hmeq; subst mid.
-    destruct (4 <=? s - 5) eqn:Hm4; [|discriminate].
+    destruct ((4 <=? s - 5) && (s - 5 <? 32)) eqn:Hm4; [|discriminate].
     rewrite (even_div4_sub5 s Hc2 Hc1) in Hd. rewrite Hre in Hd.
     injection Hd as Hdeq; subst dest. lia.
   - injection Hm as Hmeq; subst mid.
-    destruct (4 <=? s - 4) eqn:Hm4; [|discriminate].
+    destruct ((4 <=? s - 4) && (s - 4 <? 32)) eqn:Hm4; [|discriminate].
+    apply andb_true_iff in Hm4. destruct Hm4 as [Hm4 _].
     apply Nat.leb_le in Hm4.
     rewrite (even_div4_sub4 s Hs4) in Hd. rewrite Hre in Hd.
     rewrite (mod4_sub4 s Hs4) in Hd.
@@ -457,11 +461,13 @@ Proof.
   injection H as Hmid Hdest; subst m d.
   unfold step_br, sq_rank in *.
   cbn zeta in *.
-  destruct (4 <=? s) eqn:Hs4; [|discriminate].
+  destruct ((4 <=? s) && (s <? 32)) eqn:Hs4; [|discriminate].
+  apply andb_true_iff in Hs4. destruct Hs4 as [Hs4 _].
   apply Nat.leb_le in Hs4.
   destruct (Nat.even (s / 4)) eqn:Hre.
   - injection Hm as Hmeq; subst mid.
-    destruct (4 <=? s - 4) eqn:Hm4; [|discriminate].
+    destruct ((4 <=? s - 4) && (s - 4 <? 32)) eqn:Hm4; [|discriminate].
+    apply andb_true_iff in Hm4. destruct Hm4 as [Hm4 _].
     apply Nat.leb_le in Hm4.
     rewrite (even_div4_sub4 s Hs4) in Hd. rewrite Hre in Hd.
     rewrite (mod4_sub4 s Hs4) in Hd.
@@ -470,7 +476,7 @@ Proof.
   - destruct (s mod 4 <? 3) eqn:Hc; [|discriminate].
     apply Nat.ltb_lt in Hc.
     injection Hm as Hmeq; subst mid.
-    destruct (4 <=? s - 3) eqn:Hm4; [|discriminate].
+    destruct ((4 <=? s - 3) && (s - 3 <? 32)) eqn:Hm4; [|discriminate].
     rewrite (even_div4_sub3 s Hs4 Hc) in Hd. rewrite Hre in Hd.
     injection Hd as Hdeq; subst dest. lia.
 Qed.
@@ -562,6 +568,15 @@ Proof.
   rewrite Nat.div_add by lia.
   assert (3 - s mod 4 < 4) by lia.
   rewrite Nat.div_small by lia. lia.
+Qed.
+
+Theorem rot180_col : forall s : nat,
+  s < 32 ->
+  sq_col (rot180 s) = 7 - sq_col s.
+Proof.
+  intros s Hs.
+  do 32 (destruct s as [|s]; [reflexivity|]).
+  lia.
 Qed.
 
 End CheckersBoard.

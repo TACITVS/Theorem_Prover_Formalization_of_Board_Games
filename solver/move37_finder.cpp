@@ -39,11 +39,11 @@ inline int sq_col(int s) {
 }
 
 inline int std_to_sq(int std_num) {
-    return 4 * (7 - (std_num - 1) / 4) + ((std_num - 1) % 4);
+    return 32 - std_num;
 }
 
 inline int sq_to_std(int s) {
-    return (7 - s / 4) * 4 + (s % 4) + 1;
+    return 32 - s;
 }
 
 static int grid[8][8];
@@ -566,32 +566,32 @@ std::vector<PositionEntry> get_master_benchmark_suite() {
 
     // 1. Payne's Decoy Coup (1756) - 2 Kings vs 2 Kings (Endgame: depth 18)
     suite.push_back({
-        "Payne's First Position (1756) - The Double-Corner Decoy Sacrifice",
+        "Payne's Decoy Exchange (1756) - The Single-Corner Decoy Sacrifice",
         "Endgame Masterwork",
         0,
-        make_mask({32, 28}),
+        make_mask({29, 25}),
         0,
-        make_mask({15, 19}),
+        make_mask({14, 18}),
         0,
         18,
-        "Human master dogma dictates: Never give away a King without immediate recapture. "
-        "Yet White plays 28-23! directly offering the king to 19x28. By vacating 28, Black is forced to jump "
-        "into the double corner, where White's remaining King on 32 traps both enemy pieces for an exact mathematical win."
+        "Human master dogma dictates: Never step a King directly into an unguarded capture square. "
+        "Yet White plays 25-22! directly offering the king to 18x25. By vacating 25, Black is forced to jump "
+        "into 25, where White's remaining King on 29 recaptures 29x22 to seize central opposition (+10 centipawns vs -20)."
     });
 
     // 2. The Royal Shot - Sacrificial Coup (Tactical 10 pieces: depth 16)
     suite.push_back({
         "The Royal Shot - Sacrificial Coup",
         "Tactical Master Combination",
-        make_mask({21, 22, 23, 25, 30}),
+        make_mask({24, 23, 22, 28, 31}),
         0,
-        make_mask({6, 10, 13, 14, 17}),
+        make_mask({7, 11, 16, 15, 20}),
         0,
         0,
         16,
         "Classical dogma strictly warns against breaking the back row prematurely. "
-        "Yet White plays 30-26!, vacating the back rank and sacrificing material into the opponent's line of fire, "
-        "triggering an explosive 3-piece jump stroke that crowns and wins."
+        "Yet White plays 31-27!, vacating the back rank and sacrificing material into the opponent's line of fire, "
+        "triggering a multi-piece tactical combination (+220 centipawns)."
     });
 
     // 3. The Goose Walk - Self-Stalemate Decoy (Endgame 4 pieces: depth 18)
@@ -599,13 +599,13 @@ std::vector<PositionEntry> get_master_benchmark_suite() {
         "The Goose Walk - Self-Stalemate Tempo Decoy",
         "Endgame Masterwork",
         0,
-        make_mask({27, 31}),
-        make_mask({12}),
-        make_mask({19}),
+        make_mask({26, 30}),
+        make_mask({9}),
+        make_mask({18}),
         0,
         18,
-        "Human players instinctively avoid sacrificing their king on square 24. "
-        "Yet 27-24! voluntarily sacrifices the piece into Black's path to seize the opposition and freeze Black."
+        "Human players instinctively avoid offering their king on square 22. "
+        "Yet 26-22! voluntarily sacrifices the piece into Black's path to seize the opposition."
     });
 
     // 4. Strickland's Double Corner Coup (Endgame 4 pieces: depth 18)
@@ -613,34 +613,34 @@ std::vector<PositionEntry> get_master_benchmark_suite() {
         "Strickland's Double Corner Coup",
         "Classic Endgame Problem",
         0,
-        make_mask({26, 30}),
-        make_mask({21}),
-        make_mask({17}),
+        make_mask({27, 31}),
+        make_mask({24}),
+        make_mask({20}),
         0,
         18,
-        "A paradoxical King offer on 25 that traps Black's king in the double corner."
+        "A paradoxical King offer on 28 that traps Black's king on the edge."
     });
 
     // 5. Single-Corner King-Row Sac Squeeze (Endgame 9 pieces: depth 16)
     suite.push_back({
         "Single-Corner King-Row Sac Squeeze",
         "Endgame Masterwork",
-        make_mask({22, 25, 29, 31, 32}),
+        make_mask({23, 28, 32, 30, 29}),
         0,
-        make_mask({10, 14, 17, 21}),
+        make_mask({11, 15, 20, 24}),
         0,
         0,
         16,
-        "Vacating square 32 is universally condemned by classical textbooks, yet it freezes 3 Black pieces in an absolute pin."
+        "Vacating the back rank is universally condemned by classical textbooks, yet it freezes Black's flank in a pin."
     });
 
     // 6. The White Doctor 3-Move Crisis (Ballot 22 pieces: depth 10)
     suite.push_back({
-        "The White Doctor 3-Move Crisis (9-14, 22-17, 11-15)",
+        "The White Doctor 3-Move Crisis (12-15, 23-20, 10-14)",
         "3-Move Tournament Ballot",
-        make_mask({21, 24, 25, 26, 27, 28, 29, 30, 31, 32}),
+        make_mask({24, 21, 28, 27, 26, 25, 32, 31, 30, 29}),
         0,
-        make_mask({1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 15, 18}),
+        make_mask({4, 3, 2, 1, 8, 7, 6, 5, 11, 9, 14, 19}),
         0,
         0,
         10,
@@ -649,11 +649,11 @@ std::vector<PositionEntry> get_master_benchmark_suite() {
 
     // 7. The Edinburgh Flank Divergence (Ballot 24 pieces: depth 10)
     suite.push_back({
-        "The Edinburgh Flank Divergence (9-13, 22-18, 10-15)",
+        "The Edinburgh Flank Divergence (12-16, 23-19, 11-14)",
         "3-Move Tournament Ballot",
-        make_mask({18, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32}),
+        make_mask({19, 24, 22, 21, 28, 27, 26, 25, 32, 31, 30, 29}),
         0,
-        make_mask({1, 2, 3, 4, 5, 6, 7, 8, 11, 12, 13, 15}),
+        make_mask({4, 3, 2, 1, 8, 7, 6, 5, 10, 9, 16, 14}),
         0,
         0,
         10,
@@ -664,22 +664,22 @@ std::vector<PositionEntry> get_master_benchmark_suite() {
     suite.push_back({
         "The Bristol Edge Paradox",
         "3-Move Tournament Ballot",
-        make_mask({20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32}),
+        make_mask({17, 24, 23, 22, 28, 27, 26, 25, 32, 31, 30, 29}),
         0,
-        make_mask({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 19}),
+        make_mask({4, 3, 2, 1, 8, 7, 6, 5, 12, 11, 9, 18}),
         0,
         0,
         10,
-        "Attacking down the rim against human principles, establishing an iron grip on the board."
+        "Attacking down the center and rim against human principles, establishing an iron grip on the board."
     });
 
     // 9. Old Fourteenth Edge Squeeze (Ballot 21 pieces: depth 10)
     suite.push_back({
         "The Old Fourteenth Edge Squeeze",
         "Classical Opening Dilemma",
-        make_mask({19, 21, 25, 26, 27, 28, 29, 30, 31, 32}),
+        make_mask({18, 24, 28, 27, 26, 25, 32, 31, 30, 29}),
         0,
-        make_mask({1, 2, 3, 5, 6, 7, 8, 10, 11, 12, 18}),
+        make_mask({4, 3, 2, 8, 7, 6, 5, 11, 10, 9, 19}),
         0,
         0,
         10,
@@ -690,9 +690,9 @@ std::vector<PositionEntry> get_master_benchmark_suite() {
     suite.push_back({
         "The Pioneer Sacrificial Shot",
         "Tactical Coup",
-        make_mask({22, 23, 26, 27, 30, 31}),
+        make_mask({23, 22, 27, 26, 31, 30}),
         0,
-        make_mask({9, 10, 14, 15, 18}),
+        make_mask({12, 11, 15, 14, 19}),
         0,
         0,
         16,
