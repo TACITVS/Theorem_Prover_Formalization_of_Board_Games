@@ -52,21 +52,26 @@ Under 180-degree board inversion (`std_num = 32 - s`), internal square `s ∈ {0
 
 ### 2.2 Coordinate Projection Functions
 
-For any dark square index `s ∈ {0, ..., 31}`:
+For any dark square index $s \in \{0, \dots, 31\}$:
 
-```text
-Rank(s) = ⌊s / 4⌋
-Col(s)  = 2 · (s mod 4) + 1   if Rank(s) mod 2 = 0
-          2 · (s mod 4)       if Rank(s) mod 2 = 1
-```
+$$
+\mathrm{Rank}(s) = \left\lfloor \frac{s}{4} \right\rfloor
+$$
+
+$$
+\mathrm{Col}(s) = \begin{cases}
+2 \cdot (s \bmod 4) + 1 & \text{if } \mathrm{Rank}(s) \equiv 0 \pmod{2} \\
+2 \cdot (s \bmod 4) & \text{if } \mathrm{Rank}(s) \equiv 1 \pmod{2}
+\end{cases}
+$$
 
 ### 2.3 Bipartite Parity Invariant
 
 Every valid square in the playable lattice satisfies strict odd coordinate parity:
 
-```text
-∀ s < 32,   (Rank(s) + Col(s)) ≡ 1 (mod 2)
-```
+$$
+\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \pmod{2}
+$$
 
 *Proof.* Proved with zero axioms in Rocq 9.1 ([`CheckersBoard.v`](CheckersBoard.v)) and Lean 4 ([`lean4/Checkers.lean`](lean4/Checkers.lean)).
 
@@ -74,82 +79,86 @@ Every valid square in the playable lattice satisfies strict odd coordinate parit
 
 ## 3. Universal Constant Jump Vector Invariants
 
-While diagonal single steps alternate deltas between even ranks (`+4, +5`) and odd ranks (`+3, +4`), **all two-step diagonal jumps have invariant integer offsets across the entire board**.
+While diagonal single steps alternate deltas between even ranks ($+4, +5$) and odd ranks ($+3, +4$), **all two-step diagonal jumps have invariant integer offsets across the entire board**.
 
 ### 3.1 Jump Offset Formulas
 
 | [ID] | Jump Direction | Algebraic Offset | Mid-Square (Even Rank) | Mid-Square (Odd Rank) | Rank Delta |
 |:---:|:---|:---:|:---:|:---:|:---:|
-| 1 | Forward-Left (FL) | `+7` | `s + 4` | `s + 3` | `+2` |
-| 2 | Forward-Right (FR) | `+9` | `s + 5` | `s + 4` | `+2` |
-| 3 | Backward-Left (BL) | `-9` | `s - 5` | `s - 4` | `-2` |
-| 4 | Backward-Right (BR) | `-7` | `s - 4` | `s - 3` | `-2` |
+| 1 | Forward-Left (FL) | $+7$ | $s + 4$ | $s + 3$ | $+2$ |
+| 2 | Forward-Right (FR) | $+9$ | $s + 5$ | $s + 4$ | $+2$ |
+| 3 | Backward-Left (BL) | $-9$ | $s - 5$ | $s - 4$ | $-2$ |
+| 4 | Backward-Right (BR) | $-7$ | $s - 4$ | $s - 3$ | $-2$ |
 
 ### 3.2 Formal Proof of Jump Offset
 
 In Rocq 9.1, `jump_fl_offset` proves:
 
-```text
-∀ s, mid, dest ∈ ℕ,   Jump_FL(s) = Some(mid, dest) ⟹ dest = s + 7
-```
+$$
+\forall s, \mathrm{mid}, \mathrm{dest} \in \mathbb{N}, \quad \mathrm{Jump}_{\mathrm{FL}}(s) = \mathrm{Some}(\mathrm{mid}, \mathrm{dest}) \implies \mathrm{dest} = s + 7
+$$
 
 *Proof Structure:*
-- When rank `r = s/4` is even: `Step_FL(s) = s + 4`. Then `Rank(s + 4) = r + 1` is odd. The subsequent step is `Step_FL(s + 4) = (s + 4) + 3 = s + 7`.
-- When rank `r = s/4` is odd: `Step_FL(s) = s + 3`. Then `Rank(s + 3) = r + 1` is even. The subsequent step is `Step_FL(s + 3) = (s + 3) + 4 = s + 7`.
-- In both cases, `(s + 4) + 3 = (s + 3) + 4 = s + 7`. ∎
+- When rank $r = \lfloor s/4 \rfloor$ is even: $\mathrm{Step}_{\mathrm{FL}}(s) = s + 4$. Then $\mathrm{Rank}(s + 4) = r + 1$ is odd. The subsequent step is $\mathrm{Step}_{\mathrm{FL}}(s + 4) = (s + 4) + 3 = s + 7$.
+- When rank $r = \lfloor s/4 \rfloor$ is odd: $\mathrm{Step}_{\mathrm{FL}}(s) = s + 3$. Then $\mathrm{Rank}(s + 3) = r + 1$ is even. The subsequent step is $\mathrm{Step}_{\mathrm{FL}}(s + 3) = (s + 3) + 4 = s + 7$.
+- In both cases, $(s + 4) + 3 = (s + 3) + 4 = s + 7$. $\blacksquare$
 
 ---
 
 ## 4. D2 / Klein-4 Automorphism Group Symmetries
 
-The automorphism group of the playable dark-square graph is isomorphic to the Klein 4-group `V₄ ≅ ℤ₂ × ℤ₂`:
+The automorphism group of the playable dark-square graph is isomorphic to the Klein 4-group $V_4 \cong \mathbb{Z}_2 \times \mathbb{Z}_2$:
 
-```text
-V₄ = { id, rot180, diag, antidiag }
-```
+$$
+V_4 = \{ \mathrm{id}, \mathrm{rot}_{180}, \mathrm{diag}, \mathrm{antidiag} \}
+$$
 
 | [ID] | Symmetry Operation | Geometric Action | Coordinate Transformation | Permutation Invariant |
 |:---:|:---|:---|:---:|:---:|
-| 1 | `id` | Identity | `(r, c) ↦ (r, c)` | `s ↦ s` |
-| 2 | `rot180` | 180° Point Inversion | `(r, c) ↦ (7 - r, 7 - c)` | `s ↦ 31 - s` |
-| 3 | `diag` | Main Diagonal Reflection | `(r, c) ↦ (c, r)` | Graph Isomorphism |
-| 4 | `antidiag` | Anti-Diagonal Reflection | `(r, c) ↦ (7 - c, 7 - r)` | `rot180 ∘ diag` |
+| 1 | $\mathrm{id}$ | Identity | $(r, c) \mapsto (r, c)$ | $s \mapsto s$ |
+| 2 | $\mathrm{rot}_{180}$ | 180° Point Inversion | $(r, c) \mapsto (7 - r, 7 - c)$ | $s \mapsto 31 - s$ |
+| 3 | $\mathrm{diag}$ | Main Diagonal Reflection | $(r, c) \mapsto (c, r)$ | Graph Isomorphism |
+| 4 | $\mathrm{antidiag}$ | Anti-Diagonal Reflection | $(r, c) \mapsto (7 - c, 7 - r)$ | $\mathrm{rot}_{180} \circ \mathrm{diag}$ |
 
 Both `rot180_rank : ∀ s < 32, sq_rank (rot180 s) = 7 - sq_rank s` and `rot180_col : ∀ s < 32, sq_col (rot180 s) = 7 - sq_col s` are formally proved in [`CheckersBoard.v`](CheckersBoard.v) and [`lean4/Checkers.lean`](lean4/Checkers.lean), and the full Klein-4 group composition is exhaustively verified in [`solver/audit_checkers.c`](solver/audit_checkers.c):
 
-```text
-rot180 ∘ diag = antidiag,   diag ∘ antidiag = rot180,   σ² = id   ∀ σ ∈ V₄
-```
+$$
+\mathrm{rot}_{180} \circ \mathrm{diag} = \mathrm{antidiag}, \quad \mathrm{diag} \circ \mathrm{antidiag} = \mathrm{rot}_{180}, \quad \sigma^2 = \mathrm{id} \quad (\forall \sigma \in V_4)
+$$
 
 ---
 
-## 5. Monotonic Rank Potential `Φ(st)` & Game Acyclicity
+## 5. Monotonic Rank Potential $\Phi(\mathrm{st})$ & Game Acyclicity
 
 In English Checkers, regular men can only move and jump forward:
-- White men strictly advance: `Rank(dest) = Rank(src) + 1` (steps) or `Rank(src) + 2` (jumps).
-- Black men strictly advance: `Rank(src) = Rank(dest) + 1` (steps) or `Rank(dest) + 2` (jumps).
+- White men strictly advance: $\mathrm{Rank}(\mathrm{dest}) = \mathrm{Rank}(\mathrm{src}) + 1$ (steps) or $\mathrm{Rank}(\mathrm{src}) + 2$ (jumps).
+- Black men strictly advance: $\mathrm{Rank}(\mathrm{src}) = \mathrm{Rank}(\mathrm{dest}) + 1$ (steps) or $\mathrm{Rank}(\mathrm{dest}) + 2$ (jumps).
 
 ### 5.1 Potential Function Definition
 
-In [`CheckersInvariants.v`](CheckersInvariants.v), we define the global forward potential function `Φ : GameState → ℕ`:
+In [`CheckersInvariants.v`](CheckersInvariants.v), we define the global forward potential function $\Phi : \mathrm{GameState} \to \mathbb{N}$:
 
-```text
-Φ(st) = 64 · (24 - TotalPieces(st)) + ∑_{w ∈ W_men(st)} Rank(w) + ∑_{b ∈ B_men(st)} (7 - Rank(b))
-```
+$$
+\Phi(\mathrm{st}) = 64 \cdot (24 - \mathrm{TotalPieces}(\mathrm{st})) + \sum_{w \in W_{\mathrm{men}}(\mathrm{st})} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}(\mathrm{st})} (7 - \mathrm{Rank}(b))
+$$
 
 ### 5.2 Strict Monotonicity Theorem
 
 For any legal move prior to king creation:
-1. **Simple Move (`ΔΦ = +1`):** No pieces are captured (`ΔTotalPieces = 0`). One regular man advances by exactly 1 rank (`white_step_potential_inc` / `black_step_potential_inc`), yielding `ΔΦ = +1 > 0`.
-2. **Jump Move (`ΔΦ ≥ +59`):** At least one opponent piece is removed (`TotalPieces(st') ≤ TotalPieces(st) - 1`), increasing `64 · (24 - TotalPieces)` by at least `+64`. The jumping man advances by `+2` ranks (`+2` to the rank sum), while each captured opponent man contributed at most `7` to the rank sum (`-7` worst-case change). Thus a single-capture jump increases `Φ(st)` by at least `64 + 2 - 7 = +59 > 0` (`jump_capture_potential_net_gain`).
+1. **Simple Move ($\Delta \Phi = +1$):** No pieces are captured ($\Delta \mathrm{TotalPieces} = 0$). One regular man advances by exactly 1 rank (`white_step_potential_inc` / `black_step_potential_inc`), yielding $\Delta \Phi = +1 > 0$.
+2. **Jump Move ($\Delta \Phi \ge +59$):** At least one opponent piece is removed ($\mathrm{TotalPieces}(\mathrm{st}') \le \mathrm{TotalPieces}(\mathrm{st}) - 1$), increasing $64 \cdot (24 - \mathrm{TotalPieces})$ by at least $+64$. The jumping man advances by $+2$ ranks ($+2$ to the rank sum), while each captured opponent man contributed at most $7$ to the rank sum ($-7$ worst-case change). Thus a single-capture jump increases $\Phi(\mathrm{st})$ by at least:
+
+$$
+\Delta \Phi \ge 64 + 2 - 7 = +59 > 0
+$$
 
 ### 5.3 Finiteness Corollary (No Cycles for Men)
 
-Because `Φ(st)` is strictly increasing on every half-move and bounded above by:
+Because $\Phi(\mathrm{st})$ is strictly increasing on every half-move and bounded above by:
 
-```text
-Φ_max = 64 · 24 + 12 · 7 + 12 · 7 = 1536 + 168 = 1704
-```
+$$
+\Phi_{\max} = 64 \cdot 24 + 12 \cdot 7 + 12 \cdot 7 = 1{,}536 + 168 = 1{,}704
+$$
 
 **No game sequence consisting of regular men can repeat a position or enter a cycle.** Every men-only sequence must terminate in at most 1,704 ply.
 

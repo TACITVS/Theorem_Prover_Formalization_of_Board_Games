@@ -35,19 +35,19 @@ Detailed treatise available in [`CHECKERS_MATHEMATICAL_MONOGRAPH.md`](CHECKERS_M
   <img src="assets/checkers_board_topology.svg" alt="Checkers Board Topology" width="800"/>
 </p>
 
-* **Bipartite Parity Invariant:** Every playable square `s ∈ {0, ..., 31}` satisfies:
+* **Bipartite Parity Invariant:** Every playable square $s \in \{0, \dots, 31\}$ satisfies:
 
-```text
-∀ s < 32,   (Rank(s) + Col(s)) ≡ 1 (mod 2)
-```
+$$
+\forall s < 32, \quad (\mathrm{Rank}(s) + \mathrm{Col}(s)) \equiv 1 \pmod{2}
+$$
 
 * **Universal Constant Jump Offsets:**
   Every diagonal jump on the 32-square board exhibits an invariant offset regardless of row parity:
-  - **Forward-Left (FL):** Strictly **`+7`** (`s ↦ s + 7`)
-  - **Forward-Right (FR):** Strictly **`+9`** (`s ↦ s + 9`)
-  - **Backward-Left (BL):** Strictly **`-9`** (`s ↦ s - 9`)
-  - **Backward-Right (BR):** Strictly **`-7`** (`s ↦ s - 7`)
-* **Symmetry Group:** Automorphism group is the Klein 4-group `V₄ ≅ ℤ₂ × ℤ₂ = { id, rot180, diag, antidiag }`, with both `rot180_rank` and `rot180_col` formally machine-checked in [`CheckersBoard.v`](CheckersBoard.v) and [`lean4/Checkers.lean`](lean4/Checkers.lean).
+  - **Forward-Left (FL):** Strictly **$+7$** ($s \mapsto s + 7$)
+  - **Forward-Right (FR):** Strictly **$+9$** ($s \mapsto s + 9$)
+  - **Backward-Left (BL):** Strictly **$-9$** ($s \mapsto s - 9$)
+  - **Backward-Right (BR):** Strictly **$-7$** ($s \mapsto s - 7$)
+* **Symmetry Group:** Automorphism group is the Klein 4-group $V_4 \cong \mathbb{Z}_2 \times \mathbb{Z}_2 = \{ \mathrm{id}, \mathrm{rot}_{180}, \mathrm{diag}, \mathrm{antidiag} \}$, with both `rot180_rank` and `rot180_col` formally machine-checked in [`CheckersBoard.v`](CheckersBoard.v) and [`lean4/Checkers.lean`](lean4/Checkers.lean).
 
 ---
 
@@ -58,22 +58,22 @@ Detailed treatise available in [`CHECKERS_MATHEMATICAL_MONOGRAPH.md`](CHECKERS_M
 </p>
 
 * **Mandatory Capture Rule:** A player cannot make a simple move if any capture jump exists on the board.
-* **Strict Rank Advancement:** Regular men can only capture forward, strictly increasing rank by `+2` per jump.
+* **Strict Rank Advancement:** Regular men can only capture forward, strictly increasing rank by $+2$ per jump.
 * **Turn Alternation:** Formally machine-checked in [`step_turn`](CheckersGame.v).
 
 ---
 
-### 3. The Monotonic Rank Potential `Φ(st)` & Cycle Impossibility
+### 3. The Monotonic Rank Potential $\Phi(\mathrm{st})$ & Cycle Impossibility
 
 For games prior to king promotion, we define the forward rank potential function in [`CheckersInvariants.v`](CheckersInvariants.v):
 
-```text
-Φ(st) = 64 · (24 - TotalPieces(st)) + ∑_{w ∈ W_men} Rank(w) + ∑_{b ∈ B_men} (7 - Rank(b))
-```
+$$
+\Phi(\mathrm{st}) = 64 \cdot (24 - \mathrm{TotalPieces}(\mathrm{st})) + \sum_{w \in W_{\mathrm{men}}} \mathrm{Rank}(w) + \sum_{b \in B_{\mathrm{men}}} (7 - \mathrm{Rank}(b))
+$$
 
-* **Theorem:** Every legal move prior to crowning strictly increases `Φ(st)`:
-  - **Simple Step (`ΔΦ = +1`):** One man advances by `+1` rank (`white_step_potential_inc` and `black_step_potential_inc`).
-  - **Capture Jump (`ΔΦ ≥ +59`):** At least one opponent piece is removed (`+64` to the capture term), the jumping man advances by `+2` ranks, and the captured opponent piece contributed at most `7` to the rank sum, yielding a net increase of at least `64 + 2 - 7 = +59 > 0` (`jump_capture_potential_net_gain`).
+* **Theorem:** Every legal move prior to crowning strictly increases $\Phi(\mathrm{st})$:
+  - **Simple Step ($\Delta \Phi = +1$):** One man advances by $+1$ rank (`white_step_potential_inc` and `black_step_potential_inc`).
+  - **Capture Jump ($\Delta \Phi \ge +59$):** At least one opponent piece is removed ($+64$ to the capture term), the jumping man advances by $+2$ ranks, and the captured opponent piece contributed at most $7$ to the rank sum, yielding a net increase of at least $64 + 2 - 7 = +59 > 0$ (`jump_capture_potential_net_gain`).
 * **Corollary:** Men-only positions can **never enter cycles or repeat positions**, terminating in at most 1,704 ply.
 
 ---
