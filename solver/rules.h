@@ -21,12 +21,12 @@
 #define W 8
 #endif
 #ifndef H
-#define H 7
+#define H 8
 #endif
 #ifndef K
 #define K 5
 #endif
-#define H1 (H + 1)
+#define H1 8
 #define NCELL (W * H)
 typedef uint64_t u64;
 typedef unsigned __int128 LS;
@@ -66,7 +66,7 @@ static void init(void) {
 }
 
 typedef struct { u64 st[2]; u64 mask; int n; } Pos;
-static inline u64 playable(const Pos *p) { return (p->mask + BOTTOM) & FULL; }
+static inline u64 playable(const Pos *p) { return (((p->mask & 0x7F7F7F7F7F7F7F7FULL) + BOTTOM) & FULL) & ~p->mask; }
 static inline int height(const Pos *p, int c) { return popc(p->mask & COLMASK[c]); }
 static inline int has_line(u64 s) {
   for (int l = 0; l < NL; l++) if ((LINES[l] & s) == LINES[l]) return 1;

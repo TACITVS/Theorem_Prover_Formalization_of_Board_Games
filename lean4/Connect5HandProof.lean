@@ -250,7 +250,7 @@ instance (c r : Int) : Decidable (InWhiteGuaranteed c r) := by
 /-- **Proposition 2.4A (Vertical Line Through `(4, 7)` is Double-Blocked):**
     The unique vertical 5-line in Column 4 passing through `(4, 7)` spans rows `[3, 7]`
     and contains both `(4, 4)` and `(4, 6)` in `InBlackGuaranteed`. -/
-theorem dead_cell_4_6_vertical_double_blocked :
+theorem dead_cell_4_7_vertical_double_blocked :
     (3 ≤ (4 : Int) ∧ (4 : Int) ≤ 7 ∧ InBlackGuaranteed 4 4) ∧
     (3 ≤ (6 : Int) ∧ (6 : Int) ≤ 7 ∧ InBlackGuaranteed 4 6) ∧
     ((4 : Int) ≠ 6) := by
@@ -260,7 +260,7 @@ theorem dead_cell_4_6_vertical_double_blocked :
     For any valid non-vertical 5-line `(c0, r4, s)` passing through `(4, 7)` (so `r4 = 7`),
     there exist TWO distinct columns `c1 ≠ c2` in `[c0, c0 + 4]` where the line
     hits `InBlackGuaranteed`. -/
-theorem dead_cell_4_6_nonvertical_double_blocked (c0 s : Int)
+theorem dead_cell_4_7_nonvertical_double_blocked (c0 s : Int)
     (hL : ValidNonVerticalLine c0 7 s) :
     ∃ c1 c2 : Int,
       c0 ≤ c1 ∧ c1 ≤ c0 + 4 ∧
@@ -384,12 +384,14 @@ theorem horizontal_5col_pair_transversal (c0 : Int) (h0 : 0 ≤ c0) (h3 : c0 ≤
   · exact Or.inl ⟨h, by omega⟩
   · exact Or.inr ⟨by omega, by omega⟩
 
-/-- **Theorem 4.2 (Second-Player Odd-Row Diagonal & Odd-Horizontal Transversal):**
-    In Second-Player (Black) Claimeven defense, Black's vertical dominoes
-    guarantee all odd rows `r ∈ {1, 3, 5, 7}` in every flank column `c ∈ [0, 7]`.
-    For any valid non-vertical 5-line `(c0, r4, s)`:
-    - If `s = ±1` (any of the 32 diagonals) or `r4 % 2 = 1` (odd horizontal lines),
-      there exists a column `c ∈ [c0, c0 + 4]` where `rowAt r4 s c ∈ {1, 3, 5, 7}`! -/
+/-- **Theorem 4.2 (Pure 8-Column Claimeven Odd-Row Diagonal & Odd-Horizontal Transversal):**
+    Under a pure 8-column Claimeven partition `[(c,2k),(c,2k+1)]` where Black owns
+    all odd rows `r ∈ {1, 3, 5, 7}` in every column `c ∈ [0, 7]`, all 32 diagonals
+    (`s = ±1`) and all 16 odd-row horizontals (`r4 % 2 = 1`)—together with all 32
+    verticals (80 / 96 lines total)—are blocked, leaving only the 16 even-row
+    horizontals (which motivates switching columns 3 and 4 to even rows in Pattern `00011000`!).
+    Specifically, for any valid non-vertical 5-line `(c0, r4, s)` with `s = ±1` or `r4 % 2 = 1`,
+    there exists a column `c ∈ [c0, c0 + 4]` where `rowAt r4 s c ∈ {1, 3, 5, 7}`! -/
 theorem black_odd_row_transversal_hand_proof (c0 r4 s : Int)
     (hL : ValidNonVerticalLine c0 r4 s)
     (h_diag_or_odd : s = -1 ∨ s = 1 ∨ r4 % 2 = 1) :
@@ -582,8 +584,8 @@ ZERO custom axioms, and NOT EVEN `Classical.choice` (100% constructive!):
 #print axioms Connect5HandProof.pigeonhole_5col_window
 #print axioms Connect5HandProof.modulo2_parity_preservation
 #print axioms Connect5HandProof.erdos_10cell_transversal_hand_proof
-#print axioms Connect5HandProof.dead_cell_4_6_vertical_double_blocked
-#print axioms Connect5HandProof.dead_cell_4_6_nonvertical_double_blocked
+#print axioms Connect5HandProof.dead_cell_4_7_vertical_double_blocked
+#print axioms Connect5HandProof.dead_cell_4_7_nonvertical_double_blocked
 #print axioms Connect5HandProof.r3_frozen_suffix_restores_even_parity
 #print axioms Connect5HandProof.zermelo_mutual_safety_draw
 #print axioms Connect5HandProof.allis_followup_induction

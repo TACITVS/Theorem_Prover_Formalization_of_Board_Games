@@ -10,9 +10,9 @@
 #include <chrono>
 
 #define W 8
-#define H 7
+#define H 8
 #define K 5
-#define FULL_MASK 0x7F7F7F7F7F7F7F7FULL
+#define FULL_MASK 0xFFFFFFFFFFFFFFFFULL
 #define BOTTOM_MASK 0x0101010101010101ULL
 
 typedef unsigned long long u64;
@@ -21,16 +21,16 @@ typedef int8_t i8;
 
 // Bit operations
 #define BIT(c, r) (1ULL << ((c) * 8 + (r)))
-#define COLMASK(c) (0x7FULL << ((c) * 8))
+#define COLMASK(c) (0xFFULL << ((c) * 8))
 
 // Constant memory for winning lines
-__constant__ u64 c_LINES[76];
-static u64 h_LINES[76];
+__constant__ u64 c_LINES[96];
+static u64 h_LINES[96];
 
-// Initialize the 76 winning lines
+// Initialize the 96 winning lines
 void init_lines() {
     int nl = 0;
-    // Horizontal lines (28)
+    // Horizontal lines (32)
     for (int r = 0; r < H; r++) {
         for (int c = 0; c <= W - K; c++) {
             u64 m = 0;
@@ -38,7 +38,7 @@ void init_lines() {
             h_LINES[nl++] = m;
         }
     }
-    // Vertical lines (24)
+    // Vertical lines (32)
     for (int c = 0; c < W; c++) {
         for (int r = 0; r <= H - K; r++) {
             u64 m = 0;
@@ -46,7 +46,7 @@ void init_lines() {
             h_LINES[nl++] = m;
         }
     }
-    // Diagonal / lines (12)
+    // Diagonal / lines (16)
     for (int c = 0; c <= W - K; c++) {
         for (int r = 0; r <= H - K; r++) {
             u64 m = 0;
@@ -54,7 +54,7 @@ void init_lines() {
             h_LINES[nl++] = m;
         }
     }
-    // Diagonal \ lines (12)
+    // Diagonal \ lines (16)
     for (int c = 0; c <= W - K; c++) {
         for (int r = K - 1; r < H; r++) {
             u64 m = 0;
@@ -68,18 +68,18 @@ void init_lines() {
 // 5-in-a-row detector (both host and device)
 __host__ __device__ inline bool has_won_5(u64 s) {
     u64 m;
-    // Vertical (shift 1)
+    // Vertical (shift 1, starting row r0 in 0..3)
     m = s & (s >> 1);
-    if ((m & (m >> 2) & (s >> 4)) & FULL_MASK) return true;
+    if ((m & (m >> 2) & (s >> 4)) & 0x0F0F0F0F0F0F0F0FULL) return true;
     // Horizontal (shift 8)
     m = s & (s >> 8);
     if ((m & (m >> 16) & (s >> 32)) & FULL_MASK) return true;
-    // Diagonal / (shift 9)
+    // Diagonal / (shift 9, starting row r0 in 0..3)
     m = s & (s >> 9);
-    if ((m & (m >> 18) & (s >> 36)) & FULL_MASK) return true;
-    // Diagonal \ (shift 7)
+    if ((m & (m >> 18) & (s >> 36)) & 0x0F0F0F0F0F0F0F0FULL) return true;
+    // Diagonal \ (shift 7, starting col c0 in 0..3 and row r0 in 4..7)
     m = s & (s >> 7);
-    if ((m & (m >> 14) & (s >> 28)) & FULL_MASK) return true;
+    if ((m & (m >> 14) & (s >> 28)) & 0x00000000F0F0F0F0ULL) return true;
     return false;
 }
 
@@ -103,7 +103,7 @@ static inline void generate_legal_board(u64 seed, u64 *out_w, u64 *out_b, i8 *ou
         int chosen_c = -1;
         for (int off = 0; off < 8; off++) {
             int c = (start_c + off) & 7;
-            if (heights[c] < 7) {
+            if (heights[c] < 8) {
                 u64 bit = 1ULL << (c * 8 + heights[c]);
                 u64 next_s = ((actual_moves & 1) == 0) ? (w | bit) : (b | bit);
                 if (!has_won_5(next_s)) {
@@ -176,8 +176,8 @@ __global__ void eval_batch_kernel(
     u64 landings[8];
     for (int c = 0; c < 8; c++) {
         u64 col_bit = 1ULL << (c * 8);
-        u64 col_mask = 0x7FULL << (c * 8);
-        u64 land = (mask + col_bit) & col_mask & ~mask;
+        u64 col_mask = 0xFFULL << (c * 8);
+        u64 land = (((mask & 0x7F7F7F7F7F7F7F7FULL) + col_bit) & col_mask) & ~mask;
         landings[c] = land;
         if (land) {
             res.num_moves++;

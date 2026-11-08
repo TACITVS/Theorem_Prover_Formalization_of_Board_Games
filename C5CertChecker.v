@@ -1,4 +1,4 @@
-(** * Connect-5 (8x7): Verified Computational Certificate Checker
+(** * Connect-5 (8x8): Verified Computational Certificate Checker
 
     This file provides a computable certificate engine that verifies
     strategy trees via Rocq's Virtual Machine (vm_compute).
@@ -493,62 +493,75 @@ Proof.
   vm_compute. reflexivity.
 Qed.
 
-(** Alias for backwards compatibility *)
-Definition white_27pair_struct : structure := black_dual_core_struct.
-Theorem opening_27pair_line_cover :
-  check_cover Black b_ply2 white_27pair_struct = true.
-Proof. exact dual_core_covers_all_96_lines. Qed.
-
-(** Alias for backwards compatibility *)
-Definition white_core10_struct : structure := black_dual_core_struct.
-Theorem core10_covers_all_76_lines :
-  check_cover Black b_ply2 white_core10_struct = true.
-Proof. exact dual_core_covers_all_96_lines. Qed.
-
-(** Theorem 4 (Multi-Blocking of Dead Cells (3, 7) and (4, 7)):
-    Cells (3, 7) and (4, 7) participate in exactly 6 winning lines each, and every
-    single one of those winning lines contains at least 1 (in fact at least 2 for non-horizontals)
-    cells from Black's guaranteed upper domino set. *)
+(** Theorem 3 (Double-Blocking of Dead Cells (3, 7) and (4, 7)):
+    Cells (3, 7) and (4, 7) participate in 6 winning lines each (12 lines total),
+    and every single one of those winning lines contains at least 2 cells from
+    Black's guaranteed upper domino set [black_guaranteed_cells]. *)
 Definition lines_through_3_7 : list (list cell) :=
   filter (existsb (cell_eqb (3, 7))) lines.
 
 Definition lines_through_4_7 : list (list cell) :=
   filter (existsb (cell_eqb (4, 7))) lines.
 
-Definition lines_through_4_6 : list (list cell) := lines_through_4_7.
-
 Definition black_guaranteed_cells : list cell :=
   (4, 0) :: map snd (s_strong black_dual_core_struct).
-
-Definition white_guaranteed_cells : list cell := black_guaranteed_cells.
 
 Theorem dead_cells_3_7_and_4_7_blocked :
   length lines_through_3_7 = 6 /\
   length lines_through_4_7 = 6 /\
   forallb (fun L =>
-    1 <=? length (filter (fun x => existsb (cell_eqb x) black_guaranteed_cells) L))
+    2 <=? length (filter (fun x => existsb (cell_eqb x) black_guaranteed_cells) L))
     (lines_through_3_7 ++ lines_through_4_7) = true.
 Proof.
   vm_compute. repeat split; reflexivity.
 Qed.
 
-Theorem dead_cell_4_6_six_lines_double_blocked :
-  length lines_through_4_6 = 6 /\
+Theorem dead_cell_4_7_six_lines_double_blocked :
+  length lines_through_4_7 = 6 /\
   forallb (fun L =>
-    1 <=? length (filter (fun x => existsb (cell_eqb x) white_guaranteed_cells) L))
-    lines_through_4_6 = true.
+    2 <=? length (filter (fun x => existsb (cell_eqb x) black_guaranteed_cells) L))
+    lines_through_4_7 = true.
 Proof.
   vm_compute. split; reflexivity.
 Qed.
 
-(** Theorem 5 (Even Parity Conservation on 8x8 Grid):
-    On the 8x8 board, subtracting any 16-move sequence from the 64 total cells
-    yields an exact even count of 48 empty cells, satisfying [st_mode] directly
-    without requiring frozen columns. *)
-Theorem r3_frozen_column_restores_even_parity :
-  Nat.even (64 - 16) = true.
+(** Helper lemma for boolean parity negation under successor. *)
+Lemma even_S_negb : forall n : nat, Nat.even (S n) = negb (Nat.even n).
 Proof.
-  reflexivity.
+  induction n as [|n IH]; [reflexivity|].
+  change (Nat.even (S (S n))) with (Nat.even n).
+  rewrite IH. destruct (Nat.even n); reflexivity.
+Qed.
+
+(** Theorem 5 (Rule R3 Frozen-Column Parity Restoration on 8x8 Grid):
+    Whenever the total number of empty cells [E] is odd ([Nat.even E = false])
+    and the defender holds a 4-in-a-row threat at an even row [ft] in {2, 4, 6}
+    above an empty poison cell (fc, ft - 1), the frozen column suffix from
+    (fc, ft - 1) to (fc, 7) has odd length [9 - ft] in {7, 5, 3}, and subtracting
+    it from [E] restores an EVEN count [E - (9 - ft)] of active empty cells. *)
+Theorem r3_frozen_column_restores_even_parity :
+  forall E ft : nat,
+    Nat.even E = false ->
+    (ft = 2 \/ ft = 4 \/ ft = 6) ->
+    9 - ft <= E ->
+    Nat.even (9 - ft) = false /\ Nat.even (E - (9 - ft)) = true.
+Proof.
+  intros E ft Hodd [-> | [-> | ->]] Hle; simpl in *.
+  - split; [reflexivity|].
+    replace E with (S (S (S (S (S (S (S (E - 7)))))))) in Hodd by lia.
+    change (Nat.even (S (S (S (S (S (S (S (E - 7))))))))) with (Nat.even (S (E - 7))) in Hodd.
+    rewrite even_S_negb in Hodd.
+    destruct (Nat.even (E - 7)); [reflexivity | discriminate].
+  - split; [reflexivity|].
+    replace E with (S (S (S (S (S (E - 5)))))) in Hodd by lia.
+    change (Nat.even (S (S (S (S (S (E - 5))))))) with (Nat.even (S (E - 5))) in Hodd.
+    rewrite even_S_negb in Hodd.
+    destruct (Nat.even (E - 5)); [reflexivity | discriminate].
+  - split; [reflexivity|].
+    replace E with (S (S (S (E - 3)))) in Hodd by lia.
+    change (Nat.even (S (S (S (E - 3))))) with (Nat.even (S (E - 3))) in Hodd.
+    rewrite even_S_negb in Hodd.
+    destruct (Nat.even (E - 3)); [reflexivity | discriminate].
 Qed.
 
 (** ** The Elementary "Central Wall & Alternating Parity" Book Proof (Zero Enumeration)
@@ -561,7 +574,7 @@ Qed.
               (the 2-column Central Wall) plus at least one of Column 2 or Column 6.
     - Step 3: Complementary row parities between Center and Flanks block all horizontals.
     - Step 4: Diagonal row parity alternation blocks all diagonals.
-    - Step 5: Parity law for even board height. *)
+    - Step 5: Universal even parity conservation law across all 2-ply exchanges. *)
 
 (** Book Proof Step 1 (Middle Vertical Dominoes):
     Any 5-row vertical window [r0, r0 + 4] inside [0, 7] (r0 <= 3) contains
@@ -636,8 +649,6 @@ Definition central_wall_7cells : list cell :=
 Definition wing_flank_cells : list cell :=
   flat_map (fun c => [(c,1); (c,3); (c,5); (c,7)]) [0; 1; 2; 5; 6; 7].
 
-Definition wing_even_6cells : list cell := wing_flank_cells.
-
 Definition nonvert_lines : list (list cell) :=
   filter (fun L => match L with
                    | (c1, _) :: (c2, _) :: _ => negb (c1 =? c2)
@@ -651,67 +662,80 @@ Definition unblocked_by_central_wall : list (list cell) :=
 Theorem book_central_wall_decomposition :
   length nonvert_lines = 64 /\
   length unblocked_by_central_wall = 17 /\
-  forallb (fun L => existsb (fun x => existsb (cell_eqb x) wing_even_6cells) L)
+  forallb (fun L => existsb (fun x => existsb (cell_eqb x) wing_flank_cells) L)
     unblocked_by_central_wall = true.
 Proof.
   vm_compute. repeat split; reflexivity.
 Qed.
 
 (** Book Proof Step 5 (Universal Analytic Parity Law on 8x8 Grid):
-    Subtracting any 16-ply sequence from 64 empty cells leaves an exact
-    multiple of 2: specifically 48 = 2 * 24. *)
+    For every 2-ply exchange count k <= 32 on the 64-cell board, subtracting
+    2*k played discs leaves an exact even multiple 2*(32 - k) of empty cells. *)
 Theorem book_step5_r3_parity_law_lia :
-  forall k : nat, k = 8 -> 64 - 2 * k = 2 * (32 - k).
+  forall k : nat, k <= 32 -> 64 - 2 * k = 2 * (32 - k).
 Proof.
-  intros k ->. lia.
+  intros k Hk. lia.
 Qed.
 
 (** ** Concrete End-to-End Verification of [check_static = true], [check_cert_node = true], and [safe] *)
 
-(** Reachable 16-ply board [b_r2] where columns 3 and 4 are filled with 8 White and 8 Black discs: *)
-Definition b_r2 : board :=
-  play (play (play (play (play (play (play (play
-  (play (play (play (play (play (play (play (play initial
-    3 White) 4 Black)
-    3 Black) 4 White)
-    3 White) 4 Black)
-    3 Black) 4 White)
-    3 White) 4 Black)
-    3 Black) 4 White)
-    3 White) 4 Black)
-    3 Black) 4 White.
+(** 1. Genuine Rule-R3 Reachable 12-Ply / 13-Ply Witness ([b_ply12] -> [b_r3]):
+    At Ply 12 ([b_ply12], 6 White and 6 Black strictly alternating moves, White to move),
+    White plays in Column 3 to land at (3, 2), creating a 4-in-a-row threat on Row 2
+    ([(0,2); (1,2); (2,2); (3,2); (4,2)]) threatening the even-row cell (4, 2) ([ft = 2])
+    above the empty poison cell (4, 1) with 51 (odd) empty cells remaining and Black to move. *)
+Definition b_ply12 : board :=
+  play (play (play (play (play (play (play (play (play (play (play (play initial
+    0 White) (* 1. White (0,0) *)
+    0 Black) (* 2. Black (0,1) *)
+    0 White) (* 3. White (0,2) *)
+    1 Black) (* 4. Black (1,0) *)
+    1 White) (* 5. White (1,1) *)
+    2 Black) (* 6. Black (2,0) *)
+    1 White) (* 7. White (1,2) *)
+    2 Black) (* 8. Black (2,1) *)
+    2 White) (* 9. White (2,2) *)
+    4 Black) (* 10. Black (4,0) *)
+    3 White) (* 11. White (3,0) *)
+    3 Black. (* 12. Black (3,1) *)
 
-Definition b_r3 : board := b_r2.
-Definition b_ply8 : board := b_r2.
+Definition b_r3 : board := play b_ply12 3 White. (* 13. White (3,2) -> 51 empty cells *)
 
-(** Complete 24-domino structure covering all 48 remaining cells in flank columns 0, 1, 2, 5, 6, 7: *)
-Definition black_r2_full_struct : structure := {|
+(** Complete Rule-R3 defensive pairing structure at [b_r3]:
+    - [s_frozen = Some (4, 2)] freezes all 7 empty cells (4,1)..(4,7) of Column 4
+      ([9 - ft = 7] odd cells), leaving [51 - 7 = 44] (even) active empty cells;
+    - [s_rigid] pairs the 4 playable cells ((0,3),(1,3)) and ((2,3),(3,3));
+    - [s_strong] pairs the remaining 40 empty cells in Columns 0..3 and 5..7 into
+      20 vertical dominoes. *)
+Definition white_r3_full_struct : structure := {|
   s_parity := true;
-  s_frozen := None;
+  s_frozen := Some (4, 2);
   s_strong :=
-    [((0,0),(0,1)); ((0,2),(0,3)); ((0,4),(0,5)); ((0,6),(0,7));
-     ((1,0),(1,1)); ((1,2),(1,3)); ((1,4),(1,5)); ((1,6),(1,7));
-     ((2,0),(2,1)); ((2,2),(2,3)); ((2,4),(2,5)); ((2,6),(2,7));
+    [((0,4),(0,5)); ((0,6),(0,7));
+     ((1,4),(1,5)); ((1,6),(1,7));
+     ((2,4),(2,5)); ((2,6),(2,7));
+     ((3,4),(3,5)); ((3,6),(3,7));
      ((5,0),(5,1)); ((5,2),(5,3)); ((5,4),(5,5)); ((5,6),(5,7));
      ((6,0),(6,1)); ((6,2),(6,3)); ((6,4),(6,5)); ((6,6),(6,7));
      ((7,0),(7,1)); ((7,2),(7,3)); ((7,4),(7,5)); ((7,6),(7,7))];
-  s_rigid := [];
+  s_rigid :=
+    [((0,3),(1,3)); ((2,3),(3,3))];
   s_weak := [];
   s_free := []
 |}.
 
-Definition white_r3_full_struct : structure := black_r2_full_struct.
-
+(** Two-step DAG certificate from [b_ply12] (White plays col 3 -> [b_r3], followed
+    by the verified Rule-R3 static structure leaf at [b_r3]): *)
 Definition r3_two_step_cert : certificate :=
-  [CS_Leaf white_r3_full_struct].
+  [CS_DefMove 3 1; CS_Leaf white_r3_full_struct].
 
-(** Theorem 19 (Concrete Full Static Verification with Even Empty Count = 48):
-    On the reachable 48-empty-cell board [b_r3], [check_static] and [check_cert_node]
-    evaluate to [true]. *)
+(** Theorem 19 (Concrete Full Rule-R3 Static Verification with Odd Empty Count = 51):
+    On the reachable 51-empty-cell board [b_r3], [check_static] (with [s_frozen = Some (4, 2)])
+    and [check_cert_node] evaluate to [true]. *)
 Theorem r3_concrete_check_static_true :
-  empties b_r3 = 48 /\
+  empties b_r3 = 51 /\
   check_static White b_r3 white_r3_full_struct = true /\
-  check_cert_node r3_two_step_cert 1 White b_ply8 Black 0 = true.
+  check_cert_node r3_two_step_cert 2 White b_ply12 White 0 = true.
 Proof.
   vm_compute. repeat split; reflexivity.
 Qed.
@@ -732,6 +756,38 @@ Theorem r3_concrete_cert_safe :
 Proof.
   apply (structure_sound White b_r3 white_r3_full_struct r3_concrete_Static).
 Qed.
+
+(** 2. Reachable 16-Ply Rule-R2 Witness ([b_r2], 8 White & 8 Black strictly alternating moves):
+    Columns 3 and 4 are filled to height 8 with strictly alternating moves
+    (White, Black, White, Black, ...) such that neither player has more than 2 consecutive
+    discs in any direction, leaving 48 (even) empty cells across the 6 flank columns. *)
+Definition b_r2 : board :=
+  play (play (play (play (play (play (play (play
+  (play (play (play (play (play (play (play (play initial
+    3 White) 4 Black)
+    3 White) 4 Black)
+    4 White) 3 Black)
+    4 White) 3 Black)
+    3 White) 4 Black)
+    3 White) 4 Black)
+    4 White) 3 Black)
+    4 White) 3 Black.
+
+(** Complete 24-domino structure covering all 48 remaining cells in flank columns 0, 1, 2, 5, 6, 7: *)
+Definition black_r2_full_struct : structure := {|
+  s_parity := true;
+  s_frozen := None;
+  s_strong :=
+    [((0,0),(0,1)); ((0,2),(0,3)); ((0,4),(0,5)); ((0,6),(0,7));
+     ((1,0),(1,1)); ((1,2),(1,3)); ((1,4),(1,5)); ((1,6),(1,7));
+     ((2,0),(2,1)); ((2,2),(2,3)); ((2,4),(2,5)); ((2,6),(2,7));
+     ((5,0),(5,1)); ((5,2),(5,3)); ((5,4),(5,5)); ((5,6),(5,7));
+     ((6,0),(6,1)); ((6,2),(6,3)); ((6,4),(6,5)); ((6,6),(6,7));
+     ((7,0),(7,1)); ((7,2),(7,3)); ((7,4),(7,5)); ((7,6),(7,7))];
+  s_rigid := [];
+  s_weak := [];
+  s_free := []
+|}.
 
 (** Theorem 22 (Concrete Player-2 Unfrozen Rule-R2 [check_static = true] & [safe]):
     On the reachable 48-empty-cell board [b_r2], [check_static Black b_r2 black_r2_full_struct]

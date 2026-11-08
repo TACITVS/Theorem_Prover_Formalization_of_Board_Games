@@ -298,10 +298,3 @@ Proof.
   - apply strategy_sound; exact sW.
   - apply strategy_sound; exact sB.
 Qed.
-
-Theorem connect5_8x7_fair :
-  (exists c0, legal initial c0 = true /\ strategy White (play initial c0 White) Black) ->
-  strategy Black initial White ->
-  game_value = Draw.
-Proof. exact connect5_8x8_fair. Qed.
-

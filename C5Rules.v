@@ -608,7 +608,7 @@ Proof.
     rewrite Nat.eqb_refl; auto. }
   assert (Hlen_b1 : length (col b1 c) = snd hi).
   { rewrite Hcol_b1, length_app; simpl. rewrite Hlen_lo, Hr_hi. lia. }
-  assert (Htop7 : topc st c <= 8).
+  assert (Htop8 : topc st c <= 8).
   { unfold topc. destruct (s_frozen st) as [[fc ft]|] eqn:Efr; [destruct (c =? fc)|]; try lia.
     destruct (st_frozen _ _ _ HS fc ft Efr) as [_ [Hft _]]. lia. }
   assert (Hleg : legal b1 c = true).
@@ -754,7 +754,7 @@ Proof.
       destruct (fst q =? c) eqn:E; [apply Nat.eqb_eq in E; subst c; exfalso; apply Hne; auto | reflexivity]. }
     assert (Hlen_q : length (col b1 (fst q)) = snd q).
     { rewrite Hcol_b1. apply (rigid_col_sync p q Hin Hx). }
-    assert (Htop7 : topc st (fst q) <= 8).
+    assert (Htop8 : topc st (fst q) <= 8).
     { unfold topc. destruct (s_frozen st) as [[fc ft]|] eqn:Efr; [destruct (fst q =? fc)|]; try lia.
       destruct (st_frozen _ _ _ HS fc ft Efr) as [_ [Hft _]]. lia. }
     assert (Hleg : legal b1 (fst q) = true).
@@ -801,7 +801,7 @@ Proof.
       destruct (fst p =? c) eqn:E; [apply Nat.eqb_eq in E; subst c; exfalso; apply Hne; auto | reflexivity]. }
     assert (Hlen_p : length (col b1 (fst p)) = snd p).
     { rewrite Hcol_b1. apply (rigid_col_sync_rev p q Hin Hx). }
-    assert (Htop7 : topc st (fst p) <= 8).
+    assert (Htop8 : topc st (fst p) <= 8).
     { unfold topc. destruct (s_frozen st) as [[fc ft]|] eqn:Efr; [destruct (fst p =? fc)|]; try lia.
       destruct (st_frozen _ _ _ HS fc ft Efr) as [_ [Hft _]]. lia. }
     assert (Hleg : legal b1 (fst p) = true).
@@ -863,7 +863,7 @@ Proof.
     pose proof Hwin as Hwin'. apply in_freezone in Hwin' as [Fw [Lw Tw]]. simpl in *.
     apply owner_None in Hwe.
     assert (Hfr := st_free_range _ _ _ HS _ Fw).
-    assert (Tw7 : topc st wc <= 8).
+    assert (Tw8 : topc st wc <= 8).
     { unfold topc. destruct (s_frozen st) as [[fc ft]|] eqn:Efr; [destruct (wc =? fc)|]; try lia.
       destruct (st_frozen _ _ _ HS fc ft Efr) as [_ [Hft _]]. lia. }
     assert (Hleg : legal b1 wc = true) by (apply legal_spec; lia).
@@ -982,7 +982,7 @@ Proof.
       { rewrite Hcol_b1, length_app; simpl.
         assert (Hlen_p : length (col b' c) = snd p) by (rewrite <- Hx_p; reflexivity).
         rewrite Hlen_p, Hvert_r. lia. }
-      assert (Htop7 : topc st c <= 8).
+      assert (Htop8 : topc st c <= 8).
       { unfold topc. destruct (s_frozen st) as [[fc ft]|] eqn:Efr; [destruct (c =? fc)|]; try lia.
         destruct (st_frozen _ _ _ HS fc ft Efr) as [_ [Hft _]]. lia. }
       assert (Hleg : legal b1 c = true).
@@ -1033,7 +1033,7 @@ Proof.
         { rewrite Hcol_b1.
           assert (Hle1 : length (col b (fst q)) <= length (col b' (fst q))) by (apply extends_length; exact (iv_ext _ _ _ _ HI)).
           apply owner_None in Hqe. lia. }
-        assert (Htop7 : topc st (fst q) <= 8).
+        assert (Htop8 : topc st (fst q) <= 8).
         { unfold topc. destruct (s_frozen st) as [[fc ft]|] eqn:Efr; [destruct (fst q =? fc)|]; try lia.
           destruct (st_frozen _ _ _ HS fc ft Efr) as [_ [Hft _]]. lia. }
         assert (Hleg : legal b1 (fst q) = true).
@@ -1078,7 +1078,7 @@ Proof.
         { rewrite Hcol_b1.
           assert (Hle1 : length (col b (fst p)) <= length (col b' (fst p))) by (apply extends_length; exact (iv_ext _ _ _ _ HI)).
           apply owner_None in Hpe. lia. }
-        assert (Htop7 : topc st (fst p) <= 8).
+        assert (Htop8 : topc st (fst p) <= 8).
         { unfold topc. destruct (s_frozen st) as [[fc ft]|] eqn:Efr; [destruct (fst p =? fc)|]; try lia.
           destruct (st_frozen _ _ _ HS fc ft Efr) as [_ [Hft _]]. lia. }
         assert (Hleg : legal b1 (fst p) = true).

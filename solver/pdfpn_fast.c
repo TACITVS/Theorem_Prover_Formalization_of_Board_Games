@@ -1,4 +1,4 @@
-/* Optimized High-Performance Parallel DF-PN Solver for Connect-5 (8x7)
+/* Optimized High-Performance Parallel DF-PN Solver for Connect-5 (8x8)
    Includes:
    1. Blunder filtering at OR-nodes (never play a move allowing opponent immediate win)
    2. Pigeonhole capacity pre-filter in r2_solve

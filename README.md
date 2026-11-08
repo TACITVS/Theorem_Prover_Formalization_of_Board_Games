@@ -63,7 +63,7 @@
 - **Exact Equilibrium & Transparent Proof Architecture:** Proving `game_value = Draw` requires verifying **both** First-Player Defense (`safe White (play initial 3 White) Black`) and Second-Player Defense (`safe Black initial White`). Our formalization cleanly separates **22 unconditional Rocq 9.1 theorems + 18 unconditional Lean 4.35.0 theorems** from the root game-value reductions (`connect5_8x8_fair`, `mutual_safety_draw`).
 - **Dual-Prover Zero-Axiom Soundness (Rocq 9.1 + Lean 4.35.0):** Confirmed by [`CheckAssumptions.v`](CheckAssumptions.v) (`Closed under the global context` × 26 in Rocq 9.1) and [`lean4/Connect5HandProof.lean`](lean4/Connect5HandProof.lean) (18 analytic hand-proof theorems verified in Lean 4.35.0 with 0 `sorry`s, 0 custom axioms, and 0 `Classical.choice`).
 - **Even-Height Parity Inversion & Pure Vertical Dominoes:** Unlike 8 × 7 where an odd empty count forced the use of horizontal ground cross-pairs, on the 8 × 8 board (H = 8 even), Black's response at (4, 0) restores an even count of 62 empty cells. All 96 winning lines are blocked using **pure vertical dominoes alone**!
-- **Concrete Midgame `Static` Leaves & Game-Tree Safety:** Verified on the balanced 16-move position `b_r2` (filling central columns 3 and 4 with 8 White and 8 Black discs), leaving 48 empty cells in flank columns (6 × 8 = 48) that partition into 24 vertical dominoes with zero unassigned cells, validating `check_static` for both White and Black simultaneously!
+- **Concrete Midgame `Static` Leaves & Game-Tree Safety:** Verified on both a genuine 13-ply Rule-R3 frozen-column witness `b_r3` (`empties b_r3 = 51` odd, `s_frozen = Some (4, 2)` above empty poison cell `(4, 1)`, proving `r3_concrete_check_static_true`, `r3_concrete_Static`, and `r3_concrete_cert_safe`) and a strictly alternating 16-ply Rule-R2 unfrozen witness `b_r2` (`empties b_r2 = 48` even, `s_frozen = None`, proving `r2_concrete_black_static_safe`)!
 
 ---
 
@@ -119,13 +119,13 @@ The 96 winning lines are partitioned and blocked as follows:
 
 | Line Type (96 Total) | Count | Elementary Reason Why It Is Blocked (Zero Enumeration) | Rocq 9.1 Theorem (`C5CertChecker.v`) |
 | :--- | :---: | :--- | :--- |
-| **Vertical Lines** | **32** | Every 5-row window in `0..7` (`r0 ≤ 3`) contains `{3, 4}` (middle domino). | [`book_step1_vertical_middle_two_dominoes`](C5CertChecker.v#L569) |
-| **Horizontal Lines** | **32** | Every 5-col window crosses `Col 3` & `Col 4` (even rows `{0,2,4,6}`) or hits `{1,3,5,7}` in `Col 2/6`. | [`book_step3_horizontal_parity_split`](C5CertChecker.v#L592) |
-| **In-Phase Diagonals** | **16** | Crosses `Col 4` at an **even** row ∈ {0, 2, 4, 6}, hitting anchor (4, 0) or upper cells. | [`book_step4_diagonal_parity_alternation`](C5CertChecker.v#L605) |
-| **Out-of-Phase Diagonals** | **16** | Crosses `Col 4` at an **odd** row ⇒ crosses `Col 2` or `Col 6` at an **odd** row ∈ {1, 3, 5, 7}. | [`book_central_wall_decomposition`](C5CertChecker.v#L651) |
+| **Vertical Lines** | **32** | Every 5-row window in `0..7` (`r0 ≤ 3`) contains `{3, 4}` (middle domino). | [`book_step1_vertical_middle_two_dominoes`](C5CertChecker.v) |
+| **Horizontal Lines** | **32** | Every 5-col window crosses `Col 3` & `Col 4` (even rows `{0,2,4,6}`) or hits `{1,3,5,7}` in `Col 2/6`. | [`book_step3_horizontal_parity_split`](C5CertChecker.v) |
+| **In-Phase Diagonals** | **16** | Crosses `Col 4` at an **even** row ∈ {0, 2, 4, 6}, hitting anchor (4, 0) or upper cells. | [`book_step4_diagonal_parity_alternation`](C5CertChecker.v) |
+| **Out-of-Phase Diagonals** | **16** | Crosses `Col 4` at an **odd** row ⇒ crosses `Col 2` or `Col 6` at an **odd** row ∈ {1, 3, 5, 7}. | [`book_central_wall_decomposition`](C5CertChecker.v) |
 
 ### Dead Cells (3, 7) and (4, 7) Multi-Blocking
-Cells (3, 7) and (4, 7) participate in exactly 6 winning lines each. In [`C5CertChecker.v`](C5CertChecker.v) (`dead_cells_3_7_and_4_7_blocked`) and [`lean4/Connect5HandProof.lean`](lean4/Connect5HandProof.lean) (`dead_cell_4_6_vertical_double_blocked`, `dead_cell_4_6_nonvertical_double_blocked`), every single line is proven to contain at least 2 guaranteed Black cells!
+Cells (3, 7) and (4, 7) participate in exactly 6 winning lines each. In [`C5CertChecker.v`](C5CertChecker.v) (`dead_cells_3_7_and_4_7_blocked`, `dead_cell_4_7_six_lines_double_blocked`) and [`lean4/Connect5HandProof.lean`](lean4/Connect5HandProof.lean) (`dead_cell_4_7_vertical_double_blocked`, `dead_cell_4_7_nonvertical_double_blocked`), every single line is proven to contain at least 2 guaranteed Black cells!
 
 ---
 
@@ -150,32 +150,32 @@ Connect5_8x8/
 
 | # | Theorem Identifier | File | Formal Statement Verified (`Closed under the global context`) |
 | :-: | :--- | :--- | :--- |
-| **1** | [`structure_sound`](C5Rules.v) | `C5Rules.v` | `forall d b st, Static d b st -> safe d b (other d)` *(Unconditional)* |
-| **2** | [`strategy_sound`](C5Certificate.v) | `C5Certificate.v` | `forall d b s t, valid_strategy d b s t = true -> safe d b s` *(Unconditional)* |
-| **3** | [`mutual_safety_draw`](C5Certificate.v) | `C5Certificate.v` | `forall c0, legal initial c0 = true -> safe White (play initial c0 White) Black -> safe Black initial White -> game_value = Draw` *(Unconditional)* |
-| **4** | [`connect5_8x8_fair`](C5Certificate.v) | `C5Certificate.v` | `(exists c0 tw, ...) -> (exists tb, ...) -> game_value = Draw` *(Master 8x8 Reduction)* |
-| **5** | [`connect5_8x7_fair`](C5Certificate.v) | `C5Certificate.v` | Master 8x7 Reduction *(Compatibility)* |
+| **1** | [`empties_play`](C5Board.v) | `C5Board.v` | `forall b c p, legal b c = true -> empties (play b c p) = empties b - 1` *(Unconditional)* |
+| **2** | [`structure_sound`](C5Rules.v) | `C5Rules.v` | `forall d b st, Static d b st -> safe d b (other d)` *(Unconditional)* |
+| **3** | [`strategy_sound`](C5Certificate.v) | `C5Certificate.v` | `forall d b s, strategy d b s -> safe d b s` *(Unconditional)* |
+| **4** | [`mutual_safety_draw`](C5Certificate.v) | `C5Certificate.v` | `forall c0, legal initial c0 = true -> safe White (play initial c0 White) Black -> safe Black initial White -> game_value = Draw` *(Unconditional)* |
+| **5** | [`connect5_8x8_fair`](C5Certificate.v) | `C5Certificate.v` | `(exists c0 tw, ...) -> (exists tb, ...) -> game_value = Draw` *(Master 8x8 Reduction)* |
 | **6** | [`check_static_sound`](C5CertChecker.v) | `C5CertChecker.v` | `forall d b st, check_static d b st = true -> Static d b st` *(Unconditional)* |
 | **7** | [`cert_sound`](C5CertChecker.v) | `C5CertChecker.v` | `forall fuel cert d b s idx, check_cert_node cert fuel d b s idx = true -> safe d b s` *(Unconditional)* |
 | **8** | [`cert_fair`](C5CertChecker.v) | `C5CertChecker.v` | Root certificate reduction to `game_value = Draw` |
 | **9** | [`parity_trap_ply1`](C5CertChecker.v) | `C5CertChecker.v` | `empties b_open = 63 /\ Nat.even (empties b_open) = false` *(Unconditional)* |
 | **10** | [`parity_restored_ply2`](C5CertChecker.v) | `C5CertChecker.v` | `empties b_ply2 = 62 /\ Nat.even (empties b_ply2) = true` *(Even Parity Restored!)* |
 | **11** | [`dual_core_covers_all_96_lines`](C5CertChecker.v) | `C5CertChecker.v` | `check_cover Black b_ply2 black_dual_core_struct = true` (All 96 lines covered) |
-| **12** | [`dead_cells_3_7_and_4_7_blocked`](C5CertChecker.v) | `C5CertChecker.v` | Multi-blocking of dead cells (3, 7) and (4, 7) |
-| **13** | [`r3_frozen_column_restores_even_parity`](C5CertChecker.v) | `C5CertChecker.v` | `Nat.even (64 - 16) = true` (Even parity conservation on 8x8) |
-| **14** | [`book_step1_vertical_middle_two_dominoes`](C5CertChecker.v) | `C5CertChecker.v` | Every 5-row window in `0..7` contains `{1,2}`, `{3,4}`, or `{5,6}` (`lia`) |
-| **15** | [`book_step2_central_wall_pigeonhole`](C5CertChecker.v) | `C5CertChecker.v` | Every 5-col window crosses `Col 3`, `Col 4`, and `Col 2` or `Col 6` (`lia`) |
-| **16** | [`book_step3_horizontal_parity_split`](C5CertChecker.v) | `C5CertChecker.v` | Row r ≤ 7 split into even {0,2,4,6} or odd {1,3,5,7} (`lia`) |
-| **17** | [`book_step4_diagonal_parity_alternation`](C5CertChecker.v) | `C5CertChecker.v` | Every diagonal hits Central Wall or Flank Wings (`lia`) |
-| **18** | [`book_central_wall_decomposition`](C5CertChecker.v) | `C5CertChecker.v` | 47/64 central wall + 17 flank lines = 64 non-vertical lines blocked |
-| **19** | [`book_step5_r3_parity_law_lia`](C5CertChecker.v) | `C5CertChecker.v` | 64 - 2k = 2(32 - k) (Universal even parity law on 8x8) |
-| **20** | [`r3_concrete_check_static_true`](C5CertChecker.v) | `C5CertChecker.v` | `empties b_r3 = 48 /\ check_static White b_r3 white_r3_full_struct = true` |
-| **21** | [`r3_concrete_Static`](C5CertChecker.v) | `C5CertChecker.v` | `Static White b_r3 white_r3_full_struct` on reachable 48-empty board |
-| **22** | [`r3_concrete_cert_safe`](C5CertChecker.v) | `C5CertChecker.v` | `safe White b_r3 Black` *(Unconditional game-tree safety across continuations!)* |
-| **23** | [`r2_concrete_black_static_safe`](C5CertChecker.v) | `C5CertChecker.v` | `empties b_r2 = 48 /\ check_static Black ... = true /\ safe Black b_r2 White` |
-| **24** | [`c4_7x6_claimeven_57_of_69_and_center3_cover`](C5CertChecker.v) | `C5CertChecker.v` | Classic Connect-4 57/69 Claimeven collapse & 69/69 center-3 cover |
-| **25** | [`c4_7x6_book_theorems_lia`](C5CertChecker.v) | `C5CertChecker.v` | Classic Connect-4 Presburger `lia` book theorems |
-| **26** | [`dead_cell_4_6_six_lines_double_blocked`](C5CertChecker.v) | `C5CertChecker.v` | Dead cell double-blocking compatibility theorem |
+| **12** | [`dead_cells_3_7_and_4_7_blocked`](C5CertChecker.v) | `C5CertChecker.v` | Double-blocking (`>= 2` guaranteed cells) of all 12 lines through `(3, 7)` and `(4, 7)` |
+| **13** | [`dead_cell_4_7_six_lines_double_blocked`](C5CertChecker.v) | `C5CertChecker.v` | Explicit 6 lines through dead cell `(4, 7)`, each double-blocked (`>= 2` cells) |
+| **14** | [`r3_frozen_column_restores_even_parity`](C5CertChecker.v) | `C5CertChecker.v` | `forall E ft, Nat.even E = false -> (ft = 2 \/ ft = 4 \/ ft = 6) -> 9 - ft <= E -> Nat.even (9 - ft) = false /\ Nat.even (E - (9 - ft)) = true` |
+| **15** | [`book_step1_vertical_middle_two_dominoes`](C5CertChecker.v) | `C5CertChecker.v` | Every 5-row window in `0..7` contains `{1,2}`, `{3,4}`, or `{5,6}` (`lia`) |
+| **16** | [`book_step2_central_wall_pigeonhole`](C5CertChecker.v) | `C5CertChecker.v` | Every 5-col window crosses `Col 3`, `Col 4`, and `Col 2` or `Col 6` (`lia`) |
+| **17** | [`book_step3_horizontal_parity_split`](C5CertChecker.v) | `C5CertChecker.v` | Row r ≤ 7 split into even {0,2,4,6} or odd {1,3,5,7} (`lia`) |
+| **18** | [`book_step4_diagonal_parity_alternation`](C5CertChecker.v) | `C5CertChecker.v` | Every diagonal hits Central Wall or Flank Wings (`lia`) |
+| **19** | [`book_central_wall_decomposition`](C5CertChecker.v) | `C5CertChecker.v` | 47/64 central wall + 17 flank lines = 64 non-vertical lines blocked |
+| **20** | [`book_step5_r3_parity_law_lia`](C5CertChecker.v) | `C5CertChecker.v` | `forall k : nat, k <= 32 -> 64 - 2 * k = 2 * (32 - k)` (Universal even parity law on 8x8) |
+| **21** | [`r3_concrete_check_static_true`](C5CertChecker.v) | `C5CertChecker.v` | `empties b_r3 = 51 /\ check_static White b_r3 white_r3_full_struct = true` (`s_frozen = Some (4, 2)`) |
+| **22** | [`r3_concrete_Static`](C5CertChecker.v) | `C5CertChecker.v` | `Static White b_r3 white_r3_full_struct` on reachable 51-empty Rule-R3 board |
+| **23** | [`r3_concrete_cert_safe`](C5CertChecker.v) | `C5CertChecker.v` | `safe White b_r3 Black` *(Unconditional game-tree safety across continuations!)* |
+| **24** | [`r2_concrete_black_static_safe`](C5CertChecker.v) | `C5CertChecker.v` | `empties b_r2 = 48 /\ check_static Black ... = true /\ safe Black b_r2 White` (`s_frozen = None`) |
+| **25** | [`c4_7x6_claimeven_57_of_69_and_center3_cover`](C5CertChecker.v) | `C5CertChecker.v` | Classic Connect-4 57/69 Claimeven collapse & 69/69 center-3 cover |
+| **26** | [`c4_7x6_book_theorems_lia`](C5CertChecker.v) | `C5CertChecker.v` | Classic Connect-4 Presburger `lia` book theorems |
 
 ---
 
@@ -192,13 +192,13 @@ In [`lean4/Connect5HandProof.lean`](lean4/Connect5HandProof.lean), we formalize 
 | **3** | [`pigeonhole_5col_window`](lean4/Connect5HandProof.lean) | Step 1 (Pigeonhole): Every 5-col window contains `3, 4` and `2` or `6` | `[propext, Quot.sound]` |
 | **4** | [`modulo2_parity_preservation`](lean4/Connect5HandProof.lean) | Step 2A (Parity): `r4 % 2 = 0 → rowAt r4 s 2 % 2 = 0 ∧ rowAt r4 s 6 % 2 = 0` | `[propext, Quot.sound]` |
 | **5** | [`erdos_10cell_transversal_hand_proof`](lean4/Connect5HandProof.lean) | **Theorem 2.3:** Every valid non-vertical 5-line `(c0, r4, s)` intersects `InCoreDual` | `[propext, Quot.sound]` |
-| **6** | [`dead_cell_4_6_vertical_double_blocked`](lean4/Connect5HandProof.lean) | Prop 2.4A: Vertical line through dead cell hits both `(4,4)` and `(4,6)` | **None (`0 axioms`)** |
-| **7** | [`dead_cell_4_6_nonvertical_double_blocked`](lean4/Connect5HandProof.lean) | Prop 2.4B: Every non-vertical line through dead cell hits `≥ 2` guaranteed cells | `[propext, Quot.sound]` |
+| **6** | [`dead_cell_4_7_vertical_double_blocked`](lean4/Connect5HandProof.lean) | Prop 2.4A: Vertical line through dead cell `(4,7)` hits both `(4,4)` and `(4,6)` | **None (`0 axioms`)** |
+| **7** | [`dead_cell_4_7_nonvertical_double_blocked`](lean4/Connect5HandProof.lean) | Prop 2.4B: Every non-vertical line through dead cell `(4,7)` hits `≥ 2` guaranteed cells | `[propext, Quot.sound]` |
 | **8** | [`r3_frozen_suffix_restores_even_parity`](lean4/Connect5HandProof.lean) | **Theorem 3.2 (Rule R3):** `E % 2 = 1 ∧ ft % 2 = 0 → (E - (9 - ft)) % 2 = 0` | `[propext, Quot.sound]` |
 | **9** | [`zermelo_mutual_safety_draw`](lean4/Connect5HandProof.lean) | Zermelo Equilibrium: `SafeOutcome White o ∧ SafeOutcome Black o → o = Draw` | `[propext]` |
 | **10** | [`allis_followup_induction`](lean4/Connect5HandProof.lean) | Inductive Follow-Up Principle schema over remaining empty cells `E : Nat` | `[propext, Quot.sound]` |
 | **11** | [`horizontal_5col_pair_transversal`](lean4/Connect5HandProof.lean) | Every 5-column horizontal window `[c0, c0+4]` contains `{1,2}` or `{5,6}` | `[propext, Quot.sound]` |
-| **12** | [`black_odd_row_transversal_hand_proof`](lean4/Connect5HandProof.lean) | Player 2 (Black) odd-row transversal covers all 32 diagonals & odd horizontals | `[propext, Quot.sound]` |
+| **12** | [`black_odd_row_transversal_hand_proof`](lean4/Connect5HandProof.lean) | Pure odd-row Claimeven covers all 32 diagonals & 16 odd horizontals (80/96 lines) | `[propext, Quot.sound]` |
 | **13** | [`book_step3_central_wall_blocks_all_horizontals`](lean4/Connect5HandProof.lean) | **Central Wall Step 3:** Central Wall + Flank Wings block all 32 horizontals | `[propext, Quot.sound]` |
 | **14** | [`book_step4_central_wall_diagonal_dichotomy`](lean4/Connect5HandProof.lean) | **Central Wall Step 4:** Every diagonal hits Central Wall or Flank Wings | `[propext, Quot.sound]` |
 | **15** | [`c4_7x6_book_thm1a_vertical_claimeven_double_blocked`](lean4/Connect5HandProof.lean) | **Classic 7×6 C4 Thm IA:** Every vertical 4-line contains `{1,3}` or `{3,5}` | `[propext, Quot.sound]` |
@@ -233,6 +233,8 @@ An independent C11 verification tool [`solver/audit_c5_8x8.c`](solver/audit_c5_8
 // All 96 winning lines covered (100.0%)
 // All 32 vertical lines contain a full domino (100.0%)
 // Row 0 horizontals intersection with {(3,0), (4,0)}: 4 / 4 (100.0%)
+// Dead cell (3,7) double-blocked lines (>= 2 cells): 6 / 6 (100.0%)
+// Dead cell (4,7) double-blocked lines (>= 2 cells): 6 / 6 (100.0%)
 ```
 
 ---

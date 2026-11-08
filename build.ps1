@@ -20,20 +20,25 @@ $files = @(
 
 Write-Host "=== Compiling Connect-5 (8x8) Formal Mathematical Proof in Rocq 9.1 ===" -ForegroundColor Cyan
 $assumptionsOutput = @()
-foreach ($f in $files) {
-    Write-Host "Compiling $f..." -NoNewline
-    $sw = [System.Diagnostics.Stopwatch]::StartNew()
-    $out = & $rocq compile -Q . C5 $f 2>&1
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host " FAILED!" -ForegroundColor Red
-        $out | ForEach-Object { Write-Host $_ }
-        exit $LASTEXITCODE
+Push-Location $PSScriptRoot
+try {
+    foreach ($f in $files) {
+        Write-Host "Compiling $f..." -NoNewline
+        $sw = [System.Diagnostics.Stopwatch]::StartNew()
+        $out = & $rocq compile -Q . C5 $f 2>&1
+        if ($LASTEXITCODE -ne 0) {
+            Write-Host " FAILED!" -ForegroundColor Red
+            $out | ForEach-Object { Write-Host $_ }
+            exit $LASTEXITCODE
+        }
+        $sw.Stop()
+        Write-Host " OK ($([math]::Round($sw.Elapsed.TotalSeconds, 2))s)" -ForegroundColor Green
+        if ($f -eq "CheckAssumptions.v") {
+            $assumptionsOutput = $out
+        }
     }
-    $sw.Stop()
-    Write-Host " OK ($([math]::Round($sw.Elapsed.TotalSeconds, 2))s)" -ForegroundColor Green
-    if ($f -eq "CheckAssumptions.v") {
-        $assumptionsOutput = $out
-    }
+} finally {
+    Pop-Location
 }
 
 $assumptionsOutput | ForEach-Object { Write-Host $_ }

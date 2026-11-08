@@ -206,24 +206,19 @@ By horizontal reflection symmetry, the identical property holds for (3, 7).
 
 ---
 
-## 6. The Balanced 16-Move Midgame State b_r2
+## 6. Concrete Midgame Witnesses: Rule-R3 (`b_r3`) and Rule-R2 (`b_r2`)
 
-To provide concrete, machine-verified witnesses of `check_static = true` and `safe` on reachable positions, we construct the balanced 16-move position b_r2:
+To provide concrete, machine-verified witnesses of `check_static = true` and `safe` on reachable 8 × 8 midgame positions, we construct two distinct strictly alternating play sequences in [`C5CertChecker.v`](C5CertChecker.v):
 
-```text
-b_r2 = play*(initial, moves₁₆)
-```
+1. **The Genuine 13-Ply Rule-R3 Frozen-Column Witness (`b_r3`):**
+   - Reached from `initial` via 13 strictly alternating legal moves (`b_ply12` followed by Black's 13th move in Column 3), leaving `empties b_r3 = 51` (odd).
+   - Column 4 has height `ft = 2` with an empty poison threat cell `(4, 1)` and frozen suffix `s_frozen = Some (4, 2)` of odd length `9 - 2 = 7` (rows `2..8`), paired with 2 base cross-pairs `((0, 3), (1, 3))` and `((2, 3), (3, 3))` and 20 vertical dominoes.
+   - Verified via the 2-step DAG certificate `r3_two_step_cert = [CS_DefMove 3 1; CS_Leaf white_r3_full_struct]`, proving `r3_concrete_check_static_true`, `r3_concrete_Static`, and `r3_concrete_cert_safe` (`safe White b_r3 Black`).
 
-Where central columns 3 and 4 are filled to capacity (8 discs each, alternating colors White/Black such that no player ever achieves 2 discs in a row):
-- Columns 3 and 4: completely full (16 discs).
-- Flank columns 0, 1, 2, 5, 6, 7: completely empty (6 × 8 = 48 cells).
-- Remaining empty cells: 64 - 16 = 48 ≡ 0 (mod 2).
-
-The 48 empty cells partition into 24 pure vertical dominoes with zero unassigned cells, validating `check_static` for **both** White and Black simultaneously:
-
-```text
-check_static(White, b_r2, struct₂₄) = true ∧ check_static(Black, b_r2, struct₂₄) = true
-```
+2. **The Balanced 16-Ply Rule-R2 Unfrozen Witness (`b_r2`):**
+   - Reached from `initial` via 16 strictly alternating legal moves (`White, Black, White, Black, ...`) filling central columns 3 and 4 to capacity (8 discs each, with at most 2 consecutive discs of the same color in any direction).
+   - Flank columns 0, 1, 2, 5, 6, 7 are completely empty (`6 × 8 = 48` cells, even), with `s_frozen = None` and `s_rigid = []`.
+   - The 48 empty cells partition into 24 pure vertical dominoes with zero unassigned cells, proving `r2_concrete_black_static_safe` (`safe Black b_r2 White`)!
 
 ---
 
@@ -243,35 +238,35 @@ Compiling CheckAssumptions.v... OK (2.79s)
 All 6 foundational theory files and all 26 theorems verified (26/26 Closed under the global context, 0 Axioms, 0 Admits)!
 ```
 
-### Table of Verified Theorems in Rocq 9.1
-| Theorem Name | File | Description | Status |
-| :--- | :--- | :--- | :--- |
-| `wf_initial` | `C5Board.v` | Initial board is well-formed | Closed (0 Axioms) |
-| `wf_play` | `C5Board.v` | Legal move preserves well-formedness | Closed (0 Axioms) |
-| `legal_play_empties` | `C5Board.v` | Legal move decrements empty cells | Closed (0 Axioms) |
-| `structure_sound` | `C5Rules.v` | Pairing structure implies game-tree safety | Closed (0 Axioms) |
-| `strategy_sound` | `C5Certificate.v` | Strategy induction soundness | Closed (0 Axioms) |
-| `mutual_safety_draw` | `C5Certificate.v` | Mutual defensive safety implies Draw | Closed (0 Axioms) |
-| `connect5_8x8_fair` | `C5Certificate.v` | Master root equilibrium theorem for 8x8 | Closed (0 Axioms) |
-| `connect5_8x7_fair` | `C5Certificate.v` | Master root equilibrium theorem for 8x7 | Closed (0 Axioms) |
-| `cert_sound` | `C5CertChecker.v` | Fast bounded certificate checker soundness | Closed (0 Axioms) |
-| `check_static_sound` | `C5CertChecker.v` | Boolean decider reflection to `Static` | Closed (0 Axioms) |
-| `parity_trap_ply1` | `C5CertChecker.v` | Ply 1 leaves 63 empty cells (odd) | Closed (0 Axioms) |
-| `parity_restored_ply2` | `C5CertChecker.v` | Ply 2 leaves 62 empty cells (even) | Closed (0 Axioms) |
-| `dual_core_covers_all_96_lines` | `C5CertChecker.v` | Dual-core covers all 96 lines via `vm_compute` | Closed (0 Axioms) |
-| `dead_cells_3_7_and_4_7_blocked` | `C5CertChecker.v` | Multi-blocking of dead cells (3,7) and (4,7) | Closed (0 Axioms) |
-| `r3_frozen_column_restores_even_parity`| `C5CertChecker.v` | Parity conservation on 8x8 grid | Closed (0 Axioms) |
-| `book_step1_vertical_middle_two_dominoes` | `C5CertChecker.v` | Step 1 vertical dominoes via `lia` | Closed (0 Axioms) |
-| `book_step2_central_wall_pigeonhole` | `C5CertChecker.v` | Step 2 central wall pigeonhole via `lia` | Closed (0 Axioms) |
-| `book_step3_horizontal_parity_split` | `C5CertChecker.v` | Step 3 horizontal parity split via `lia` | Closed (0 Axioms) |
-| `book_step4_diagonal_parity_alternation` | `C5CertChecker.v` | Step 4 diagonal parity alternation via `lia` | Closed (0 Axioms) |
-| `book_central_wall_decomposition` | `C5CertChecker.v` | 47/64 central wall + 17 flank lines | Closed (0 Axioms) |
-| `book_step5_r3_parity_law_lia` | `C5CertChecker.v` | Parity law 64 - 2k = 2(32 - k) | Closed (0 Axioms) |
-| `r3_concrete_check_static_true` | `C5CertChecker.v` | Concrete 48-empty board check_static = true | Closed (0 Axioms) |
-| `r3_concrete_Static` | `C5CertChecker.v` | Unconditional Static witness on 48-empty board | Closed (0 Axioms) |
-| `r3_concrete_cert_safe` | `C5CertChecker.v` | Unconditional safe on 48-empty board | Closed (0 Axioms) |
-| `r2_concrete_black_static_safe` | `C5CertChecker.v` | Player 2 unfrozen safe witness on 48-empty board | Closed (0 Axioms) |
-| `c4_7x6_book_theorems_lia` | `C5CertChecker.v` | Classic Connect-4 7x6 book theorems | Closed (0 Axioms) |
+### Table of All 26 Verified Theorems in [`CheckAssumptions.v`](CheckAssumptions.v)
+| # | Theorem Name | File | Description | Status |
+| :-: | :--- | :--- | :--- | :--- |
+| **1** | `empties_play` | `C5Board.v` | Legal move decrements empty cells by 1 | Closed (0 Axioms) |
+| **2** | `structure_sound` | `C5Rules.v` | Pairing structure implies game-tree safety | Closed (0 Axioms) |
+| **3** | `strategy_sound` | `C5Certificate.v` | Strategy induction soundness (`forall d b s, strategy d b s -> safe d b s`) | Closed (0 Axioms) |
+| **4** | `mutual_safety_draw` | `C5Certificate.v` | Mutual defensive safety implies Draw | Closed (0 Axioms) |
+| **5** | `connect5_8x8_fair` | `C5Certificate.v` | Master root equilibrium theorem for 8x8 | Closed (0 Axioms) |
+| **6** | `check_static_sound` | `C5CertChecker.v` | Boolean decider reflection to `Static` | Closed (0 Axioms) |
+| **7** | `cert_sound` | `C5CertChecker.v` | Fast bounded certificate checker soundness | Closed (0 Axioms) |
+| **8** | `cert_fair` | `C5CertChecker.v` | Root certificate reduction to `game_value = Draw` | Closed (0 Axioms) |
+| **9** | `parity_trap_ply1` | `C5CertChecker.v` | Ply 1 leaves 63 empty cells (odd) | Closed (0 Axioms) |
+| **10** | `parity_restored_ply2` | `C5CertChecker.v` | Ply 2 leaves 62 empty cells (even) | Closed (0 Axioms) |
+| **11** | `dual_core_covers_all_96_lines` | `C5CertChecker.v` | Dual-core covers all 96 lines via `vm_compute` | Closed (0 Axioms) |
+| **12** | `dead_cells_3_7_and_4_7_blocked` | `C5CertChecker.v` | Double-blocking (`>= 2` cells) of all 12 lines through (3,7) and (4,7) | Closed (0 Axioms) |
+| **13** | `dead_cell_4_7_six_lines_double_blocked` | `C5CertChecker.v` | Explicit 6 lines through dead cell (4,7), each double-blocked | Closed (0 Axioms) |
+| **14** | `r3_frozen_column_restores_even_parity` | `C5CertChecker.v` | Universal 8x8 Rule-R3 parity restoration (`Nat.even (E - (9 - ft)) = true`) | Closed (0 Axioms) |
+| **15** | `book_step1_vertical_middle_two_dominoes` | `C5CertChecker.v` | Step 1 vertical dominoes via `lia` | Closed (0 Axioms) |
+| **16** | `book_step2_central_wall_pigeonhole` | `C5CertChecker.v` | Step 2 central wall pigeonhole via `lia` | Closed (0 Axioms) |
+| **17** | `book_step3_horizontal_parity_split` | `C5CertChecker.v` | Step 3 horizontal parity split via `lia` | Closed (0 Axioms) |
+| **18** | `book_step4_diagonal_parity_alternation` | `C5CertChecker.v` | Step 4 diagonal parity alternation via `lia` | Closed (0 Axioms) |
+| **19** | `book_central_wall_decomposition` | `C5CertChecker.v` | 47/64 central wall + 17 flank lines | Closed (0 Axioms) |
+| **20** | `book_step5_r3_parity_law_lia` | `C5CertChecker.v` | Universal parity law `forall k <= 32, 64 - 2*k = 2*(32 - k)` | Closed (0 Axioms) |
+| **21** | `r3_concrete_check_static_true` | `C5CertChecker.v` | Concrete 51-empty Rule-R3 board `check_static = true` (`s_frozen = Some (4, 2)`) | Closed (0 Axioms) |
+| **22** | `r3_concrete_Static` | `C5CertChecker.v` | Unconditional `Static` witness on 51-empty Rule-R3 board | Closed (0 Axioms) |
+| **23** | `r3_concrete_cert_safe` | `C5CertChecker.v` | Unconditional `safe White b_r3 Black` via 2-step DAG | Closed (0 Axioms) |
+| **24** | `r2_concrete_black_static_safe` | `C5CertChecker.v` | Player 2 unfrozen `safe Black b_r2 White` witness on 48-empty board | Closed (0 Axioms) |
+| **25** | `c4_7x6_claimeven_57_of_69_and_center3_cover` | `C5CertChecker.v` | Classic Connect-4 57/69 Claimeven collapse & 69/69 center-3 cover | Closed (0 Axioms) |
+| **26** | `c4_7x6_book_theorems_lia` | `C5CertChecker.v` | Classic Connect-4 7x6 book theorems via `lia` | Closed (0 Axioms) |
 
 ---
 
@@ -287,8 +282,8 @@ Lean (version 4.35.0, x86_64-w64-windows-gnu, commit eb6cafb7290e8bd5f2937522d8d
 'Connect5HandProof.pigeonhole_5col_window' depends on axioms: [propext, Quot.sound]
 'Connect5HandProof.modulo2_parity_preservation' depends on axioms: [propext, Quot.sound]
 'Connect5HandProof.erdos_10cell_transversal_hand_proof' depends on axioms: [propext, Quot.sound]
-'Connect5HandProof.dead_cell_4_6_vertical_double_blocked' does not depend on any axioms
-'Connect5HandProof.dead_cell_4_6_nonvertical_double_blocked' depends on axioms: [propext, Quot.sound]
+'Connect5HandProof.dead_cell_4_7_vertical_double_blocked' does not depend on any axioms
+'Connect5HandProof.dead_cell_4_7_nonvertical_double_blocked' depends on axioms: [propext, Quot.sound]
 'Connect5HandProof.r3_frozen_suffix_restores_even_parity' depends on axioms: [propext, Quot.sound]
 'Connect5HandProof.zermelo_mutual_safety_draw' depends on axioms: [propext]
 'Connect5HandProof.allis_followup_induction' depends on axioms: [propext, Quot.sound]
@@ -318,6 +313,8 @@ An independent C11 verification tool [`solver/audit_c5_8x8.c`](solver/audit_c5_8
 // All 96 winning lines covered (100.0%)
 // All 32 vertical lines contain a full domino (100.0%)
 // Row 0 horizontals intersection with {(3,0), (4,0)}: 4 / 4 (100.0%)
+// Dead cell (3,7) double-blocked lines (>= 2 cells): 6 / 6 (100.0%)
+// Dead cell (4,7) double-blocked lines (>= 2 cells): 6 / 6 (100.0%)
 ```
 
 ---

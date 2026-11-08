@@ -1,35 +1,35 @@
 # Appendix Note: Applying Our Formal & "Book Proof" Framework to Classic `7 × 6` Connect-Four (`k = 4`)
 
 [![Back to Main Repository](https://img.shields.io/badge/⬅_Back_to_Main_Landing_Page-README.md-2563eb?style=for-the-badge)](README.md)
-[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-Theorems_23_%26_24_Verified_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](C5CertChecker.v)
+[![Rocq 9.1 Verified](https://img.shields.io/badge/Rocq_9.1-Theorems_25_%26_26_Verified_(0_Axioms)-16a34a?style=for-the-badge&logo=coq)](C5CertChecker.v)
 [![Lean 4.35.0 Verified](https://img.shields.io/badge/Lean_4.35.0-Theorems_15..18_Verified_(0_Sorrys)-10b981?style=for-the-badge)](lean4/Connect5HandProof.lean)
 [![Follow-Up Paper II](https://img.shields.io/badge/📘_Companion_Paper_II-Hilbert--Erdős_Book_Proof-8b5cf6?style=for-the-badge)](HILBERT_ERDOS_PEN_AND_PAPER_PROOF.md)
 
-> **Abstract:** With the benefit of hindsight from our formalization of `8 × 7` Connect-5 (`k = 5`, an exact Draw), a natural question arises: *Can we apply our exact deductive pairing theory (`C5Rules.v`), computational reflection (`C5CertChecker.v`), CUDA bitboard architecture (`c5_gpu_search.cu`), and elementary "FROM THE BOOK" pen-and-paper proofs (`lia` / `omega`) to **Classic `7 × 6` Connect-Four (`k = 4`)**—the game independently solved by James D. Allen (Oct 1, 1988) and Victor Allis (Oct 16, 1988)?*
+> **Abstract:** With the benefit of hindsight from our formalizations of **`8 × 8` Connect-5** (`k = 5`, an exact Draw, this repository) and **`8 × 7` Connect-5** (`k = 5`, an exact Draw), a natural question arises: *Can we apply our exact deductive pairing theory (`C5Rules.v`), computational reflection (`C5CertChecker.v`), CUDA bitboard architecture (`c5_gpu_search.cu`), and elementary "FROM THE BOOK" pen-and-paper proofs (`lia` / `omega`) to **Classic `7 × 6` Connect-Four (`k = 4`)**—the game independently solved by James D. Allen (Oct 1, 1988) and Victor Allis (Oct 16, 1988)?*
 >
-> In this Appendix Note, we show that Classic `7 × 6` Connect-Four is the **exact parity dual** of `8 × 7` Connect-5. Better yet, we prove **Three Elementary "Book Theorems" of Classic `7 × 6` Connect-Four** by hand on a single page—and machine-check all three with **zero axioms, zero `sorry`s, and zero `Classical.choice`** in both **Rocq 9.1** ([`C5CertChecker.v`](C5CertChecker.v#L819-L889), Theorems 23–24) and **Lean 4.35.0** ([`lean4/Connect5HandProof.lean`](lean4/Connect5HandProof.lean#L481-L558), Theorems 15–18).
+> In this Appendix Note, we compare the column-height parity and horizontal window geometry of **`8 × 8` Connect-5**, **`8 × 7` Connect-5**, and **Classic `7 × 6` Connect-Four**. Better yet, we prove **Three Elementary "Book Theorems" of Classic `7 × 6` Connect-Four** by hand on a single page—and machine-check all three with **zero axioms, zero `sorry`s, and zero `Classical.choice`** in both **Rocq 9.1** ([`C5CertChecker.v`](C5CertChecker.v), Theorems 25–26) and **Lean 4.35.0** ([`lean4/Connect5HandProof.lean`](lean4/Connect5HandProof.lean), Theorems 15–18).
 
 ---
 
-## 1. The Parity Duality Between `8 × 7` Connect-5 (`Draw`) and `7 × 6` Connect-Four (`Win White`)
+## 1. Structural Comparison: `8 × 8` Connect-5 (`Draw`), `8 × 7` Connect-5 (`Draw`), and `7 × 6` Connect-Four (`Win White`)
 
-Why did `8 × 7` Connect-5 have the **Ply-1 Parity Trap** (`56 - 1 = 55` odd empty cells) and a ground-row offset in even columns, whereas Classic `7 × 6` Connect-Four behaves completely differently? Because of **Column-Height Parity**:
+Both **`8 × 8` Connect-5** (`H = 8`) and **Classic `7 × 6` Connect-Four** (`H = 6`) have **EVEN column height**, whereas **`8 × 7` Connect-5** (`H = 7`) has **ODD column height**. Why is `8 × 8` Connect-5 an exact **Draw** via pure vertical dominoes (`Pattern 00011000`), whereas `7 × 6` Connect-Four is a **First-Player Win**? Because of the interplay between **Column-Height Parity** and **Center-Column Pigeonhole Geometry**:
 
-| Structural Property | `8 × 7` Connect-5 (`k = 5`, This Repo) | Classic `7 × 6` Connect-Four (`k = 4`, Allen & Allis 1988) |
-| :--- | :--- | :--- |
-| **Grid Dimensions & Total Cells** | `8` columns (`0..7`) × `7` rows (`0..6`) = **`56` cells (Even)** | `7` columns (`0..6`) × `6` rows (`0..5`) = **`42` cells (Even)** |
-| **Column Height Parity** | **ODD (`7` rows per column)** | **EVEN (`6` rows per column)** |
-| **Total Winning Lines** | **`76` lines** of length `5` (`24` V + `28` H + `24` D) | **`69` lines** of length `4` (`21` V + `24` H + `24` D) |
-| **Pure Vertical Strong Dominoes at Move 0** | Cannot tile an odd 7-cell column without 1 leftover cell per column (`7 = 2 × 3 + 1`). | **Tiles all `42` cells at Move 0 into `21` pure Strong Vertical Dominoes `[(c, 2k), (c, 2k+1)]` with ZERO leftover cells (`6 = 2 × 3`)!** |
-| **Pigeonhole Intersection of Horizontal Windows** | Every 5-col window on `8` cols crosses the **2-Column Central Wall `{Col 3, Col 4}`**. | Every 4-col window on `7` cols crosses the **Single Center Column `Col 3` (`d1`)**! |
-| **Role of Frozen Column Threat (`s_frozen`)** | Threat at **odd** 0-indexed row `ft ∈ {1, 3, 5}` freezes `8 - ft ∈ {3, 5, 7}` (**odd**) cells, turning `55` (odd) into **even** so Player 1 forces a **Draw** (`Rule R3`). | Threat at **even** 0-indexed row `ft ∈ {2, 4}` (1-indexed odd row `3, 5`) freezes `7 - ft ∈ {3, 5}` (**odd**) cells, turning `42 - 2m` (even) into **odd** so Player 1 forces Black into **Zugzwang (`Win White`)**! |
-| **Exact Game-Theoretic Value** | **`Draw` (`Fair Game`)** | **`Win White` (for `c0 = 3`); `Draw` (for `c0 ∈ {2, 4}`); `Win Black` (for `c0 ∈ {0, 1, 5, 6}`)** |
+| Structural Property | `8 × 8` Connect-5 (`k = 5`, This Repo) | `8 × 7` Connect-5 (`k = 5`) | Classic `7 × 6` Connect-Four (`k = 4`, Allen & Allis 1988) |
+| :--- | :--- | :--- | :--- |
+| **Grid Dimensions & Total Cells** | `8 × 8` = **`64` cells (Even)** | `8 × 7` = **`56` cells (Even)** | `7 × 6` = **`42` cells (Even)** |
+| **Column Height Parity** | **EVEN (`8` rows per column)** | **ODD (`7` rows per column)** | **EVEN (`6` rows per column)** |
+| **Total Winning Lines** | **`96` lines** of length `5` (`32` V + `32` H + `32` D) | **`76` lines** of length `5` (`24` V + `28` H + `24` D) | **`69` lines** of length `4` (`21` V + `24` H + `24` D) |
+| **Pure Vertical Domino Tiling** | **Every column partitions into `4` vertical dominoes (`8 = 2 × 4`); Pattern `00011000` uses `30` pure vertical dominoes (`0` cross-pairs)!** | Cannot tile an odd 7-cell column without 1 leftover cell per column (`7 = 2 × 3 + 1`). | **Tiles all `42` cells at Move 0 into `21` pure Strong Vertical Dominoes `[(c, 2k), (c, 2k+1)]` (`6 = 2 × 3`)!** |
+| **Pigeonhole Intersection of Horizontal Windows** | Every 5-col window on `8` cols crosses the **2-Column Central Wall `{Col 3, Col 4}`** (Black answers `(3,0)` with `(4,0)`!). | Every 5-col window on `8` cols crosses the **2-Column Central Wall `{Col 3, Col 4}`**. | Every 4-col window on `7` cols crosses the **Single Center Column `Col 3` (`d1`)** (White monopolizes `(3,0)` on Ply 1)! |
+| **Role of Frozen Column Threat (`s_frozen`)** | Threat at **even** 0-indexed row `ft ∈ {2, 4, 6}` freezes `9 - ft ∈ {3, 5, 7}` (**odd**) cells (`Rule R3`). | Threat at **odd** 0-indexed row `ft ∈ {1, 3, 5}` freezes `8 - ft ∈ {3, 5, 7}` (**odd**) cells (`Rule R3`). | Threat at **even** 0-indexed row `ft ∈ {2, 4}` freezes `7 - ft ∈ {3, 5}` (**odd**) cells, forcing Black into **Zugzwang (`Win White`)**! |
+| **Exact Game-Theoretic Value** | **`Draw` (`Fair Game`)** | **`Draw` (`Fair Game`)** | **`Win White` (`c0 = 3`); `Draw` (`c0 ∈ {2, 4}`); `Win Black` (`c0 ∈ {0, 1, 5, 6}`)** |
 
 ---
 
 ## 2. Three "FROM THE BOOK" Pen-and-Paper Proofs for Classic `7 × 6` Connect-Four
 
-Without searching a single node of the game tree, three foundational theorems of Classic `7 × 6` Connect-Four follow from the exact same Pigeonhole + Modulo-2 Parity machinery we developed for `8 × 7` Connect-5:
+Without searching a single node of the game tree, three foundational theorems of Classic `7 × 6` Connect-Four follow from the exact same Pigeonhole + Modulo-2 Parity machinery we developed for `8 × 8` and `8 × 7` Connect-5:
 
 ### 2.1 Book Theorem I: The `57 / 69` (`82.6%`) Claimeven Collapse Theorem
 

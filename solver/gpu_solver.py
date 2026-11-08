@@ -41,31 +41,31 @@ assert hCuda.cuCtxCreate(ctypes.byref(ctx), 0, dev) == 0
 
 CUDA_SRC = b"""
 #define W 8
-#define H 7
+#define H 8
 #define K 5
-#define NL 76
-#define FULL_MASK 0x7F7F7F7F7F7F7F7FULL
+#define NL 96
+#define FULL_MASK 0xFFFFFFFFFFFFFFFFULL
 #define BOTTOM_MASK 0x0101010101010101ULL
 #define BIT(c, r) (1ULL << ((c) * 8 + (r)))
-#define COLMASK(c) (0x7FULL << ((c) * 8))
+#define COLMASK(c) (0xFFULL << ((c) * 8))
 
 typedef unsigned long long u64;
 typedef signed char i8;
 
 __device__ inline bool has_won_5(u64 s) {
     u64 m;
-    // Vertical (shift 1)
+    // Vertical (shift 1, starting row r0 in 0..3)
     m = s & (s >> 1);
-    if ((m & (m >> 2) & (s >> 4)) & FULL_MASK) return true;
+    if ((m & (m >> 2) & (s >> 4)) & 0x0F0F0F0F0F0F0F0FULL) return true;
     // Horizontal (shift 8)
     m = s & (s >> 8);
     if ((m & (m >> 16) & (s >> 32)) & FULL_MASK) return true;
-    // Diagonal / (shift 9)
+    // Diagonal / (shift 9, starting row r0 in 0..3)
     m = s & (s >> 9);
-    if ((m & (m >> 18) & (s >> 36)) & FULL_MASK) return true;
-    // Diagonal \\ (shift 7)
+    if ((m & (m >> 18) & (s >> 36)) & 0x0F0F0F0F0F0F0F0FULL) return true;
+    // Diagonal \\ (shift 7, starting col c0 in 0..3 and row r0 in 4..7)
     m = s & (s >> 7);
-    if ((m & (m >> 14) & (s >> 28)) & FULL_MASK) return true;
+    if ((m & (m >> 14) & (s >> 28)) & 0x00000000F0F0F0F0ULL) return true;
     return false;
 }
 
@@ -80,7 +80,7 @@ __device__ inline u64 splitmix64_init(u64 seed) {
     return splitmix64(&seed);
 }
 
-// Kernel 1: Exhaustively verify 76 winning lines, 380 4-stone near-misses, and n_random bitboards
+// Kernel 1: Exhaustively verify 96 winning lines, 480 4-stone near-misses, and n_random bitboards
 extern "C" __global__ void verify_detector_kernel(
     const u64 *d_lines,
     int n_random,
@@ -133,7 +133,7 @@ extern "C" __global__ void generate_boards_kernel(
         int chosen_c = -1;
         for (int off = 0; off < 8; off++) {
             int c = (start_c + off) & 7;
-            if (heights[c] < 7) {
+            if (heights[c] < 8) {
                 u64 bit = 1ULL << (c * 8 + heights[c]);
                 u64 next_s = ((actual_moves & 1) == 0) ? (w | bit) : (b | bit);
                 if (!has_won_5(next_s)) {
@@ -197,8 +197,8 @@ extern "C" __global__ void eval_boards(
     u64 landings[8];
     for (int c = 0; c < 8; c++) {
         u64 col_bit = 1ULL << (c * 8);
-        u64 col_mask = 0x7FULL << (c * 8);
-        u64 land = (mask + col_bit) & col_mask & ~mask;
+        u64 col_mask = 0xFFULL << (c * 8);
+        u64 land = (((mask & 0x7F7F7F7F7F7F7F7FULL) + col_bit) & col_mask) & ~mask;
         landings[c] = land;
         if (land) {
             res.num_moves++;
@@ -279,37 +279,37 @@ assert hCuda.cuModuleGetFunction(ctypes.byref(k_eval), mod, b"eval_boards") == 0
 hCuda.cuMemcpyHtoD.argtypes = [ctypes.c_uint64, ctypes.c_void_p, ctypes.c_size_t]
 hCuda.cuMemcpyDtoH.argtypes = [ctypes.c_void_p, ctypes.c_uint64, ctypes.c_size_t]
 
-# 1. Build 76 winning line masks and run GPU Win-Detector Verification
-h_lines = np.zeros(76, dtype=np.uint64)
+# 1. Build 96 winning line masks and run GPU Win-Detector Verification
+h_lines = np.zeros(96, dtype=np.uint64)
 idx = 0
-for r in range(7):
+for r in range(8):
     for c in range(4):
         m = 0
         for i in range(5): m |= (1 << ((c + i) * 8 + r))
         h_lines[idx] = m; idx += 1
 for c in range(8):
-    for r in range(3):
+    for r in range(4):
         m = 0
         for i in range(5): m |= (1 << (c * 8 + (r + i)))
         h_lines[idx] = m; idx += 1
 for c in range(4):
-    for r in range(3):
+    for r in range(4):
         m = 0
         for i in range(5): m |= (1 << ((c + i) * 8 + (r + i)))
         h_lines[idx] = m; idx += 1
 for c in range(4):
-    for r in range(4, 7):
+    for r in range(4, 8):
         m = 0
         for i in range(5): m |= (1 << ((c + i) * 8 + (r - i)))
         h_lines[idx] = m; idx += 1
-assert idx == 76
+assert idx == 96
 
 d_lines = ctypes.c_uint64()
 d_errors = ctypes.c_uint64()
 h_errors = np.zeros(1, dtype=np.int32)
-assert hCuda.cuMemAlloc(ctypes.byref(d_lines), 76 * 8) == 0
+assert hCuda.cuMemAlloc(ctypes.byref(d_lines), 96 * 8) == 0
 assert hCuda.cuMemAlloc(ctypes.byref(d_errors), 4) == 0
-assert hCuda.cuMemcpyHtoD(d_lines, h_lines.ctypes.data, 76 * 8) == 0
+assert hCuda.cuMemcpyHtoD(d_lines, h_lines.ctypes.data, 96 * 8) == 0
 assert hCuda.cuMemcpyHtoD(d_errors, h_errors.ctypes.data, 4) == 0
 
 c_n_rand = ctypes.c_int(100000)
@@ -321,7 +321,7 @@ v_params = (ctypes.c_void_p * 3)(
 assert hCuda.cuLaunchKernel(k_verify, (100000 + 255) // 256, 1, 1, 256, 1, 1, 0, None, v_params, None) == 0
 hCuda.cuCtxSynchronize()
 assert hCuda.cuMemcpyDtoH(h_errors.ctypes.data, d_errors, 4) == 0
-print(f"[1/3] GPU Win-Detector Verification (76 lines, 380 near-misses, 100,000 random bitboards): errors = {h_errors[0]}", flush=True)
+print(f"[1/3] GPU Win-Detector Verification (96 lines, 480 near-misses, 100,000 random bitboards): errors = {h_errors[0]}", flush=True)
 assert h_errors[0] == 0
 
 # 2. Generate 4,194,304 boards with SplitMix64 and verify distinctness & true mover parity on first 262,144
