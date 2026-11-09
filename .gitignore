@@ -10,3 +10,5 @@
 lean4/.lake/
 .*.aux
 .lia.cache
+*.dll
+__pycache__/
