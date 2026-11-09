@@ -286,6 +286,7 @@ int main() {
 
     int num_games = 50000;
     int white_wins = 0;
+    int black_wins = 0;
     int black_draw_matched = 0;
     int full_board_draws = 0;
     uint32_t seed = 1234567;
@@ -314,6 +315,15 @@ int main() {
             if (b == -1) { full_board_draws++; game_over = true; break; }
             black |= ((u128)1 << b);
 
+            for (int l = 0; l < TOTAL_LINES; l++) {
+                if ((black & all_lines[l].mask) == all_lines[l].mask) {
+                    black_wins++;
+                    game_over = true;
+                    break;
+                }
+            }
+            if (game_over) break;
+
             int unb;
             if (check_perfect_matching(white, black, &unb)) {
                 black_draw_matched++;
@@ -324,8 +334,8 @@ int main() {
         if (!game_over) full_board_draws++;
 
         if ((g + 1) % 10000 == 0) {
-            printf("Games: %5d / %5d | White Wins: %d | Matched Draws: %d | Full-Board: %d\n",
-                   g + 1, num_games, white_wins, black_draw_matched, full_board_draws);
+            printf("Games: %5d / %5d | White Wins: %d | Black Wins: %d | Matched Leaves: %d | Full-Board: %d\n",
+                   g + 1, num_games, white_wins, black_wins, black_draw_matched, full_board_draws);
         }
     }
 
@@ -334,11 +344,12 @@ int main() {
 
     printf("\n=======================================================================\n");
     printf("FINAL RESULTS ACROSS %d GAMES (Time: %.2fs):\n", num_games, sec);
-    printf("  White Wins:          %d (%.4f%%)\n", white_wins, (double)white_wins * 100.0 / num_games);
-    printf("  Hopcroft-Karp Draws: %d (%.4f%%)\n", black_draw_matched, (double)black_draw_matched * 100.0 / num_games);
-    printf("  Full-Board Draws:    %d (%.4f%%)\n", full_board_draws, (double)full_board_draws * 100.0 / num_games);
-    printf("  TOTAL DRAWS:         %d (%.4f%%)\n", black_draw_matched + full_board_draws,
-           (double)(black_draw_matched + full_board_draws) * 100.0 / num_games);
+    printf("  White Wins:             %d (%.4f%%)\n", white_wins, (double)white_wins * 100.0 / num_games);
+    printf("  Black Outright Wins:    %d (%.4f%%)\n", black_wins, (double)black_wins * 100.0 / num_games);
+    printf("  Hopcroft-Karp Draws:    %d (%.4f%%)\n", black_draw_matched, (double)black_draw_matched * 100.0 / num_games);
+    printf("  Full-Board Draws:       %d (%.4f%%)\n", full_board_draws, (double)full_board_draws * 100.0 / num_games);
+    printf("  TOTAL WHITE LOSS/DRAW:  %d (%.4f%%)\n", black_wins + black_draw_matched + full_board_draws,
+           (double)(black_wins + black_draw_matched + full_board_draws) * 100.0 / num_games);
     printf("=======================================================================\n");
     return 0;
 }
