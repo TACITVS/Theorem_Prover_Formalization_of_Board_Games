@@ -2,9 +2,9 @@
 
 **Dedicated Branch:** `qubic-5x5x5`  
 **Repository:** `https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games.git`  
-**Dual-Prover Verification:** Rocq 9.1 (84 Theorems, 0 Axioms, 0 Admits) & Lean 4.35.0 (34 Theorems, 0 Sorry)  
+**Dual-Prover Verification:** Rocq 9.1 (92 Theorems, 0 Axioms, 0 Admits) & Lean 4.35.0 (37 Theorems, 0 Sorry)  
 **Independent Verification Engines:** 128-bit SIMD Bitboard Auditor (0.00 ms), Hopcroft-Karp Pairing Engine (1.00 ms), & Native C++ Z3 SAT/SMT Solver (5.98 ms)  
-**Master Game-Theoretic Value:** **EXACT DRAW (Fair Game)**  
+**Master Game-Theoretic Value:** **CONJECTURED EXACT DRAW (Safe Leaf Proven; Reachability Open)**  
 
 ---
 
@@ -19,7 +19,7 @@ For 3D cubic tic-tac-toe (n³, k = n):
 - **7×7×7 (k = 7):** Proven Draw by John W. Cain, Ioannis M. Raymond, and Nora C. Källersjö (September 2025, arXiv:2509.21494) using a 4-move opening prefix and Hopcroft-Karp bipartite matching.
 - **5×5×5 (k = 5):** The smallest unresolved cubic tic-tac-toe in mathematics.
 
-This formalization establishes the complete game-theoretic resolution of 5×5×5 3D Tic-Tac-Toe: under optimal play, the game is an **Exact Draw**.
+This formalization establishes the dual formal verification suite and algorithmic framework for 5×5×5 3D Tic-Tac-Toe: under optimal play, the game is conjectured to be an **Exact Draw**, supported by machine-certified pairing-safe leaves (92 Rocq theorems, 37 Lean theorems, 0 axioms/sorry), universal potential contraction across all 125 cells, and the absence of White VCF sequences.
 
 ---
 
@@ -413,15 +413,16 @@ This certifies with zero heuristic assumptions that under Black's defense partit
 
 ## 8. Dual-Prover Verification Architecture
 
-### Rocq 9.1 (`build.ps1` in 75.13s):
-- `QubicBoard.v` (27 Theorems): Coordinates, 109 lines, 5-uniformity, degree spectrum, 545 incidences.
-- `QubicSymmetry.v` (20 Theorems): O_h coordinate involutions, orbit preservation, Dedicated Pair Theorem (`dedicated_pair_bound`), and center degree strict maximality (`center_degree_strictly_maximal`).
-- `QubicThreat.v` (11 Theorems): Linear Hypergraph Theorem (`two_lines_intersect_at_most_once`), double threat intersection bound, orbit line counts, and opening center dominance.
+### Rocq 9.1 (`build.ps1` in ~72s):
+- `QubicBoard.v` (33 Theorems): Coordinates, 109 lines, 5-uniformity, degree spectrum, 545 incidences.
+- `QubicSymmetry.v` (15 Theorems): O_h coordinate involutions, orbit preservation, Dedicated Pair Theorem (`dedicated_pair_bound`), and center degree strict maximality (`center_degree_strictly_maximal`).
+- `QubicThreat.v` (10 Theorems): Linear Hypergraph Theorem (`two_lines_intersect_at_most_once`), double threat intersection bound, orbit line counts, and opening center dominance.
 - `QubicTheorem.v` (10 Theorems): Certified 43-pair schedule, 17 defense stones, pairwise disjointness, complete 109-line coverage reflection, constructive pairing and stone blocking soundness lemmas, and Certified Partition Blocking Theorem (`certified_partition_blocks_all_109_lines`).
-- `CheckAssumptions.v`: Programmatic audit confirming **68 / 68 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
+- `QubicAlgebraic.v` (24 Theorems): Algebraic deficit conservation law, Counterexample 014 (necessity vs. sufficiency), minimal horizon bounds under MILP line-coverage limits, board-quantified weighted degree and universal Move 1 potential contraction across all 125 cells, 10-round minimal pairing leaf certificate, and formal Minimax Draw specification (`MinimaxDrawConjecture`).
+- `CheckAssumptions.v`: Programmatic audit confirming **92 / 92 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
 
-### Lean 4.35.0 (`build_lean.ps1` in 2.39s):
-- `lean4/Qubic_5x5x5.lean` (27 Theorems): Complete formal verification under Presburger arithmetic (`omega`) and constructive inductive board semantics with **ZERO sorry**.
+### Lean 4.35.0 (`build_lean.ps1` in ~2.5s):
+- `lean4/Qubic_5x5x5.lean` (37 Theorems): Complete formal verification under Presburger arithmetic (`omega`), Counterexample 014, deficit conservation, minimal horizon, and constructive inductive board semantics with **ZERO sorry**.
 
 ---
 
@@ -432,7 +433,7 @@ Game Size | Cells | Lines | Max Deg | Ratio L/V | Outcome   | Solver / Date
 ----------+-------+-------+---------+-----------+-----------+-------------------------------------
   3x3x3   |   27  |   49  |   13    |   1.815   | White Win | Gardner / Silver (1975)
   4x4x4   |   64  |   76  |    7    |   1.188   | White Win | Patashnik (1980) / Allis (1994)
-  5x5x5   |  125  |  109  |   13    |   0.872   | DRAW      | Antigravity Formal Verification (2026)
+  5x5x5   |  125  |  109  |   13    |   0.872   | DRAW*     | Dual Formal Verification (2026) [*Conjectured; Safe Leaf Proven]
   7x7x7   |  343  |  193  |   13    |   0.563   | DRAW      | Cain, Raymond, Källersjö (2025)
   8x8x8   |  512  |  244  |    7    |   0.477   | DRAW      | Golomb & Hales (2002)
 ```

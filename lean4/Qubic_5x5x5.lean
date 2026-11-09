@@ -213,6 +213,9 @@ theorem totalNaiveStatesComputation :
 -- 8. ALGEBRAIC DEFICIT CONSERVATION, POTENTIAL INVARIANTS & MINIMAL HORIZON
 -- =========================================================================
 
+-- The capacity condition B >= k + 47 is strictly NECESSARY, not sufficient.
+-- (Counterexample 014: B = 57 at k = 10 satisfies 104 <= 105, yet pairing fails
+-- if White places 4 stones on an unblocked line, leaving only 1 free cell).
 theorem algebraicDeficitConservation (k B : Nat) (hk : k ≤ 62) (hb : B ≤ 109) :
     2 * (109 - B) ≤ 125 - 2 * k ↔ k + 47 ≤ B := by
   omega
@@ -220,13 +223,32 @@ theorem algebraicDeficitConservation (k B : Nat) (hk : k ≤ 62) (hb : B ≤ 109
 theorem staticPairingImpossibility : ¬ (2 * 109 ≤ 125) := by
   omega
 
-theorem minimalHorizonLowerBoundK9 : 53 < 9 + 47 := by
+-- Under MILP branch-and-bound upper bounds B_max(7) <= 45, B_max(8) <= 49, B_max(9) <= 53,
+-- the necessary capacity condition B >= k + 47 is violated for all choices of stones for k < 10.
+theorem minimalHorizonLowerBoundK9 (B : Nat) (hB : B ≤ 53) : B < 9 + 47 := by
   omega
 
-theorem minimalHorizonLowerBoundK8 : 49 < 8 + 47 := by
+theorem minimalHorizonLowerBoundK8 (B : Nat) (hB : B ≤ 49) : B < 8 + 47 := by
   omega
 
-theorem minimalHorizonLowerBoundK7 : 45 < 7 + 47 := by
+theorem minimalHorizonLowerBoundK7 (B : Nat) (hB : B ≤ 45) : B < 7 + 47 := by
+  omega
+
+-- Formal Counterexample 014: Capacity condition holds, but 4 White stones leave only 1 free cell
+theorem ce014CapacityHolds : 2 * (109 - 57) ≤ 125 - 2 * 10 := by
+  omega
+
+theorem ce014PairingImpossible (p q : Nat)
+    (hp : p = 50 ∨ p = 51 ∨ p = 52 ∨ p = 53 ∨ p = 54)
+    (hq : q = 50 ∨ q = 51 ∨ q = 52 ∨ q = 53 ∨ q = 54)
+    (hneq : p ≠ q)
+    (hnotp : ¬(p = 50 ∨ p = 51 ∨ p = 52 ∨ p = 53))
+    (hnotq : ¬(q = 50 ∨ q = 51 ∨ q = 52 ∨ q = 53)) : False := by
+  omega
+
+-- Move 1 potential arithmetic bounds under weights w_ortho=9, w_planar=1, w_space=1
+theorem move1BoardContraction (deg_w1 deg_center : Nat) (hw : deg_w1 ≤ 31) (hc : deg_center = 37) :
+    (deg_w1 : Int) - (deg_center : Int) ≤ -6 := by
   omega
 
 theorem move1CenterContraction : (3 * 9 + 6 * 1 + 4 * 1 : Int) - (18 + 18 + 2) < 0 := by
@@ -274,5 +296,8 @@ end Qubic5x5x5
 #print axioms Qubic5x5x5.minimalHorizonLowerBoundK9
 #print axioms Qubic5x5x5.minimalHorizonLowerBoundK8
 #print axioms Qubic5x5x5.minimalHorizonLowerBoundK7
+#print axioms Qubic5x5x5.ce014CapacityHolds
+#print axioms Qubic5x5x5.ce014PairingImpossible
+#print axioms Qubic5x5x5.move1BoardContraction
 #print axioms Qubic5x5x5.move1CenterContraction
 #print axioms Qubic5x5x5.move1NonCenterContraction

@@ -90,13 +90,21 @@ Print Assumptions pair_blocks_white_line.
 Print Assumptions stone_blocks_white_line.
 Print Assumptions certified_partition_blocks_all_109_lines.
 
-(** 5. QubicAlgebraic.v (16 Theorems: Algebraic Conservation, Potential Contraction & Minimal Leaf) *)
+(** 5. QubicAlgebraic.v (24 Theorems: Algebraic Conservation, Counterexample 014, Board-Quantified Contraction & Minimal Leaf) *)
 Print Assumptions algebraic_deficit_conservation.
 Print Assumptions static_pairing_impossibility_algebraic.
 Print Assumptions minimal_horizon_lower_bound_k9.
 Print Assumptions minimal_horizon_lower_bound_k8.
 Print Assumptions minimal_horizon_lower_bound_k7.
+Print Assumptions ce014_unpaired_line_in_lines.
+Print Assumptions ce014_capacity_holds.
+Print Assumptions ce014_line_free_cells.
+Print Assumptions ce014_pairing_impossible.
 Print Assumptions initial_potential_num.
+Print Assumptions center_cell_weighted_degree.
+Print Assumptions all_noncenter_cells_weighted_bound_bool.
+Print Assumptions noncenter_cells_weighted_degree_bound.
+Print Assumptions move1_board_noncenter_contraction.
 Print Assumptions move1_center_strict_contraction.
 Print Assumptions move1_noncenter_strict_contraction.
 Print Assumptions safe10_census.

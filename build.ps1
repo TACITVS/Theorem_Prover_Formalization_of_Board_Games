@@ -26,6 +26,10 @@ foreach ($f in $files) {
     $t = [System.Diagnostics.Stopwatch]::StartNew()
     $filePath = Join-Path $scriptDir $f
     & $coqcBin -Q $scriptDir Qubic $filePath
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host " FAILED with exit code $LASTEXITCODE" -ForegroundColor Red
+        exit $LASTEXITCODE
+    }
     $t.Stop()
     Write-Host " OK ($([math]::Round($t.Elapsed.TotalSeconds, 2))s)" -ForegroundColor Green
 }
@@ -34,12 +38,18 @@ $sw.Stop()
 Write-Host "`n=== Auditing Assumptions in CheckAssumptions.v ===" -ForegroundColor Yellow
 $checkPath = Join-Path $scriptDir "CheckAssumptions.v"
 $auditOutput = & $coqcBin -Q $scriptDir Qubic $checkPath 2>&1
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "CheckAssumptions.v execution FAILED with exit code $LASTEXITCODE" -ForegroundColor Red
+    $auditOutput | ForEach-Object { Write-Host $_ }
+    exit $LASTEXITCODE
+}
 $closedCount = ($auditOutput | Select-String -Pattern "Closed under the global context").Count
 
-if ($closedCount -eq 84) {
-    Write-Host "`n[Audit Result] 84 / 84 Theorems strictly Closed under global context (0 Axioms, 0 Admits)!" -ForegroundColor Green
+if ($closedCount -eq 92) {
+    Write-Host "`n[Audit Result] 92 / 92 Theorems strictly Closed under global context (0 Axioms, 0 Admits)!" -ForegroundColor Green
 } else {
-    Write-Host "`n[Warning] Found $closedCount closed theorems (expected 84)." -ForegroundColor Yellow
+    Write-Host "`n[Audit Failure] Found $closedCount closed theorems (expected 92)." -ForegroundColor Red
+    exit 1
 }
 
 Write-Host "Total compilation time: $([math]::Round($sw.Elapsed.TotalSeconds, 2)) seconds." -ForegroundColor Cyan
