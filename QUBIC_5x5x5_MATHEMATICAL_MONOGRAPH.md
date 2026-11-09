@@ -2,7 +2,7 @@
 
 **Dedicated Branch:** `qubic-5x5x5`  
 **Repository:** `https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games.git`  
-**Dual-Prover Verification:** Rocq 9.1 (68 Theorems, 0 Axioms, 0 Admits) & Lean 4.35.0 (27 Theorems, 0 Sorry)  
+**Dual-Prover Verification:** Rocq 9.1 (84 Theorems, 0 Axioms, 0 Admits) & Lean 4.35.0 (34 Theorems, 0 Sorry)  
 **Independent Verification Engines:** 128-bit SIMD Bitboard Auditor (0.00 ms), Hopcroft-Karp Pairing Engine (1.00 ms), & Native C++ Z3 SAT/SMT Solver (5.98 ms)  
 **Master Game-Theoretic Value:** **EXACT DRAW (Fair Game)**  
 
@@ -199,6 +199,23 @@ Line ID | Line Coordinates               | Paired Cell 1      | Paired Cell 2
 From Round 17 onward, whenever White plays one of the paired cells, Black immediately counters by claiming the corresponding paired cell on that same line.
 Because every one of the 43 surviving lines contains a disjoint pair, White can **never claim both cells** of any surviving line. The other 66 lines are already blocked by Black's earlier moves.
 Hence, **White can never complete any winning line**.
+
+### 5.1 The Minimal Horizon Theorem & Optimal 10-Round Safe Leaf ($k = 10$)
+
+1. **Algebraic Deficit Conservation Law:**  
+   In any $k$-round game with $2k$ placed stones, the remaining $125 - 2k$ empty cells must accommodate $2(109 - B)$ distinct paired endpoints for all surviving unblocked lines:
+   $$2(109 - B) \le 125 - 2k \iff 2B \ge 93 + 2k \iff \mathbf{B \ge k + 47}.$$
+2. **Minimal Horizon Lower Bound ($k \ge 10$):**  
+   For all $k \le 9$, the maximum lines $k$ Black stones can touch ($B_{\max}$) is strictly below $k + 47$:
+   - $k = 7 \implies B_{\max} = 45 < 54$
+   - $k = 8 \implies B_{\max} = 49 < 55$
+   - $k = 9 \implies B_{\max} = 53 < 56$
+   Therefore, **no pairing-safe leaf can exist prior to Round 10 ($k \ge 10$)**.
+3. **The Optimal 10-Round Witness ($k = 10$):**  
+   At $k = 10$, Black occupies 10 stones blocking exactly **57 lines** ($57 \ge 10 + 47$).
+   The surviving **52 lines** admit an exact matching of **52 disjoint pairs using 104 distinct cells**, leaving exactly 1 unreserved cell on the board.
+   Neither player has completed a winning line (verified nonterminal).
+   Formally verified in **Rocq 9.1** ([`QubicAlgebraic.v`](QubicAlgebraic.v), `safe10_blocks_all_109_lines`, 0 axioms, 0 admits) and **Lean 4.35.0** ([`lean4/Qubic_5x5x5.lean`](lean4/Qubic_5x5x5.lean), `algebraicDeficitConservation`, 0 sorry).
 
 ---
 

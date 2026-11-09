@@ -8,6 +8,7 @@ Require Import Qubic.QubicBoard.
 Require Import Qubic.QubicSymmetry.
 Require Import Qubic.QubicThreat.
 Require Import Qubic.QubicTheorem.
+Require Import Qubic.QubicAlgebraic.
 
 (** ========================================================================= *)
 (** AUDITING ALL 67 THEOREMS IN QUBIC 5x5x5 FORMALIZATION                      *)
@@ -88,3 +89,21 @@ Print Assumptions line_partition_sum.
 Print Assumptions pair_blocks_white_line.
 Print Assumptions stone_blocks_white_line.
 Print Assumptions certified_partition_blocks_all_109_lines.
+
+(** 5. QubicAlgebraic.v (16 Theorems: Algebraic Conservation, Potential Contraction & Minimal Leaf) *)
+Print Assumptions algebraic_deficit_conservation.
+Print Assumptions static_pairing_impossibility_algebraic.
+Print Assumptions minimal_horizon_lower_bound_k9.
+Print Assumptions minimal_horizon_lower_bound_k8.
+Print Assumptions minimal_horizon_lower_bound_k7.
+Print Assumptions initial_potential_num.
+Print Assumptions move1_center_strict_contraction.
+Print Assumptions move1_noncenter_strict_contraction.
+Print Assumptions safe10_census.
+Print Assumptions safe10_cells_count.
+Print Assumptions safe10_cells_disjoint.
+Print Assumptions safe10_disjoint_from_black.
+Print Assumptions safe10_disjoint_from_white.
+Print Assumptions safe10_covers_all_109_lines.
+Print Assumptions safe10_pairs_valid.
+Print Assumptions safe10_blocks_all_109_lines.

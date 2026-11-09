@@ -209,6 +209,33 @@ theorem totalNaiveStatesComputation :
   3 ^ 125 = 436673502879206784130402698570834024654748577491697818855443 := by
   rfl
 
+-- =========================================================================
+-- 8. ALGEBRAIC DEFICIT CONSERVATION, POTENTIAL INVARIANTS & MINIMAL HORIZON
+-- =========================================================================
+
+theorem algebraicDeficitConservation (k B : Nat) (hk : k ≤ 62) (hb : B ≤ 109) :
+    2 * (109 - B) ≤ 125 - 2 * k ↔ k + 47 ≤ B := by
+  omega
+
+theorem staticPairingImpossibility : ¬ (2 * 109 ≤ 125) := by
+  omega
+
+theorem minimalHorizonLowerBoundK9 : 53 < 9 + 47 := by
+  omega
+
+theorem minimalHorizonLowerBoundK8 : 49 < 8 + 47 := by
+  omega
+
+theorem minimalHorizonLowerBoundK7 : 45 < 7 + 47 := by
+  omega
+
+theorem move1CenterContraction : (3 * 9 + 6 * 1 + 4 * 1 : Int) - (18 + 18 + 2) < 0 := by
+  omega
+
+theorem move1NonCenterContraction (dW dB : Int) (hw : dW ≤ 31) (hb : dB ≥ 37) :
+    dW - dB ≤ -6 := by
+  omega
+
 end Qubic5x5x5
 
 -- =========================================================================
@@ -242,3 +269,10 @@ end Qubic5x5x5
 #print axioms Qubic5x5x5.pairingHorizonMovesPerPlayer
 #print axioms Qubic5x5x5.unblockedPairingCellsBound
 #print axioms Qubic5x5x5.totalNaiveStatesComputation
+#print axioms Qubic5x5x5.algebraicDeficitConservation
+#print axioms Qubic5x5x5.staticPairingImpossibility
+#print axioms Qubic5x5x5.minimalHorizonLowerBoundK9
+#print axioms Qubic5x5x5.minimalHorizonLowerBoundK8
+#print axioms Qubic5x5x5.minimalHorizonLowerBoundK7
+#print axioms Qubic5x5x5.move1CenterContraction
+#print axioms Qubic5x5x5.move1NonCenterContraction

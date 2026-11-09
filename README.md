@@ -24,8 +24,8 @@ This repository contains the complete dual theorem-prover formalization and algo
 | Beck Danger Potential:        D(0) = 3.40625 --> D(27) = 0.9375 (< 1.000, Mathematically Guaranteed)|
 | State-Space Complexity:       3^125 ≈ 4.3667 × 10^59 positions                                    |
 | Word Saturation:              125 cells fit in a single 128-bit SIMD register (unsigned __int128) |
-| Rocq 9.1 Machine Proofs:      68 / 68 Theorems Closed under Global Context (0 Axioms, 0 Admits)   |
-| Lean 4.35.0 Machine Proofs:   27 / 27 Theorems Formally Verified with ZERO sorry                  |
+| Rocq 9.1 Machine Proofs:      84 / 84 Theorems Closed under Global Context (0 Axioms, 0 Admits)   |
+| Lean 4.35.0 Machine Proofs:   34 / 34 Theorems Formally Verified with ZERO sorry                  |
 | Independent C11 Engine:       Audit in 0.00 ms (100% Pass) | Hopcroft-Karp Pairing in 1.00 ms     |
 | Native C++ Z3 SAT/SMT Solver: tau(5³) = 28 Proven | White Non-Win UNSAT Certified in 5.98 ms      |
 +---------------------------------------------------------------------------------------------------+
@@ -254,15 +254,16 @@ At Round 27, `D(27) = 0.9375 < 1.000`, providing a dual, independent potential-f
 
 ## 6. Dual-Prover Verification Architecture
 
-### Rocq 9.1 Verification Suite (`build.ps1` in 70.44s)
+### Rocq 9.1 Verification Suite (`build.ps1` in 65.86s)
 - `QubicBoard.v` (27 Theorems): Hypergraph geometry, 109 lines, 5-uniformity, degree spectrum (1×13 + 16×7 + 12×5 + 72×4 + 24×3 = 545 incidences).
 - `QubicSymmetry.v` (20 Theorems): O_h coordinate involutions, orbit preservation, Dedicated Pair Theorem (`dedicated_pair_bound`), and center degree strict maximality (`center_degree_strictly_maximal`).
 - `QubicThreat.v` (11 Theorems): Linear Hypergraph Theorem (`two_lines_intersect_at_most_once`), double threat intersection bound, orbit line counts, and opening center dominance.
 - `QubicTheorem.v` (10 Theorems): Certified 43-pair schedule, 17 defense stones, pairwise disjointness, complete 109-line coverage reflection, constructive pairing and stone blocking soundness lemmas, and Certified Partition Blocking Theorem (`certified_partition_blocks_all_109_lines`).
-- `CheckAssumptions.v`: Programmatic audit confirming **68 / 68 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
+- `QubicAlgebraic.v` (16 Theorems): Algebraic Deficit Conservation Law (`algebraic_deficit_conservation`, $B \ge k + 47$), static pairing impossibility, minimal horizon lower bounds ($k \ge 10$), Move 1 universal potential contraction ($\Delta \Psi < 0$), and minimal 10-round safe leaf blocking theorem (`safe10_blocks_all_109_lines`).
+- `CheckAssumptions.v`: Programmatic audit confirming **84 / 84 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
 
-### Lean 4.35.0 Verification Suite (`build_lean.ps1` in 2.39s)
-- `lean4/Qubic_5x5x5.lean`: 27 Theorems formally verified with **ZERO sorry** under Presburger arithmetic (`omega`) and constructive inductive board semantics.
+### Lean 4.35.0 Verification Suite (`build_lean.ps1` in 2.38s)
+- `lean4/Qubic_5x5x5.lean`: 34 Theorems formally verified with **ZERO sorry** under Presburger arithmetic (`omega`) and constructive inductive board semantics.
 
 ### Independent C11 & Native C++ Verification Engines
 - `solver/audit_qubic5.c`: Structural 4-pass audit verifying geometry, degree spectrum, static pairing impossibility, and O_h symmetry invariance in **0.00 ms (100% pass)**.
