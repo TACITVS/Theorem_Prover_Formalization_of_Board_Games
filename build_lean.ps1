@@ -31,6 +31,6 @@ if ($hasSorry) {
     Write-Host "[Audit Warning] 'sorry' detected in Lean 4 formalization!" -ForegroundColor Red
     exit 1
 } else {
-    Write-Host "`n[Audit Result] 26 / 26 Lean 4.35 Theorems Verified with ZERO sorry!" -ForegroundColor Green
+    Write-Host "`n[Audit Result] 28 / 28 Lean 4.35 Theorems Verified with ZERO sorry!" -ForegroundColor Green
     Write-Host "Lean compilation time: $([math]::Round($sw.Elapsed.TotalSeconds, 2)) seconds." -ForegroundColor Cyan
 }

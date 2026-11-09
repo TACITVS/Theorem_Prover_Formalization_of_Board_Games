@@ -77,11 +77,14 @@ Print Assumptions opening_outer_edge_lines_count.
 Print Assumptions center_opening_advantage.
 Print Assumptions min_moves_for_four_threat.
 
-(** 4. QubicTheorem.v (7 Theorems) *)
-Print Assumptions qubic5_master_value_is_draw.
-Print Assumptions pairing_horizon_plies_bound.
-Print Assumptions pairing_horizon_moves_per_player.
-Print Assumptions unblocked_pairing_cells_bound.
-Print Assumptions total_naive_states_Z_computed.
-Print Assumptions total_naive_states_lower_bound.
-Print Assumptions cells_fit_uint128.
+(** 4. QubicTheorem.v (The Authentic Pairing Verification Theorems) *)
+Print Assumptions black_defense_stones_length.
+Print Assumptions pairing_schedule_length.
+Print Assumptions pairing_cells_length.
+Print Assumptions pairing_cells_nodup.
+Print Assumptions pairing_cells_disjoint_from_defense.
+Print Assumptions all_109_lines_covered.
+Print Assumptions line_partition_sum.
+Print Assumptions pair_blocks_white_line.
+Print Assumptions stone_blocks_white_line.
+Print Assumptions white_cannot_win_5x5x5.

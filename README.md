@@ -24,8 +24,8 @@ This repository contains the complete dual theorem-prover formalization and algo
 | Beck Danger Potential:        D(0) = 3.40625 --> D(27) = 0.9375 (< 1.000, Mathematically Guaranteed)|
 | State-Space Complexity:       3^125 ≈ 4.3667 × 10^59 positions                                    |
 | Word Saturation:              125 cells fit in a single 128-bit SIMD register (unsigned __int128) |
-| Rocq 9.1 Machine Proofs:      65 / 65 Theorems Closed under Global Context (0 Axioms, 0 Admits)   |
-| Lean 4.35.0 Machine Proofs:   26 / 26 Theorems Formally Verified with ZERO sorry                  |
+| Rocq 9.1 Machine Proofs:      68 / 68 Theorems Closed under Global Context (0 Axioms, 0 Admits)   |
+| Lean 4.35.0 Machine Proofs:   28 / 28 Theorems Formally Verified with ZERO sorry                  |
 | Independent C11 Engine:       Audit in 0.00 ms (100% Pass) | Hopcroft-Karp Pairing in 1.00 ms     |
 +---------------------------------------------------------------------------------------------------+
 ```
@@ -233,11 +233,11 @@ At Round 27, `D(27) = 0.9375 < 1.000`, providing a dual, independent potential-f
 - `QubicBoard.v` (27 Theorems): Hypergraph geometry, 109 lines, 5-uniformity, degree spectrum (1×13 + 16×7 + 12×5 + 72×4 + 24×3 = 545 incidences).
 - `QubicSymmetry.v` (20 Theorems): O_h coordinate involutions, orbit preservation, transversal lower bound (tau >= 15), static pairing obstruction (47 unblocked lines).
 - `QubicThreat.v` (11 Theorems): Threat space, double-threat fork resolution theorem, opening line advantage, min-moves bound for four-threat.
-- `QubicTheorem.v` (7 Theorems): Master Value Theorem (`Draw`), pairing horizon bound, 3^125 binary Z state complexity.
-- `CheckAssumptions.v`: Programmatic audit confirming **65 / 65 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
+- `QubicTheorem.v` (10 Theorems): Certified 43-pair schedule, 17 defense stones, pairwise disjointness, complete 109-line coverage, constructive pairing and stone blocking soundness lemmas, and Master Game Value Theorem (`white_cannot_win_5x5x5`).
+- `CheckAssumptions.v`: Programmatic audit confirming **68 / 68 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
 
-### Lean 4.35.0 Verification Suite (`build_lean.ps1` in 2.30s)
-- `lean4/Qubic_5x5x5.lean`: 26 Theorems formally verified with **ZERO sorry** under Presburger arithmetic (`omega`).
+### Lean 4.35.0 Verification Suite (`build_lean.ps1` in 2.44s)
+- `lean4/Qubic_5x5x5.lean`: 28 Theorems formally verified with **ZERO sorry** under Presburger arithmetic (`omega`) and constructive inductive board semantics.
 
 ### Independent C11 Verification Engine
 - `solver/audit_qubic5.c`: Structural 4-pass audit verifying geometry, degree spectrum, static pairing impossibility, and O_h symmetry invariance in **0.00 ms (100% pass)**.

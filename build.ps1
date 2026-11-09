@@ -31,10 +31,10 @@ Write-Host "`n=== Auditing Assumptions in CheckAssumptions.v ===" -ForegroundCol
 $auditOutput = & $coqcBin -Q . Qubic CheckAssumptions.v 2>&1
 $closedCount = ($auditOutput | Select-String -Pattern "Closed under the global context").Count
 
-if ($closedCount -eq 65) {
-    Write-Host "`n[Audit Result] 65 / 65 Theorems strictly Closed under global context (0 Axioms, 0 Admits)!" -ForegroundColor Green
+if ($closedCount -eq 68) {
+    Write-Host "`n[Audit Result] 68 / 68 Theorems strictly Closed under global context (0 Axioms, 0 Admits)!" -ForegroundColor Green
 } else {
-    Write-Host "`n[Warning] Found $closedCount closed theorems (expected 65)." -ForegroundColor Yellow
+    Write-Host "`n[Warning] Found $closedCount closed theorems (expected 68)." -ForegroundColor Yellow
 }
 
 Write-Host "Total compilation time: $([math]::Round($sw.Elapsed.TotalSeconds, 2)) seconds." -ForegroundColor Cyan
