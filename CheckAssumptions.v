@@ -10,10 +10,10 @@ Require Import Qubic.QubicThreat.
 Require Import Qubic.QubicTheorem.
 
 (** ========================================================================= *)
-(** AUDITING ALL 65 THEOREMS IN QUBIC 5x5x5 FORMALIZATION                      *)
+(** AUDITING ALL 67 THEOREMS IN QUBIC 5x5x5 FORMALIZATION                      *)
 (** ========================================================================= *)
 
-(** 1. QubicBoard.v (27 Theorems) *)
+(** 1. QubicBoard.v (27 Theorems: Concrete Hypergraph Geometry) *)
 Print Assumptions all_cells_length.
 Print Assumptions all_cells_NoDup.
 Print Assumptions make_cell_decomp.
@@ -42,7 +42,7 @@ Print Assumptions deg3_cells_count.
 Print Assumptions cell_degree_partition_sum.
 Print Assumptions total_incidence_identity.
 
-(** 2. QubicSymmetry.v (20 Theorems) *)
+(** 2. QubicSymmetry.v (20 Theorems: O_h Group Involutions & Dedicated Pair Theorem) *)
 Print Assumptions refl_coord_involutive.
 Print Assumptions refl_coord_bound.
 Print Assumptions refl_x_involutive.
@@ -61,23 +61,23 @@ Print Assumptions refl_x_preserves_deg3.
 Print Assumptions cell_classification_exhaustive.
 Print Assumptions max_cell_degree_thirteen.
 Print Assumptions non_center_max_degree_seven.
-Print Assumptions transversal_size_arithmetic_lower_bound.
-Print Assumptions static_pairing_impossibility_bound.
+Print Assumptions dedicated_pair_bound.
+Print Assumptions center_degree_strictly_maximal.
 
-(** 3. QubicThreat.v (11 Theorems) *)
+(** 3. QubicThreat.v (10 Theorems: Linear Hypergraph Intersection & Opening Dominance) *)
 Print Assumptions other_color_involutive.
-Print Assumptions double_threat_unblockable.
-Print Assumptions double_threat_fork_forces_win.
+Print Assumptions two_lines_intersect_at_most_once.
+Print Assumptions double_threat_intersection_bound.
 Print Assumptions opening_center_lines_count.
 Print Assumptions opening_corner_lines_count.
 Print Assumptions opening_subcenter_lines_count.
 Print Assumptions opening_edge_center_lines_count.
 Print Assumptions opening_inner_face_lines_count.
 Print Assumptions opening_outer_edge_lines_count.
-Print Assumptions center_opening_advantage.
-Print Assumptions min_moves_for_four_threat.
+Print Assumptions opening_center_strictly_dominates_corner.
+Print Assumptions opening_corner_strictly_dominates_edge.
 
-(** 4. QubicTheorem.v (The Authentic Pairing Verification Theorems) *)
+(** 4. QubicTheorem.v (10 Theorems: Certified Partition Blocking Defense) *)
 Print Assumptions black_defense_stones_length.
 Print Assumptions pairing_schedule_length.
 Print Assumptions pairing_cells_length.
@@ -87,4 +87,4 @@ Print Assumptions all_109_lines_covered.
 Print Assumptions line_partition_sum.
 Print Assumptions pair_blocks_white_line.
 Print Assumptions stone_blocks_white_line.
-Print Assumptions white_cannot_win_5x5x5.
+Print Assumptions certified_partition_blocks_all_109_lines.

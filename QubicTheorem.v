@@ -163,8 +163,17 @@ Definition pairing_strategy_active (b : Board) : Prop :=
      (b c1 = Some White -> b c2 = Some Black) /\
      (b c2 = Some White -> b c1 = Some Black)).
 
-(** MASTER THEOREM: Under the dynamic pairing defense, White cannot win ANY line on 5x5x5 *)
-Theorem white_cannot_win_5x5x5 : forall b : Board,
+(** CERTIFIED PARTITION BLOCKING THEOREM:
+    Formally verifies that ANY board configuration b that satisfies the
+    certified 43-pair + 17-defense-stone partition invariant completely
+    prevents White from completing ANY of the 109 winning lines.
+    
+    Mathematical Status:
+    This establishes that the 109 lines admit a certified blocking decomposition
+    into 17 transversal points and 43 disjoint 2-element subsets.
+    (Note: Full game-theoretic resolution of 5x5x5 against all possible opening
+    branches remains an active open research problem in combinatorial games). *)
+Theorem certified_partition_blocks_all_109_lines : forall b : Board,
   pairing_strategy_active b ->
   ~ has_won b White.
 Proof.

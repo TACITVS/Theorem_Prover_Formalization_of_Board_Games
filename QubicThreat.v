@@ -1,4 +1,4 @@
-(** QubicThreat.v: Threat Spaces, Double-Threat Forks, and VCF Combinatorial Guarantees in Rocq 9.1 *)
+(** QubicThreat.v: Threat Spaces, Linear Hypergraph Intersection, and Opening Dominance in Rocq 9.1 *)
 
 From Stdlib Require Import List.
 From Stdlib Require Import Arith.
@@ -40,7 +40,38 @@ Definition has_won (b : Board) (c : Color) : Prop :=
   exists l : list cell, In l all_lines /\ is_line_win b c l.
 
 (** ========================================================================= *)
-(** 2. THREAT DEFINITIONS (1-THREATS AND DOUBLE-THREAT FORKS)                   *)
+(** 2. LINE INTERSECTION & THE LINEAR HYPERGRAPH THEOREM                       *)
+(** ========================================================================= *)
+
+Definition line_intersection (l1 l2 : list cell) : list cell :=
+  filter (fun c => existsb (Nat.eqb c) l2) l1.
+
+Definition lines_equal (l1 l2 : list cell) : bool :=
+  forallb (fun c => existsb (Nat.eqb c) l2) l1 &&
+  forallb (fun c => existsb (Nat.eqb c) l1) l2.
+
+(** THEOREM: Two distinct straight lines in 5x5x5 share at most 1 cell.
+    This linear hypergraph property guarantees that threats on distinct lines
+    intersect in at most one cell, preventing multi-cell overlaps. *)
+Theorem two_lines_intersect_at_most_once : forall l1 l2 : list cell,
+  In l1 all_lines ->
+  In l2 all_lines ->
+  lines_equal l1 l2 = false ->
+  length (line_intersection l1 l2) <= 1.
+Proof.
+  intros l1 l2 Hl1 Hl2 Hneq.
+  assert (Hcheck : forallb (fun l1 => forallb (fun l2 =>
+    if lines_equal l1 l2 then true else Nat.leb (length (line_intersection l1 l2)) 1) all_lines) all_lines = true) by reflexivity.
+  rewrite forallb_forall in Hcheck.
+  pose proof (Hcheck l1 Hl1) as H1.
+  rewrite forallb_forall in H1.
+  pose proof (H1 l2 Hl2) as H2.
+  rewrite Hneq in H2.
+  apply Nat.leb_le, H2.
+Qed.
+
+(** ========================================================================= *)
+(** 3. THREAT DEFINITION & FORK GEOMETRY                                       *)
 (** ========================================================================= *)
 
 Definition is_threat (b : Board) (c : Color) (l : list cell) (t : cell) : Prop :=
@@ -49,52 +80,19 @@ Definition is_threat (b : Board) (c : Color) (l : list cell) (t : cell) : Prop :
   b t = None /\
   (forall x : cell, In x l -> x <> t -> b x = Some c).
 
-Definition is_double_threat (b : Board) (c : Color) : Prop :=
-  exists (l1 l2 : list cell) (t1 t2 : cell),
-    l1 <> l2 /\
-    t1 <> t2 /\
-    is_threat b c l1 t1 /\
-    is_threat b c l2 t2.
-
-(** ========================================================================= *)
-(** 3. THE DOUBLE-THREAT FORK RESOLUTION THEOREM                               *)
-(** ========================================================================= *)
-
-Theorem double_threat_unblockable :
-  forall (t1 t2 m : cell),
-    t1 <> t2 ->
-    m <> t1 \/ m <> t2.
+(** Any two distinct lines forming threats intersect in at most one cell *)
+Theorem double_threat_intersection_bound : forall (b : Board) (c : Color) (l1 l2 : list cell) (t1 t2 : cell),
+  is_threat b c l1 t1 ->
+  is_threat b c l2 t2 ->
+  lines_equal l1 l2 = false ->
+  length (line_intersection l1 l2) <= 1.
 Proof.
-  intros t1 t2 m Hdiff.
-  destruct (Nat.eq_dec m t1) as [Heq1 | Hneq1].
-  - right. subst m. intros Heq2. apply Hdiff, Heq2.
-  - left. exact Hneq1.
-Qed.
-
-Theorem double_threat_fork_forces_win :
-  forall (b : Board) (l1 l2 : list cell) (t1 t2 : cell) (m : cell),
-    is_threat b White l1 t1 ->
-    is_threat b White l2 t2 ->
-    t1 <> t2 ->
-    (m <> t1 /\ (forall b', b' t1 = Some White -> (forall x, In x l1 -> x <> t1 -> b' x = Some White) -> is_line_win b' White l1)) \/
-    (m <> t2 /\ (forall b', b' t2 = Some White -> (forall x, In x l2 -> x <> t2 -> b' x = Some White) -> is_line_win b' White l2)).
-Proof.
-  intros b l1 l2 t1 t2 m Hth1 Hth2 Hdiff.
-  pose proof (double_threat_unblockable t1 t2 m Hdiff) as [Hn1 | Hn2].
-  - left. split; [exact Hn1 |].
-    intros b' Hbt1 Hother x Hx.
-    destruct (Nat.eq_dec x t1) as [Heq | Hneq].
-    + subst x. exact Hbt1.
-    + apply Hother; assumption.
-  - right. split; [exact Hn2 |].
-    intros b' Hbt2 Hother x Hx.
-    destruct (Nat.eq_dec x t2) as [Heq | Hneq].
-    + subst x. exact Hbt2.
-    + apply Hother; assumption.
+  intros b c l1 l2 t1 t2 [Hl1 _] [Hl2 _] Hneq.
+  apply (two_lines_intersect_at_most_once l1 l2 Hl1 Hl2 Hneq).
 Qed.
 
 (** ========================================================================= *)
-(** 4. OPENING THREAT DOMINANCE IN 5x5x5                                       *)
+(** 4. OPENING THREAT DOMINANCE BY GRAPH DEGREE                                *)
 (** ========================================================================= *)
 
 Theorem opening_center_lines_count :
@@ -121,16 +119,16 @@ Theorem opening_outer_edge_lines_count :
   length (filter (fun l => existsb (Nat.eqb 7) l) all_lines) = 3.
 Proof. reflexivity. Qed.
 
-(** Center opening activates 13 winning lines, giving White 6 more lines
-    than the strongest corner (7) and 10 more than outer edges (3) *)
-Theorem center_opening_advantage :
-  13 - 7 = 6 /\ 13 - 3 = 10.
-Proof. lia. Qed.
-
-(** In 5x5x5, length of every line is 5; hence after 1 move White has at most 1 stone per line,
-    making immediate 4-threats impossible *)
-Theorem min_moves_for_four_threat : forall k : nat,
-  k < 4 -> 5 - k > 1.
+(** Center opening activates strictly more winning lines (13) than corner opening (7) *)
+Theorem opening_center_strictly_dominates_corner :
+  cell_degree 62 > cell_degree 0.
 Proof.
-  intros k Hk. lia.
+  unfold cell_degree. simpl. lia.
+Qed.
+
+(** Corner opening activates strictly more winning lines (7) than flank edge opening (3) *)
+Theorem opening_corner_strictly_dominates_edge :
+  cell_degree 0 > cell_degree 7.
+Proof.
+  unfold cell_degree. simpl. lia.
 Qed.

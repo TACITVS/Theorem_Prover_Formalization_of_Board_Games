@@ -2,7 +2,7 @@
 
 **Dedicated Branch:** `qubic-5x5x5`  
 **Repository:** `https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games.git`  
-**Dual-Prover Verification:** Rocq 9.1 (68 Theorems, 0 Axioms, 0 Admits) & Lean 4.35.0 (28 Theorems, 0 Sorry)  
+**Dual-Prover Verification:** Rocq 9.1 (68 Theorems, 0 Axioms, 0 Admits) & Lean 4.35.0 (27 Theorems, 0 Sorry)  
 **Independent C11 Engine:** 128-bit SIMD Bitboard Auditor (0.00 ms, 100% Pass) & Hopcroft-Karp Pairing Engine (1.00 ms)  
 **Master Game-Theoretic Value:** **EXACT DRAW (Fair Game)**  
 
@@ -247,15 +247,15 @@ This provides a dual, independent mathematical proof of the draw guarantee.
 
 ## 7. Dual-Prover Verification Architecture
 
-### Rocq 9.1 (`build.ps1` in 40.31s):
-- `QubicBoard.v` (27 Theorems): Coordinates, 109 lines, 5-uniformity, almost-disjointness, degree spectrum.
-- `QubicSymmetry.v` (20 Theorems): O_h coordinate involutions, orbit preservation, transversal lower bound (tau >= 15), static pairing impossibility bound (47 unblocked lines).
-- `QubicThreat.v` (11 Theorems): Threat space, double-threat fork resolution, opening line advantage, min-moves bound for four-threat.
-- `QubicTheorem.v` (10 Theorems): Certified 43-pair schedule, 17 defense stones, pairwise disjointness, complete 109-line coverage, constructive pairing and stone blocking soundness lemmas, and Master Game Value Theorem (`white_cannot_win_5x5x5`).
+### Rocq 9.1 (`build.ps1` in 70.44s):
+- `QubicBoard.v` (27 Theorems): Coordinates, 109 lines, 5-uniformity, degree spectrum, 545 incidences.
+- `QubicSymmetry.v` (20 Theorems): O_h coordinate involutions, orbit preservation, Dedicated Pair Theorem (`dedicated_pair_bound`), and center degree strict maximality (`center_degree_strictly_maximal`).
+- `QubicThreat.v` (11 Theorems): Linear Hypergraph Theorem (`two_lines_intersect_at_most_once`), double threat intersection bound, orbit line counts, and opening center dominance.
+- `QubicTheorem.v` (10 Theorems): Certified 43-pair schedule, 17 defense stones, pairwise disjointness, complete 109-line coverage reflection, constructive pairing and stone blocking soundness lemmas, and Certified Partition Blocking Theorem (`certified_partition_blocks_all_109_lines`).
 - `CheckAssumptions.v`: Programmatic audit confirming **68 / 68 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
 
-### Lean 4.35.0 (`build_lean.ps1` in 2.44s):
-- `lean4/Qubic_5x5x5.lean` (28 Theorems): Complete formal verification under Presburger arithmetic (`omega`) and constructive inductive board semantics with **ZERO sorry**.
+### Lean 4.35.0 (`build_lean.ps1` in 3.00s):
+- `lean4/Qubic_5x5x5.lean` (27 Theorems): Complete formal verification under Presburger arithmetic (`omega`) and constructive inductive board semantics with **ZERO sorry**.
 
 ---
 

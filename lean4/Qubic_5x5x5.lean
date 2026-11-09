@@ -1,9 +1,8 @@
 /-
   Qubic_5x5x5.lean: Formal Verification of 5x5x5 3D Tic-Tac-Toe in Lean 4.35.0
   Proving Line Enumeration, Degree Spectrum, O_h Symmetry Involutions,
-  Transversal Lower Bounds, Static Pairing Impossibility,
-  The Certified 43-Pair Schedule, 17 Defense Stones, Constructive Pairing Soundness,
-  and Dynamic Pairing Horizon (Round 17 / 34 Plies).
+  Static Pairing Deficit (47 lines), The Certified 43-Pair Schedule,
+  17 Defense Stones, Constructive Soundness Lemmas, and Partition Blocking.
 -/
 
 namespace Qubic5x5x5
@@ -66,15 +65,11 @@ theorem reflCoordBound (v : Nat) (hv : v < 5) : reflCoord v < 5 := by
   unfold reflCoord; omega
 
 -- =========================================================================
--- 4. TRANSVERSAL THEORY AND STATIC PAIRING OBSTRUCTION
+-- 4. STATIC PAIRING DEFICIT
 -- =========================================================================
 
-theorem transversalSizeLowerBound (k : Nat) (h : 13 + 7 * (k - 1) ≥ 109) : k ≥ 15 := by
-  omega
-
-theorem staticPairingImpossibility (n_pairs : Nat) (h : n_pairs = 62) :
-  109 - n_pairs = 47 ∧ 47 > 0 := by
-  omega
+theorem staticPairingDeficit : totalLines - (boardCells / 2) = 47 := by
+  unfold totalLines boardCells; rfl
 
 -- =========================================================================
 -- 5. THE CERTIFIED 43-PAIR SCHEDULE & 17 DEFENSE STONES
@@ -141,7 +136,7 @@ def pairingCells : List Nat :=
 theorem pairingCellsLength : pairingCells.length = 86 := by rfl
 
 -- =========================================================================
--- 6. CONSTRUCTIVE SOUNDNESS LEMMAS & PAIRING DEFENSE
+-- 6. CONSTRUCTIVE SOUNDNESS LEMMAS & CERTIFIED PARTITION BLOCKING
 -- =========================================================================
 
 inductive Color where
@@ -179,7 +174,7 @@ def pairingStrategyActive (b : Board) : Prop :=
      (b u = some Color.White → b v = some Color.Black) ∧
      (b v = some Color.White → b u = some Color.Black))
 
-theorem whiteCannotWinPairedLine (b : Board) (line : List Nat) (lineId u v : Nat)
+theorem certifiedPartitionBlocksPairedLine (b : Board) (line : List Nat) (lineId u v : Nat)
     (hstrat : pairingStrategyActive b)
     (hin : (lineId, u, v) ∈ pairingSchedule)
     (hu : u ∈ line) (hv : v ∈ line) :
@@ -187,7 +182,7 @@ theorem whiteCannotWinPairedLine (b : Board) (line : List Nat) (lineId u v : Nat
   have hresp := (hstrat.2 lineId u v hin).1
   exact pairBlocksWhiteLine b line u v hu hv hresp
 
-theorem whiteCannotWinBlockedLine (b : Board) (line : List Nat) (c : Nat)
+theorem certifiedPartitionBlocksStoneLine (b : Board) (line : List Nat) (c : Nat)
     (hstrat : pairingStrategyActive b)
     (hin : c ∈ blackDefenseStones)
     (hc : c ∈ line) :
@@ -234,16 +229,15 @@ end Qubic5x5x5
 #print axioms Qubic5x5x5.totalIncidenceIdentity
 #print axioms Qubic5x5x5.reflCoordInvolutive
 #print axioms Qubic5x5x5.reflCoordBound
-#print axioms Qubic5x5x5.transversalSizeLowerBound
-#print axioms Qubic5x5x5.staticPairingImpossibility
+#print axioms Qubic5x5x5.staticPairingDeficit
 #print axioms Qubic5x5x5.blackDefenseStonesLength
 #print axioms Qubic5x5x5.pairingScheduleLength
 #print axioms Qubic5x5x5.linePartitionSum
 #print axioms Qubic5x5x5.pairingCellsLength
 #print axioms Qubic5x5x5.pairBlocksWhiteLine
 #print axioms Qubic5x5x5.stoneBlocksWhiteLine
-#print axioms Qubic5x5x5.whiteCannotWinPairedLine
-#print axioms Qubic5x5x5.whiteCannotWinBlockedLine
+#print axioms Qubic5x5x5.certifiedPartitionBlocksPairedLine
+#print axioms Qubic5x5x5.certifiedPartitionBlocksStoneLine
 #print axioms Qubic5x5x5.pairingHorizonPliesBound
 #print axioms Qubic5x5x5.pairingHorizonMovesPerPlayer
 #print axioms Qubic5x5x5.unblockedPairingCellsBound

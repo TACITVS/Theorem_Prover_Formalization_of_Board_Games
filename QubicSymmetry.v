@@ -243,24 +243,43 @@ Proof.
 Qed.
 
 (** ========================================================================= *)
-(** 4. TRANSVERSAL THEORY AND STATIC PAIRING OBSTRUCTION                       *)
+(** 4. DEDICATED PAIR THEOREM & DEGREE MAXIMALITY                             *)
 (** ========================================================================= *)
 
-(** Transversal Lower Bound: Any set of cells covering all 109 lines must have size >= 15 *)
-Theorem transversal_size_arithmetic_lower_bound : forall k : nat,
-  13 + 7 * (k - 1) >= 109 -> k >= 15.
+(** Dedicated Pair Theorem:
+    Any two distinct cells belong to at most ONE winning line in 5x5x5.
+    This is the core combinatorial lemma proving that a disjoint pair of cells
+    can cover at most one winning line. *)
+Definition common_lines (u v : cell) : list (list cell) :=
+  filter (fun l => existsb (Nat.eqb u) l && existsb (Nat.eqb v) l) all_lines.
+
+Theorem dedicated_pair_bound : forall u v : cell,
+  u < 125 -> v < 125 -> u <> v ->
+  length (common_lines u v) <= 1.
 Proof.
-  intros k Hk. lia.
+  intros u v Hu Hv Hneq.
+  assert (Hcheck : forallb (fun u => forallb (fun v =>
+    if u =? v then true else Nat.leb (length (common_lines u v)) 1) all_cells) all_cells = true) by (vm_compute; reflexivity).
+  rewrite forallb_forall in Hcheck.
+  assert (Hu_in : In u all_cells) by (apply in_seq; lia).
+  assert (Hv_in : In v all_cells) by (apply in_seq; lia).
+  pose proof (Hcheck u Hu_in) as H1.
+  rewrite forallb_forall in H1.
+  pose proof (H1 v Hv_in) as H2.
+  destruct (u =? v) eqn:Heq.
+  - apply Nat.eqb_eq in Heq. contradiction.
+  - apply Nat.leb_le, H2.
 Qed.
 
-(** Static Pairing Strategy Impossibility:
-    125 cells can form at most 62 disjoint pairs.
-    Since any pair lies on at most 1 line (linear hypergraph),
-    at most 62 lines can be covered simultaneously,
-    leaving at least 109 - 62 = 47 lines completely unblocked! *)
-Theorem static_pairing_impossibility_bound : forall n_pairs : nat,
-  n_pairs = 62 ->
-  109 - n_pairs = 47 /\ 47 > 0.
+(** Center Degree Strict Maximality:
+    The central cell 62 has strictly more incident winning lines (13) than any other cell (at most 7). *)
+Theorem center_degree_strictly_maximal : forall c : cell,
+  c < 125 -> c <> center_cell ->
+  cell_degree c < cell_degree center_cell.
 Proof.
-  intros n_pairs Hn. lia.
+  intros c Hc Hnot_center.
+  pose proof (non_center_max_degree_seven c Hc Hnot_center) as Hle.
+  pose proof center_cell_degree as Hcenter.
+  lia.
 Qed.
+
