@@ -54,18 +54,19 @@ This repository contains the complete dual theorem-prover formalization and algo
 
 ### Comprehensive Board Topography & Degree Spectrum Table
 
-| Cell Orbit Type | Count in Orbit | Degree (Lines Incident) | Incidence Contribution | Sample Coordinates (x, y, z) | Representative Indices | Geometric Description |
-| :--- | :---: | :---: | :---: | :--- | :---: | :--- |
-| **Cube-Center** | **1** | **13** | **13** | `(2, 2, 2)` | `62` | Unique central cell; intersection of 3 orthogonal axes, 6 planar diagonals, and all 4 space diagonals |
-| **Corners** | **8** | **7** | **56** | `(0, 0, 0), (4, 4, 4)` | `0, 4, 20, 24, 100, 104, 120, 124` | 8 outer vertices of the cube; each incident to 3 orthogonal, 3 planar, and 1 space diagonal |
-| **Sub-Centers** | **8** | **7** | **56** | `(1, 1, 1), (3, 3, 3)` | `31, 33, 41, 43, 81, 83, 91, 93` | Inner diagonal cube corners; each incident to 3 orthogonal, 3 planar, and 1 space diagonal |
-| **Face-Centers** | **6** | **5** | **30** | `(2, 2, 0), (2, 2, 4)` | `12, 52, 60, 64, 72, 112` | Geometric center of each 5×5 outer face; incident to 3 orthogonal and 2 planar diagonals |
-| **Inner Axes** | **6** | **5** | **30** | `(2, 2, 1), (2, 2, 3)` | `37, 57, 61, 63, 67, 87` | Interior orthogonal axis points flanking the central cell; incident to 3 orthogonal and 2 planar diagonals |
-| **Face Interior** | **24** | **4** | **96** | `(1, 2, 0), (2, 1, 0)` | `5, 6, 7, 11, 13, 17...` | Interior cells lying on 5×5 outer face grids; incident to 3 orthogonal and 1 planar diagonal |
-| **Inner Planar** | **24** | **4** | **96** | `(1, 1, 2), (3, 3, 2)` | `32, 34, 42, 44, 82, 84...` | Interior diagonal slice points; incident to 3 orthogonal and 1 planar diagonal |
-| **Edge Inners** | **24** | **4** | **96** | `(0, 1, 0), (0, 3, 0)` | `1, 2, 3, 9, 15, 19...` | Interior edge points on outer cube boundaries; incident to 3 orthogonal and 1 planar diagonal |
-| **Outer Flank Edges**| **24** | **3** | **72** | `(0, 1, 1), (4, 3, 3)` | `7, 11, 13, 17, 27, 29...` | Flank points on outer edges; incident strictly to 3 orthogonal axes (0 diagonals) |
-| **TOTALS** | **125 Cells** | **—** | **545 Incidences** | — | — | **Exactly 109 Winning Lines × 5 Cells/Line = 545 Incidences** |
+| Orbit # | Multiset | Cell Orbit Type | Count in Orbit | Degree (Lines) | Incidence Contribution | Sample Coordinates (x, y, z) | Representative Indices | Geometric Description |
+| :---: | :---: | :--- | :---: | :---: | :---: | :--- | :---: | :--- |
+| **1** | `(0, 0, 0)` | **Cube-Center** | **1** | **13** | **13** | `(2, 2, 2)` | `62` | Unique central cell; intersection of 3 orthogonal axes, 6 planar diagonals, and all 4 space diagonals |
+| **2** | `(2, 2, 2)` | **Corners** | **8** | **7** | **56** | `(0, 0, 0), (4, 4, 4)` | `0, 4, 20, 24, 100, 104, 120, 124` | 8 outer vertices of the cube; each incident to 3 orthogonal, 3 planar, and 1 space diagonal |
+| **3** | `(1, 1, 1)` | **Sub-Centers** | **8** | **7** | **56** | `(1, 1, 1), (3, 3, 3)` | `31, 33, 41, 43, 81, 83, 91, 93` | Inner diagonal cube corners; each incident to 3 orthogonal, 3 planar, and 1 space diagonal |
+| **4** | `(0, 0, 2)` | **Face-Centers** | **6** | **5** | **30** | `(0, 2, 2), (4, 2, 2)` | `12, 52, 60, 64, 72, 112` | Geometric center of each 5×5 outer face; incident to 3 orthogonal and 2 planar diagonals |
+| **5** | `(0, 0, 1)` | **Inner Axes** | **6** | **5** | **30** | `(1, 2, 2), (3, 2, 2)` | `37, 57, 61, 63, 67, 87` | Interior orthogonal axis points flanking the central cell; incident to 3 orthogonal and 2 planar diagonals |
+| **6** | `(0, 1, 1)` | **Inner Planar** | **12** | **4** | **48** | `(1, 1, 2), (3, 3, 2)` | `32, 34, 42, 44, 82, 84...` | Interior diagonal slice cross points; incident to 3 orthogonal and 1 planar diagonal |
+| **7** | `(0, 2, 2)` | **Edge Centers** | **12** | **4** | **48** | `(0, 0, 2), (4, 4, 2)` | `2, 10, 22, 50, 70...` | Midpoints of the 12 outer edges; incident to 3 orthogonal and 1 planar diagonal |
+| **8** | `(1, 1, 2)` | **Outer Flanks** | **24** | **4** | **96** | `(0, 1, 1), (4, 3, 3)` | `6, 8, 16, 18, 26, 28...` | Outer edge flank points; incident to 3 orthogonal and 1 planar diagonal |
+| **9** | `(1, 2, 2)` | **Edge Inners** | **24** | **4** | **96** | `(0, 0, 1), (0, 0, 3)` | `1, 3, 5, 9, 15, 19...` | Interior edge points on outer cube boundaries; incident to 3 orthogonal and 1 planar diagonal |
+| **10** | `(0, 1, 2)` | **Face Interior** | **24** | **3** | **72** | `(0, 1, 2), (0, 3, 2)` | `7, 11, 13, 17, 27, 29...` | Interior cells of 5×5 outer face grids; incident strictly to 3 orthogonal axes (0 diagonals) |
+| **TOTALS** | — | **10 Orbits** | **125 Cells** | **—** | **545 Incidences** | — | — | **Exactly 109 Winning Lines × 5 Cells/Line = 545 Incidences** |
 
 ---
 

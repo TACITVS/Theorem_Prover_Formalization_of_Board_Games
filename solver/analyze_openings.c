@@ -124,28 +124,25 @@ int main() {
         int orbit_size;
         int degree;
     } orbits[] = {
-        {"Cube-Center   (2,2,2)", cell_index(2,2,2), 1,  13},
-        {"Corner        (0,0,0)", cell_index(0,0,0), 8,  7},
-        {"Sub-Center    (1,1,1)", cell_index(1,1,1), 8,  7},
-        {"Face-Center   (2,2,0)", cell_index(2,2,0), 6,  5},
-        {"Inner-Axis    (2,2,1)", cell_index(2,2,1), 6,  5},
-        {"Face-Interior (1,2,0)", cell_index(1,2,0), 24, 4},
-        {"Inner-Planar  (1,1,2)", cell_index(1,1,2), 24, 4},
-        {"Edge-Inner    (0,1,0)", cell_index(0,1,0), 24, 4},
-        {"Outer-Flank   (0,1,1)", cell_index(0,1,1), 24, 3}
+        {"Cube-Center    (2,2,2)", cell_index(2,2,2), 1,  13},
+        {"Corner         (0,0,0)", cell_index(0,0,0), 8,  7},
+        {"Sub-Center     (1,1,1)", cell_index(1,1,1), 8,  7},
+        {"Face-Center    (0,2,2)", cell_index(0,2,2), 6,  5},
+        {"Inner-Axis     (1,2,2)", cell_index(1,2,2), 6,  5},
+        {"Edge-Center    (0,0,2)", cell_index(0,0,2), 12, 4},
+        {"Inner-Planar   (1,1,2)", cell_index(1,1,2), 12, 4},
+        {"Face-Interior  (0,1,2)", cell_index(0,1,2), 24, 3},
+        {"Outer-Flank    (0,1,1)", cell_index(0,1,1), 24, 4},
+        {"Outer-Edge-In  (0,0,1)", cell_index(0,0,1), 24, 4}
     };
 
     printf("%-24s | Size | Deg | Best Black Response | Shared Lines | Lines Blocked\n", "White Move 1 Orbit");
     printf("-------------------------+------+-----+---------------------+--------------+--------------\n");
 
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 10; i++) {
         int w1 = orbits[i].rep_cell;
         int w_deg = get_degree(w1);
 
-        // Find best Black response b1:
-        // Criteria:
-        // 1. If Center is available, taking Center blocks 13 lines!
-        // 2. If White took Center, what response blocks the most lines or directly blocks White's strongest lines?
         int best_b = -1;
         int max_lines_blocked_by_b = -1;
         int max_shared = -1;
@@ -154,8 +151,6 @@ int main() {
             if (b == w1) continue;
             int b_deg = get_degree(b);
             int shared = count_shared_lines(w1, b);
-            // Total lines blocked by b that are not already blocked by w1:
-            // Every line containing b is blocked for White!
             if (b_deg > max_lines_blocked_by_b || (b_deg == max_lines_blocked_by_b && shared > max_shared)) {
                 max_lines_blocked_by_b = b_deg;
                 max_shared = shared;
@@ -169,6 +164,9 @@ int main() {
         char b_desc[32];
         if (best_b == cell_index(2,2,2)) {
             snprintf(b_desc, sizeof(b_desc), "Center (cell %d)", best_b);
+        } else if (best_b == 0 || best_b == 4 || best_b == 20 || best_b == 24 ||
+                   best_b == 100 || best_b == 104 || best_b == 120 || best_b == 124) {
+            snprintf(b_desc, sizeof(b_desc), "Corner (cell %d)", best_b);
         } else if (get_degree(best_b) == 7) {
             snprintf(b_desc, sizeof(b_desc), "Sub-Center (cell %d)", best_b);
         } else {
