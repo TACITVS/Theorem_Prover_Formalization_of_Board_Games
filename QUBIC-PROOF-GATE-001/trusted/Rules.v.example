@@ -1,0 +1,18 @@
+(* NOT A SPECIFICATION; REQUIRE AN INDEPENDENTLY AUDITED Rules.v.
+   Do not copy this example to Rules.v unchanged; this file is deliberately
+   comment-only, because a "placeholder" game model can make proofs vacuous.
+
+   REQUIRED EXACT INTERFACE, with actual definitions and proofs (NO Axioms):
+   - Inductive result constructors WhiteWins, BlackWins, Draw
+   - WhiteStrategy : Type, BlackStrategy : Type (inhabited legal policies)
+   - play : WhiteStrategy -> BlackStrategy -> GameTrace
+   - outcome : GameTrace -> Result
+
+   Specify: 125 distinguishable positions, 109 correct 5-point lines,
+   empty-board initial position, White first, alternating legal placements,
+   immediate termination on first 5-in-a-row, board exhaustion and draw.
+
+   STRONGER: prove non-vacuity (both strategy types inhabited), board and line
+   correctness, determinism of play, terminal stop, and that all legal moves
+   are represented. Human/auditor must validate semantics before hash-pinning.
+*)

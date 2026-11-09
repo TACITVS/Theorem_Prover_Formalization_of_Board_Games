@@ -1,0 +1,15 @@
+(* AGENT-OWNED PROOF FILE; rename to Solution.v after trusted Rules.v is fixed.
+   Only the proof engineer may edit agent/*.v. No Axiom/Admitted/unsound flags. *)
+From QubicTrusted Require Import Goal.
+
+(* Both goals deliberately remain unproved until a real global strategy exists.
+Theorem black_nonloss : QubicTrusted.Goal.BlackNonLossFromEmpty.
+Proof.
+  (* real strategy proof, e.g. verified game-DAG checker *)
+Qed.
+
+Theorem exact_draw : QubicTrusted.Goal.ExactDraw.
+Proof.
+  (* Black nonloss and White nonloss, as defined by the frozen model *)
+Qed.
+*)

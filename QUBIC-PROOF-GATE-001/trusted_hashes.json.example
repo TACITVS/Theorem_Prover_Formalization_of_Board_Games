@@ -1,0 +1,5 @@
+{
+  "trusted/Rules.v": "REPLACE_WITH_REVIEWED_SHA256",
+  "trusted/Goal.v": "REPLACE_WITH_REVIEWED_SHA256",
+  "trusted/Acceptance.v": "REPLACE_WITH_REVIEWED_SHA256"
+}
