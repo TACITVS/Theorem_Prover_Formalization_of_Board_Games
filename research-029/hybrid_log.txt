@@ -1,0 +1,79 @@
+﻿hybrid capacity search: 13 positions x 25s (about 5.4 min), 30 potential slots
+[1/13] empty
+      26531 moves, 5305/s, current 34, best 34 (whole-line shortfall 53), T 0.20
+      52288 moves, 5228/s, current 27, best 27 (whole-line shortfall 53), T 0.20
+      80972 moves, 5397/s, current 31, best 27 (whole-line shortfall 53), T 0.20
+      109535 moves, 5476/s, current 28, best 26 (whole-line shortfall 53), T 0.20
+    -> shortfall 23 (whole-line 53), penalty 0, code lines 72, potential lines 37 in 23 regions, exact None  [25s]
+[2/13] game0@4
+      41555 moves, 8310/s, current 21, best 19 (whole-line shortfall 31), T 0.20
+      83310 moves, 8330/s, current 20, best 19 (whole-line shortfall 31), T 0.20
+      126524 moves, 8434/s, current 20, best 19 (whole-line shortfall 31), T 0.20
+      170059 moves, 8502/s, current 17, best 17 (whole-line shortfall 31), T 0.20
+    -> shortfall 17 (whole-line 31), penalty 0, code lines 47, potential lines 34 in 23 regions, exact None  [50s]
+[3/13] game0@6
+      48867 moves, 9772/s, current 17, best 16 (whole-line shortfall 21), T 0.20
+      97496 moves, 9748/s, current 16, best 15 (whole-line shortfall 21), T 0.20
+      146059 moves, 9736/s, current 15, best 14 (whole-line shortfall 21), T 0.20
+      193644 moves, 9681/s, current 14, best 14 (whole-line shortfall 21), T 0.20
+    -> shortfall 11 (whole-line 21), penalty 0, code lines 40, potential lines 33 in 21 regions, exact None  [75s]
+[4/13] game0@8
+      53041 moves, 10608/s, current 10, best 10 (whole-line shortfall 15), T 0.20
+      109873 moves, 10987/s, current 8, best 8 (whole-line shortfall 15), T 0.20
+      165000 moves, 11000/s, current 10, best 8 (whole-line shortfall 15), T 0.20
+      219218 moves, 10960/s, current 8, best 7 (whole-line shortfall 15), T 0.20
+    -> shortfall 6 (whole-line 15), penalty 0, code lines 34, potential lines 32 in 20 regions, exact None  [100s]
+[5/13] game1@4
+      42218 moves, 8443/s, current 26, best 25 (whole-line shortfall 31), T 0.20
+      84544 moves, 8454/s, current 22, best 20 (whole-line shortfall 31), T 0.20
+      126979 moves, 8465/s, current 19, best 17 (whole-line shortfall 31), T 0.20
+      168689 moves, 8434/s, current 24, best 16 (whole-line shortfall 31), T 0.20
+    -> shortfall 16 (whole-line 31), penalty 0, code lines 42, potential lines 39 in 22 regions, exact None  [125s]
+[6/13] game1@6
+      40891 moves, 8177/s, current 13, best 12 (whole-line shortfall 21), T 0.20
+      87061 moves, 8705/s, current 12, best 9 (whole-line shortfall 21), T 0.20
+      131524 moves, 8768/s, current 10, best 7 (whole-line shortfall 21), T 0.20
+      179744 moves, 8986/s, current 8, best 6 (whole-line shortfall 21), T 0.20
+    -> shortfall 6 (whole-line 21), penalty 0, code lines 34, potential lines 39 in 25 regions, exact None  [150s]
+[7/13] game1@8
+      46970 moves, 9392/s, current 0, best 0 (whole-line shortfall 15), T 0.20
+      100135 moves, 10012/s, current 1, best 0 (whole-line shortfall 15), T 0.20
+      152289 moves, 10152/s, current 0, best 0 (whole-line shortfall 15), T 0.20
+      204928 moves, 10245/s, current 2, best 0 (whole-line shortfall 15), T 0.20
+    -> shortfall 0 (whole-line 15), penalty 0, code lines 29, potential lines 37 in 26 regions, exact False  [175s]
+[8/13] game2@4
+      37821 moves, 7563/s, current 25, best 25 (whole-line shortfall 35), T 0.20
+      76474 moves, 7646/s, current 22, best 22 (whole-line shortfall 35), T 0.20
+      110335 moves, 7355/s, current 22, best 22 (whole-line shortfall 35), T 0.20
+      149852 moves, 7492/s, current 18, best 18 (whole-line shortfall 35), T 0.20
+    -> shortfall 17 (whole-line 35), penalty 0, code lines 52, potential lines 32 in 21 regions, exact None  [200s]
+[9/13] game2@6
+      44064 moves, 8811/s, current 24, best 22 (whole-line shortfall 25), T 0.20
+      84030 moves, 8402/s, current 17, best 17 (whole-line shortfall 25), T 0.20
+      126997 moves, 8466/s, current 17, best 16 (whole-line shortfall 25), T 0.20
+      171737 moves, 8586/s, current 17, best 16 (whole-line shortfall 25), T 0.20
+    -> shortfall 8 (whole-line 25), penalty 0, code lines 37, potential lines 38 in 27 regions, exact None  [225s]
+[10/13] game2@8
+      52166 moves, 10432/s, current 9, best 9 (whole-line shortfall 19), T 0.20
+      105597 moves, 10558/s, current 11, best 9 (whole-line shortfall 19), T 0.20
+      160689 moves, 10711/s, current 9, best 8 (whole-line shortfall 19), T 0.20
+      213253 moves, 10661/s, current 10, best 8 (whole-line shortfall 19), T 0.20
+    -> shortfall 8 (whole-line 19), penalty 0, code lines 33, potential lines 35 in 22 regions, exact None  [250s]
+[11/13] game3@4
+      40437 moves, 8087/s, current 27, best 26 (whole-line shortfall 35), T 0.20
+      78932 moves, 7893/s, current 27, best 24 (whole-line shortfall 35), T 0.20
+      120453 moves, 8029/s, current 27, best 24 (whole-line shortfall 35), T 0.20
+      162892 moves, 8144/s, current 23, best 23 (whole-line shortfall 35), T 0.20
+    -> shortfall 23 (whole-line 35), penalty 0, code lines 52, potential lines 32 in 24 regions, exact None  [275s]
+[12/13] game3@6
+      47233 moves, 9445/s, current 20, best 19 (whole-line shortfall 25), T 0.20
+      97333 moves, 9732/s, current 18, best 18 (whole-line shortfall 25), T 0.20
+      147720 moves, 9846/s, current 20, best 17 (whole-line shortfall 25), T 0.20
+      197036 moves, 9851/s, current 20, best 17 (whole-line shortfall 25), T 0.20
+    -> shortfall 17 (whole-line 25), penalty 0, code lines 42, potential lines 32 in 23 regions, exact None  [300s]
+[13/13] game3@8
+      52610 moves, 10522/s, current 12, best 10 (whole-line shortfall 19), T 0.20
+      105151 moves, 10515/s, current 11, best 10 (whole-line shortfall 19), T 0.20
+      160848 moves, 10723/s, current 10, best 10 (whole-line shortfall 19), T 0.20
+      216231 moves, 10811/s, current 13, best 10 (whole-line shortfall 19), T 0.20
+    -> shortfall 10 (whole-line 19), penalty 0, code lines 33, potential lines 34 in 21 regions, exact None  [325s]

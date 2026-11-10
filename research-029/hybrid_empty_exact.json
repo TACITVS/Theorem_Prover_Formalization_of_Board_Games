@@ -1,0 +1,122 @@
+{
+ "101": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 416461
+ },
+ "102": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 408313
+ },
+ "103": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 404159
+ },
+ "104": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 457371
+ },
+ "106": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 406886
+ },
+ "105": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 411840
+ },
+ "108": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 422854
+ },
+ "107": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 436210
+ },
+ "109": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 382545
+ },
+ "110": {
+  "shortfall": 19,
+  "rank": 21,
+  "code_cells": 32,
+  "code_lines": 64,
+  "potential_lines": 45,
+  "penalty": 0,
+  "exact_code_ok": null,
+  "whole_line_shortfall": 53,
+  "regions_used": 29,
+  "iterations": 388874
+ }
+}

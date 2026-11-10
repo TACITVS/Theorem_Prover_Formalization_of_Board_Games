@@ -88,3 +88,68 @@ python research-029/analyze.py research-029/games_cert.jsonl --out research-029/
 ```
 
 Each run takes about 80 s of wall time.
+
+## Hybrid regional certificates: code regions plus potential regions
+
+This combines research 026 with research 021. Cells are split into one **code
+region** and up to 40 **potential regions**. Black always answers in the region
+of White's last move.
+
+- **Potential region.** Its fragments must satisfy `Σ 2^(5−s) ≤ 15`, where `s`
+  is a fragment's free size (research 026's φ < 16). A 2-cell potential region
+  is a pairing.
+- **Code region.** Its GF(2) code needs two disjoint information sets
+  (research 021). The **exact shortfall** is `2·rank − max(|I0|+|I1|)`,
+  computed by Edmonds matroid partition; 0 is needed.
+
+The capacity bound `2·rank − cells` is misleading here. Fragments with only 2
+cells behave like graph edges, and on a connected graph the capacity bound can
+pass while two disjoint bases still do not exist. That is research 027's
+Proposition 8. Python layouts that optimised the capacity bound reached 10,
+but their exact shortfall was 19–22. All numbers below are exact.
+
+**Programs.**
+
+- `hybrid.c` (C + OpenMP) is the search. It runs one annealing search per
+  thread, about 2 M exact evaluations/s on 22 threads, roughly 130× the Python
+  version. It checkpoints each seed every 30 s and resumes automatically.
+- `hybrid.py` is the slower reference implementation. `exact_shortfall.py`
+  re-scores every C layout with it, independently.
+
+**Results.** Best exact shortfall, with 22 seeds per position (270 s each for
+the empty board, 60 s each for game positions). Positions come from
+`games_cert.jsonl`, played by the certificate-seeking Black. Whole-line codes
+are in brackets.
+
+| round | 0 (empty) | 3 | 4 | 5 | 6 | first whole-line leaf |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| game 0 | **19** (53) | **15** (37) | **10** (31) | **8** (27) | **6** (21) | round 12 |
+| game 18 | **19** (53) | **17** (41) | **14** (35) | **12** (29) | **9** (27) | round 13 |
+
+- **The empty-board value 19 is robust.** All 22 independent cold starts ended
+  at 19, or at 20 for a few seeds. Their layouts differ, with code regions of
+  23–29 cells, but the same pattern recurs: a small dense code core of about
+  23 cells holds 64 lines but has rank 21, so it lacks cells. About 100 cells
+  of potential regions hold the remaining ~45 lines, at about 2.2 cells per
+  line. This is heuristic evidence that 19 is the floor of this model, not a
+  proof.
+- **The hybrid gains about 3–4 rounds.** It keeps about a third to a half of
+  the whole-line shortfall and falls by 2–3 per round. Extrapolated, it reaches
+  zero around round 8–10, against rounds 12–13 for whole-line leaves in the
+  same games. That is a real gain, but not yet the round-6 target.
+- **Caveats.**
+  - Black in these games minimised the *whole-line* deficit, not the hybrid
+    one, so a hybrid-aware Black should do better.
+  - 60 s per game position is less converged than the 270 s used for the empty
+    board.
+  - No layout reached 0, so there is nothing to export to Rocq yet.
+  - Soundness of the composition would need a new Rocq theorem: generalising
+    `RegionalCertificates.v` with a code-region case built on
+    `linear_information_minimax`.
+
+```bash
+gcc -O3 -march=native -fopenmp research-029/hybrid.c -o research-029/hybrid.exe
+research-029/hybrid.exe --seeds 22 --threads 22 --seconds 270 --ckdir hybrid_c_empty
+research-029/hybrid.exe --seeds 22 --seconds 60 --white 4,24,100,104,0,72 --black 20,9,62,124,52,120 --ckdir hybrid_c_game0@6
+python research-029/exact_shortfall.py research-029/hybrid_c_empty/best.txt
+```
