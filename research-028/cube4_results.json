@@ -1,0 +1,106 @@
+{
+ "0": {
+  "seed": 0,
+  "result": "black",
+  "round": 16,
+  "first": {
+   "pairing": null,
+   "whole_line": null,
+   "fragment": null
+  },
+  "falsified": []
+ },
+ "1": {
+  "seed": 1,
+  "result": "open",
+  "first": {
+   "pairing": 19,
+   "whole_line": 19,
+   "fragment": 19
+  },
+  "falsified": []
+ },
+ "2": {
+  "seed": 2,
+  "result": "open",
+  "first": {
+   "pairing": 20,
+   "whole_line": 20,
+   "fragment": 20
+  },
+  "falsified": []
+ },
+ "3": {
+  "seed": 3,
+  "result": "black",
+  "round": 12,
+  "first": {
+   "pairing": null,
+   "whole_line": null,
+   "fragment": null
+  },
+  "falsified": []
+ },
+ "4": {
+  "seed": 4,
+  "result": "open",
+  "first": {
+   "pairing": 18,
+   "whole_line": 18,
+   "fragment": 18
+  },
+  "falsified": []
+ },
+ "5": {
+  "seed": 5,
+  "result": "black",
+  "round": 19,
+  "first": {
+   "pairing": null,
+   "whole_line": null,
+   "fragment": null
+  },
+  "falsified": []
+ },
+ "6": {
+  "seed": 6,
+  "result": "open",
+  "first": {
+   "pairing": 16,
+   "whole_line": 16,
+   "fragment": 16
+  },
+  "falsified": []
+ },
+ "7": {
+  "seed": 7,
+  "result": "open",
+  "first": {
+   "pairing": 21,
+   "whole_line": 21,
+   "fragment": 21
+  },
+  "falsified": []
+ },
+ "8": {
+  "seed": 8,
+  "result": "black",
+  "round": 14,
+  "first": {
+   "pairing": null,
+   "whole_line": null,
+   "fragment": null
+  },
+  "falsified": []
+ },
+ "9": {
+  "seed": 9,
+  "result": "open",
+  "first": {
+   "pairing": 18,
+   "whole_line": 18,
+   "fragment": 18
+  },
+  "falsified": []
+ }
+}

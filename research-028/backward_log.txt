@@ -1,0 +1,57 @@
+﻿backward walk: 19 positions, about 6s search each (upper bound 2.9 min)
+[1/19] r021-witness@10: free 105, live 53, pairing False, whole-line code {'ok': True, 'rank': 52}, elapsed 0s
+        fragment code: ok=True rank 52
+[2/19] r021-witness@9: free 107, live 57, pairing False, whole-line code {'ok': False, 'rank': 55}, elapsed 0s
+        search: 515678 steps, 128835/s, rank 57, best 55, need <= 53, partition checks 0
+        fragment code: ok=False best rank 55 need <= 53
+[3/19] r021-witness@8: free 109, live 61, pairing False, whole-line code {'ok': False, 'rank': 58}, elapsed 6s
+        search: 437676 steps, 109399/s, rank 61, best 58, need <= 54, partition checks 0
+        fragment code: ok=False best rank 58 need <= 54
+[4/19] r021-witness@7: free 111, live 65, pairing False, whole-line code {'ok': False, 'rank': 62}, elapsed 12s
+        search: 405731 steps, 101426/s, rank 65, best 62, need <= 55, partition checks 0
+        fragment code: ok=False best rank 62 need <= 55
+[5/19] r021-witness@6: free 113, live 69, pairing False, whole-line code {'ok': False, 'rank': 65}, elapsed 18s
+        search: 356123 steps, 89020/s, rank 69, best 65, need <= 56, partition checks 0
+        fragment code: ok=False best rank 65 need <= 56
+[6/19] r021-witness@5: free 115, live 73, pairing False, whole-line code {'ok': False, 'rank': 68}, elapsed 24s
+        search: 297253 steps, 74085/s, rank 73, best 68, need <= 57, partition checks 0
+        fragment code: ok=False best rank 68 need <= 57
+[7/19] r021-stronger@11: free 103, live 54, pairing False, whole-line code {'ok': True, 'rank': 51}, elapsed 30s
+        search: 454439 steps, 113594/s, rank 54, best 51, need <= 51, partition checks 0
+        fragment code: ok=False best rank 51 need <= 51
+[8/19] r021-stronger@10: free 105, live 56, pairing False, whole-line code {'ok': False, 'rank': 53}, elapsed 36s
+        search: 423394 steps, 105835/s, rank 56, best 53, need <= 52, partition checks 0
+        fragment code: ok=False best rank 53 need <= 52
+[9/19] r021-stronger@9: free 107, live 59, pairing False, whole-line code {'ok': False, 'rank': 56}, elapsed 42s
+        search: 412266 steps, 103043/s, rank 59, best 56, need <= 53, partition checks 0
+        fragment code: ok=False best rank 56 need <= 53
+[10/19] r021-stronger@8: free 109, live 63, pairing False, whole-line code {'ok': False, 'rank': 59}, elapsed 48s
+        search: 369380 steps, 92301/s, rank 63, best 59, need <= 54, partition checks 0
+        fragment code: ok=False best rank 59 need <= 54
+[11/19] r021-stronger@7: free 111, live 66, pairing False, whole-line code {'ok': False, 'rank': 62}, elapsed 54s
+        search: 379747 steps, 94930/s, rank 66, best 62, need <= 55, partition checks 0
+        fragment code: ok=False best rank 62 need <= 55
+[12/19] r021-stronger@6: free 113, live 70, pairing False, whole-line code {'ok': False, 'rank': 65}, elapsed 60s
+        search: 369641 steps, 92376/s, rank 70, best 65, need <= 56, partition checks 0
+        fragment code: ok=False best rank 65 need <= 56
+[13/19] r021-stronger@5: free 115, live 74, pairing False, whole-line code {'ok': False, 'rank': 68}, elapsed 66s
+        search: 351840 steps, 87791/s, rank 74, best 68, need <= 57, partition checks 0
+        fragment code: ok=False best rank 68 need <= 57
+[14/19] r013-pairing@10: free 105, live 52, pairing True, whole-line code {'ok': True, 'rank': 51}, elapsed 72s
+        fragment code: ok=True rank 52
+[15/19] r013-pairing@9: free 107, live 57, pairing False, whole-line code {'ok': False, 'rank': 56}, elapsed 72s
+        search: 472053 steps, 117595/s, rank 57, best 54, need <= 53, partition checks 0
+        fragment code: ok=False best rank 54 need <= 53
+[16/19] r013-pairing@8: free 109, live 61, pairing False, whole-line code {'ok': False, 'rank': 59}, elapsed 78s
+        search: 448220 steps, 111958/s, rank 60, best 58, need <= 54, partition checks 0
+        fragment code: ok=False best rank 58 need <= 54
+[17/19] r013-pairing@7: free 111, live 66, pairing False, whole-line code {'ok': False, 'rank': 63}, elapsed 84s
+        search: 376985 steps, 94235/s, rank 66, best 63, need <= 55, partition checks 0
+        fragment code: ok=False best rank 63 need <= 55
+[18/19] r013-pairing@6: free 113, live 70, pairing False, whole-line code {'ok': False, 'rank': 66}, elapsed 90s
+        search: 323985 steps, 80955/s, rank 70, best 66, need <= 56, partition checks 0
+        fragment code: ok=False best rank 66 need <= 56
+[19/19] r013-pairing@5: free 115, live 81, pairing False, whole-line code {'ok': False, 'rank': 75}, elapsed 96s
+        search: 256117 steps, 63929/s, rank 79, best 75, need <= 57, partition checks 0
+        fragment code: ok=False best rank 75 need <= 57
+done in 102s; results in C:\Rocq-Platform~9.1~2026.01\Math_Proofs\Qubic_5x5x5\research-028\backward_results.json

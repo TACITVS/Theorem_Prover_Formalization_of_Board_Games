@@ -302,6 +302,7 @@ python research-026/verify.py --rocq rocq   # regional Erdős–Selfridge barrie
 | [`research-022/`](research-022/README.md) | Layer symmetry, six opening classes, five center replies, and an exact whole-line code obstruction |
 | [`research-026/`](research-026/README.md) | Regional Erdős–Selfridge barrier: no mix of pairing and potential arguments on disjoint regions works on the empty board (`6·109 > 5·125`); Qubic-plus-three-planes structure |
 | [`research-027/`](research-027/README.md) | Research programme: certificate classes, activation depth, the blocking/threat dichotomy, and fragment codes as the precise form of the tensor/topology idea (computations only) |
+| [`research-028/`](research-028/README.md) | First test of fragment codes: sound on small hypergraphs, but no earlier activation than whole-line codes along the known 5x5x5 games; 4x4x4 used as a falsification testbed (computations only) |
 | `Qubic*.v`, `CheckAssumptions.v` | Legacy Rocq library: board facts, symmetry, pairing certificates |
 | [`solver/`](solver/) | C, C++ and Python experiments (evidence only, see above) |
 | [`QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md`](QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md) | Historical write-up. Contains withdrawn claims; read it with the status above in mind |

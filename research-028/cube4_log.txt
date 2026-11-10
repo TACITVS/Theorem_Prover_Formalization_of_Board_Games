@@ -1,0 +1,12 @@
+﻿4x4x4: 76 lines; 10 games, fragment search 0.4s per position (estimate under 0.7 min)
+[game 1/10] black first certificate round: {'pairing': None, 'whole_line': None, 'fragment': None}, elapsed 6s
+[game 2/10] open  first certificate round: {'pairing': 19, 'whole_line': 19, 'fragment': 19}, elapsed 13s
+[game 3/10] open  first certificate round: {'pairing': 20, 'whole_line': 20, 'fragment': 20}, elapsed 20s
+[game 4/10] black first certificate round: {'pairing': None, 'whole_line': None, 'fragment': None}, elapsed 24s
+[game 5/10] open  first certificate round: {'pairing': 18, 'whole_line': 18, 'fragment': 18}, elapsed 30s
+[game 6/10] black first certificate round: {'pairing': None, 'whole_line': None, 'fragment': None}, elapsed 37s
+[game 7/10] open  first certificate round: {'pairing': 16, 'whole_line': 16, 'fragment': 16}, elapsed 43s
+[game 8/10] open  first certificate round: {'pairing': 21, 'whole_line': 21, 'fragment': 21}, elapsed 51s
+[game 9/10] black first certificate round: {'pairing': None, 'whole_line': None, 'fragment': None}, elapsed 55s
+[game 10/10] open  first certificate round: {'pairing': 18, 'whole_line': 18, 'fragment': 18}, elapsed 62s
+SUMMARY {"games": 10, "results": {"white": 0, "black": 4, "open": 6}, "falsified": 0, "pairing": {"certified_games": 6, "mean_first_round": 18.67}, "whole_line": {"certified_games": 6, "mean_first_round": 18.67}, "fragment": {"certified_games": 6, "mean_first_round": 18.67}, "fragment_earlier_than_whole_line": 0, "fragment_gain_rounds": [0, 0, 0, 0, 0, 0], "fragment_gain_over_pairing": [0, 0, 0, 0, 0, 0]}
