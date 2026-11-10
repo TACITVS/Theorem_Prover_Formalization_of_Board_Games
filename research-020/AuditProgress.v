@@ -1,0 +1,17 @@
+From QubicAgent Require Import SymmetryGame.
+From QubicResearch020 Require Import Regressions.
+
+Print Assumptions SymmetryGame.transport_valid.
+Print Assumptions SymmetryGame.transport_winning.
+Print Assumptions SymmetryGame.move_transport.
+Print Assumptions SymmetryGame.solve_symmetry.
+Print Assumptions SymmetryGame.cube_actions_distinct.
+Print Assumptions SymmetryGame.every_opening_has_representative.
+Print Assumptions SymmetryGame.black_nonloss_iff_ten_openings.
+Print Assumptions SymmetryGame.exact_draw_iff_ten_opening_check.
+Print Assumptions SymmetryGame.black_value_equals_ten_opening_check.
+Print Assumptions SymmetryGame.white_forced_win_iff_ten_opening_check_false.
+Print Assumptions Regressions.exactly_one_opening_representative.
+Print Assumptions Regressions.ten_orbit_sizes.
+Print Assumptions Regressions.fallback_does_not_commute_with_reflection.
+Print Assumptions Regressions.reversing_line_orientation_preserves_win.

@@ -8,7 +8,15 @@
   <img src="https://img.shields.io/badge/Game_value-UNSOLVED-red.svg" alt="Game value: unsolved"/>
   <img src="https://img.shields.io/badge/Exact_draw-NOT_PROVED-red.svg" alt="Exact draw: not proved"/>
   <img src="https://img.shields.io/badge/First_player_cannot_lose-PROVED-brightgreen.svg" alt="First player cannot lose: proved"/>
+  <img src="https://img.shields.io/badge/Linear_defense-LOCAL_PROOF-blue.svg" alt="Linear defense: proved for local positions"/>
   <img src="https://img.shields.io/badge/Prover-Rocq_9.1-blue.svg" alt="Rocq 9.1"/>
+</p>
+
+<p align="center">
+  <a href="research-021/README.md">Latest checked result</a> ·
+  <a href="research-020/README.md">Ten-opening reduction</a> ·
+  <a href="QUBIC-PROOF-GATE-001/README.md">Proof gate</a> ·
+  <a href="assets/view_board.html">Explore the board</a>
 </p>
 
 > [!IMPORTANT]
@@ -75,6 +83,34 @@ The 2025 paper that settled 7×7×7 explicitly lists 5×5×5 and 6×6×6 as stil
 
 ---
 
+## 🧬 Latest checked advance: beyond fixed pairing
+
+A fixed pairing assigns a partner to each defended cell. On a 5×5×5 board,
+different winning lines share at most one cell, so a pair can protect at most
+one line. A new Rocq proof uses **two disjoint sets of free cells that each
+encode every surviving line**. After White moves, Black can repair the
+damaged set using an XOR exchange argument.
+
+| Checked position | Unblocked lines | Free cells | Cells fixed pairing would need | Cells in each information set |
+| :--- | ---: | ---: | ---: | ---: |
+| After 20 legal moves | 53 | 105 | 106 | 52 |
+| After 22 legal moves | 54 | 103 | 108 | 51 |
+
+For **each** position, Rocq proves one Black strategy prevents White from
+winning against **every remaining continuation**. It also proves that no
+partner function satisfies the project's static pairing invariant there.
+The 22-move certificate appears in
+[`StrongerWitness.v`](research-021/StrongerWitness.v), and
+[`research-021/README.md`](research-021/README.md) explains the proof and its
+tensor and topology calculations.
+
+**The missing step:** a legal path to a safe position is not enough. To settle
+the game, Black must force a safe position against every White strategy from
+the empty board, or White must be proved to force a win. The existing Rocq
+checker would accept a complete Black strategy tree at the empty board.
+
+---
+
 ## ✅ What is actually proved
 
 Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and zero admits** in its dependencies. The rules are fixed in a hash-pinned file, [`trusted/Rules.v`](QUBIC-PROOF-GATE-001/trusted/Rules.v).
@@ -91,6 +127,9 @@ Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and ze
 | 8 | A checked strategy tree starting **from the empty board** would prove the draw. (No such tree exists yet.) | `checked_empty_tree_proves_exact_draw` | [`TreeCertificates.v`](QUBIC-PROOF-GATE-001/agent/TreeCertificates.v) |
 | 9 | Pairing alone cannot work on the empty board: 62 pairs can block at most 62 of the 109 lines. | `static_pairing_impossibility_algebraic` | [`QubicAlgebraic.v`](QubicAlgebraic.v) |
 | 10 | The earlier "43 pairs + 17 stones" defense **loses on move 9**. | `pairing_policy_is_not_nonlosing` | [`research-017/Regressions.v`](research-017/Regressions.v) |
+| 11 | Cube symmetry reduces the draw question to ten full-horizon opening cases. Their values remain unproved. | `exact_draw_iff_ten_opening_check` | [`SymmetryGame.v`](QUBIC-PROOF-GATE-001/agent/SymmetryGame.v) |
+| 12 | Two legal nonterminal positions have complete linear-code defenses where the static pairing invariant is impossible. | `linear_defense_strictly_beyond_pairing` | [`research-021/Witness.v`](research-021/Witness.v), [`StrongerWitness.v`](research-021/StrongerWitness.v) |
+| 13 | A checked strategy tree with pairing or linear-code leaves at the empty board would prove the draw. No such tree is supplied. | `checked_empty_linear_tree_proves_exact_draw` | [`ZZLinearTrees.v`](QUBIC-PROOF-GATE-001/agent/ZZLinearTrees.v) |
 
 <details>
 <summary><b>How does result 3 work? (strategy stealing in plain words)</b></summary>
@@ -121,6 +160,17 @@ Goal.BlackNonLossFromEmpty :=
 
 - If this is proved, the game is a **draw** (by result 4).
 - If it is refuted, the first player has a **forced win**.
+
+[Research 020](research-020/README.md) now proves an equivalent set of ten
+full-horizon opening cases, using verified game-theoretic cube symmetries.
+All ten opening values remain undetermined; the reduction itself is not a
+resolution of the game.
+
+[Research 021](research-021/README.md) adds verified defenses using binary
+linear codes and matroid exchange. Its 20- and 22-move positions have complete
+Black nonloss strategies beyond the static pairing invariant. Forcing an
+accepted position from the empty board against every White strategy remains
+unproved.
 
 In [`agent/Solution.v`](QUBIC-PROOF-GATE-001/agent/Solution.v) it is still marked `Admitted`. The fail-closed proof gate therefore **rejects** the exact-draw claim, as it should:
 
@@ -158,13 +208,13 @@ These experiments are useful for intuition. **None of them establishes the game 
 
 ```mermaid
 flowchart TD
-    E["Empty board"] -->|"needs a proof for EVERY White move"| T["Black strategy tree (checked by TreeCertificates.v)"]
-    T --> L["Pairing-safe positions (proved safe by SafePairing.v)"]
+    E["Empty board"] -->|"needs a proof for EVERY White move"| T["Black strategy tree (checked by TreeCertificates.v / ZZLinearTrees.v)"]
+    T --> L["Pairing-safe or linear-code-safe positions"]
     L --> D["Draw"]
     E -.->|"or"| W["A forced White win<br/>(would settle the game the other way)"]
 ```
 
-The missing link is the top arrow. It needs a Black reply to **every** White move from the empty board until a pairing-safe position is reached. This is the step that solved 7×7×7, where it took only 4 moves. On 5×5×5, a counting argument shows pairing cannot even start before Black's 7th move, so the tree would be much deeper.
+The missing link is the top arrow. It needs a Black reply to **every** White move from the empty board until a verified safe position is reached. The pairing version of this step solved 7×7×7, where it took only 4 moves. On 5×5×5, a counting argument shows pairing cannot even start before Black's 7th move. Research 021 adds linear-code leaves that can succeed where the pairing invariant is impossible; a complete opening tree is still missing.
 
 ---
 
@@ -223,6 +273,9 @@ python QUBIC-PROOF-GATE-001/tools/verify_gate.py --rocq rocq
 python research-017/verify.py   # strategy stealing, geometry, rules facts
 python research-018/verify.py   # pairing-safe leaves, strategy-tree checker
 python research-019/verify.py   # 14-ply opening bound, forced-block and fork rules
+python research-020/verify.py   # full-game symmetry and the exact ten-opening reduction
+python research-021/verify.py   # linear-code defense and strict separation from pairing
+python research-021/tensor_structure.py --check  # exact F2 tensor/topology calculations
 
 # Legacy building-block library (92 theorems, all closed)
 .\build.ps1
@@ -238,6 +291,8 @@ python research-019/verify.py   # 14-ply opening bound, forced-block and fork ru
 | [`research-017/`](research-017/README.md) | Strategy stealing: the first player cannot lose |
 | [`research-018/`](research-018/README.md) | Pairing-safe leaves and the strategy-tree certificate checker |
 | [`research-019/`](research-019/README.md) | Opening bound and sound tactical pruning |
+| [`research-020/`](research-020/README.md) | Full-game symmetry and the ten remaining opening cases |
+| [`research-021/`](research-021/README.md) | Binary-code exchange defense, a checked separation from static pairing, and tensor/topology experiments |
 | `Qubic*.v`, `CheckAssumptions.v` | Legacy Rocq library: board facts, symmetry, pairing certificates |
 | [`solver/`](solver/) | C, C++ and Python experiments (evidence only, see above) |
 | [`QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md`](QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md) | Historical write-up. Contains withdrawn claims; read it with the status above in mind |

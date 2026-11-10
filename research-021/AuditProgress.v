@@ -1,0 +1,30 @@
+From QubicAgent Require Import ZLinearAlgebra ZLinearDefense ZPairingSeparation ZZLinearTrees.
+From QubicResearch021 Require Import Witness StrongerWitness.
+
+Print Assumptions ZLinearAlgebra.code_words_closed.
+Print Assumptions ZLinearAlgebra.reconstruct_linear.
+Print Assumptions ZLinearAlgebra.decoder_detects.
+Print Assumptions ZLinearDefense.information_prevents_white_move.
+Print Assumptions ZLinearDefense.information_response_exists.
+Print Assumptions ZLinearDefense.linear_information_minimax.
+Print Assumptions ZLinearDefense.linear_leafb_sound.
+Print Assumptions ZLinearDefense.checked_linear_leaf_total_defense.
+Print Assumptions ZPairingSeparation.every_static_pairing_needs_capacity.
+Print Assumptions Witness.linear_state_is_legal_prefix.
+Print Assumptions Witness.linear_state_valid.
+Print Assumptions Witness.linear_state_nonterminal.
+Print Assumptions Witness.linear_certificate_checks.
+Print Assumptions Witness.linear_state_total_defense.
+Print Assumptions Witness.no_static_pairing_defense_exists.
+Print Assumptions Witness.linear_defense_strictly_beyond_pairing.
+Print Assumptions ZZLinearTrees.every_existing_tree_embeds.
+Print Assumptions ZZLinearTrees.checked_linear_tree_minimax.
+Print Assumptions ZZLinearTrees.checked_linear_tree_total_defense.
+Print Assumptions ZZLinearTrees.checked_empty_linear_tree_proves_exact_draw.
+Print Assumptions Witness.local_linear_tree_checks.
+Print Assumptions Witness.local_linear_tree_does_not_check_empty.
+Print Assumptions StrongerWitness.linear_state_is_legal_prefix.
+Print Assumptions StrongerWitness.linear_state_nonterminal.
+Print Assumptions StrongerWitness.linear_certificate_checks.
+Print Assumptions StrongerWitness.linear_defense_strictly_beyond_pairing.
+Print Assumptions StrongerWitness.local_linear_tree_does_not_check_empty.
