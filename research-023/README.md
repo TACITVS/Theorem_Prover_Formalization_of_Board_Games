@@ -56,14 +56,18 @@ This geometric structure explains the fundamental difference between White's ope
   * $W = 2$ (Edge-Center): blocks the planar diagonal `[2; 32; 62; 92; 122]` (`edge_center_two_shares_diagonal_with_center`).
   * $W = 12$ (Face-Center): blocks the orthogonal axis `[12; 37; 62; 87; 112]` (`face_center_twelve_shares_axis_with_center`).
 - The residual line count drops instantly from 109 to 96, and the binary code rank drops from 89 to 84.
-- Over the next 9 rounds, greedy minimum-rank defense routinely achieves $2 \times \text{rank} \le \text{free cells}$ by **Round 10 (ply 20)**, successfully yielding verified Linear Leaves!
+- Over the next 9 rounds, greedy minimum-rank defense frequently finds sample paths achieving $2 \times \text{rank} \le \text{free cells}$ by **Round 10 (ply 20)**, yielding verified local Linear Leaves.
 
 ### Case B: White opens at Center ($W = 62$)
 - White claims the hub of the 13-spoke star $S_{13}$.
 - By the Center Star Dispersion Theorem, Black can block **at most 1 spoke per move**.
 - At Round 10, even if Black spent every move blocking a center spoke, at least $13 - 10 = 3$ center spokes remain unblocked.
 - Consequently, the binary rank at Round 10 stays at ~55 (needed: $\le 52$).
-- The threshold $2 \times \text{rank} \le \text{free cells}$ is delayed by ~4 rounds, first being met around **Round 14 (ply 28)**.
+- The threshold $2 \times \text{rank} \le \text{free cells}$ is delayed by ~4 rounds, with sample leaves first appearing around **Round 14 (ply 28)**.
+
+> [!NOTE]
+> **Sample Paths vs. Exhaustive Minimax Trees:**
+> These simulation findings demonstrate that local linear leaves are reachable along sample game paths. However, settling `Goal.ExactDraw` requires an exhaustive strategy tree (`LinearDefenseNode` in `ZZLinearTrees.v`) that covers **100% of White's legal replies** from the opening to certified leaves. A high-probability sample path is empirical evidence, not a full-game proof.
 
 ---
 
