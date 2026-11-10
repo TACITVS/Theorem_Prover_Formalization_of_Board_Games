@@ -1,7 +1,65 @@
-# Research 028: first test of fragment codes
+# Research 028: fragment codes, and code-leaf trees pushed backwards
 
-Status: **computations only; negative result.** Nothing here is a Rocq theorem,
-and nothing here decides the value of 5x5x5 Qubic.
+Status: **computations and proof tooling; no new theorem about the game.** The
+value of 5x5x5 Qubic is still unresolved.
+
+## Part B: strategy trees with code leaves (tooling, plus a cautionary finding)
+
+`ZZLinearTrees.v` already proves that a tree accepted by `linear_treeb` is a
+sound Black non-loss strategy. Each node gives Black's reply to every White
+request, and each leaf is a whole-line code leaf. This part adds:
+
+- **`tree_extend.py`:** searches for such trees backwards from a position, to a
+  fixed depth.
+- **`adaptive.py`:** extra depth only on the branches that need it.
+- **`export_tree.py`:** writes a tree as a Rocq file. Each leaf stores only its
+  information set `I0`, as one 125-bit mask. A small Gaussian elimination inside
+  Rocq builds the decoders for `I0` and for the remaining free cells, and
+  `linear_leafb` re-checks them. So no Python output is trusted.
+- **`export_split.py` and `verify.py --split`:** check large trees as one lemma
+  per White request, about 10 requests per file. The files compile and pass
+  `rocq check -norec` in parallel, and each finished `.vo` file is a resume
+  checkpoint, so no run has to exceed 10 minutes.
+
+The pipeline works. It kernel-checked depth-1 trees at the research-021 witness
+game after 18 plies and the stronger game after 20 plies. It then compiled a
+depth-2 tree with 12,911 leaves at the witness game after 16 plies, in 13
+parallel parts in about 4 minutes.
+
+**Cautionary finding: those positions are trivial.** In both research-021
+games, White's moves do not defend. Black already threatens to complete
+**two** lines:
+
+| game, rounds played | Black's winning cells |
+| --- | --- |
+| witness, rounds 8–10 | 0 and 20 |
+| stronger, rounds 10–11 | 33 and 43 (and 83 at round 11) |
+
+White can block only one of them, so these positions, including research-021's
+own leaves, are forced Black **wins**. Black's apparently "universal" reply,
+corner 0, was just Black completing a line. The earlier search did not model
+Black's immediate wins, which is also why six branches had looked hard.
+
+The kernel results are correct but say nothing new, so those generated files
+are not kept. The search now handles Black's immediate wins as terminal
+(`'win'`). It also refuses to start from a position where Black already
+threatens to win, unless `--allow-trivial` is given.
+
+**What would be meaningful.** The same tree-plus-code-leaf certificates need
+positions reached by strong White play, not by the research-021 witness games.
+Those have to come from an engine that plays White well.
+
+**Probe from a threat-free position.** The stronger game after 16 plies
+(stronger@8) is the last position in it where neither side threatens anything.
+From there, a depth-2 search with up to 40 Black replies per node covered **0
+of 109** White moves (about 60 s). So, starting from a non-trivial position,
+two rounds of explicit tree followed by whole-line code leaves are nowhere near
+enough. This fits the Part A finding: each round of look-ahead lacks 2–3 GF(2)
+relations, and a depth-2 tree recovers only what two Black stones can block.
+
+## Part A (computation): fragment codes
+
+Status: **computations only; negative result.**
 
 Research 027 proposed *fragment codes*. Each live line (no Black stone) gets a
 fragment of at least two of its free cells. The GF(2) span of the fragments must
@@ -84,7 +142,9 @@ ones. The shortfall grows by about 2–3 relations per round going backwards:
 2, 4, 7, 9 and 11 along the witness game.
 
 This is a heuristic search, not a proof that no fragment code exists at these
-positions. It is strong enough evidence to stop. Fragment codes alone will not
+positions. These games are also favourable to Black: as Part B shows, White
+does not defend in them. Fragment codes failing even here makes the negative
+result stronger. It is strong enough evidence to stop. Fragment codes alone will not
 lower the activation depth.
 
 ## Step 3: 4x4x4 as a falsification testbed (`cube4.py`, about 60 s)
