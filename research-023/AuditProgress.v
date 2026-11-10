@@ -1,0 +1,8 @@
+From QubicAgent Require Import ZCenterStar.
+
+Print Assumptions ZCenterStar.center_uniquely_dominates_degree.
+Print Assumptions ZCenterStar.center_lines_pairwise_disjoint_outside_center.
+Print Assumptions ZCenterStar.center_spoke_census.
+Print Assumptions ZCenterStar.corner_zero_shares_space_diagonal_with_center.
+Print Assumptions ZCenterStar.edge_center_two_shares_diagonal_with_center.
+Print Assumptions ZCenterStar.face_center_twelve_shares_axis_with_center.
