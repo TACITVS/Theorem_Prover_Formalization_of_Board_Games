@@ -127,7 +127,7 @@ Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and ze
 | 8 | A checked strategy tree starting **from the empty board** would prove the draw. (No such tree exists yet.) | `checked_empty_tree_proves_exact_draw` | [`TreeCertificates.v`](QUBIC-PROOF-GATE-001/agent/TreeCertificates.v) |
 | 9 | Pairing alone cannot work on the empty board: 62 pairs can block at most 62 of the 109 lines. | `static_pairing_impossibility_algebraic` | [`QubicAlgebraic.v`](QubicAlgebraic.v) |
 | 10 | The earlier "43 pairs + 17 stones" defense **loses on move 9**. | `pairing_policy_is_not_nonlosing` | [`research-017/Regressions.v`](research-017/Regressions.v) |
-| 11 | Cube symmetry reduces the draw question to ten full-horizon opening cases. Their values remain unproved. | `exact_draw_iff_ten_opening_check` | [`SymmetryGame.v`](QUBIC-PROOF-GATE-001/agent/SymmetryGame.v) |
+| 11 | A permutation of the cube's layers reduces the ten geometric opening cases to six. After a center opening, Black needs one successful reply among five representatives. | `exact_draw_iff_six_openings`, `center_opening_iff_five_replies` | [`ZLayerSymmetry.v`](QUBIC-PROOF-GATE-001/agent/ZLayerSymmetry.v) |
 | 12 | Two legal nonterminal positions have complete linear-code defenses where the static pairing invariant is impossible. | `linear_defense_strictly_beyond_pairing` | [`research-021/Witness.v`](research-021/Witness.v), [`StrongerWitness.v`](research-021/StrongerWitness.v) |
 | 13 | A checked strategy tree with pairing or linear-code leaves at the empty board would prove the draw. No such tree is supplied. | `checked_empty_linear_tree_proves_exact_draw` | [`ZZLinearTrees.v`](QUBIC-PROOF-GATE-001/agent/ZZLinearTrees.v) |
 
@@ -163,8 +163,10 @@ Goal.BlackNonLossFromEmpty :=
 
 [Research 020](research-020/README.md) now proves an equivalent set of ten
 full-horizon opening cases, using verified game-theoretic cube symmetries.
-All ten opening values remain undetermined; the reduction itself is not a
-resolution of the game.
+Applying the level permutation `[1,0,2,4,3]` on all three axes preserves every
+winning line as a set. Together with rotations and reflections, this reduces
+the draw question to openings at cells **0, 1, 2, 7, 12 and 62**. All six
+values remain undetermined.
 
 [Research 021](research-021/README.md) adds verified defenses using binary
 linear codes and matroid exchange. Its 20- and 22-move positions have complete
