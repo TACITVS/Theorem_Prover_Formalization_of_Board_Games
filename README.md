@@ -280,6 +280,7 @@ python research-020/verify.py   # full-game symmetry and the exact ten-opening r
 python research-021/verify.py   # linear-code defense and strict separation from pairing
 python research-021/tensor_structure.py --check  # exact F2 tensor/topology calculations
 python research-022/verify.py   # six opening classes and the center parity obstruction
+python research-026/verify.py --rocq rocq   # regional Erdős–Selfridge barrier (seconds)
 
 # Legacy building-block library (92 theorems, all closed)
 .\build.ps1
@@ -298,6 +299,7 @@ python research-022/verify.py   # six opening classes and the center parity obst
 | [`research-020/`](research-020/README.md) | Full-game symmetry and the ten remaining opening cases |
 | [`research-021/`](research-021/README.md) | Binary-code exchange defense, a checked separation from static pairing, and tensor/topology experiments |
 | [`research-022/`](research-022/README.md) | Layer symmetry, six opening classes, five center replies, and an exact whole-line code obstruction |
+| [`research-026/`](research-026/README.md) | Regional Erdős–Selfridge barrier: no mix of pairing and potential arguments on disjoint regions works on the empty board (`6·109 > 5·125`); Qubic-plus-three-planes structure |
 | `Qubic*.v`, `CheckAssumptions.v` | Legacy Rocq library: board facts, symmetry, pairing certificates |
 | [`solver/`](solver/) | C, C++ and Python experiments (evidence only, see above) |
 | [`QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md`](QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md) | Historical write-up. Contains withdrawn claims; read it with the status above in mind |
