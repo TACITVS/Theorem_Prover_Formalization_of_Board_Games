@@ -1,0 +1,18 @@
+From QubicAgent Require Import Geometry Minimax RulesFacts Stealing Solution.
+From QubicResearch Require Import Regressions.
+
+Print Assumptions Geometry.locked_lines_are_exactly_standard_lines.
+Print Assumptions Geometry.locked_lines_distinct.
+Print Assumptions Minimax.solve_policy_sound.
+Print Assumptions Minimax.black_nonloss_iff_value.
+Print Assumptions Minimax.exact_draw_iff_values.
+Print Assumptions RulesFacts.every_play_is_legal_and_terminal.
+Print Assumptions Stealing.extra_white_stones_do_not_hurt.
+Print Assumptions Solution.white_nonloss.
+Print Assumptions Stealing.second_player_cannot_force_win.
+Print Assumptions Stealing.exact_draw_iff_black_nonloss.
+Print Assumptions Stealing.draw_or_first_player_forced_win.
+Print Assumptions Regressions.pairing_policy_is_not_nonlosing.
+Print Assumptions Regressions.black_win_stops_on_ply_ten.
+Print Assumptions Regressions.concrete_full_board_draw.
+Print Assumptions Regressions.last_ply_win_takes_precedence_over_draw.

@@ -1,326 +1,259 @@
-# 5x5x5 3D Tic-Tac-Toe (5³, k = 5): Dual Formal Verification & Dynamic Pairing Resolution
+<h1 align="center">5×5×5 3D Tic-Tac-Toe</h1>
 
-[![Rocq 9.1](https://img.shields.io/badge/Rocq-9.1-blue.svg)](https://coq.inria.fr/)
-[![Lean 4.35.0](https://img.shields.io/badge/Lean-4.35.0-green.svg)](https://leanprover.github.io/)
-[![Zero Axioms](https://img.shields.io/badge/Axioms-0-brightgreen.svg)]()
-[![Zero Admits](https://img.shields.io/badge/Admits-0-brightgreen.svg)]()
-[![Zero Sorry](https://img.shields.io/badge/Sorry-0-brightgreen.svg)]()
-[![Game Value](https://img.shields.io/badge/Master_Value-DRAW_(Conjectured)-purple.svg)]()
+<p align="center">
+  <b>A machine-checked research project on one of the smallest unsolved board games in mathematics.</b>
+</p>
 
-This repository contains the dual theorem-prover formalization and algorithmic resolution framework of **5x5x5 3D Tic-Tac-Toe (5³, k = 5)** across **Rocq 9.1** and **Lean 4.35.0**, verified by an independent **128-bit SIMD C11 structural audit harness and Hopcroft-Karp dynamic pairing engine**.
+<p align="center">
+  <img src="https://img.shields.io/badge/Game_value-UNSOLVED-red.svg" alt="Game value: unsolved"/>
+  <img src="https://img.shields.io/badge/Exact_draw-NOT_PROVED-red.svg" alt="Exact draw: not proved"/>
+  <img src="https://img.shields.io/badge/First_player_cannot_lose-PROVED-brightgreen.svg" alt="First player cannot lose: proved"/>
+  <img src="https://img.shields.io/badge/Prover-Rocq_9.1-blue.svg" alt="Rocq 9.1"/>
+</p>
 
----
-
-## 1. Executive Summary & Master Game-Theoretic Value
-
-```
-+---------------------------------------------------------------------------------------------------+
-|                                5x5x5 3D TIC-TAC-TOE MASTER VALUE                                  |
-+---------------------------------------------------------------------------------------------------+
-| Master Game-Theoretic Value:  EXACT DRAW (Conjectured; Safe Leaf Proven, Reachability Open)       |
-| First-Player Advantage:       Neutralized (Absence of White VCF Sequences up to Depth 8)         |
-| Dynamic Pairing Horizon:      Round 10 (Minimal Horizon Witness) / Round 17 (Master Schedule)     |
-| Surviving Lines Paired:       52 surviving lines paired into 104 distinct empty cells (Round 10)  |
-| Beck Danger Potential:        Universal Move 1 Contraction ΔΨ ≤ -6 Proven Across All 125 Cells    |
-| State-Space Complexity:       3^125 ≈ 4.3667 × 10^59 positions                                    |
-| Word Saturation:              125 cells fit in a single 128-bit SIMD register (unsigned __int128) |
-| Rocq 9.1 Machine Proofs:      92 / 92 Theorems Closed under Global Context (0 Axioms, 0 Admits)   |
-| Lean 4.35.0 Machine Proofs:   37 / 37 Theorems Formally Verified with ZERO sorry                  |
-| Independent C11 Engine:       Audit in 0.00 ms (100% Pass) | Hopcroft-Karp Pairing in 1.00 ms     |
-| Native C++ Z3 SAT/SMT Solver: tau(5³) = 28 Proven | White Non-Win UNSAT Certified in 5.98 ms      |
-+---------------------------------------------------------------------------------------------------+
-```
-
-> [!NOTE]
-> **Mathematical Status & Peer-Review Transparency (Audit 014/015):**  
-> In accordance with the highest standards of modern pure mathematics and formal theorem proving:
-> 1. **Machine-Certified Theorems (0 Axioms, 0 Admits, 0 Sorry):** Both Rocq 9.1 (92 theorems) and Lean 4.35.0 (37 theorems) formally verify board topography, static pairing impossibility at ply 0, the algebraic deficit conservation law ($B \ge k + 47$), universal Move 1 potential contraction across all 125 board cells ($\Delta \Psi \le -6$), Counterexample 014 (necessity vs. sufficiency), and the valid nonterminal Round 10 pairing-safe leaf certificate with its conditional invariant (if Black maintains the pairing schedule, White never completes a line).
-> 2. **Algorithmic Evidence:** 128-bit SIMD bitboard search across all 10 canonical $O_h$ opening orbits proves White has zero forced Victory-Continue-Four (VCF) sequences within depth $\le 8$.
-> 3. **The Open Combinatorial Frontier:** The unconditional alternating game-tree reachability theorem:
->    $$\exists \sigma_B, \forall \sigma_W, \forall d \le 125, \neg \text{WhiteWon}(\text{play}(\sigma_W, \sigma_B, d))$$
->    from the initial empty board is formally specified as `MinimaxDrawConjecture`. Full backward induction over $3^{125} \approx 4.37 \times 10^{59}$ states remains computationally infeasible without further symbolic compression.
+> [!IMPORTANT]
+> **This repository does NOT prove that 5×5×5 tic-tac-toe is a draw.**
+> Whether perfect play ends in a draw or a first-player win is still an **open problem**.
+> Earlier versions of this page said the game was solved as a draw. That claim was **wrong**, and it has been withdrawn (see [Corrections](#-corrections)).
 
 ---
 
-## 2. Board Architecture & Vector Graphics
+## 🎯 The answer at a glance
+
+| Question | Answer | Status |
+| :--- | :---: | :--- |
+| Can the **second** player force a win? | **No** | ✅ **Proved** in Rocq (strategy stealing), no axioms or admits |
+| Can the **first** player force a win? | **Unknown** | ❓ Open |
+| Is it a **draw** with perfect play? | **Unknown** | ❓ Open, often conjectured, never proved |
+
+In one sentence: **the first player can never lose, but nobody knows whether they can always win.**
+
+```mermaid
+flowchart LR
+    A["5×5×5 under perfect play"] --> B["Second player wins"]
+    A --> C["First player wins"]
+    A --> D["Draw"]
+    B:::ruled
+    C:::open
+    D:::open
+    classDef ruled fill:#f8d7da,stroke:#b02a37,color:#58151c,stroke-dasharray: 5 5
+    classDef open fill:#fff3cd,stroke:#997404,color:#664d03
+```
+
+<p align="center"><sub>Red dashed box: ruled out by a machine-checked proof. Yellow boxes: both still possible.</sub></p>
+
+---
+
+## 🧊 The game in 60 seconds
+
+- The board is a **5 × 5 × 5 cube** of **125 cells**.
+- Two players take turns. **White moves first** and **Black moves second**. Each turn, the player claims one empty cell.
+- The first player to claim **5 cells in a straight line** wins. A line can run along a row, along a column, through a plane diagonal, or through a space diagonal.
+- There are exactly **109 winning lines**. If the board fills up with no line completed, the game is a **draw**.
 
 <p align="center">
   <a href="assets/qubic_5x5x5_board.svg">
-    <img src="assets/qubic_5x5x5_board.svg" alt="5x5x5 3D Tic-Tac-Toe Board Topography and Degree Spectrum" width="100%"/>
+    <img src="assets/qubic_5x5x5_board.svg" alt="5x5x5 board and cell degree map" width="100%"/>
   </a>
+  <br/>
+  <a href="assets/qubic_5x5x5_board.svg"><b>Full-size diagram</b></a> &nbsp;•&nbsp;
+  <a href="assets/view_board.html"><b>Interactive viewer</b></a>
 </p>
 
-<p align="center">
-  <a href="assets/qubic_5x5x5_board.svg"><b>🔍 View Full-Size Vector Diagram (1920×1280 SVG)</b></a>
-  &nbsp;&nbsp;•&nbsp;&nbsp;
-  <a href="assets/view_board.html"><b>🎛️ Launch Interactive Auto-Scaling Board Viewer (HTML)</b></a>
-</p>
+### Where this game sits in the family of cube games
 
-> [!TIP]
-> **Interactive Auto-Scaling Board Viewer Available:**  
-> For customized viewing, launch the dedicated interactive viewer: [**`assets/view_board.html`**](assets/view_board.html).  
-> It provides interactive sliders to dynamically adjust the **Graph Zoom (50% to 250%)**, **Lettering / Font Size (70% to 180%)**, and **Fullscreen Toggle** to adapt seamlessly to any monitor or resolution.
+| Board | Who wins with perfect play? | Source |
+| :---: | :--- | :--- |
+| 3×3×3 | First player | Classical |
+| 4×4×4 (Qubic) | First player | Patashnik (1980) |
+| **5×5×5** | ❓ **Unknown** | **Open** |
+| 6×6×6 | ❓ Unknown | Open |
+| 7×7×7 | Draw | Cain, Raymond & Källersjö (2025), [arXiv:2509.21494](https://arxiv.org/abs/2509.21494) |
+| 8×8×8 and larger | Draw | Known pairing strategies (as summarized in Cain et al. 2025) |
 
-### Comprehensive Board Topography & Degree Spectrum Table
-
-| Orbit # | Multiset | Cell Orbit Type | Count in Orbit | Degree (Lines) | Incidence Contribution | Sample Coordinates (x, y, z) | Representative Indices | Geometric Description |
-| :---: | :---: | :--- | :---: | :---: | :---: | :--- | :---: | :--- |
-| **1** | `(0, 0, 0)` | **Cube-Center** | **1** | **13** | **13** | `(2, 2, 2)` | `62` | Unique central cell; intersection of 3 orthogonal axes, 6 planar diagonals, and all 4 space diagonals |
-| **2** | `(2, 2, 2)` | **Corners** | **8** | **7** | **56** | `(0, 0, 0), (4, 4, 4)` | `0, 4, 20, 24, 100, 104, 120, 124` | 8 outer vertices of the cube; each incident to 3 orthogonal, 3 planar, and 1 space diagonal |
-| **3** | `(1, 1, 1)` | **Sub-Centers** | **8** | **7** | **56** | `(1, 1, 1), (3, 3, 3)` | `31, 33, 41, 43, 81, 83, 91, 93` | Inner diagonal cube corners; each incident to 3 orthogonal, 3 planar, and 1 space diagonal |
-| **4** | `(0, 0, 2)` | **Face-Centers** | **6** | **5** | **30** | `(0, 2, 2), (4, 2, 2)` | `12, 52, 60, 64, 72, 112` | Geometric center of each 5×5 outer face; incident to 3 orthogonal and 2 planar diagonals |
-| **5** | `(0, 0, 1)` | **Inner Axes** | **6** | **5** | **30** | `(1, 2, 2), (3, 2, 2)` | `37, 57, 61, 63, 67, 87` | Interior orthogonal axis points flanking the central cell; incident to 3 orthogonal and 2 planar diagonals |
-| **6** | `(0, 1, 1)` | **Inner Planar** | **12** | **4** | **48** | `(1, 1, 2), (3, 3, 2)` | `32, 34, 42, 44, 82, 84...` | Interior diagonal slice cross points; incident to 3 orthogonal and 1 planar diagonal |
-| **7** | `(0, 2, 2)` | **Edge Centers** | **12** | **4** | **48** | `(0, 0, 2), (4, 4, 2)` | `2, 10, 22, 50, 70...` | Midpoints of the 12 outer edges; incident to 3 orthogonal and 1 planar diagonal |
-| **8** | `(1, 1, 2)` | **Outer Flanks** | **24** | **4** | **96** | `(0, 1, 1), (4, 3, 3)` | `6, 8, 16, 18, 26, 28...` | Outer edge flank points; incident to 3 orthogonal and 1 planar diagonal |
-| **9** | `(1, 2, 2)` | **Edge Inners** | **24** | **4** | **96** | `(0, 0, 1), (0, 0, 3)` | `1, 3, 5, 9, 15, 19...` | Interior edge points on outer cube boundaries; incident to 3 orthogonal and 1 planar diagonal |
-| **10** | `(0, 1, 2)` | **Face Interior** | **24** | **3** | **72** | `(0, 1, 2), (0, 3, 2)` | `7, 11, 13, 17, 27, 29...` | Interior cells of 5×5 outer face grids; incident strictly to 3 orthogonal axes (0 diagonals) |
-| **TOTALS** | — | **10 Orbits** | **125 Cells** | **—** | **545 Incidences** | — | — | **Exactly 109 Winning Lines × 5 Cells/Line = 545 Incidences** |
+The 2025 paper that settled 7×7×7 explicitly lists 5×5×5 and 6×6×6 as still open.
 
 ---
 
-## 3. The 109 Winning Lines Decomposition
+## ✅ What is actually proved
 
-Every winning line is a collinear 5-tuple of cells in ℤ₅³:
+Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and zero admits** in its dependencies. The rules are fixed in a hash-pinned file, [`trusted/Rules.v`](QUBIC-PROOF-GATE-001/trusted/Rules.v).
 
-1. **75 Orthogonal Lines:**
-   - 25 Parallel to Z: for each fixed pair `(x, y) ∈ {0..4}²`, the 5 cells `(x, y, z)` for `z ∈ {0..4}`.
-   - 25 Parallel to Y: for each fixed pair `(x, z) ∈ {0..4}²`, the 5 cells `(x, y, z)` for `y ∈ {0..4}`.
-   - 25 Parallel to X: for each fixed pair `(y, z) ∈ {0..4}²`, the 5 cells `(x, y, z)` for `x ∈ {0..4}`.
-2. **30 Planar Diagonal Lines:**
-   - 10 in XY planes: for each of the 5 fixed `z ∈ {0..4}`, 2 diagonals `[(i, i, z)]` and `[(4-i, i, z)]`.
-   - 10 in XZ planes: for each of the 5 fixed `y ∈ {0..4}`, 2 diagonals `[(i, y, i)]` and `[(4-i, y, i)]`.
-   - 10 in YZ planes: for each of the 5 fixed `x ∈ {0..4}`, 2 diagonals `[(x, i, i)]` and `[(x, 4-i, i)]`.
-3. **4 Space Diagonals (Triagonals):**
-   - Connecting opposite vertices through the center cell `(2, 2, 2)`:
-     - `[(0,0,0); (1,1,1); (2,2,2); (3,3,3); (4,4,4)]`
-     - `[(4,0,0); (3,1,1); (2,2,2); (1,3,3); (0,4,4)]`
-     - `[(0,4,0); (1,3,1); (2,2,2); (3,1,3); (4,0,4)]`
-     - `[(4,4,0); (3,3,1); (2,2,2); (1,1,3); (0,0,4)]`
+| # | Plain-English result | Rocq theorem | File |
+| :-: | :--- | :--- | :--- |
+| 1 | The 109 lines in the rules file are exactly all straight lines of the cube, with no duplicates. | `locked_lines_are_exactly_standard_lines`, `locked_lines_distinct` | [`Geometry.v`](QUBIC-PROOF-GATE-001/agent/Geometry.v) |
+| 2 | Every game is legal and gets the correct result. | `every_play_is_legal_and_terminal` | [`RulesFacts.v`](QUBIC-PROOF-GATE-001/agent/RulesFacts.v) |
+| 3 | **The first player has a strategy that never loses.** | `white_nonloss_proved` | [`Stealing.v`](QUBIC-PROOF-GATE-001/agent/Stealing.v) |
+| 4 | So the game is a draw **if and only if** the second player has a strategy that never loses. | `exact_draw_iff_black_nonloss` | [`Stealing.v`](QUBIC-PROOF-GATE-001/agent/Stealing.v) |
+| 5 | Making two different winning threats at once takes at least 7 stones. | `distinct_targets_require_seven_stones` | [`Tactics.v`](QUBIC-PROOF-GATE-001/agent/Tactics.v) |
+| 6 | A simple blocking strategy stops White from winning in the first 14 moves, whatever White does. | `blocking_policy_delays_white_win_until_ply_fifteen` | [`Tactics.v`](QUBIC-PROOF-GATE-001/agent/Tactics.v) |
+| 7 | Once Black reaches a "pairing-safe" position, Black can never lose from there. | `static_pairing_policy_nonloss` | [`SafePairing.v`](QUBIC-PROOF-GATE-001/agent/SafePairing.v) |
+| 8 | A checked strategy tree starting **from the empty board** would prove the draw. (No such tree exists yet.) | `checked_empty_tree_proves_exact_draw` | [`TreeCertificates.v`](QUBIC-PROOF-GATE-001/agent/TreeCertificates.v) |
+| 9 | Pairing alone cannot work on the empty board: 62 pairs can block at most 62 of the 109 lines. | `static_pairing_impossibility_algebraic` | [`QubicAlgebraic.v`](QubicAlgebraic.v) |
+| 10 | The earlier "43 pairs + 17 stones" defense **loses on move 9**. | `pairing_policy_is_not_nonlosing` | [`research-017/Regressions.v`](research-017/Regressions.v) |
 
-```
-Total Winning Lines = 75 Orthogonal + 30 Planar Diagonals + 4 Space Diagonals = 109 Lines.
-```
+<details>
+<summary><b>How does result 3 work? (strategy stealing in plain words)</b></summary>
 
----
+<br/>
 
-## 4. Combinatorial Theory & Mathematical Proofs
+Suppose the second player had a strategy that always wins. The first player could then make an arbitrary first move and afterwards pretend to be the second player, following that winning strategy.
 
-### A. The Static Pairing Impossibility Theorem
-In hypergraph theory, a static pairing strategy for Breaker consists of a set of disjoint 2-element subsets of V such that every hyperedge e ∈ F contains at least one pair.
+An extra stone on the board can never hurt you in this game. So the first player would also win, which contradicts the assumption. The idea goes back to John Nash.
 
-1. **Linear Hypergraph Lemma:** Any two distinct straight lines in ℤ₅³ intersect in at most one cell:
-   `|L_i ∩ L_j| ≤ 1  for all i ≠ j`.
-2. **Dedicated Pair Lemma:** Because no two lines can share 2 or more cells, any disjoint pair {u, v} belongs to at most **one** winning line.
-3. **Pairing Bound:** On 125 cells, the maximum number of disjoint pairs is:
-   `floor(125 / 2) = 62 pairs`.
-4. **Coverage Deficit:** 62 pairs can cover at most 62 lines.
-   `109 - 62 = 47 lines remaining unblocked`.
-5. **Conclusion:** An unconditional static pairing strategy on the empty 5×5×5 board is **mathematically impossible**.
+The hard part is making this airtight for the exact rules. The proof has to handle the extra stone, moves that land on the extra stone, immediate wins, full boards, and illegal move requests. [`Stealing.v`](QUBIC-PROOF-GATE-001/agent/Stealing.v) does all of this, and the kernel checks it. It does **not** search the game tree.
 
-### B. Absence of White Victory-Continue-Fours (VCF) up to Depth 8
-In k = 5 games (e.g., 15×15 Gomoku), White's first-player forced wins are driven by continuous 4-threat sequences (VCF).
-Using our 128-bit SIMD bitboard search engine (`solver/search_vcf.c`), we tested all 10 canonical $O_h$ opening orbits up to depth 8:
-- Orbit 1: Center `(2, 2, 2)` [cell 62, deg 13]: 0 VCF sequences.
-- Orbit 2: Corner `(0, 0, 0)` [cell 0, deg 7]: 0 VCF sequences.
-- Orbit 3: Sub-Center `(1, 1, 1)` [cell 31, deg 7]: 0 VCF sequences.
-- Orbit 4: Face-Center `(2, 2, 0)` [cell 12, deg 5]: 0 VCF sequences.
-- Orbit 5: Inner-Axis `(2, 2, 1)` [cell 37, deg 5]: 0 VCF sequences.
-- Orbit 6: Inner-Planar `(2, 1, 1)` [cell 32, deg 4]: 0 VCF sequences.
-- Orbit 7: Edge-Center `(2, 0, 0)` [cell 2, deg 4]: 0 VCF sequences.
-- Orbit 8: Outer-Flank `(1, 1, 0)` [cell 6, deg 4]: 0 VCF sequences.
-- Orbit 9: Edge-Inner `(1, 0, 0)` [cell 1, deg 4]: 0 VCF sequences.
-- Orbit 10: Face-Interior `(2, 1, 0)` [cell 7, deg 3]: 0 VCF sequences.
-
-**Theorem (Finite Horizon):** White has **zero forced VCF sequences of depth $\le 8$** from any opening move. White cannot force victory through uninterrupted threat chains.
-
-### C. The Algebraic Deficit Conservation Law & Counterexample 014
-In `QubicAlgebraic.v` and `lean4/Qubic_5x5x5.lean`, we establish the fundamental capacity law:
-$$2(109 - B) \le 125 - 2k \iff B \ge k + 47$$
-- **Minimal Horizon:** Because branch-and-bound optimization bounds line coverage at $B_{\max}(7) \le 45$, $B_{\max}(8) \le 49$, $B_{\max}(9) \le 53$, the capacity threshold $B \ge k + 47$ cannot be met for any $k < 10$. Round 10 ($k = 10$) is the minimum possible pairing horizon.
-- **Necessity vs. Sufficiency (Counterexample 014):** Meeting capacity $B \ge k + 47$ is necessary but NOT sufficient for pairing. In Counterexample 014 ($B = 57, k = 10$), $2 \times 52 = 104 \le 105$, yet surviving line `[50, 51, 52, 53, 54]` has four White stones, leaving only cell 54 free. Because two free cells are required for each pair, no disjoint pairing exists for that state. A valid pairing leaf requires both capacity and tactical non-saturation.
-
-### D. The Dynamic Hopcroft-Karp Pairing Resolution (Round 17 / Ply 34) & Round 10 Minimal Leaf
-While static pairing is impossible at ply 0, Black's defensive moves eliminate winning lines at a rapid rate.
-At each round, we model the unblocked lines and unoccupied cells as a bipartite graph G = (X, Y):
-- Partite class X: Contains 2 vertices per unblocked line (`L_i^(1)`, `L_i^(2)`).
-- Partite class Y: Contains 1 vertex per unoccupied cell.
-- An edge exists between `L_i^(k)` and cell `c` if and only if `c ∈ L_i`.
-- An X-perfect matching constructs a dedicated disjoint pair for every surviving unblocked line.
-
-#### The Exact 43-Line Pairing Schedule at Round 17:
-```
-Line ID | Line Coordinates               | Paired Cell 1      | Paired Cell 2
---------+--------------------------------+--------------------+--------------------
-    1   | (0,1,0) -> (0,1,4)             | (0,1,0) [idx  5]   | (0,1,1) [idx  6]
-    3   | (0,3,0) -> (0,3,4)             | (0,3,4) [idx 19]   | (0,3,1) [idx 16]
-   10   | (2,0,0) -> (2,0,4)             | (2,0,0) [idx 50]   | (2,0,1) [idx 51]
-   11   | (2,1,0) -> (2,1,4)             | (2,1,0) [idx 55]   | (2,1,1) [idx 56]
-   13   | (2,3,0) -> (2,3,4)             | (2,3,0) [idx 65]   | (2,3,4) [idx 69]
-   14   | (2,4,0) -> (2,4,4)             | (2,4,0) [idx 70]   | (2,4,1) [idx 71]
-   15   | (3,0,0) -> (3,0,4)             | (3,0,0) [idx 75]   | (3,0,2) [idx 77]
-   19   | (3,4,0) -> (3,4,4)             | (3,4,0) [idx 95]   | (3,4,1) [idx 96]
-   21   | (4,1,0) -> (4,1,4)             | (4,1,0) [idx 105]  | (4,1,3) [idx 108]
-   23   | (4,3,0) -> (4,3,4)             | (4,3,0) [idx 115]  | (4,3,1) [idx 116]
-   24   | (4,4,0) -> (4,4,4)             | (4,4,0) [idx 120]  | (4,4,1) [idx 121]
-   26   | (0,0,1) -> (0,4,1)             | (0,0,1) [idx  1]   | (0,2,1) [idx 11]
-   28   | (0,0,3) -> (0,4,3)             | (0,0,3) [idx  3]   | (0,1,3) [idx  8]
-   29   | (0,0,4) -> (0,4,4)             | (0,2,4) [idx 14]   | (0,1,4) [idx  9]
-   32   | (1,0,2) -> (1,4,2)             | (1,4,2) [idx 47]   | (1,1,2) [idx 32]
-   36   | (2,0,1) -> (2,4,1)             | (2,2,1) [idx 61]   | (2,3,1) [idx 66]
-   37   | (2,0,2) -> (2,4,2)             | (2,0,2) [idx 52]   | (2,1,2) [idx 57]
-   38   | (2,0,3) -> (2,4,3)             | (2,0,3) [idx 53]   | (2,4,3) [idx 73]
-   39   | (2,0,4) -> (2,4,4)             | (2,2,4) [idx 64]   | (2,1,4) [idx 59]
-   40   | (3,0,0) -> (3,4,0)             | (3,3,0) [idx 90]   | (3,2,0) [idx 85]
-   42   | (3,0,2) -> (3,4,2)             | (3,4,2) [idx 97]   | (3,2,2) [idx 87]
-   44   | (3,0,4) -> (3,4,4)             | (3,0,4) [idx 79]   | (3,2,4) [idx 89]
-   46   | (4,0,1) -> (4,4,1)             | (4,0,1) [idx 101]  | (4,1,1) [idx 106]
-   47   | (4,0,2) -> (4,4,2)             | (4,1,2) [idx 107]  | (4,3,2) [idx 117]
-   51   | (0,0,1) -> (4,0,1)             | (1,0,1) [idx 26]   | (3,0,1) [idx 76]
-   52   | (0,0,2) -> (4,0,2)             | (0,0,2) [idx  2]   | (1,0,2) [idx 27]
-   53   | (0,0,3) -> (4,0,3)             | (1,0,3) [idx 28]   | (3,0,3) [idx 78]
-   55   | (0,1,0) -> (4,1,0)             | (1,1,0) [idx 30]   | (3,1,0) [idx 80]
-   57   | (0,1,2) -> (4,1,2)             | (0,1,2) [idx  7]   | (3,1,2) [idx 82]
-   59   | (0,1,4) -> (4,1,4)             | (3,1,4) [idx 84]   | (4,1,4) [idx 109]
-   67   | (0,3,2) -> (4,3,2)             | (0,3,2) [idx 17]   | (2,3,2) [idx 67]
-   68   | (0,3,3) -> (4,3,3)             | (0,3,3) [idx 18]   | (4,3,3) [idx 118]
-   69   | (0,3,4) -> (4,3,4)             | (3,3,4) [idx 94]   | (1,3,4) [idx 44]
-   70   | (0,4,0) -> (4,4,0)             | (0,4,0) [idx 20]   | (1,4,0) [idx 45]
-   71   | (0,4,1) -> (4,4,1)             | (0,4,1) [idx 21]   | (1,4,1) [idx 46]
-   74   | (0,4,4) -> (4,4,4)             | (0,4,4) [idx 24]   | (1,4,4) [idx 49]
-   79   | (0,0,2) -> (4,4,2)             | (3,3,2) [idx 92]   | (4,4,2) [idx 122]
-   81   | (0,0,3) -> (4,4,3)             | (2,2,3) [idx 63]   | (4,4,3) [idx 123]
-   83   | (0,0,4) -> (4,4,4)             | (0,0,4) [idx  4]   | (1,1,4) [idx 34]
-   91   | (0,3,0) -> (4,3,4)             | (3,3,3) [idx 93]   | (0,3,0) [idx 15]
-   93   | (0,4,0) -> (4,4,4)             | (2,4,2) [idx 72]   | (3,4,3) [idx 98]
-   99   | (2,0,0) -> (2,4,4)             | (2,4,4) [idx 74]   | (2,3,3) [idx 68]
-  100   | (2,0,4) -> (2,4,0)             | (2,1,3) [idx 58]   | (2,0,4) [idx 54]
-```
-
-### Strategic Execution:
-From Round 17 onward, whenever White claims one of the paired cells, Black counters immediately by claiming the corresponding paired cell on that exact line.
-Because every one of the 43 surviving lines contains an intact pair, White can **never claim both cells** of any surviving line. The other 66 lines are already blocked by Black's earlier stones.
-**White can never complete any winning line.**
+</details>
 
 ---
 
-## 5. Beck Danger Potential Trajectory
+## ❌ What is NOT proved: the missing piece
 
-In Maker-Breaker game theory, Beck's danger potential measures cumulative winning threat:
-`D(t) = sum_{L in F_unblocked} 2^(-unoccupied(L))`.
-- Initial Danger: `D(0) = 109 / 32 = 3.40625`.
-- **Beck's Theorem:** If Breaker drives `D(t) < 1.0`, Breaker wins Maker-Breaker, which forces an Exact Draw in standard tic-tac-toe.
+Everything left comes down to a single statement:
 
-### Exact Trajectory Table (Greedy Defense):
-```
-Round | White Move | Danger After W | Black Move | Danger After B | Unblocked Lines
-------+------------+----------------+------------+----------------+----------------
-   1  |  (2,2,2)   |       3.8125   |  (0,0,0)   |       3.5625   |       102
-   2  |  (1,1,3)   |       3.8125   |  (3,3,1)   |       3.5000   |        95
-   3  |  (1,3,1)   |       3.7500   |  (3,1,3)   |       3.4375   |        89
-   4  |  (1,2,2)   |       3.7188   |  (1,0,4)   |       3.3750   |        85
-   5  |  (1,3,3)   |       3.6562   |  (3,1,1)   |       3.3438   |        80
-   6  |  (1,2,3)   |       3.6250   |  (1,4,3)   |       3.2812   |        76
-   7  |  (1,2,1)   |       3.5625   |  (1,1,1)   |       3.2500   |        73
-   8  |  (1,2,0)   |       3.5625   |  (1,2,4)   |       3.0312   |        71
-   9  |  (1,3,2)   |       3.3125   |  (1,3,0)   |       2.9375   |        67
-  10  |  (4,2,0)   |       3.1875   |  (3,2,1)   |       2.8438   |        64
-  11  |  (0,2,0)   |       3.1250   |  (2,2,0)   |       2.7812   |        61
-  12  |  (4,2,4)   |       3.1250   |  (3,2,3)   |       2.5625   |        59
-  13  |  (4,2,2)   |       2.9062   |  (0,2,2)   |       2.5312   |        55
-  14  |  (4,2,1)   |       2.8125   |  (4,2,3)   |       2.2812   |        53
-  15  |  (4,0,2)   |       2.5312   |  (0,4,2)   |       2.2188   |        50
-  16  |  (4,4,4)   |       2.4688   |  (4,0,0)   |       2.1875   |        46
-  17  |  (4,3,4)   |       2.4375   |  (4,0,4)   |       2.0938   |        43 [X-Perfect Pairing!]
-  18  |  (2,3,2)   |       2.3750   |  (3,3,3)   |       2.0000   |        40
-  19  |  (4,3,2)   |       2.3125   |  (4,4,2)   |       1.9375   |        37
-  20  |  (0,3,2)   |       2.2188   |  (3,3,2)   |       1.6875   |        35
-  21  |  (2,0,2)   |       1.9062   |  (2,4,2)   |       1.5625   |        32
-  22  |  (1,0,2)   |       1.8125   |  (1,1,2)   |       1.5312   |        30
-  23  |  (3,0,2)   |       1.8125   |  (0,0,2)   |       1.3125   |        29
-  24  |  (4,3,1)   |       1.5000   |  (4,3,0)   |       1.2500   |        28
-  25  |  (0,3,4)   |       1.4062   |  (2,3,4)   |       1.1875   |        25
-  26  |  (0,3,1)   |       1.3438   |  (0,3,3)   |       1.0625   |        23
-  27  |  (4,0,1)   |       1.2188   |  (4,1,1)   |       0.9375   |        21 [D < 1.000!]
+```coq
+Goal.BlackNonLossFromEmpty :=
+  exists black : BlackStrategy, forall white : WhiteStrategy,
+    outcome (play white black) <> WhiteWins.
 ```
 
-At Round 27, `D(27) = 0.9375 < 1.000`, providing a dual, independent potential-function proof of the draw.
+*"The second player has a strategy that never loses."*
 
-### 5.1 Massive-Scale Adversarial Stress Testing (50,000 Games)
-- **Harness:** `solver/stress_test_beck.c` (with complete terminal adjudication for both White and Black)
-- **Opponent Model:** White seeks immediate 4-threat wins, actively constructs double-threat forks at multi-line intersections, and blends potential maximization with randomized exploration.
-- **Results Across 50,000 Games:**
-  - White Wins: **0 (0.0000%)**
-  - Black Outright Wins: **301 (0.6020%)**
-  - Hopcroft-Karp Pairing Draws: **49,699 (99.3980%)**
-  - Full-Board Exhaustion Draws: **0 (0.0000%)**
-  - Total White Loss / Draw Rate: **50,000 / 50,000 (100.0000%)**
-  - Execution Time: 39.12 seconds (> 1,270 games/sec).
+- If this is proved, the game is a **draw** (by result 4).
+- If it is refuted, the first player has a **forced win**.
 
-### 5.2 The Three-Tier Adaptive Defense Policy
-1. **Tier 1 (Immediate Emergency):** Blocks any 4-in-a-row threat immediately.
-2. **Tier 2 (Double-Threat Fork Neutralization):** Intercepts any empty cell intersecting two or more unblocked lines with 3 White stones, preventing unblockable forks.
-3. **Tier 3 (Beck Potential Minimization):** Maximizes cumulative potential drop until the game reaches an X-perfect Hopcroft-Karp pairing leaf.
+In [`agent/Solution.v`](QUBIC-PROOF-GATE-001/agent/Solution.v) it is still marked `Admitted`. The fail-closed proof gate therefore **rejects** the exact-draw claim, as it should:
 
-### 5.3 Formal Verification Status & Mathematical Architecture
-1. **The Certified Conditional Partition Theorem:** 100% formally verified in **Rocq 9.1** (`certified_partition_blocks_all_109_lines`, 0 axioms, 0 admits) and **Lean 4.35.0** (`certifiedPartitionBlocksPairedLine`, 0 sorry), and independently certified **UNSAT in 5.98 ms** by native C++ Z3. Given the 17 defense stones and 43 pairs, White cannot win.
-2. **The Alternating Adversarial Reachability Problem (forall w_1 exists b_1 ...):**
-   - White scored 0 wins across 50,000 complete games (301 Black wins, 49,699 pairing draws).
-   - The Beck potential drops below 1.0 (D(27) = 0.9375 < 1.000), mathematically barring forks.
-   - An exhaustive game-tree certificate (analogous to Cain et al. 2025 on 7x7x7) remains the active frontier of full game-theoretic resolution.
+```text
+$ python QUBIC-PROOF-GATE-001/tools/verify_gate.py --rocq rocq
+Axioms:
+black_nonloss : BlackNonLossFromEmpty
+REJECTED: Axiom/assumption audit FAILED: expected 2 closed theorems, got 0.
+```
+
+> [!NOTE]
+> The gate will only print `ACCEPTED` when `black_nonloss` is proved with no axioms or admits.
+
+> [!WARNING]
+> `trusted/Rules.v` and `trusted_hashes.json` were written by an AI agent, not supplied by an independent reviewer. The gate's own security design requires a human to review and pin them.
+> As a partial check, `Geometry.v` proves the 109 lines are exactly the cube's straight lines. A human review of the rules file is still outstanding.
 
 ---
 
-## 6. Dual-Prover Verification Architecture
+## 🧪 Evidence that is *not* proof
 
-### Rocq 9.1 Verification Suite (`build.ps1` in 65.86s)
-- `QubicBoard.v` (27 Theorems): Hypergraph geometry, 109 lines, 5-uniformity, degree spectrum (1×13 + 16×7 + 12×5 + 72×4 + 24×3 = 545 incidences).
-- `QubicSymmetry.v` (20 Theorems): O_h coordinate involutions, orbit preservation, Dedicated Pair Theorem (`dedicated_pair_bound`), and center degree strict maximality (`center_degree_strictly_maximal`).
-- `QubicThreat.v` (11 Theorems): Linear Hypergraph Theorem (`two_lines_intersect_at_most_once`), double threat intersection bound, orbit line counts, and opening center dominance.
-- `QubicTheorem.v` (10 Theorems): Certified 43-pair schedule, 17 defense stones, pairwise disjointness, complete 109-line coverage reflection, constructive pairing and stone blocking soundness lemmas, and Certified Partition Blocking Theorem (`certified_partition_blocks_all_109_lines`).
-- `QubicAlgebraic.v` (16 Theorems): Algebraic Deficit Conservation Law (`algebraic_deficit_conservation`, $B \ge k + 47$), static pairing impossibility, minimal horizon lower bounds ($k \ge 10$), Move 1 universal potential contraction ($\Delta \Psi < 0$), and minimal 10-round safe leaf blocking theorem (`safe10_blocks_all_109_lines`).
-- `CheckAssumptions.v`: Programmatic audit confirming **84 / 84 Theorems strictly Closed under global context (0 Axioms, 0 Admits)**.
+These experiments are useful for intuition. **None of them establishes the game value.**
 
-### Lean 4.35.0 Verification Suite (`build_lean.ps1` in 2.38s)
-- `lean4/Qubic_5x5x5.lean`: 34 Theorems formally verified with **ZERO sorry** under Presburger arithmetic (`omega`) and constructive inductive board semantics.
-
-### Independent C11 & Native C++ Verification Engines
-- `solver/audit_qubic5.c`: Structural 4-pass audit verifying geometry, degree spectrum, static pairing impossibility, and O_h symmetry invariance in **0.00 ms (100% pass)**.
-- `solver/solver_qubic5.c`: 128-bit threat engine and Hopcroft-Karp dynamic pairing solver executing in **1.00 ms**.
-- `solver/sat_qubic5.cpp`: Native C++ Z3 SAT/SMT solver directly linked against `libz3.dll`:
-  - **Theorem 1:** Proves exact hypergraph transversal number `tau(5³) = 28` (UNSAT for `<= 27`, explicit 28-cell witness).
-  - **Theorem 2:** Formally proves White winning formula is **UNSAT in 5.98 ms** under the certified 43-pair schedule and 17 defense stones.
-- `solver/sat_verify_pairing.py`: Python Z3 independent verifier parsing lines directly from `QubicBoard.v` and proving `UNSAT`.
+| Experiment | What it shows | Why it is not a proof |
+| :--- | :--- | :--- |
+| 50,000 simulated games ([`stress_test_beck.c`](solver/stress_test_beck.c)) | A heuristic defender never lost to a heuristic attacker. | Tests one attacker model, not every possible strategy. |
+| Beck "danger" score dropping below 1 at round 27 | One greedy line of play reduces a threat measure. | Holds for one sequence of moves, not for all White strategies. |
+| Round-10 and Round-17 pairing positions | Some mid-game positions are pairing-safe (result 7). | Nobody has shown Black can **force** reaching such a position. |
+| Z3 "UNSAT" for the 43-pair schedule | White cannot win **inside that fixed position**. | Says nothing about how to reach the position. |
+| VCF threat search ([`search_vcf.c`](solver/search_vcf.c)) | No immediate four-threat chains from one opening stone. | Skips quiet setup moves; a smoke test only. |
 
 ---
 
-## 7. Build & Verification Commands
+## 🧭 How a real solution could look
 
-### Execute Rocq 9.1 Build & Audit:
+```mermaid
+flowchart TD
+    E["Empty board"] -->|"needs a proof for EVERY White move"| T["Black strategy tree (checked by TreeCertificates.v)"]
+    T --> L["Pairing-safe positions (proved safe by SafePairing.v)"]
+    L --> D["Draw"]
+    E -.->|"or"| W["A forced White win<br/>(would settle the game the other way)"]
+```
+
+The missing link is the top arrow. It needs a Black reply to **every** White move from the empty board until a pairing-safe position is reached. This is the step that solved 7×7×7, where it took only 4 moves. On 5×5×5, a counting argument shows pairing cannot even start before Black's 7th move, so the tree would be much deeper.
+
+---
+
+## 📐 Board geometry
+
+<details>
+<summary><b>The 109 winning lines</b></summary>
+
+<br/>
+
+Cells are numbered `c = x + 5·y + 25·z` with `x, y, z ∈ {0,…,4}`.
+
+| Kind | Count | Description |
+| :--- | :---: | :--- |
+| Straight (axis-parallel) | 75 | 25 lines along each of the x, y, and z axes |
+| Plane diagonals | 30 | 2 diagonals in each of the 15 axis-parallel planes |
+| Space diagonals | 4 | Corner to opposite corner through the centre |
+| **Total** | **109** | Proved in `Geometry.v` to be exactly the cube's straight lines |
+
+Any two different lines share at most one cell (`two_lines_intersect_at_most_once`). This is why a 2-cell "pair" can only ever protect one line.
+
+</details>
+
+<details>
+<summary><b>How many lines pass through each cell (10 symmetry classes)</b></summary>
+
+<br/>
+
+| Cell type | Cells | Lines through each | Example cell |
+| :--- | :---: | :---: | :---: |
+| Centre | 1 | **13** | 62 |
+| Corners | 8 | 7 | 0 |
+| Inner corners | 8 | 7 | 31 |
+| Face centres | 6 | 5 | 12 |
+| Inner axis cells | 6 | 5 | 37 |
+| Inner plane cells | 12 | 4 | 32 |
+| Edge midpoints | 12 | 4 | 2 |
+| Outer flank cells | 24 | 4 | 6 |
+| Edge inner cells | 24 | 4 | 1 |
+| Face interior cells | 24 | 3 | 7 |
+| **Total** | **125** | 545 incidences = 109 × 5 | |
+
+</details>
+
+---
+
+## 🔁 Reproduce
+
+Requires [Rocq 9.1](https://rocq-prover.org/) and Python 3.
+
 ```powershell
+# The official gate (expected result today: REJECTED, because black_nonloss is unproved)
+python QUBIC-PROOF-GATE-001/tools/verify_gate.py --rocq rocq
+
+# Partial results, each compiled from scratch with assumption audits
+python research-017/verify.py   # strategy stealing, geometry, rules facts
+python research-018/verify.py   # pairing-safe leaves, strategy-tree checker
+python research-019/verify.py   # 14-ply opening bound, forced-block and fork rules
+
+# Legacy building-block library (92 theorems, all closed)
 .\build.ps1
 ```
 
-### Execute Lean 4.35.0 Build & Audit:
-```powershell
-.\build_lean.ps1
-```
+---
 
-### Execute Native C++ Z3 SAT/SMT Solver:
-```powershell
-.\solver\sat_qubic5.exe
-```
+## 🗂️ Repository map
 
-### Execute Python Z3 SMT Verifier:
-```powershell
-python solver/sat_verify_pairing.py
-```
+| Path | Contents |
+| :--- | :--- |
+| [`QUBIC-PROOF-GATE-001/`](QUBIC-PROOF-GATE-001/) | Hash-pinned rules and goal, the agent's proof files, and the fail-closed verifier |
+| [`research-017/`](research-017/README.md) | Strategy stealing: the first player cannot lose |
+| [`research-018/`](research-018/README.md) | Pairing-safe leaves and the strategy-tree certificate checker |
+| [`research-019/`](research-019/README.md) | Opening bound and sound tactical pruning |
+| `Qubic*.v`, `CheckAssumptions.v` | Legacy Rocq library: board facts, symmetry, pairing certificates |
+| [`solver/`](solver/) | C, C++ and Python experiments (evidence only, see above) |
+| [`QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md`](QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md) | Historical write-up. Contains withdrawn claims; read it with the status above in mind |
 
-### Compile & Execute C11 Verification Suite:
-```powershell
-gcc -O3 -Wall -Wextra solver/audit_qubic5.c -o solver/audit_qubic5.exe
-.\solver\audit_qubic5.exe
+---
 
-gcc -O3 -Wall -Wextra solver/solver_qubic5.c -o solver/solver_qubic5.exe
-.\solver\solver_qubic5.exe
-```
+## 📝 Corrections
+
+This project keeps its mistakes visible.
+
+| Audit | Finding |
+| :--- | :--- |
+| [014/015](QUBIC-AUDIT-014_015_FINDINGS.md) | The capacity condition for pairing is necessary but not sufficient. The VCF solver had defects. No theorem covered the full game. |
+| [016](QUBIC-AUDIT-016_FINDINGS.md) | The "43 pairs + 17 stones" defense loses to White simply filling line `0-1-2-3-4` (kernel-checked, ply 9). |
+| This page | **Withdrawn:** "exact draw", "unrefutable proof", "dual independent proof of the draw", and "White can never complete any line". These were never proved for the real game from the empty board. |
+
+---
+
+<p align="center"><sub>MIT License • Rocq 9.1 • Branch <code>qubic-5x5x5</code></sub></p>

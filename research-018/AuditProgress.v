@@ -1,0 +1,17 @@
+From QubicAgent Require Import SafePairing TreeCertificates.
+From QubicResearch018 Require Import Witnesses.
+
+Print Assumptions SafePairing.paired_white_move_cannot_win.
+Print Assumptions SafePairing.reply_restores_pairing.
+Print Assumptions SafePairing.static_pairing_policy_nonloss.
+Print Assumptions SafePairing.checked_pairing_leaf_policy.
+Print Assumptions TreeCertificates.checked_defense_tree_minimax.
+Print Assumptions TreeCertificates.checked_tree_has_total_defense.
+Print Assumptions TreeCertificates.checked_empty_tree_proves_exact_draw.
+Print Assumptions Witnesses.state10_is_legal_prefix.
+Print Assumptions Witnesses.safe10_all_continuations.
+Print Assumptions Witnesses.state15_is_legal_prefix.
+Print Assumptions Witnesses.tree15_checks_all_white_moves.
+Print Assumptions Witnesses.state15_total_defense.
+Print Assumptions Witnesses.safe10_table_does_not_certify_empty_board.
+Print Assumptions Witnesses.local_tree_does_not_certify_empty_board.

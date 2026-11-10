@@ -1,10 +1,11 @@
-(** agent/Solution.v: Pure Algebraic Defense & Master Draw Theorem for 5x5x5 Qubic
-    Specification-locked solution for QUBIC-PROOF-GATE-001.
-    Strictly 0 axioms, 0 admits, 0 brute-force computation.
-    Verified pairing partition + invariant game induction. *)
+(** Candidate solution for the specification-locked QUBIC-PROOF-GATE-001.
+    First-player nonloss is proved by constructive strategy stealing.
+    Second-player nonloss remains admitted: the exact-draw gate MUST reject.
+    Conditional pairing facts below do not settle that remaining obligation. *)
 
 From Stdlib Require Import List Arith Bool Lia.
 From QubicTrusted Require Import Rules Goal.
+From QubicAgent Require Import Stealing.
 Import ListNotations.
 
 (** ========================================================================= *)
@@ -543,12 +544,10 @@ Definition white_pairing_policy : Rules.WhiteStrategy :=
 (**    Black responds with [91; 11; 77; 123; 94], failing to block Line 0.    *)
 (**    White completes Line 0 on Move 5 and wins.                             *)
 (**                                                                           *)
-(** 4. Fail-Closed Proof Gate:                                                *)
-(**    Because reaching a verified safe leaf against ALL legal White moves is  *)
-(**    an open problem in combinatorial game theory (Beck 2008, Patashnik     *)
-(**    1980, Cain et al. 2025), these theorems remain Admitted to ensure the   *)
-(**    proof gate fail-closed verifier `tools/verify_gate.py` rightly rejects *)
-(**    unproven claims (0 axioms, 0 admits required).                         *)
+(** 4. Remaining global obligation:                                         *)
+(**    black_nonloss is still unproved, so the fail-closed gate must reject.  *)
+(**    white_nonloss below now follows from the assumption-free full-game   *)
+(**    strategy-stealing proof in Stealing.v.                               *)
 (** ------------------------------------------------------------------------- *)
 
 Theorem black_nonloss : Goal.BlackNonLossFromEmpty.
@@ -557,7 +556,8 @@ Admitted.
 
 Theorem white_nonloss : Goal.WhiteNonLossFromEmpty.
 Proof.
-Admitted.
+  exact Stealing.white_nonloss_proved.
+Qed.
 
 Theorem exact_draw : Goal.ExactDraw.
 Proof.

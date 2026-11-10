@@ -14,7 +14,7 @@
   REJECTED: Axiom/assumption audit FAILED: expected 2 closed theorems, got 0.
   ```
 - **Why did previous runs hang for ~10 minutes?**  
-  The kernel was subjected to `destruct (Rules.step_game 125 ...)`. Unfolding a 125-deep fixpoint containing branching let-bindings triggers astronomical symbolic expression growth ($O(2^{125})$), locking Rocq's unification engine.
+  The proof script contained `destruct (Rules.step_game 125 ...)` over abstract strategies. The most likely cause is symbolic unfolding of the 125-deep fixpoint with duplicated `if`/`let` subterms, which can grow the term exponentially. This explanation is a hypothesis; it was not profiled.
 - **Why was the proposed pairing strategy refuted?**  
   The proposed 43-pair + 17-defense stone policy loses on move 5 to a trivial 5-move attack on Line 0 (Counterexample 016).
 
@@ -46,6 +46,8 @@ $$\text{Line } 0 = [0, 1, 2, 3, 4]$$
    $$\{0, 1, 2, 3, 4\} \subset \text{white\_stones}$$
    **`has_win (white_stones) = true`. White wins on Ply 9.**
 
+**Kernel-checked:** with `line0_attack := fun st => length (white_stones st)`, Rocq proves `outcome (play line0_attack black_pairing_policy) = WhiteWins` by `vm_compute` (one concrete 9-ply game, 0.49 s, closed under the global context). The final history is `[0; 91; 1; 11; 2; 77; 3; 123; 4]`. Black never plays a 5th stone.
+
 Black's policy blindly paired on unrelated lines while White marched directly down Line 0.  
 The condition `length (white_stones st) < 5` ceased to hold on move 5, at which point Black had played only 4 stones ($4 < 17$), rendering the inductive invariant mathematically false.
 
@@ -70,7 +72,7 @@ The condition `length (white_stones st) < 5` ceased to hold on move 5, at which 
   Required cells to pair 75 lines: $2 \times 75 = 150$.  
   Remaining free cells: $125 - 8 = 117$.  
   Since $150 > 117$, **no matching can possibly exist after 4 moves**.  
-  The matching capacity $2L \le F$ cannot theoretically be met before Round 17 (34 plies), by which point White has had 17 moves to construct unstoppable forks.
+  *Correction (re-audit):* an earlier version claimed the capacity condition could not be met before Round 17. That was false. The crude degree bound (sum of the $k$ largest cell degrees) only excludes $k \le 6$, and the Counterexample 014 position already blocks 57 lines with 10 Black stones, meeting the capacity condition at Round 10. Capacity is necessary, not sufficient (Audit 014).
 
 ---
 

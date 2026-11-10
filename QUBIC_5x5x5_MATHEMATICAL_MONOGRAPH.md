@@ -1,5 +1,8 @@
 # Mathematical Monograph: Formal Verification & Dynamic Pairing Resolution of 5x5x5 3D Tic-Tac-Toe (5³, k = 5)
 
+> [!CAUTION]
+> **Historical document: contains withdrawn claims.** Statements below such as "proof of the draw", "unrefutable SMT proof", and "White can never complete any winning line" are **not** proofs for the real game from the empty board. The 5×5×5 game value is **unsolved**. What is proved is that the first player cannot lose; whether the game is a draw or a first-player win is open. See the [README](README.md) for the current, checked status.
+
 **Dedicated Branch:** `qubic-5x5x5`  
 **Repository:** `https://github.com/TACITVS/Theorem_Prover_Formalization_of_Board_Games.git`  
 **Dual-Prover Verification:** Rocq 9.1 (92 Theorems, 0 Axioms, 0 Admits) & Lean 4.35.0 (37 Theorems, 0 Sorry)  

@@ -1,10 +1,11 @@
 /**
  * search_vcf.c - Heuristic VCF (Victory-Continue-Fours) Threat-Space Search for 5x5x5 Qubic
  * 
- * Searches whether White possesses any forced win using strictly continuous 4-threats
- * from any of the 10 canonical O_h opening orbits up to a specified search depth.
+ * Searches threat-producing continuations of a supplied White-to-move position.
  * 
- * NOTE: This is a depth-bounded threat-chain search (VCF), not a full minimax game-tree proof.
+ * NOTE: Quiet setup moves are omitted. main() uses synthetic one-stone inputs,
+ * which cannot create a four-stone threat on the next White move. Its negative
+ * outputs provide no opening search bound and no minimax game-value proof.
  */
 
 #include <stdio.h>
@@ -213,10 +214,11 @@ bool search_vcf(u128 white, u128 black, int depth, int max_depth) {
 int main() {
     generate_lines();
     printf("=======================================================================\n");
-    printf("    SEARCHING FOR WHITE FORCED VCF SEQUENCES IN 5x5x5 TIC-TAC-TOE      \n");
+    printf("       RESTRICTED VCF SMOKE TEST ON SYNTHETIC ONE-STONE INPUTS        \n");
     printf("=======================================================================\n");
 
-    // All 10 canonical O_h opening orbits:
+    // Representatives of the 10 cell orbits. These are synthetic White-to-move
+    // test inputs, not legal histories after an actual White opening move.
     int canonical_openings[] = { 62, 0, 31, 12, 37, 32, 2, 6, 1, 7 };
     const char *names[] = {
         "Center (2,2,2)       [deg 13]",
@@ -231,7 +233,7 @@ int main() {
         "Face-Interior (2,1,0)[deg  3]"
     };
 
-    printf("Evaluating depth <= 8 across all 10 canonical O_h opening orbits:\n\n");
+    printf("Threat-only continuations; quiet setup moves omitted (limit 8):\n\n");
 
     for (int i = 0; i < 10; i++) {
         int w1 = canonical_openings[i];
@@ -245,11 +247,11 @@ int main() {
         if (vcf) {
             printf("FORCED VCF WIN FOUND!\n");
         } else {
-            printf("NO forced VCF (depth <= 8).\n");
+            printf("NO threat-only continuation from this input.\n");
         }
     }
-    printf("\nNote: Absence of VCF within depth 8 confirms White cannot win via\n");
-    printf("uninterrupted 4-threat chains. Full game value is determined by the pairing\n");
-    printf("defense and potential contraction theorems.\n");
+    printf("\nThese one-stone inputs cannot create a four-stone threat on the next move.\n");
+    printf("The test does not explore setup moves or establish an opening depth bound.\n");
+    printf("The full game value remains unproved; see research-019 for verified bounds.\n");
     return 0;
 }

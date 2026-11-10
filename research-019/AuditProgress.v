@@ -1,0 +1,18 @@
+From QubicAgent Require Import Tactics.
+From QubicResearch019 Require Import Regressions.
+
+Print Assumptions Tactics.winning_lines_linear.
+Print Assumptions Tactics.distinct_targets_require_seven_stones.
+Print Assumptions Tactics.white_completion_unique_below_seven.
+Print Assumptions Tactics.blocking_policy_removes_unique_completion.
+Print Assumptions Tactics.no_white_win_in_first_fourteen_plies.
+Print Assumptions Tactics.blocking_policy_delays_white_win_until_ply_fifteen.
+Print Assumptions Tactics.ignoring_white_completion_loses.
+Print Assumptions Tactics.forced_block_minimax_equality.
+Print Assumptions Tactics.checked_fork_has_total_white_win.
+Print Assumptions Regressions.true_fork_reachable_prefix.
+Print Assumptions Regressions.local_fork_has_total_winning_strategy.
+Print Assumptions Regressions.shared_target_has_two_threat_lines.
+Print Assumptions Regressions.shared_target_is_not_a_distinct_fork.
+Print Assumptions Regressions.own_immediate_win_rejects_fork_cutoff.
+Print Assumptions Regressions.black_wins_before_white_fork.
