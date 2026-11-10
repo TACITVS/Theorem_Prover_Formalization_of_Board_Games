@@ -1,0 +1,344 @@
+﻿hybrid-aware Black: start layout hybrid_c_empty/best.txt, 100000 local steps per candidate
+engine: 109 lines; 22 games to play (0 already done), 22 threads, 1.00s/move, max 24 plies; upper bound 0.4 min wall
+  [    1s] games done 0/22 | game 11 ply 1: White 4 depth 6 eval 10 | 0.77 M nodes/s total, max depth 6
+    game 8 round 1: Black 43, hybrid shortfall 25
+  [   19s] games done 0/22 | game 8 ply 2: Black 43 depth 6 eval -74 | 0.90 M nodes/s total, max depth 6
+    game 2 round 1: Black 62, hybrid shortfall 26
+    game 10 round 1: Black 93, hybrid shortfall 26
+    game 0 round 1: Black 31, hybrid shortfall 25
+    game 1 round 1: Black 0, hybrid shortfall 26
+    game 17 round 1: Black 62, hybrid shortfall 24
+    game 14 round 1: Black 4, hybrid shortfall 26
+    game 21 round 1: Black 93, hybrid shortfall 26
+    game 7 round 1: Black 62, hybrid shortfall 27
+    game 5 round 1: Black 124, hybrid shortfall 25
+    game 4 round 1: Black 62, hybrid shortfall 26
+    game 3 round 1: Black 31, hybrid shortfall 25
+    game 6 round 1: Black 4, hybrid shortfall 27
+    game 19 round 1: Black 62, hybrid shortfall 22
+    game 11 round 1: Black 62, hybrid shortfall 27
+    game 16 round 1: Black 62, hybrid shortfall 17
+    game 12 round 1: Black 62, hybrid shortfall 23
+    game 18 round 1: Black 62, hybrid shortfall 28
+    game 20 round 1: Black 31, hybrid shortfall 26
+    game 13 round 1: Black 83, hybrid shortfall 28
+    game 9 round 1: Black 124, hybrid shortfall 26
+    game 15 round 1: Black 120, hybrid shortfall 27
+  [   21s] games done 0/22 | game 20 ply 3: White 62 depth 6 eval -4 | 2.28 M nodes/s total, max depth 6
+    game 2 round 2: Black 41, hybrid shortfall 22
+  [   38s] games done 0/22 | game 2 ply 4: Black 41 depth 6 eval -28 | 1.38 M nodes/s total, max depth 6
+    game 11 round 2: Black 14, hybrid shortfall 26
+    game 17 round 2: Black 12, hybrid shortfall 20
+    game 16 round 2: Black 120, hybrid shortfall 23
+    game 18 round 2: Black 1, hybrid shortfall 21
+    game 7 round 2: Black 15, hybrid shortfall 21
+    game 19 round 2: Black 41, hybrid shortfall 23
+    game 4 round 2: Black 1, hybrid shortfall 22
+    game 12 round 2: Black 3, hybrid shortfall 23
+    game 8 round 2: Black 124, hybrid shortfall 29
+    game 10 round 2: Black 91, hybrid shortfall 25
+    game 1 round 2: Black 62, hybrid shortfall 24
+    game 3 round 2: Black 20, hybrid shortfall 27
+    game 0 round 2: Black 62, hybrid shortfall 25
+    game 5 round 2: Black 104, hybrid shortfall 26
+    game 21 round 2: Black 91, hybrid shortfall 24
+    game 14 round 2: Black 120, hybrid shortfall 27
+    game 6 round 2: Black 100, hybrid shortfall 28
+    game 9 round 2: Black 120, hybrid shortfall 28
+  [   40s] games done 0/22 | game 9 ply 4: Black 120 depth 6 eval -66 | 1.86 M nodes/s total, max depth 6
+    game 15 round 2: Black 62, hybrid shortfall 23
+    game 20 round 2: Black 4, hybrid shortfall 29
+    game 13 round 2: Black 4, hybrid shortfall 27
+    game 11 round 3: Black 0, hybrid shortfall 23
+  [   55s] games done 0/22 | game 11 ply 6: Black 0 depth 6 eval -16 | 1.55 M nodes/s total, max depth 6
+    game 16 round 3: Black 72, hybrid shortfall 24
+    game 2 round 3: Black 120, hybrid shortfall 24
+    game 19 round 3: Black 23, hybrid shortfall 23
+    game 17 round 3: Black 28, hybrid shortfall 20
+    game 7 round 3: Black 21, hybrid shortfall 21
+    game 0 round 3: Black 1, hybrid shortfall 23
+    game 4 round 3: Black 24, hybrid shortfall 23
+    game 12 round 3: Black 104, hybrid shortfall 22
+    game 18 round 3: Black 24, hybrid shortfall 19
+    game 1 round 3: Black 100, hybrid shortfall 19
+    game 10 round 3: Black 64, hybrid shortfall 25
+    game 8 round 3: Black 30, hybrid shortfall 27
+  [   57s] games done 0/22 | game 0 ply 7: White 12 depth 5 eval 32 | 1.74 M nodes/s total, max depth 6
+    game 15 round 3: Black 12, hybrid shortfall 23
+    game 14 round 3: Black 10, hybrid shortfall 28
+    game 21 round 3: Black 60, hybrid shortfall 24
+    game 9 round 3: Black 43, hybrid shortfall 24
+    game 5 round 3: Black 120, hybrid shortfall 22
+    game 6 round 3: Black 120, hybrid shortfall 25
+    game 3 round 3: Black 81, hybrid shortfall 26
+    game 13 round 3: Black 24, hybrid shortfall 26
+    game 20 round 3: Black 124, hybrid shortfall 27
+  [   59s] games done 0/22 | game 3 ply 7: White 91 depth 6 eval 8 | 1.95 M nodes/s total, max depth 6
+    game 6 round 4: Black 83, hybrid shortfall 30
+    game 13 round 4: Black 124, hybrid shortfall 32
+  [   62s] games done 0/22 | game 13 ply 8: Black 124 depth 7 eval -34 | 1.93 M nodes/s total, max depth 7
+    game 2 round 4: Black 8, hybrid shortfall 21
+  [   71s] games done 0/22 | game 2 ply 8: Black 8 depth 6 eval -76 | 1.70 M nodes/s total, max depth 7
+    game 11 round 4: Black 104, hybrid shortfall 21
+    game 16 round 4: Black 21, hybrid shortfall 23
+    game 19 round 4: Black 40, hybrid shortfall 23
+    game 0 round 4: Black 61, hybrid shortfall 23
+    game 17 round 4: Black 20, hybrid shortfall 22
+    game 7 round 4: Black 70, hybrid shortfall 23
+    game 4 round 4: Black 5, hybrid shortfall 21
+    game 1 round 4: Black 14, hybrid shortfall 22
+    game 18 round 4: Black 52, hybrid shortfall 19
+    game 12 round 4: Black 52, hybrid shortfall 20
+  [   73s] games done 0/22 | game 17 ply 9: White 120 depth 6 eval 30 | 1.85 M nodes/s total, max depth 7
+    game 8 round 4: Black 91, hybrid shortfall 27
+    game 10 round 4: Black 104, hybrid shortfall 24
+    game 15 round 4: Black 5, hybrid shortfall 22
+    game 2 round 5: Black 18, hybrid shortfall 22
+    game 9 round 4: Black 100, hybrid shortfall 24
+    game 14 round 4: Black 100, hybrid shortfall 26
+    game 21 round 4: Black 81, hybrid shortfall 24
+    game 5 round 4: Black 43, hybrid shortfall 22
+  [   75s] games done 0/22 | game 2 ply 11: White 14 depth 5 eval 52 | 1.98 M nodes/s total, max depth 7
+    game 3 round 4: Black 37, hybrid shortfall 22
+    game 20 round 4: Black 34, hybrid shortfall 25
+    game 6 round 5: Black 31, hybrid shortfall 26
+  [   78s] games done 0/22 | game 6 ply 11: White 52 depth 6 eval -2 | 2.02 M nodes/s total, max depth 7
+    game 3 round 5: Black 120, hybrid shortfall 29
+    game 13 round 5: Black 26, hybrid shortfall 24
+    game 11 round 5: Black 34, hybrid shortfall 16
+  [   87s] games done 0/22 | game 11 ply 10: Black 34 depth 5 eval -22 | 1.86 M nodes/s total, max depth 7
+    game 16 round 5: Black 52, hybrid shortfall 20
+    game 19 round 5: Black 14, hybrid shortfall 23
+    game 18 round 5: Black 112, hybrid shortfall 18
+    game 0 round 5: Black 22, hybrid shortfall 22
+    game 17 round 5: Black 90, hybrid shortfall 19
+    game 1 round 5: Black 124, hybrid shortfall 22
+    game 7 round 5: Black 41, hybrid shortfall 22
+    game 4 round 5: Black 76, hybrid shortfall 19
+    game 12 round 5: Black 12, hybrid shortfall 18
+  [   89s] games done 0/22 | game 0 ply 11: White 100 depth 6 eval -10 | 1.97 M nodes/s total, max depth 7
+    game 10 round 5: Black 101, hybrid shortfall 24
+    game 8 round 5: Black 67, hybrid shortfall 25
+    game 2 round 6: Black 91, hybrid shortfall 16
+    game 15 round 5: Black 104, hybrid shortfall 16
+    game 9 round 5: Black 12, hybrid shortfall 24
+  [   91s] games done 0/22 | game 15 ply 11: White 28 depth 6 eval 58 | 2.05 M nodes/s total, max depth 7
+    game 14 round 5: Black 104, hybrid shortfall 26
+    game 21 round 5: Black 43, hybrid shortfall 23
+    game 1 round 6: Black 43, hybrid shortfall 22
+    game 5 round 5: Black 12, hybrid shortfall 24
+    game 6 round 6: Black 67, hybrid shortfall 21
+    game 15 round 6: Black 76, hybrid shortfall 18
+    game 20 round 5: Black 24, hybrid shortfall 22
+  [   93s] games done 0/22 | game 20 ply 10: Black 24 depth 5 eval -52 | 2.12 M nodes/s total, max depth 7
+    game 14 round 6: Black 31, hybrid shortfall 21
+    game 21 round 6: Black 104, hybrid shortfall 24
+    game 3 round 6: Black 67, hybrid shortfall 24
+  [   95s] games done 0/22 | game 14 ply 13: White 79 depth 6 eval 48 | 2.13 M nodes/s total, max depth 7
+    game 6 round 7: Black 26, hybrid shortfall 18
+    game 13 round 6: Black 34, hybrid shortfall 25
+    game 11 round 6: Black 22, hybrid shortfall 15
+  [  102s] games done 0/22 | game 11 ply 12: Black 22 depth 6 eval -58 | 2.05 M nodes/s total, max depth 7
+    game 16 round 6: Black 18, hybrid shortfall 13
+    game 19 round 6: Black 12, hybrid shortfall 20
+    game 18 round 6: Black 87, hybrid shortfall 18
+    game 17 round 6: Black 26, hybrid shortfall 19
+    game 7 round 6: Black 72, hybrid shortfall 18
+    game 0 round 6: Black 76, hybrid shortfall 20
+    game 12 round 6: Black 40, hybrid shortfall 21
+  [  104s] games done 0/22 | game 18 ply 13: White 12 depth 5 eval 180 | 2.11 M nodes/s total, max depth 7
+    game 4 round 6: Black 40, hybrid shortfall 19
+    game 2 round 7: Black 4, hybrid shortfall 15
+    game 8 round 6: Black 104, hybrid shortfall 21
+    game 10 round 6: Black 42, hybrid shortfall 19
+    game 9 round 6: Black 93, hybrid shortfall 21
+    game 1 round 7: Black 26, hybrid shortfall 13
+  [  106s] games done 0/22 | game 9 ply 13: White 0 depth 6 eval 92 | 2.19 M nodes/s total, max depth 7
+    game 15 round 7: Black 3, hybrid shortfall 13
+    game 5 round 6: Black 50, hybrid shortfall 17
+    game 21 round 7: Black 58, hybrid shortfall 21
+  [  109s] games done 0/22 | game 5 ply 13: White 60 depth 6 eval 40 | 2.19 M nodes/s total, max depth 7
+    game 14 round 7: Black 102, hybrid shortfall 18
+    game 20 round 6: Black 61, hybrid shortfall 25
+    game 6 round 8: Black 23, hybrid shortfall 13
+    game 3 round 7: Black 83, hybrid shortfall 19
+    game 15 round 8: Black 75, hybrid shortfall 11
+    game 13 round 7: Black 60, hybrid shortfall 23
+  [  111s] games done 0/22 | game 15 ply 17: White 112 depth 6 eval -38 | 2.25 M nodes/s total, max depth 7
+    game 11 round 7: Black 98, hybrid shortfall 11
+  [  116s] games done 0/22 | game 11 ply 14: Black 98 depth 5 eval -60 | 2.17 M nodes/s total, max depth 7
+    game 16 round 7: Black 8, hybrid shortfall 18
+    game 17 round 7: Black 108, hybrid shortfall 15
+    game 18 round 7: Black 8, hybrid shortfall 18
+    game 19 round 7: Black 76, hybrid shortfall 17
+    game 8 round 7: Black 57, hybrid shortfall 20
+  [  118s] games done 0/22 | game 17 ply 15: White 124 depth 5 eval 168 | 2.20 M nodes/s total, max depth 7
+    game 0 round 7: Black 26, hybrid shortfall 21
+    game 12 round 7: Black 15, hybrid shortfall 17
+    game 10 round 7: Black 90, hybrid shortfall 19
+    game 7 round 7: Black 71, hybrid shortfall 21
+    game 4 round 7: Black 124, hybrid shortfall 14
+    game 2 round 8: Black 11, hybrid shortfall 13
+    game 16 round 8: Black 79, hybrid shortfall 19
+    game 1 round 8: Black 33, hybrid shortfall 9
+    game 9 round 7: Black 115, hybrid shortfall 18
+  [  121s] games done 0/22 | game 16 ply 17: White 64 depth 6 eval 12 | 2.32 M nodes/s total, max depth 7
+    game 21 round 8: Black 0, hybrid shortfall 15
+    game 10 round 8: Black 24, hybrid shortfall 24
+    game 0 round 8: Black 8, hybrid shortfall 22
+    game 2 round 9: Black 21, hybrid shortfall 13
+    game 5 round 7: Black 10, hybrid shortfall 15
+  [  123s] games done 0/22 | game 2 ply 19: White 81 depth 6 eval -72 | 2.37 M nodes/s total, max depth 7
+    game 15 round 9: Black 124, hybrid shortfall 7
+    game 6 round 9: Black 124, hybrid shortfall 12
+    game 1 round 9: Black 79, hybrid shortfall 9
+    game 3 round 8: Black 50, hybrid shortfall 15
+    game 14 round 8: Black 112, hybrid shortfall 17
+    game 20 round 7: Black 30, hybrid shortfall 18
+    game 13 round 8: Black 50, hybrid shortfall 18
+  [  125s] games done 0/22 | game 20 ply 15: White 110 depth 5 eval 170 | 2.44 M nodes/s total, max depth 7
+    game 11 round 8: Black 120, hybrid shortfall 8
+  [  129s] games done 0/22 | game 11 ply 16: Black 120 depth 6 eval -52 | 2.38 M nodes/s total, max depth 7
+    game 17 round 8: Black 118, hybrid shortfall 13
+    game 18 round 8: Black 110, hybrid shortfall 10
+    game 19 round 8: Black 44, hybrid shortfall 17
+  [  132s] games done 0/22 | game 19 ply 16: Black 44 depth 5 eval -120 | 2.37 M nodes/s total, max depth 7
+    game 4 round 8: Black 52, hybrid shortfall 12
+    game 8 round 8: Black 26, hybrid shortfall 17
+    game 16 round 9: Black 57, hybrid shortfall 15
+    game 12 round 8: Black 90, hybrid shortfall 11
+    game 7 round 8: Black 101, hybrid shortfall 19
+  [  134s] games done 0/22 | game 7 ply 16: Black 101 depth 5 eval -122 | 2.43 M nodes/s total, max depth 7
+    game 9 round 8: Black 10, hybrid shortfall 12
+    game 10 round 9: Black 31, hybrid shortfall 13
+    game 0 round 9: Black 24, hybrid shortfall 15
+    game 2 round 10: Black 105, hybrid shortfall 7
+    game 21 round 9: Black 52, hybrid shortfall 13
+    game 12 round 9: Black 115, hybrid shortfall 11
+  [  136s] games done 0/22 | game 12 ply 18: Black 115 depth 7 eval -2 | 2.48 M nodes/s total, max depth 7
+    game 5 round 8: Black 52, hybrid shortfall 11
+    game 15 round 10: Black 119, hybrid shortfall 6
+    game 6 round 10: Black 40, hybrid shortfall 8
+    game 10 round 10: Black 80, hybrid shortfall 12
+    game 3 round 9: Black 3, hybrid shortfall 11
+    game 14 round 9: Black 87, hybrid shortfall 19
+  [  138s] games done 0/22 | game 14 ply 18: Black 87 depth 5 eval -14 | 2.52 M nodes/s total, max depth 7
+    game 13 round 9: Black 70, hybrid shortfall 15
+    game 15 round 11: Black 80, hybrid shortfall 6
+    game 20 round 8: Black 14, hybrid shortfall 17
+    game 1 round 10: Black 48, hybrid shortfall 4
+  [  141s] games done 0/22 | game 15 ply 23: White 54 depth 5 eval -36 | 2.56 M nodes/s total, max depth 7
+    game 6 round 11: Black 84, hybrid shortfall 7
+    game 11 round 9: Black 60, hybrid shortfall 6
+  [  143s] games done 0/22 | game 11 ply 19: White 73 depth 6 eval 16 | 2.56 M nodes/s total, max depth 7
+    game 17 round 9: Black 103, hybrid shortfall 12
+    game 11 round 10: Black 71, hybrid shortfall 6
+  [  145s] games done 0/22 | game 17 ply 19: White 123 depth 5 eval 186 | 2.54 M nodes/s total, max depth 7
+    game 19 round 9: Black 54, hybrid shortfall 16
+    game 8 round 9: Black 64, hybrid shortfall 13
+    game 4 round 9: Black 95, hybrid shortfall 11
+    game 16 round 10: Black 44, hybrid shortfall 11
+    game 18 round 9: Black 75, hybrid shortfall 10
+  [  148s] games done 0/22 | game 16 ply 21: White 74 depth 6 eval 88 | 2.57 M nodes/s total, max depth 7
+    game 0 round 10: Black 41, hybrid shortfall 13
+    game 7 round 9: Black 124, hybrid shortfall 18
+    game 9 round 9: Black 41, hybrid shortfall 11
+    game 12 round 10: Black 85, hybrid shortfall 11
+    game 5 round 9: Black 113, hybrid shortfall 11
+  [  150s] games done 0/22 | game 12 ply 21: White 72 depth 7 eval 84 | 2.61 M nodes/s total, max depth 7
+    game 2 round 11: Black 31, hybrid shortfall 5
+    game 21 round 10: Black 71, hybrid shortfall 7
+    game 13 round 10: Black 87, hybrid shortfall 13
+  [  152s] games done 0/22 | game 13 ply 20: Black 87 depth 6 eval -58 | 2.63 M nodes/s total, max depth 7
+    game 5 round 10: Black 86, hybrid shortfall 7
+    game 10 round 11: Black 2, hybrid shortfall 6
+    game 14 round 10: Black 43, hybrid shortfall 11
+    game 2 round 12: Black 7, hybrid shortfall 5
+  game 2 finished: open after 24 plies
+    game 21 round 11: Black 74, hybrid shortfall 7
+    game 3 round 10: Black 82, hybrid shortfall 8
+    game 20 round 9: Black 5, hybrid shortfall 14
+  [  154s] games done 1/22 | game 20 ply 18: Black 5 depth 5 eval -108 | 2.66 M nodes/s total, max depth 7
+    game 15 round 12: Black 114, hybrid shortfall 4
+  game 15 finished: open after 24 plies
+    game 1 round 11: Black 84, hybrid shortfall 2
+    game 11 round 11: Black 12, hybrid shortfall 6
+    game 10 round 12: Black 103, hybrid shortfall 5
+  game 10 finished: open after 24 plies
+    game 6 round 12: Black 68, hybrid shortfall 5
+  game 6 finished: open after 24 plies
+  [  157s] games done 4/22 | game 11 ply 23: White 49 depth 6 eval -38 | 2.69 M nodes/s total, max depth 7
+    game 17 round 10: Black 122, hybrid shortfall 12
+    game 11 round 12: Black 99, hybrid shortfall 6
+  game 11 finished: open after 24 plies
+    game 19 round 10: Black 25, hybrid shortfall 15
+  [  160s] games done 5/22 | game 19 ply 20: Black 25 depth 5 eval -144 | 2.67 M nodes/s total, max depth 7
+    game 8 round 10: Black 99, hybrid shortfall 8
+    game 16 round 11: Black 41, hybrid shortfall 9
+    game 0 round 11: Black 40, hybrid shortfall 10
+    game 4 round 10: Black 108, hybrid shortfall 7
+    game 18 round 10: Black 55, hybrid shortfall 10
+  [  162s] games done 5/22 | game 0 ply 23: White 101 depth 6 eval -2 | 2.72 M nodes/s total, max depth 7
+    game 12 round 11: Black 124, hybrid shortfall 10
+    game 7 round 10: Black 54, hybrid shortfall 13
+    game 9 round 10: Black 1, hybrid shortfall 8
+    game 5 round 11: Black 54, hybrid shortfall 6
+  [  165s] games done 5/22 | game 9 ply 21: White 52 depth 5 eval 250 | 2.76 M nodes/s total, max depth 7
+    game 13 round 11: Black 36, hybrid shortfall 7
+    game 14 round 11: Black 105, hybrid shortfall 7
+  [  167s] games done 5/22 | game 14 ply 22: Black 105 depth 5 eval -128 | 2.75 M nodes/s total, max depth 7
+    game 20 round 10: Black 83, hybrid shortfall 18
+    game 21 round 12: Black 120, hybrid shortfall 3
+  game 21 finished: open after 24 plies
+    game 3 round 11: Black 64, hybrid shortfall 4
+  [  169s] games done 6/22 | game 3 ply 22: Black 64 depth 5 eval -50 | 2.76 M nodes/s total, max depth 7
+    game 17 round 11: Black 72, hybrid shortfall 11
+    game 1 round 12: Black 35, hybrid shortfall 0
+  [  171s] games done 6/22 | game 1 ply 24: Black 35 depth 6 eval -44 | 2.75 M nodes/s total, max depth 7
+  game 1 finished: open after 24 plies
+    game 19 round 11: Black 78, hybrid shortfall 13
+  [  174s] games done 7/22 | game 19 ply 23: White 124 depth 6 eval 164 | 2.73 M nodes/s total, max depth 7
+    game 8 round 11: Black 82, hybrid shortfall 8
+    game 0 round 12: Black 120, hybrid shortfall 7
+  game 0 finished: open after 24 plies
+    game 18 round 11: Black 40, hybrid shortfall 10
+    game 12 round 12: Black 96, hybrid shortfall 7
+  game 12 finished: open after 24 plies
+    game 5 round 12: Black 89, hybrid shortfall 5
+  game 5 finished: open after 24 plies
+  [  176s] games done 10/22 | game 18 ply 23: White 122 depth 5 eval 202 | 2.75 M nodes/s total, max depth 7
+    game 4 round 11: Black 102, hybrid shortfall 6
+    game 16 round 12: Black 99, hybrid shortfall 6
+  game 16 finished: open after 24 plies
+    game 13 round 12: Black 86, hybrid shortfall 7
+  [  179s] games done 11/22 | game 13 ply 24: Black 86 depth 6 eval -114 | 2.74 M nodes/s total, max depth 7
+  game 13 finished: open after 24 plies
+    game 20 round 11: Black 120, hybrid shortfall 14
+    game 7 round 11: Black 26, hybrid shortfall 13
+    game 14 round 12: Black 33, hybrid shortfall 5
+  game 14 finished: open after 24 plies
+  [  181s] games done 13/22 | game 7 ply 23: White 4 depth 4 eval 246 | 2.77 M nodes/s total, max depth 7
+    game 9 round 11: Black 24, hybrid shortfall 5
+    game 3 round 12: Black 116, hybrid shortfall 1
+  [  184s] games done 13/22 | game 3 ply 24: Black 116 depth 6 eval -134 | 2.76 M nodes/s total, max depth 7
+  game 3 finished: open after 24 plies
+    game 17 round 12: Black 109, hybrid shortfall 10
+  game 17 finished: open after 24 plies
+    game 19 round 12: Black 106, hybrid shortfall 6
+  game 19 finished: open after 24 plies
+    game 9 round 12: Black 57, hybrid shortfall 4
+  game 9 finished: open after 24 plies
+    game 8 round 12: Black 3, hybrid shortfall 5
+  game 8 finished: open after 24 plies
+    game 4 round 12: Black 115, hybrid shortfall 4
+  [  187s] games done 18/22 | game 4 ply 24: Black 115 depth 5 eval -158 | 2.77 M nodes/s total, max depth 7
+  game 4 finished: open after 24 plies
+    game 18 round 12: Black 93, hybrid shortfall 5
+  game 18 finished: open after 24 plies
+    game 20 round 12: Black 74, hybrid shortfall 10
+  [  189s] games done 20/22 | game 20 ply 24: Black 74 depth 4 eval -230 | 2.76 M nodes/s total, max depth 7
+  game 20 finished: open after 24 plies
+    game 7 round 12: Black 80, hybrid shortfall 13
+  [  191s] games done 21/22 | game 7 ply 24: Black 80 depth 4 eval -206 | 2.74 M nodes/s total, max depth 7
+  game 7 finished: open after 24 plies
+DONE after 191s; 2.74 M nodes/s; results in games_hybrid.jsonl

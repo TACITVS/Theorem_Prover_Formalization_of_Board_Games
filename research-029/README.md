@@ -147,9 +147,48 @@ are in brackets.
     `RegionalCertificates.v` with a code-region case built on
     `linear_information_minimax`.
 
+### Hybrid-aware Black (`engine.exe --black-hybrid`)
+
+Black now starts from the best empty-board layout and carries a layout through
+the game. For each of its top 12 safe moves, it runs 100k exact evaluations of
+warm-started local search, then plays the move with the lowest score. That
+score is recorded per round in `games_hybrid.jsonl`. The run was 22 games of 12
+rounds, about 190 s of wall time, and every game was still open.
+
+These in-game scores are poor upper bounds: the round-1 median was 26, above the
+converged empty-board 19. So Black's guidance is noisy. The table gives
+converged values: `hybrid.exe` with 22 seeds × 60 s per position. Whole-line
+values are in brackets.
+
+| game | round 4 | round 6 | round 8 | round 10 | round 12 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 11 | 11 (33) | 8 (29) | 6 (21) | **6** (16) | **6** (12) |
+| 1 | 15 (33) | 10 (21) | 7 (15) | | |
+| 3 | 17 (37) | 14 (25) | 8 (21) | | |
+
+**Conclusion.**
+
+- **The hybrid-aware Black is not better** than the certificate-seeking Black
+  of `games_cert.jsonl`: games 0 and 18 reached 10–14 at round 4 and 6–9 at
+  round 6.
+- **The hybrid's advantage is front-loaded.** It roughly halves the shortfall
+  early. From round 8 on, though, it stalls at about 6 in game 11, while the
+  whole-line shortfall keeps falling by about 4 per round. So the hybrid
+  reaches zero no more than a few rounds before whole-line codes, around round
+  12 or later, and nowhere near round 6.
+- **The classical route looks exhausted.** Pairing, potential, whole-line
+  codes, fragment codes and hybrids of potential and code regions all need an
+  explicit opening tree of roughly 10 or more rounds, far beyond any checkable
+  size.
+
+The remaining caveats are heuristic: the searches are not exhaustive, and a
+much better guided Black might do somewhat better. None of these numbers is a
+theorem.
+
 ```bash
 gcc -O3 -march=native -fopenmp research-029/hybrid.c -o research-029/hybrid.exe
 research-029/hybrid.exe --seeds 22 --threads 22 --seconds 270 --ckdir hybrid_c_empty
 research-029/hybrid.exe --seeds 22 --seconds 60 --white 4,24,100,104,0,72 --black 20,9,62,124,52,120 --ckdir hybrid_c_game0@6
 python research-029/exact_shortfall.py research-029/hybrid_c_empty/best.txt
+research-029/engine.exe --games 22 --threads 22 --time 1.0 --maxply 24 --random-plies 6 --black-hybrid --hyb-steps 100000 --out research-029/games_hybrid.jsonl
 ```

@@ -22,6 +22,7 @@
 #include <string.h>
 #include <time.h>
 #include <omp.h>
+#include "hybrid_core.h"
 
 #define N 125
 #define NL 109
@@ -344,8 +345,53 @@ static MoveInfo think_cert(Eng *e, double seconds, int k, int safe_depth) {
     return base;
 }
 
+/* Black (s = 1) picks, among its top-k safe moves, the one whose position has
+ * the lowest hybrid exact shortfall after a short warm-started local search
+ * from the game's current layout. The layout is updated to the winner's. */
+static MoveInfo think_hybrid(Eng *e, int *region, double seconds, int k, int safe_depth,
+                             long steps, uint64_t *rng, int *score_out) {
+    MoveInfo base = think(e, 1, seconds, 0);
+    int buf[N], moves[N], tmp[N], bestreg[N];
+    HPos p;
+    int bestsc = 1 << 30, best = -1;
+    if (fours(e, 1, buf) || fours(e, 0, buf)) {          /* tactics first */
+        make(e, base.move, 1);
+        h_pos(&p, e->board);
+        *score_out = h_anneal(&p, region, 40, steps, rng, 1.0, 0.2);
+        unmake(e, base.move, 1);
+        return base;
+    }
+    int n = gen_moves(e, 1, moves, base.move);
+    if (n > k) n = k;
+    for (int i = 0; i < n; i++) {
+        int c = moves[i];
+        make(e, c, 1);
+        e->deadline = now() + seconds;
+        e->timeout = 0;
+        int v = search(e, 0, safe_depth, -WIN - 1, WIN + 1, 1, NULL);
+        if (!e->timeout && v < WIN - 200) {
+            memcpy(tmp, region, sizeof tmp);
+            h_pos(&p, e->board);
+            int sc = h_anneal(&p, tmp, 40, steps, rng, 1.0, 0.2);
+            if (sc < bestsc) { bestsc = sc; best = c; memcpy(bestreg, tmp, sizeof tmp); }
+        }
+        unmake(e, c, 1);
+    }
+    if (best < 0) {
+        make(e, base.move, 1);
+        h_pos(&p, e->board);
+        *score_out = h_anneal(&p, region, 40, steps, rng, 1.0, 0.2);
+        unmake(e, base.move, 1);
+        return base;
+    }
+    memcpy(region, bestreg, sizeof bestreg);
+    base.move = best;
+    *score_out = bestsc;
+    return base;
+}
+
 /* ------------------------------------------------------------------ games */
-typedef struct { int id, nmoves, moves[MAXPLY], done; char result[8]; } Game;
+typedef struct { int id, nmoves, moves[MAXPLY], done; char result[8]; int hyb[MAXPLY]; int region[N]; } Game;
 
 static long long g_nodes = 0;
 static int g_done = 0, g_maxdepth = 0;
@@ -355,6 +401,8 @@ static void write_game(FILE *f, const Game *g, const char *status) {
     fprintf(f, "{\"id\":%d,\"status\":\"%s\",\"result\":\"%s\",\"plies\":%d,\"moves\":[",
             g->id, status, g->result, g->nmoves);
     for (int i = 0; i < g->nmoves; i++) fprintf(f, "%s%d", i ? "," : "", g->moves[i]);
+    fprintf(f, "],\"hybrid\":[");
+    for (int i = 0; i < g->nmoves; i++) fprintf(f, "%s%d", i ? "," : "", g->hyb[i]);
     fprintf(f, "]}\n");
     fflush(f);
 }
@@ -380,7 +428,9 @@ static int parse_line(const char *s, Game *g) {
 
 int main(int argc, char **argv) {
     int games = 24, threads = 22, maxply = 60, random_plies = 4, resume = 0;
-    int cert_black = 0, cert_k = 12, safe_depth = 4;
+    int cert_black = 0, cert_k = 12, safe_depth = 4, hyb_black = 0;
+    long hyb_steps = 30000;
+    const char *layout = "hybrid_c_empty/best.txt";
     double move_time = 1.0;
     const char *out = "games.jsonl";
     for (int i = 1; i < argc; i++) {
@@ -394,10 +444,20 @@ int main(int argc, char **argv) {
         else if (!strcmp(argv[i], "--black-cert")) cert_black = 1;
         else if (!strcmp(argv[i], "--cert-k")) cert_k = atoi(argv[++i]);
         else if (!strcmp(argv[i], "--safe-depth")) safe_depth = atoi(argv[++i]);
+        else if (!strcmp(argv[i], "--black-hybrid")) hyb_black = 1;
+        else if (!strcmp(argv[i], "--hyb-steps")) hyb_steps = atol(argv[++i]);
+        else if (!strcmp(argv[i], "--layout")) layout = argv[++i];
         else { fprintf(stderr, "unknown option %s\n", argv[i]); return 2; }
     }
     if (maxply > MAXPLY) maxply = MAXPLY;
     init_lines();
+    h_init();
+    int start_region[N];
+    for (int c = 0; c < N; c++) start_region[c] = -1;
+    if (hyb_black) {
+        if (!h_load_layout(layout, start_region)) { fprintf(stderr, "cannot read layout %s\n", layout); return 1; }
+        printf("hybrid-aware Black: start layout %s, %ld local steps per candidate\n", layout, hyb_steps);
+    }
     signal(SIGINT, on_sigint);
 
     Game *gs = calloc((size_t)games, sizeof(Game));
@@ -436,11 +496,22 @@ int main(int argc, char **argv) {
         e.rng = 0x1234567ull + (uint64_t)gi * 0x9E3779B97F4A7C15ull;
         for (int i = 0; i < g->nmoves; i++) make(&e, g->moves[i], i & 1);
         strcpy(g->result, "open");
+        memcpy(g->region, start_region, sizeof start_region);
+        for (int i = g->nmoves; i < MAXPLY; i++) g->hyb[i] = -1;
+        uint64_t hrng = 0xABCDEF12345ull + (uint64_t)gi * 0x9E3779B97F4A7C15ull;
         while (g->nmoves < maxply && !stop_flag) {
             int s = g->nmoves & 1;
-            MoveInfo mi = (s == 1 && cert_black && g->nmoves >= random_plies)
+            int hsc = -1;
+            MoveInfo mi = (s == 1 && hyb_black)   /* hybrid Black from its first move */
+                ? think_hybrid(&e, g->region, move_time, cert_k, safe_depth, hyb_steps, &hrng, &hsc)
+                : (s == 1 && cert_black && g->nmoves >= random_plies)
                 ? think_cert(&e, move_time, cert_k, safe_depth)
                 : think(&e, s, move_time, g->nmoves < random_plies);
+            g->hyb[g->nmoves] = hsc;
+            if (hsc >= 0 && hsc < 1000) {
+#pragma omp critical(progress)
+                { printf("    game %d round %d: Black %d, hybrid shortfall %d\n", g->id, g->nmoves / 2 + 1, mi.move, hsc); fflush(stdout); }
+            }
             if (stop_flag && mi.depth == 0) break;
             make(&e, mi.move, s);
             g->moves[g->nmoves++] = mi.move;
