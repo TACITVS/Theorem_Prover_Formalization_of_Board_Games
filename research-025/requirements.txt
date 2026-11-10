@@ -1,0 +1,3 @@
+python-sat==1.9.dev21
+pycryptosat==5.18.0
+highspy==1.15.1

@@ -1,0 +1,74 @@
+{
+  "scope": "Three-ply tactical QBF controls; no imported Rocq certificate.",
+  "quantifiers": "exists White move; forall legal Black reply; exists White move",
+  "results": [
+    {
+      "instance": "empty_two_white_moves",
+      "backend": "CAQE 4.0.1",
+      "status": "FALSE",
+      "expected": false,
+      "nvars": 1108,
+      "clauses": 6933,
+      "white": [],
+      "black": [],
+      "exit_code": 20,
+      "stdout": "c CommonSolverConfig { filename: Some(\"/mnt/c/Rocq-Platform~9.1~2026.01/Math_Proofs/Qubic_5x5x5/scratch/solver-lab-instances/empty_two_white_moves.qdimacs\"), verbosity: Warn, statistics: None, specific: CaqeSpecificSolverConfig { options: SolverOptions { abstraction: AbstractionOptions { reuse_b_literals: Some(Partial), reuse_t_literals: Some(Partial), additional_t_literal_constraints: Some(Partial), additional_b_literal_constraints: false, equivalence_constraints: true, universal_reuse_b_literals: true, replace_t_literal_by_variable: true }, expansion: ExpansionOptions { expansion_refinement: Some(Full), dependency_schemes: false, conflict_clause_expansion: true, hamming_heuristics: false }, strong_unsat_refinement: false, refinement_literal_subsumption: false, miniscoping: true, build_conflict_clauses: false, flip_assignments_from_sat_solver: false, skip_levels: None }, qdimacs_output: false, preprocessor: None } }\nc Unsatisfiable\n",
+      "stderr": "",
+      "process_wall_seconds": 2.691298599820584
+    },
+    {
+      "instance": "one_short_of_fork",
+      "backend": "CAQE 4.0.1",
+      "status": "FALSE",
+      "expected": false,
+      "nvars": 1088,
+      "clauses": 6833,
+      "white": [
+        101,
+        102,
+        103,
+        105,
+        110
+      ],
+      "black": [
+        6,
+        17,
+        28,
+        39,
+        50
+      ],
+      "exit_code": 20,
+      "stdout": "c CommonSolverConfig { filename: Some(\"/mnt/c/Rocq-Platform~9.1~2026.01/Math_Proofs/Qubic_5x5x5/scratch/solver-lab-instances/one_short_of_fork.qdimacs\"), verbosity: Warn, statistics: None, specific: CaqeSpecificSolverConfig { options: SolverOptions { abstraction: AbstractionOptions { reuse_b_literals: Some(Partial), reuse_t_literals: Some(Partial), additional_t_literal_constraints: Some(Partial), additional_b_literal_constraints: false, equivalence_constraints: true, universal_reuse_b_literals: true, replace_t_literal_by_variable: true }, expansion: ExpansionOptions { expansion_refinement: Some(Full), dependency_schemes: false, conflict_clause_expansion: true, hamming_heuristics: false }, strong_unsat_refinement: false, refinement_literal_subsumption: false, miniscoping: true, build_conflict_clauses: false, flip_assignments_from_sat_solver: false, skip_levels: None }, qdimacs_output: false, preprocessor: None } }\nc Unsatisfiable\n",
+      "stderr": "",
+      "process_wall_seconds": 0.19447139976546168
+    },
+    {
+      "instance": "six_stone_fork_setup",
+      "backend": "CAQE 4.0.1",
+      "status": "TRUE",
+      "expected": true,
+      "nvars": 1084,
+      "clauses": 6813,
+      "white": [
+        101,
+        102,
+        103,
+        105,
+        110,
+        115
+      ],
+      "black": [
+        6,
+        17,
+        28,
+        39,
+        50,
+        61
+      ],
+      "exit_code": 10,
+      "stdout": "c CommonSolverConfig { filename: Some(\"/mnt/c/Rocq-Platform~9.1~2026.01/Math_Proofs/Qubic_5x5x5/scratch/solver-lab-instances/six_stone_fork_setup.qdimacs\"), verbosity: Warn, statistics: None, specific: CaqeSpecificSolverConfig { options: SolverOptions { abstraction: AbstractionOptions { reuse_b_literals: Some(Partial), reuse_t_literals: Some(Partial), additional_t_literal_constraints: Some(Partial), additional_b_literal_constraints: false, equivalence_constraints: true, universal_reuse_b_literals: true, replace_t_literal_by_variable: true }, expansion: ExpansionOptions { expansion_refinement: Some(Full), dependency_schemes: false, conflict_clause_expansion: true, hamming_heuristics: false }, strong_unsat_refinement: false, refinement_literal_subsumption: false, miniscoping: true, build_conflict_clauses: false, flip_assignments_from_sat_solver: false, skip_levels: None }, qdimacs_output: false, preprocessor: None } }\nc Satisfiable\n",
+      "stderr": "",
+      "process_wall_seconds": 0.17777760000899434
+    }
+  ]
+}
