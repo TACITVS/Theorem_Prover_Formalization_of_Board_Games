@@ -131,6 +131,7 @@ Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and ze
 | 12 | Two legal nonterminal positions have complete linear-code defenses where the static pairing invariant is impossible. | `linear_defense_strictly_beyond_pairing` | [`research-021/Witness.v`](research-021/Witness.v), [`StrongerWitness.v`](research-021/StrongerWitness.v) |
 | 13 | A checked strategy tree with pairing or linear-code leaves at the empty board would prove the draw. No such tree is supplied. | `checked_empty_linear_tree_proves_exact_draw` | [`ZZLinearTrees.v`](QUBIC-PROOF-GATE-001/agent/ZZLinearTrees.v) |
 | 14 | Every whole-line linear-code leaf fails at the empty board. The XOR of 19 winning lines isolates the center, which every information set must contain. | `every_whole_line_leaf_rejects_empty` | [`ZLinearObstruction.v`](QUBIC-PROOF-GATE-001/agent/ZLinearObstruction.v) |
+| 15 | Regional Erdős–Selfridge certificates (pairing and potential arguments on disjoint regions, mixed freely) are sound Black non-loss leaves, include every pairing leaf, and cannot exist at the empty board because `6·109 > 5·125`. | `regional_certificate_nonloss`, `pairing_leaf_is_regional`, `empty_board_has_no_regional_certificate` | [`research-026/RegionalCertificates.v`](research-026/RegionalCertificates.v) |
 
 <details>
 <summary><b>How does result 3 work? (strategy stealing in plain words)</b></summary>

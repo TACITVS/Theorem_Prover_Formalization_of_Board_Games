@@ -10,12 +10,15 @@ Checks
   4. Soundness smoke test: on random small regions that satisfy the
      regional condition, brute-force minimax confirms Breaker wins as
      second player. (A test of the write-up, not a proof.)
-  5. Optionally compiles RegionalBarrier.v and audits its assumptions.
+  5. Optionally compiles RegionalBarrier.v and RegionalCertificates.v
+     against the hash-pinned rules and audits their assumptions.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import itertools
+import json
 import random
 import subprocess
 import tempfile
@@ -167,23 +170,48 @@ def check_soundness_smoke(trials: int = 400, seed: int = 26) -> None:
 
 def check_rocq(rocq: str, timeout: float) -> None:
     here = Path(__file__).resolve().parent
+    gate = here.parent / 'QUBIC-PROOF-GATE-001'
+    hashes = json.loads((gate / 'trusted_hashes.json').read_text(encoding='utf-8'))
+    for name, digest in hashes.items():
+        if hashlib.sha256((gate / name).read_bytes()).hexdigest() != digest.lower():
+            raise RuntimeError(f'Pinned source changed: {name}')
     with tempfile.TemporaryDirectory(prefix='qubic-research-026-') as tmp:
-        shutil.copy2(here / 'RegionalBarrier.v', tmp)
-        flags = ['-Q', '.', 'QubicResearch026']
-        out = subprocess.run([rocq, 'compile', *flags, 'RegionalBarrier.v'], cwd=tmp,
-                             capture_output=True, text=True, timeout=timeout)
-        text = out.stdout + out.stderr
-        if out.returncode:
-            raise RuntimeError(text)
-        closed = text.count('Closed under the global context')
-        if closed != 3 or 'Axioms:' in text:
-            raise RuntimeError(f'assumption audit failed:\n{text}')
-        out = subprocess.run([rocq, 'check', '-silent', *flags,
-                              'QubicResearch026.RegionalBarrier'], cwd=tmp,
-                             capture_output=True, text=True, timeout=timeout)
-        if out.returncode:
-            raise RuntimeError(out.stdout + out.stderr)
-    print('[5] Rocq: RegionalBarrier.v compiles, 3 theorems closed, rocq check passes: OK')
+        target = Path(tmp)
+        for d in ['trusted', 'agent', 'research']:
+            (target / d).mkdir()
+        for name in ['Rules', 'Goal']:
+            shutil.copy2(gate / 'trusted' / f'{name}.v', target / 'trusted')
+        agent = ['Minimax', 'RulesFacts', 'SafePairing', 'Geometry']
+        for name in agent:
+            shutil.copy2(gate / 'agent' / f'{name}.v', target / 'agent')
+        ours = ['RegionalBarrier', 'RegionalCertificates']
+        for name in ours:
+            shutil.copy2(here / f'{name}.v', target / 'research')
+        flags = ['-Q', 'trusted', 'QubicTrusted', '-Q', 'agent', 'QubicAgent',
+                 '-Q', 'research', 'QubicResearch026']
+
+        def run(args: list[str]) -> str:
+            out = subprocess.run(args, cwd=target, capture_output=True, text=True,
+                                 encoding='utf-8', errors='replace', timeout=timeout)
+            text = out.stdout + out.stderr
+            if out.returncode:
+                raise RuntimeError(f'{" ".join(args)} failed:\n{text}')
+            return text
+
+        files = ([f'trusted/{n}.v' for n in ['Rules', 'Goal']] +
+                 [f'agent/{n}.v' for n in agent] + [f'research/{n}.v' for n in ours])
+        audits = {}
+        for path in files:
+            audits[path] = run([rocq, 'compile', *flags, path])
+        for path, expected in [('research/RegionalBarrier.v', 3),
+                               ('research/RegionalCertificates.v', 5)]:
+            text = audits[path]
+            if text.count('Closed under the global context') != expected or 'Axioms:' in text:
+                raise RuntimeError(f'assumption audit failed for {path}:\n{text}')
+        run([rocq, 'check', '-silent', *flags, 'QubicResearch026.RegionalBarrier',
+             'QubicResearch026.RegionalCertificates'])
+    print('[5] Rocq: RegionalBarrier.v (3 theorems) and RegionalCertificates.v '
+          '(5 theorems) closed under the global context; rocq check passes: OK')
 
 
 def main() -> None:

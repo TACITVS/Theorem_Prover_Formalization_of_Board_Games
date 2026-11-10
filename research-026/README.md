@@ -120,11 +120,38 @@ budget units and saves 4, 7, 9 pairs, so size 4 is used first, then size 3:
 
 In every row `m ≤ ⌊5n/6⌋`. ∎
 
-The table is a reading aid. The inequality itself is machine-checked twice:
-`verify.py` enumerates all 166 size profiles, and `RegionalBarrier.v` proves
-`region_bound`, `decomposition_bound` and `empty_board_barrier` in Rocq with
-no axioms. The Rocq file covers the arithmetic (steps 2 and 3 as hypotheses);
-steps 1–3 and Theorem 1 are the pen-and-paper arguments above.
+The table is a reading aid. `verify.py` also enumerates all 166 size
+profiles independently.
+
+## Machine-checked statements
+
+Everything in Sections 1 and 2 is proved in Rocq 9.1 against the hash-pinned
+[`trusted/Rules.v`](../QUBIC-PROOF-GATE-001/trusted/Rules.v), with every
+`Print Assumptions` closed under the global context (no axioms, no admits).
+The whole development compiles in about two seconds.
+
+| Statement | Rocq theorem | File |
+| :--- | :--- | :--- |
+| Per-region arithmetic `6m ≤ 5n` | `region_bound` | [`RegionalBarrier.v`](RegionalBarrier.v) |
+| Theorem 1: a certified position is a Black non-loss under the explicit policy, against every White strategy | `regional_certificate_nonloss` | [`RegionalCertificates.v`](RegionalCertificates.v) |
+| Executable leaf check, usable inside a strategy tree | `checked_regional_leaf_policy` | same |
+| Corollary 3: the empty board has no regional certificate | `empty_board_has_no_regional_certificate` | same |
+| Every pairing leaf of `SafePairing.v` is a regional certificate | `pairing_leaf_is_regional` | same |
+| Hence no pairing works at the empty board (re-derived) | `no_pairing_leaf_at_empty_board` | same |
+
+The Rocq definition is slightly more general than Section 1. Every cell has a
+region id (`reg`), every line has an assigned region (`asg`), and region cells
+may already hold stones. A line's weight is `0` once it holds a Black stone,
+and otherwise `2^(5 − |fragment| + White stones in the fragment)`. The
+certificate condition is that every region's total weight is below 16. The
+Black policy `regional_policy` answers inside the region of White's last move,
+on the free cell White would gain most from. The proof keeps this invariant at
+White-to-move positions: every region is below 32, and no single White move can
+lift its region to 32. A completed White line would have weight 32, so it never
+appears.
+
+Pairing leaves embed as 2-cell regions, so the barrier formally generalises the
+repository's earlier pairing impossibility result (result 9 in the main README).
 
 ### What the barrier does and does not say
 
@@ -201,4 +228,6 @@ python research-026/verify.py --rocq "C:\Rocq-Platform~9.1~2026.01\bin\rocq.exe"
 
 Expected final line:
 `ALL CHECKS PASSED. The value of the 5x5x5 game remains unresolved.`
-Runtime is a few seconds; there is no long-running search.
+Step 5 copies the pinned rules and the needed gate files into a temporary
+directory, checks the pinned hashes, compiles, audits assumptions and runs
+`rocq check`. Runtime is a few seconds; there is no long-running search.
