@@ -14,7 +14,7 @@
 
 <p align="center">
   <a href="research-021/README.md">Latest checked result</a> ·
-  <a href="research-020/README.md">Ten-opening reduction</a> ·
+  <a href="research-022/README.md">Six-opening reduction</a> ·
   <a href="QUBIC-PROOF-GATE-001/README.md">Proof gate</a> ·
   <a href="assets/view_board.html">Explore the board</a>
 </p>
@@ -130,6 +130,7 @@ Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and ze
 | 11 | A permutation of the cube's layers reduces the ten geometric opening cases to six. After a center opening, Black needs one successful reply among five representatives. | `exact_draw_iff_six_openings`, `center_opening_iff_five_replies` | [`ZLayerSymmetry.v`](QUBIC-PROOF-GATE-001/agent/ZLayerSymmetry.v) |
 | 12 | Two legal nonterminal positions have complete linear-code defenses where the static pairing invariant is impossible. | `linear_defense_strictly_beyond_pairing` | [`research-021/Witness.v`](research-021/Witness.v), [`StrongerWitness.v`](research-021/StrongerWitness.v) |
 | 13 | A checked strategy tree with pairing or linear-code leaves at the empty board would prove the draw. No such tree is supplied. | `checked_empty_linear_tree_proves_exact_draw` | [`ZZLinearTrees.v`](QUBIC-PROOF-GATE-001/agent/ZZLinearTrees.v) |
+| 14 | Every whole-line linear-code leaf fails at the empty board. The XOR of 19 winning lines isolates the center, which every information set must contain. | `every_whole_line_leaf_rejects_empty` | [`ZLinearObstruction.v`](QUBIC-PROOF-GATE-001/agent/ZLinearObstruction.v) |
 
 <details>
 <summary><b>How does result 3 work? (strategy stealing in plain words)</b></summary>
@@ -278,6 +279,7 @@ python research-019/verify.py   # 14-ply opening bound, forced-block and fork ru
 python research-020/verify.py   # full-game symmetry and the exact ten-opening reduction
 python research-021/verify.py   # linear-code defense and strict separation from pairing
 python research-021/tensor_structure.py --check  # exact F2 tensor/topology calculations
+python research-022/verify.py   # six opening classes and the center parity obstruction
 
 # Legacy building-block library (92 theorems, all closed)
 .\build.ps1
@@ -295,6 +297,7 @@ python research-021/tensor_structure.py --check  # exact F2 tensor/topology calc
 | [`research-019/`](research-019/README.md) | Opening bound and sound tactical pruning |
 | [`research-020/`](research-020/README.md) | Full-game symmetry and the ten remaining opening cases |
 | [`research-021/`](research-021/README.md) | Binary-code exchange defense, a checked separation from static pairing, and tensor/topology experiments |
+| [`research-022/`](research-022/README.md) | Layer symmetry, six opening classes, five center replies, and an exact whole-line code obstruction |
 | `Qubic*.v`, `CheckAssumptions.v` | Legacy Rocq library: board facts, symmetry, pairing certificates |
 | [`solver/`](solver/) | C, C++ and Python experiments (evidence only, see above) |
 | [`QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md`](QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md) | Historical write-up. Contains withdrawn claims; read it with the status above in mind |

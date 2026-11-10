@@ -1,0 +1,8 @@
+From QubicAgent Require Import ZLayerSymmetry ZLinearObstruction.
+Print Assumptions ZLayerSymmetry.layer_images.
+Print Assumptions ZLayerSymmetry.six_cover.
+Print Assumptions ZLayerSymmetry.exact_draw_iff_six_openings.
+Print Assumptions ZLayerSymmetry.center_opening_iff_five_replies.
+Print Assumptions ZLinearObstruction.nineteen_lines_isolate_center.
+Print Assumptions ZLinearObstruction.whole_line_information_requires_center.
+Print Assumptions ZLinearObstruction.every_whole_line_leaf_rejects_empty.
