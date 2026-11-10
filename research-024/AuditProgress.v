@@ -1,0 +1,6 @@
+From QubicAgent Require Import ZZCenterDominance.
+
+Print Assumptions ZZCenterDominance.non_center_openings_fresh.
+Print Assumptions ZZCenterDominance.non_center_reply_is_legal.
+Print Assumptions ZZCenterDominance.non_center_opening_center_reply_sound.
+Print Assumptions ZZCenterDominance.master_move_one_reduction.
