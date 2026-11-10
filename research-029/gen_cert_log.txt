@@ -1,0 +1,65 @@
+﻿engine: 109 lines; 22 games to play (0 already done), 22 threads, 1.00s/move, max 60 plies; upper bound 1.0 min wall
+  [    1s] games done 0/22 | game 2 ply 1: White 0 depth 6 eval 10 | 0.78 M nodes/s total, max depth 6
+  [    3s] games done 0/22 | game 8 ply 3: White 0 depth 6 eval 4 | 12.08 M nodes/s total, max depth 6
+  [    5s] games done 0/22 | game 8 ply 5: White 64 depth 6 eval -6 | 14.44 M nodes/s total, max depth 6
+  [    7s] games done 0/22 | game 8 ply 7: White 100 depth 6 eval 4 | 15.10 M nodes/s total, max depth 6
+  [    9s] games done 0/22 | game 1 ply 9: White 0 depth 6 eval 20 | 15.53 M nodes/s total, max depth 6
+  [   11s] games done 0/22 | game 9 ply 11: White 81 depth 5 eval -14 | 15.98 M nodes/s total, max depth 7
+  [   13s] games done 0/22 | game 1 ply 13: White 22 depth 6 eval -2 | 16.45 M nodes/s total, max depth 7
+  [   15s] games done 0/22 | game 0 ply 15: White 122 depth 6 eval 12 | 16.85 M nodes/s total, max depth 7
+  [   17s] games done 0/22 | game 16 ply 17: White 100 depth 6 eval 64 | 17.39 M nodes/s total, max depth 7
+  [   19s] games done 0/22 | game 0 ply 19: White 45 depth 7 eval 54 | 17.98 M nodes/s total, max depth 7
+  [   21s] games done 0/22 | game 0 ply 21: White 112 depth 6 eval -2 | 18.65 M nodes/s total, max depth 7
+  [   23s] games done 0/22 | game 0 ply 23: White 49 depth 6 eval 34 | 18.92 M nodes/s total, max depth 7
+  [   26s] games done 0/22 | game 0 ply 25: White 29 depth 6 eval 20 | 19.33 M nodes/s total, max depth 7
+  [   28s] games done 0/22 | game 14 ply 23: White 15 depth 6 eval 64 | 19.56 M nodes/s total, max depth 7
+  [   30s] games done 0/22 | game 21 ply 28: Black 57 depth 5 eval -1 | 19.88 M nodes/s total, max depth 7
+  [   32s] games done 0/22 | game 0 ply 31: White 3 depth 6 eval -54 | 20.10 M nodes/s total, max depth 7
+  [   34s] games done 0/22 | game 0 ply 33: White 87 depth 7 eval -12 | 20.21 M nodes/s total, max depth 7
+  [   36s] games done 0/22 | game 21 ply 32: Black 69 depth 5 eval -9 | 20.42 M nodes/s total, max depth 7
+  [   38s] games done 0/22 | game 0 ply 37: White 35 depth 6 eval -84 | 20.53 M nodes/s total, max depth 7
+  [   40s] games done 0/22 | game 8 ply 33: White 102 depth 5 eval 212 | 20.78 M nodes/s total, max depth 7
+  [   42s] games done 0/22 | game 12 ply 37: White 49 depth 5 eval 100 | 20.78 M nodes/s total, max depth 7
+  [   44s] games done 0/22 | game 12 ply 38: Black 99 depth 5 eval -21 | 21.05 M nodes/s total, max depth 7
+  [   46s] games done 0/22 | game 14 ply 40: Black 111 depth 5 eval -21 | 21.19 M nodes/s total, max depth 7
+  [   48s] games done 0/22 | game 7 ply 45: White 44 depth 6 eval -6 | 21.35 M nodes/s total, max depth 7
+  [   50s] games done 0/22 | game 7 ply 47: White 61 depth 7 eval -16 | 21.64 M nodes/s total, max depth 7
+  [   52s] games done 0/22 | game 11 ply 49: White 73 depth 7 eval -34 | 21.72 M nodes/s total, max depth 7
+  [   54s] games done 0/22 | game 16 ply 45: White 45 depth 6 eval -70 | 21.84 M nodes/s total, max depth 7
+  [   56s] games done 0/22 | game 16 ply 47: White 63 depth 6 eval -86 | 22.11 M nodes/s total, max depth 7
+  [   58s] games done 0/22 | game 11 ply 55: White 32 depth 6 eval -152 | 22.27 M nodes/s total, max depth 7
+  [   60s] games done 0/22 | game 0 ply 59: White 92 depth 7 eval -58 | 22.39 M nodes/s total, max depth 8
+  game 0 finished: open after 60 plies
+  game 18 finished: open after 60 plies
+  game 17 finished: open after 60 plies
+  game 9 finished: open after 60 plies
+  game 2 finished: open after 60 plies
+  game 15 finished: open after 60 plies
+  [   62s] games done 6/22 | game 11 ply 59: White 43 depth 7 eval -130 | 22.58 M nodes/s total, max depth 8
+  game 4 finished: open after 60 plies
+  game 20 finished: open after 60 plies
+  game 11 finished: open after 60 plies
+  game 5 finished: open after 60 plies
+  game 7 finished: open after 60 plies
+  game 1 finished: open after 60 plies
+  [   64s] games done 12/22 | game 19 ply 41: White 73 depth 4 eval 152 | 22.53 M nodes/s total, max depth 8
+  [   66s] games done 12/22 | game 19 ply 43: White 56 depth 7 eval 62 | 22.36 M nodes/s total, max depth 8
+  game 14 finished: open after 60 plies
+  game 21 finished: open after 60 plies
+  game 12 finished: open after 60 plies
+  [   69s] games done 15/22 | game 10 ply 50: Black 122 depth 5 eval -31 | 22.17 M nodes/s total, max depth 8
+  game 6 finished: open after 60 plies
+  game 16 finished: open after 60 plies
+  [   71s] games done 17/22 | game 13 ply 60: Black 15 depth 7 eval -43 | 21.92 M nodes/s total, max depth 8
+  game 13 finished: open after 60 plies
+  [   73s] games done 18/22 | game 19 ply 49: White 113 depth 6 eval -104 | 21.54 M nodes/s total, max depth 8
+  [   75s] games done 18/22 | game 19 ply 51: White 16 depth 7 eval -220 | 21.21 M nodes/s total, max depth 8
+  [   77s] games done 18/22 | game 19 ply 53: White 57 depth 6 eval -240 | 20.89 M nodes/s total, max depth 8
+  game 3 finished: open after 60 plies
+  [   79s] games done 19/22 | game 19 ply 55: White 37 depth 7 eval -192 | 20.56 M nodes/s total, max depth 8
+  game 10 finished: open after 60 plies
+  game 8 finished: open after 60 plies
+  [   81s] games done 21/22 | game 19 ply 57: White 90 depth 7 eval -196 | 20.18 M nodes/s total, max depth 8
+  [   83s] games done 21/22 | game 19 ply 59: White 43 depth 7 eval -192 | 19.75 M nodes/s total, max depth 8
+  game 19 finished: open after 60 plies
+DONE after 84s; 19.54 M nodes/s; results in games_cert.jsonl

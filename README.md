@@ -1,4 +1,4 @@
-<h1 align="center">5×5×5 3D Tic-Tac-Toe</h1>
+﻿<h1 align="center">5Ã—5Ã—5 3D Tic-Tac-Toe</h1>
 
 <p align="center">
   <b>A machine-checked research project on one of the smallest unsolved board games in mathematics.</b>
@@ -13,32 +13,32 @@
 </p>
 
 <p align="center">
-  <a href="research-021/README.md">Latest checked result</a> ·
-  <a href="research-022/README.md">Six-opening reduction</a> ·
-  <a href="QUBIC-PROOF-GATE-001/README.md">Proof gate</a> ·
+  <a href="research-021/README.md">Latest checked result</a> Â·
+  <a href="research-022/README.md">Six-opening reduction</a> Â·
+  <a href="QUBIC-PROOF-GATE-001/README.md">Proof gate</a> Â·
   <a href="assets/view_board.html">Explore the board</a>
 </p>
 
 > [!IMPORTANT]
-> **This repository does NOT prove that 5×5×5 tic-tac-toe is a draw.**
+> **This repository does NOT prove that 5Ã—5Ã—5 tic-tac-toe is a draw.**
 > Whether perfect play ends in a draw or a first-player win is still an **open problem**.
 > Earlier versions of this page said the game was solved as a draw. That claim was **wrong**, and it has been withdrawn (see [Corrections](#-corrections)).
 
 ---
 
-## 🎯 The answer at a glance
+## ðŸŽ¯ The answer at a glance
 
 | Question | Answer | Status |
 | :--- | :---: | :--- |
-| Can the **second** player force a win? | **No** | ✅ **Proved** in Rocq (strategy stealing), no axioms or admits |
-| Can the **first** player force a win? | **Unknown** | ❓ Open |
-| Is it a **draw** with perfect play? | **Unknown** | ❓ Open, often conjectured, never proved |
+| Can the **second** player force a win? | **No** | âœ… **Proved** in Rocq (strategy stealing), no axioms or admits |
+| Can the **first** player force a win? | **Unknown** | â“ Open |
+| Is it a **draw** with perfect play? | **Unknown** | â“ Open, often conjectured, never proved |
 
 In one sentence: **the first player can never lose, but nobody knows whether they can always win.**
 
 ```mermaid
 flowchart LR
-    A["5×5×5 under perfect play"] --> B["Second player wins"]
+    A["5Ã—5Ã—5 under perfect play"] --> B["Second player wins"]
     A --> C["First player wins"]
     A --> D["Draw"]
     B:::ruled
@@ -52,9 +52,9 @@ flowchart LR
 
 ---
 
-## 🧊 The game in 60 seconds
+## ðŸ§Š The game in 60 seconds
 
-- The board is a **5 × 5 × 5 cube** of **125 cells**.
+- The board is a **5 Ã— 5 Ã— 5 cube** of **125 cells**.
 - Two players take turns. **White moves first** and **Black moves second**. Each turn, the player claims one empty cell.
 - The first player to claim **5 cells in a straight line** wins. A line can run along a row, along a column, through a plane diagonal, or through a space diagonal.
 - There are exactly **109 winning lines**. If the board fills up with no line completed, the game is a **draw**.
@@ -64,7 +64,7 @@ flowchart LR
     <img src="assets/qubic_5x5x5_board.svg" alt="5x5x5 board and cell degree map" width="100%"/>
   </a>
   <br/>
-  <a href="assets/qubic_5x5x5_board.svg"><b>Full-size diagram</b></a> &nbsp;•&nbsp;
+  <a href="assets/qubic_5x5x5_board.svg"><b>Full-size diagram</b></a> &nbsp;â€¢&nbsp;
   <a href="assets/view_board.html"><b>Interactive viewer</b></a>
 </p>
 
@@ -72,20 +72,20 @@ flowchart LR
 
 | Board | Who wins with perfect play? | Source |
 | :---: | :--- | :--- |
-| 3×3×3 | First player | Classical |
-| 4×4×4 (Qubic) | First player | Patashnik (1980) |
-| **5×5×5** | ❓ **Unknown** | **Open** |
-| 6×6×6 | ❓ Unknown | Open |
-| 7×7×7 | Draw | Cain, Raymond & Källersjö (2025), [arXiv:2509.21494](https://arxiv.org/abs/2509.21494) |
-| 8×8×8 and larger | Draw | Known pairing strategies (as summarized in Cain et al. 2025) |
+| 3Ã—3Ã—3 | First player | Classical |
+| 4Ã—4Ã—4 (Qubic) | First player | Patashnik (1980) |
+| **5Ã—5Ã—5** | â“ **Unknown** | **Open** |
+| 6Ã—6Ã—6 | â“ Unknown | Open |
+| 7Ã—7Ã—7 | Draw | Cain, Raymond & KÃ¤llersjÃ¶ (2025), [arXiv:2509.21494](https://arxiv.org/abs/2509.21494) |
+| 8Ã—8Ã—8 and larger | Draw | Known pairing strategies (as summarized in Cain et al. 2025) |
 
-The 2025 paper that settled 7×7×7 explicitly lists 5×5×5 and 6×6×6 as still open.
+The 2025 paper that settled 7Ã—7Ã—7 explicitly lists 5Ã—5Ã—5 and 6Ã—6Ã—6 as still open.
 
 ---
 
-## 🧬 Latest checked advance: beyond fixed pairing
+## ðŸ§¬ Latest checked advance: beyond fixed pairing
 
-A fixed pairing assigns a partner to each defended cell. On a 5×5×5 board,
+A fixed pairing assigns a partner to each defended cell. On a 5Ã—5Ã—5 board,
 different winning lines share at most one cell, so a pair can protect at most
 one line. A new Rocq proof uses **two disjoint sets of free cells that each
 encode every surviving line**. After White moves, Black can repair the
@@ -111,7 +111,7 @@ checker would accept a complete Black strategy tree at the empty board.
 
 ---
 
-## ✅ What is actually proved
+## âœ… What is actually proved
 
 Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and zero admits** in its dependencies. The rules are fixed in a hash-pinned file, [`trusted/Rules.v`](QUBIC-PROOF-GATE-001/trusted/Rules.v).
 
@@ -131,7 +131,7 @@ Everything below is checked by the **Rocq 9.1 kernel** with **zero axioms and ze
 | 12 | Two legal nonterminal positions have complete linear-code defenses where the static pairing invariant is impossible. | `linear_defense_strictly_beyond_pairing` | [`research-021/Witness.v`](research-021/Witness.v), [`StrongerWitness.v`](research-021/StrongerWitness.v) |
 | 13 | A checked strategy tree with pairing or linear-code leaves at the empty board would prove the draw. No such tree is supplied. | `checked_empty_linear_tree_proves_exact_draw` | [`ZZLinearTrees.v`](QUBIC-PROOF-GATE-001/agent/ZZLinearTrees.v) |
 | 14 | Every whole-line linear-code leaf fails at the empty board. The XOR of 19 winning lines isolates the center, which every information set must contain. | `every_whole_line_leaf_rejects_empty` | [`ZLinearObstruction.v`](QUBIC-PROOF-GATE-001/agent/ZLinearObstruction.v) |
-| 15 | Regional Erdős–Selfridge certificates (pairing and potential arguments on disjoint regions, mixed freely) are sound Black non-loss leaves, include every pairing leaf, and cannot exist at the empty board because `6·109 > 5·125`. | `regional_certificate_nonloss`, `pairing_leaf_is_regional`, `empty_board_has_no_regional_certificate` | [`research-026/RegionalCertificates.v`](research-026/RegionalCertificates.v) |
+| 15 | Regional ErdÅ‘sâ€“Selfridge certificates (pairing and potential arguments on disjoint regions, mixed freely) are sound Black non-loss leaves, include every pairing leaf, and cannot exist at the empty board because `6Â·109 > 5Â·125`. | `regional_certificate_nonloss`, `pairing_leaf_is_regional`, `empty_board_has_no_regional_certificate` | [`research-026/RegionalCertificates.v`](research-026/RegionalCertificates.v) |
 
 <details>
 <summary><b>How does result 3 work? (strategy stealing in plain words)</b></summary>
@@ -148,7 +148,7 @@ The hard part is making this airtight for the exact rules. The proof has to hand
 
 ---
 
-## ❌ What is NOT proved: the missing piece
+## âŒ What is NOT proved: the missing piece
 
 Everything left comes down to a single statement:
 
@@ -194,7 +194,7 @@ REJECTED: Axiom/assumption audit FAILED: expected 2 closed theorems, got 0.
 
 ---
 
-## 🧪 Evidence that is *not* proof
+## ðŸ§ª Evidence that is *not* proof
 
 These experiments are useful for intuition. **None of them establishes the game value.**
 
@@ -208,7 +208,7 @@ These experiments are useful for intuition. **None of them establishes the game 
 
 ---
 
-## 🧭 How a real solution could look
+## ðŸ§­ How a real solution could look
 
 ```mermaid
 flowchart TD
@@ -218,18 +218,18 @@ flowchart TD
     E -.->|"or"| W["A forced White win<br/>(would settle the game the other way)"]
 ```
 
-The missing link is the top arrow. It needs a Black reply to **every** White move from the empty board until a verified safe position is reached. The pairing version of this step solved 7×7×7, where it took only 4 moves. On 5×5×5, a counting argument shows pairing cannot even start before Black's 7th move. Research 021 adds linear-code leaves that can succeed where the pairing invariant is impossible; a complete opening tree is still missing.
+The missing link is the top arrow. It needs a Black reply to **every** White move from the empty board until a verified safe position is reached. The pairing version of this step solved 7Ã—7Ã—7, where it took only 4 moves. On 5Ã—5Ã—5, a counting argument shows pairing cannot even start before Black's 7th move. Research 021 adds linear-code leaves that can succeed where the pairing invariant is impossible; a complete opening tree is still missing.
 
 ---
 
-## 📐 Board geometry
+## ðŸ“ Board geometry
 
 <details>
 <summary><b>The 109 winning lines</b></summary>
 
 <br/>
 
-Cells are numbered `c = x + 5·y + 25·z` with `x, y, z ∈ {0,…,4}`.
+Cells are numbered `c = x + 5Â·y + 25Â·z` with `x, y, z âˆˆ {0,â€¦,4}`.
 
 | Kind | Count | Description |
 | :--- | :---: | :--- |
@@ -259,13 +259,13 @@ Any two different lines share at most one cell (`two_lines_intersect_at_most_onc
 | Outer flank cells | 24 | 4 | 6 |
 | Edge inner cells | 24 | 4 | 1 |
 | Face interior cells | 24 | 3 | 7 |
-| **Total** | **125** | 545 incidences = 109 × 5 | |
+| **Total** | **125** | 545 incidences = 109 Ã— 5 | |
 
 </details>
 
 ---
 
-## 🔁 Reproduce
+## ðŸ” Reproduce
 
 Requires [Rocq 9.1](https://rocq-prover.org/) and Python 3.
 
@@ -281,7 +281,7 @@ python research-020/verify.py   # full-game symmetry and the exact ten-opening r
 python research-021/verify.py   # linear-code defense and strict separation from pairing
 python research-021/tensor_structure.py --check  # exact F2 tensor/topology calculations
 python research-022/verify.py   # six opening classes and the center parity obstruction
-python research-026/verify.py --rocq rocq   # regional Erdős–Selfridge barrier (seconds)
+python research-026/verify.py --rocq rocq   # regional ErdÅ‘sâ€“Selfridge barrier (seconds)
 
 # Legacy building-block library (92 theorems, all closed)
 .\build.ps1
@@ -289,7 +289,7 @@ python research-026/verify.py --rocq rocq   # regional Erdős–Selfridge barrie
 
 ---
 
-## 🗂️ Repository map
+## ðŸ—‚ï¸ Repository map
 
 | Path | Contents |
 | :--- | :--- |
@@ -300,16 +300,17 @@ python research-026/verify.py --rocq rocq   # regional Erdős–Selfridge barrie
 | [`research-020/`](research-020/README.md) | Full-game symmetry and the ten remaining opening cases |
 | [`research-021/`](research-021/README.md) | Binary-code exchange defense, a checked separation from static pairing, and tensor/topology experiments |
 | [`research-022/`](research-022/README.md) | Layer symmetry, six opening classes, five center replies, and an exact whole-line code obstruction |
-| [`research-026/`](research-026/README.md) | Regional Erdős–Selfridge barrier: no mix of pairing and potential arguments on disjoint regions works on the empty board (`6·109 > 5·125`); Qubic-plus-three-planes structure |
+| [`research-026/`](research-026/README.md) | Regional ErdÅ‘sâ€“Selfridge barrier: no mix of pairing and potential arguments on disjoint regions works on the empty board (`6Â·109 > 5Â·125`); Qubic-plus-three-planes structure |
 | [`research-027/`](research-027/README.md) | Research programme: certificate classes, activation depth, the blocking/threat dichotomy, and fragment codes as the precise form of the tensor/topology idea (computations only) |
-| [`research-028/`](research-028/README.md) | First test of fragment codes: sound on small hypergraphs, but no earlier activation than whole-line codes along the known 5x5x5 games; 4x4x4 used as a falsification testbed (computations only) |
+| [`research-028/`](research-028/README.md) | First test of fragment codes: sound on small hypergraphs, but no earlier activation than whole-line codes along the known 5x5x5 games; 4x4x4 used as a falsification testbed; code-leaf tree pipeline (search, Rocq export, parallel split check); the research-021 leaf positions are Black double-threat wins |
+| [`research-029/`](research-029/README.md) | Parallel C engine (about 20 M nodes/s); under good White play, whole-line code leaves first appear at round 11â€“22 (median 13â€“14), because the code deficit `2Â·rank âˆ’ free` starts at 53 and falls by about 4 per round (computations only) |
 | `Qubic*.v`, `CheckAssumptions.v` | Legacy Rocq library: board facts, symmetry, pairing certificates |
 | [`solver/`](solver/) | C, C++ and Python experiments (evidence only, see above) |
 | [`QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md`](QUBIC_5x5x5_MATHEMATICAL_MONOGRAPH.md) | Historical write-up. Contains withdrawn claims; read it with the status above in mind |
 
 ---
 
-## 📝 Corrections
+## ðŸ“ Corrections
 
 This project keeps its mistakes visible.
 
@@ -321,4 +322,4 @@ This project keeps its mistakes visible.
 
 ---
 
-<p align="center"><sub>MIT License • Rocq 9.1 • Branch <code>qubic-5x5x5</code></sub></p>
+<p align="center"><sub>MIT License â€¢ Rocq 9.1 â€¢ Branch <code>qubic-5x5x5</code></sub></p>
