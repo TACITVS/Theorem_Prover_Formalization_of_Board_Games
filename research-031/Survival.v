@@ -334,7 +334,8 @@ Proof.
             try assumption; apply negb_true_iff, Nat.eqb_neq; assumption. }
         assert (Hnd2 : NoDup [d1; d2]).
         { constructor; [intros [H|[]]; congruence|constructor; [intros []|constructor]]. }
-        pose proof (NoDup_incl_length Hnd2 Hincl) as Hl. cbn in Hl. lia. }
+        (* [1 < n] is [2 <= n] and [length [d1; d2]] is [2]: no evaluation of the filter. *)
+        exact (NoDup_incl_length Hnd2 Hincl). }
       pose proof (@find_none cell _ _ Hg c (in_all_cells st c Hc0)). congruence.
 Qed.
 
@@ -419,6 +420,9 @@ Proof.
   right. split; [apply initial_white_next_safe|intros _; apply initial_no_fork].
 Qed.
 
+(* As in Tactics.v: keep the kernel from unfolding the 125-ply game at Qed. *)
+Local Opaque step_game.
+
 Theorem cross_policy_delays_white_win_until_ply_seventeen : forall w,
   outcome (play w cross_policy) = WhiteWins ->
   17 <= length (history (final_state (play w cross_policy))).
@@ -426,7 +430,7 @@ Proof.
   intros w Hwin. unfold play in Hwin |- *.
   destruct (white_win_visible_or_later 16 125 true initial_state w cross_policy
     ltac:(lia) Hwin) as [Hearly|Hlate].
-  - exfalso. exact (cross_policy_no_white_win_in_sixteen_plies w Hearly).
+  - exfalso. apply (cross_policy_no_white_win_in_sixteen_plies w). exact Hearly.
   - exact Hlate.
 Qed.
 
