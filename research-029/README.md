@@ -1,4 +1,4 @@
-﻿# Research 029: a Qubic engine, and how late certificates appear under good play
+# Research 029: a Qubic engine, and how late certificates appear under good play
 
 Status: **computations only.** Nothing here is a Rocq theorem, and the value of
 5x5x5 Qubic is still unresolved. Engine games are test data, not proof.
@@ -17,15 +17,15 @@ when Black certificates appear in engine games.
   a four, uses no depth. Quiescence searches four-making threat sequences up to
   8 plies.
 - **Parallel:** OpenMP plays one game per thread. On 22 of the 24 logical CPUs it
-  runs at about 20â€“25 M nodes/s in total, and at 1 s per move it reaches depth
-  5â€“9.
+  runs at about 20–25 M nodes/s in total, and at 1 s per move it reaches depth
+  5–9.
 - **Progress:** a status line prints every 2 s with games done, ply, depth,
   eval and nodes/s.
 - **Checkpoints:** each game is appended to the output as one JSON line. On
   Ctrl-C, unfinished games are saved as `partial`, and `--resume` continues them.
 - **`--black-cert`:** Black takes its 12 best-ordered moves, discards any where a
   depth-4 White search finds a forced win, and plays the one that minimises the
-  **code deficit** `2Â·rank âˆ’ free`. Here `rank` is the GF(2) rank of the residual
+  **code deficit** `2·rank − free`. Here `rank` is the GF(2) rank of the residual
   rows, computed in C with 128-bit Gaussian elimination. A whole-line code leaf
   needs a deficit of at most 0; that is necessary, not sufficient.
 
@@ -45,14 +45,14 @@ already threatens to win.
 
 | Black plays | first non-trivial code leaf (round) | first pairing (round) |
 | --- | --- | --- |
-| engine, attacking | 15â€“27, in 21 of 22 games (median 20) | 15â€“27, in 21 of 22 games |
-| `--black-cert` (certificate-seeking) | **11â€“22, in all 22 games (median 13â€“14)** | 12â€“22 |
+| engine, attacking | 15–27, in 21 of 22 games (median 20) | 15–27, in 21 of 22 games |
+| `--black-cert` (certificate-seeking) | **11–22, in all 22 games (median 13–14)** | 12–22 |
 
-Mean code deficit `2Â·rank âˆ’ free` with certificate-seeking Black, by round:
+Mean code deficit `2·rank − free` with certificate-seeking Black, by round:
 
 | round | 0 | 2 | 4 | 6 | 8 | 10 | 12 | 13 | 14 | 16 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| deficit | 53 | 45.5 | 34.4 | 25.9 | 17.6 | 9.6 | 1.3 | âˆ’2.7 | âˆ’6.2 | âˆ’14.5 |
+| deficit | 53 | 45.5 | 34.4 | 25.9 | 17.6 | 9.6 | 1.3 | −2.7 | −6.2 | −14.5 |
 
 ## What this says
 
@@ -61,7 +61,7 @@ Mean code deficit `2Â·rank âˆ’ free` with certificate-seeking Black, by ro
 - **The deficit falls about 4 per round,** and this is easy to explain. Each
   round removes two free cells, which adds 2. Black's stone kills lines worth
   about 3 units of rank, which subtracts 6.
-- **Whole-line codes therefore need about 53 / 4 â‰ˆ 13 rounds of explicit tree**
+- **Whole-line codes therefore need about 53 / 4 ≈ 13 rounds of explicit tree**
   against good White play. The programme in research 027 targets activation by
   round 6. An explicit opening tree 13 rounds deep is far beyond any checkable
   size.

@@ -29,7 +29,7 @@ depth, excludes earlier wins by either player, and uses the frozen policy's
 lowest-free-cell fallback.
 
 HiGHS also solves equivalent native packing models. It reports the two
-infeasible pairing cases in about 0.27â€“0.32 seconds and finds the known safe
+infeasible pairing cases in about 0.27–0.32 seconds and finds the known safe
 pairing in about 0.21 seconds. The corresponding CNF-as-MIP runs need more time.
 This small comparison shows the effect of the representation. Timings include
 process setup, use mixed Windows/WSL execution, and do not establish a general
@@ -37,7 +37,7 @@ solver ranking. Raw versions, wall times, formula hashes and witnesses are in
 `results.json`.
 
 The far-region control is infeasible because White's restricted moves cannot
-interrupt Black's early completion of cells 0â€“4. Adding cell 4 to the allowed
+interrupt Black's early completion of cells 0–4. Adding cell 4 to the allowed
 region makes a winning attack possible. Both players' terminal conditions
 therefore matter in the encoding.
 
