@@ -1,0 +1,222 @@
+﻿mb: Maker-Breaker on 109 lines; 22 games to play (0 done), 22 threads; Maker 20000000 nodes/move, Breaker 20000000 nodes/move
+    estimate: about 12.0 min wall if games last ~72 plies; hard upper bound 20.8 min (125 plies)
+    stop: Ctrl-C or create file 'STOP'; continue with --resume
+  [   3.0s] done 0/22 (maker 0, breaker 0) | ETA ~4798s | game 3 ply 1 M->62 depth 9 score 237 pot 122 | 6.6 M nodes/s
+  [   5.8s] done 0/22 (maker 0, breaker 0) | ETA ~393s | game 18 ply 2 B->20 depth 9 score -149 pot 108 | 79.5 M nodes/s
+  [   8.4s] done 0/22 (maker 0, breaker 0) | ETA ~286s | game 10 ply 3 M->24 depth 9 score 230 pot 109 | 107.7 M nodes/s
+  [  10.7s] done 0/22 (maker 0, breaker 0) | ETA ~243s | game 10 ply 4 B->9 depth 7 score -149 pot 102 | 125.1 M nodes/s
+  [  13.2s] done 0/22 (maker 0, breaker 0) | ETA ~222s | game 10 ply 5 M->104 depth 9 score 242 pot 110 | 134.9 M nodes/s
+  [  15.6s] done 0/22 (maker 0, breaker 0) | ETA ~207s | game 13 ply 6 B->8 depth 7 score -168 pot 103 | 142.4 M nodes/s
+  [  18.0s] done 0/22 (maker 0, breaker 0) | ETA ~197s | game 1 ply 7 M->100 depth 9 score 262 pot 111 | 147.5 M nodes/s
+  [  20.4s] done 0/22 (maker 0, breaker 0) | ETA ~188s | game 0 ply 8 B->104 depth 7 score -194 pot 110 | 152.1 M nodes/s
+  [  22.7s] done 0/22 (maker 0, breaker 0) | ETA ~180s | game 2 ply 9 M->72 depth 8 score 228 pot 117 | 156.2 M nodes/s
+  [  24.9s] done 0/22 (maker 0, breaker 0) | ETA ~169s | game 1 ply 10 B->112 depth 9 score -218 pot 105 | 163.6 M nodes/s
+  [  27.1s] done 0/22 (maker 0, breaker 0) | ETA ~161s | game 1 ply 11 M->60 depth 8 score 218 pot 113 | 168.4 M nodes/s
+  [  29.1s] done 0/22 (maker 0, breaker 0) | ETA ~155s | game 11 ply 12 B->19 depth 7 score -231 pot 100 | 172.4 M nodes/s
+  [  31.1s] done 0/22 (maker 0, breaker 0) | ETA ~149s | game 1 ply 13 M->20 depth 9 score 349 pot 113 | 176.0 M nodes/s
+  [  33.3s] done 0/22 (maker 0, breaker 0) | ETA ~141s | game 17 ply 15 M->61 depth 8 score 314 pot 114 | 181.4 M nodes/s
+  [  35.3s] done 0/22 (maker 0, breaker 0) | ETA ~136s | game 15 ply 15 M->87 depth 8 score 250 pot 112 | 185.2 M nodes/s
+  [  37.4s] done 0/22 (maker 0, breaker 0) | ETA ~130s | game 9 ply 16 B->31 depth 7 score -225 pot 97 | 188.7 M nodes/s
+  [  39.4s] done 0/22 (maker 0, breaker 0) | ETA ~125s | game 17 ply 19 M->58 depth 6 score 327 pot 111 | 192.7 M nodes/s
+  [  41.5s] done 0/22 (maker 0, breaker 0) | ETA ~121s | game 4 ply 20 B->71 depth 10 score -267 pot 92 | 194.8 M nodes/s
+  [  43.5s] done 0/22 (maker 0, breaker 0) | ETA ~116s | game 17 ply 22 B->64 depth 5 score -391 pot 101 | 198.7 M nodes/s
+  [  45.5s] done 0/22 (maker 0, breaker 0) | ETA ~113s | game 16 ply 19 M->58 depth 8 score 194 pot 94 | 200.5 M nodes/s
+  [  47.5s] done 0/22 (maker 0, breaker 0) | ETA ~108s | game 16 ply 20 B->68 depth 7 score -194 pot 85 | 204.2 M nodes/s
+  [  49.5s] done 0/22 (maker 0, breaker 0) | ETA ~105s | game 15 ply 23 M->36 depth 8 score 330 pot 98 | 205.6 M nodes/s
+  [  51.6s] done 0/22 (maker 0, breaker 0) | ETA ~100s | game 4 ply 26 B->42 depth 7 score -272 pot 87 | 209.5 M nodes/s
+  [  53.6s] done 0/22 (maker 0, breaker 0) | ETA ~96s | game 16 ply 23 M->70 depth 8 score 250 pot 90 | 212.0 M nodes/s
+  [  55.7s] done 0/22 (maker 0, breaker 0) | ETA ~93s | game 15 ply 27 M->114 depth 6 score 339 pot 97 | 213.1 M nodes/s
+  [  57.7s] done 0/22 (maker 0, breaker 0) | ETA ~89s | game 21 ply 25 M->79 depth 8 score 281 pot 95 | 215.2 M nodes/s
+  [  59.8s] done 0/22 (maker 0, breaker 0) | ETA ~87s | game 21 ply 26 B->54 depth 9 score -289 pot 79 | 216.4 M nodes/s
+  [  61.8s] done 0/22 (maker 0, breaker 0) | ETA ~82s | game 21 ply 27 M->100 depth 8 score 199 pot 86 | 219.6 M nodes/s
+  [  64.0s] done 0/22 (maker 0, breaker 0) | ETA ~79s | game 6 ply 29 M->16 depth 9 score 225 pot 68 | 221.5 M nodes/s
+  [  66.1s] done 0/22 (maker 0, breaker 0) | ETA ~76s | game 14 ply 37 M->92 depth 4 score 509 pot 103 | 223.4 M nodes/s
+  [  68.1s] done 0/22 (maker 0, breaker 0) | ETA ~73s | game 5 ply 41 M->60 depth 6 score 413 pot 87 | 224.3 M nodes/s
+  [  70.2s] done 0/22 (maker 0, breaker 0) | ETA ~69s | game 8 ply 35 M->79 depth 7 score 356 pot 76 | 227.2 M nodes/s
+  [  72.3s] done 0/22 (maker 0, breaker 0) | ETA ~67s | game 0 ply 42 B->88 depth 3 score -604 pot 79 | 227.5 M nodes/s
+  [  74.3s] done 0/22 (maker 0, breaker 0) | ETA ~65s | game 14 ply 43 M->119 depth 4 score 547 pot 95 | 228.2 M nodes/s
+  [  76.4s] done 0/22 (maker 0, breaker 0) | ETA ~62s | game 9 ply 40 B->108 depth 8 score -293 pot 60 | 228.4 M nodes/s
+  [  78.4s] done 0/22 (maker 0, breaker 0) | ETA ~60s | game 20 ply 46 B->78 depth 3 score -400 pot 67 | 228.6 M nodes/s
+  [  80.5s] done 0/22 (maker 0, breaker 0) | ETA ~57s | game 16 ply 36 B->100 depth 8 score -244 pot 58 | 230.0 M nodes/s
+  [  82.5s] done 0/22 (maker 0, breaker 0) | ETA ~56s | game 11 ply 44 B->60 depth 10 score -136 pot 48 | 229.5 M nodes/s
+  [  84.7s] done 0/22 (maker 0, breaker 0) | ETA ~53s | game 0 ply 51 M->59 depth 6 score 406 pot 71 | 229.6 M nodes/s
+  [  86.7s] done 0/22 (maker 0, breaker 0) | ETA ~51s | game 1 ply 45 M->9 depth 6 score 308 pot 70 | 230.4 M nodes/s
+  game 2: breaker at ply 65 (final pot 27)
+  [  88.8s] done 1/22 (maker 0, breaker 1) | ETA ~34s | game 9 ply 46 B->18 depth 9 score -158 pot 54 | 230.3 M nodes/s
+  [  90.9s] done 1/22 (maker 0, breaker 1) | ETA ~32s | game 16 ply 41 M->30 depth 8 score 175 pot 63 | 230.5 M nodes/s
+  [  92.9s] done 1/22 (maker 0, breaker 1) | ETA ~30s | game 9 ply 48 B->13 depth 7 score -152 pot 50 | 231.0 M nodes/s
+  game 0: breaker at ply 67 (final pot 26)
+  game 8: breaker at ply 57 (final pot 29)
+  game 12: breaker at ply 61 (final pot 28)
+  game 20: breaker at ply 67 (final pot 29)
+  [  95.0s] done 5/22 (maker 0, breaker 5) | ETA ~20s | game 7 ply 43 M->41 depth 9 score 197 pot 53 | 230.5 M nodes/s
+  game 17: breaker at ply 71 (final pot 24)
+  game 3: breaker at ply 65 (final pot 27)
+  [  97.0s] done 7/22 (maker 0, breaker 7) | ETA ~19s | game 11 ply 51 M->112 depth 11 score -49989 pot 42 | 230.1 M nodes/s
+  game 15: breaker at ply 57 (final pot 31)
+  game 10: breaker at ply 61 (final pot 31)
+  game 11: breaker at ply 61 (final pot 28)
+  game 14: breaker at ply 71 (final pot 24)
+  [  99.0s] done 11/22 (maker 0, breaker 11) | ETA ~12s | game 5 ply 65 M->1 depth 10 score 196 pot 50 | 229.4 M nodes/s
+  game 6: breaker at ply 55 (final pot 29)
+  [ 101.1s] done 12/22 (maker 0, breaker 12) | ETA ~9s | game 1 ply 58 B->19 depth 9 score 49990 pot 38 | 228.0 M nodes/s
+  game 1: breaker at ply 67 (final pot 26)
+  game 5: breaker at ply 77 (final pot 26)
+  game 19: breaker at ply 69 (final pot 21)
+  [ 103.1s] done 15/22 (maker 0, breaker 15) | ETA ~8s | game 13 ply 49 M->120 depth 10 score 129 pot 48 | 226.4 M nodes/s
+  game 9: breaker at ply 65 (final pot 29)
+  game 18: breaker at ply 63 (final pot 31)
+  [ 105.4s] done 17/22 (maker 0, breaker 17) | ETA ~5s | game 7 ply 50 B->29 depth 8 score -136 pot 33 | 223.4 M nodes/s
+  game 7: breaker at ply 61 (final pot 29)
+  game 16: breaker at ply 65 (final pot 30)
+  game 13: breaker at ply 63 (final pot 30)
+  [ 107.4s] done 20/22 (maker 0, breaker 20) | ETA ~2s | game 4 ply 58 B->48 depth 11 score 49988 pot 37 | 221.2 M nodes/s
+  game 4: breaker at ply 69 (final pot 21)
+  game 21: breaker at ply 63 (final pot 29)
+finished: 22 games this run, maker 0, breaker 22, 108.3s, 219.8 M nodes/s, max depth 12
+mb: Maker-Breaker on 109 lines; 22 games to play (0 done), 22 threads; Maker 40000000 nodes/move, Breaker 1000000 nodes/move
+    estimate: about 12.3 min wall if games last ~72 plies; hard upper bound 21.4 min (125 plies)
+    stop: Ctrl-C or create file 'STOP'; continue with --resume
+  [   6.2s] done 0/22 (maker 0, breaker 0) | ETA ~9781s | game 0 ply 1 M->0 depth 10 score 159 pot 116 | 6.5 M nodes/s
+  [  12.9s] done 0/22 (maker 0, breaker 0) | ETA ~441s | game 3 ply 3 M->41 depth 9 score 242 pot 122 | 73.1 M nodes/s
+  [  19.3s] done 0/22 (maker 0, breaker 0) | ETA ~324s | game 1 ply 5 M->104 depth 9 score 233 pot 110 | 95.5 M nodes/s
+  [  25.6s] done 0/22 (maker 0, breaker 0) | ETA ~279s | game 16 ply 7 M->41 depth 10 score 223 pot 118 | 107.2 M nodes/s
+  [  31.1s] done 0/22 (maker 0, breaker 0) | ETA ~248s | game 16 ply 9 M->83 depth 10 score 233 pot 118 | 117.1 M nodes/s
+  [  36.1s] done 0/22 (maker 0, breaker 0) | ETA ~223s | game 20 ply 11 M->93 depth 10 score 302 pot 119 | 126.1 M nodes/s
+  [  38.1s] done 0/22 (maker 0, breaker 0) | ETA ~195s | game 8 ply 11 M->29 depth 10 score 203 pot 104 | 139.8 M nodes/s
+  [  40.1s] done 0/22 (maker 0, breaker 0) | ETA ~194s | game 16 ply 14 B->109 depth 5 score -233 pot 102 | 138.9 M nodes/s
+  [  42.2s] done 0/22 (maker 0, breaker 0) | ETA ~181s | game 6 ply 14 B->96 depth 5 score -204 pot 94 | 145.8 M nodes/s
+  [  44.2s] done 0/22 (maker 0, breaker 0) | ETA ~175s | game 12 ply 16 B->123 depth 5 score -234 pot 100 | 148.4 M nodes/s
+  [  46.3s] done 0/22 (maker 0, breaker 0) | ETA ~166s | game 18 ply 15 M->16 depth 8 score 236 pot 100 | 153.1 M nodes/s
+  [  48.4s] done 0/22 (maker 0, breaker 0) | ETA ~159s | game 8 ply 15 M->31 depth 10 score 249 pot 99 | 156.7 M nodes/s
+  [  50.4s] done 0/22 (maker 0, breaker 0) | ETA ~152s | game 15 ply 19 M->63 depth 8 score 365 pot 111 | 161.0 M nodes/s
+  [  52.5s] done 0/22 (maker 0, breaker 0) | ETA ~145s | game 21 ply 20 B->46 depth 3 score -342 pot 106 | 164.1 M nodes/s
+  [  54.5s] done 0/22 (maker 0, breaker 0) | ETA ~136s | game 7 ply 19 M->60 depth 8 score 310 pot 105 | 170.8 M nodes/s
+  [  56.6s] done 0/22 (maker 0, breaker 0) | ETA ~132s | game 18 ply 22 B->75 depth 3 score -277 pot 85 | 171.8 M nodes/s
+  [  58.6s] done 0/22 (maker 0, breaker 0) | ETA ~125s | game 2 ply 24 B->44 depth 6 score -258 pot 81 | 177.1 M nodes/s
+  [  60.6s] done 0/22 (maker 0, breaker 0) | ETA ~122s | game 19 ply 23 M->56 depth 8 score 418 pot 108 | 178.6 M nodes/s
+  [  62.7s] done 0/22 (maker 0, breaker 0) | ETA ~116s | game 10 ply 21 M->61 depth 8 score 283 pot 96 | 182.4 M nodes/s
+  [  64.8s] done 0/22 (maker 0, breaker 0) | ETA ~112s | game 17 ply 30 B->6 depth 4 score -370 pot 91 | 184.2 M nodes/s
+  [  66.8s] done 0/22 (maker 0, breaker 0) | ETA ~105s | game 18 ply 28 B->90 depth 3 score -258 pot 73 | 189.0 M nodes/s
+  [  68.9s] done 0/22 (maker 0, breaker 0) | ETA ~102s | game 1 ply 28 B->61 depth 5 score -281 pot 81 | 190.5 M nodes/s
+  [  70.9s] done 0/22 (maker 0, breaker 0) | ETA ~96s | game 3 ply 33 M->38 depth 4 score 596 pot 112 | 194.9 M nodes/s
+  [  73.1s] done 0/22 (maker 0, breaker 0) | ETA ~93s | game 17 ply 35 M->88 depth 5 score 567 pot 97 | 195.8 M nodes/s
+  [  75.2s] done 0/22 (maker 0, breaker 0) | ETA ~88s | game 1 ply 31 M->16 depth 8 score 332 pot 94 | 199.4 M nodes/s
+  [  77.3s] done 0/22 (maker 0, breaker 0) | ETA ~84s | game 19 ply 35 M->42 depth 6 score 409 pot 91 | 202.0 M nodes/s
+  [  79.4s] done 0/22 (maker 0, breaker 0) | ETA ~80s | game 2 ply 36 B->16 depth 8 score -211 pot 55 | 204.0 M nodes/s
+  [  81.4s] done 0/22 (maker 0, breaker 0) | ETA ~77s | game 6 ply 33 M->124 depth 9 score 313 pot 76 | 204.9 M nodes/s
+  [  83.5s] done 0/22 (maker 0, breaker 0) | ETA ~74s | game 1 ply 36 B->106 depth 5 score -173 pot 68 | 206.7 M nodes/s
+  [  85.6s] done 0/22 (maker 0, breaker 0) | ETA ~70s | game 11 ply 43 M->118 depth 6 score 331 pot 78 | 208.7 M nodes/s
+  [  87.7s] done 0/22 (maker 0, breaker 0) | ETA ~68s | game 21 ply 45 M->14 depth 6 score 378 pot 74 | 209.0 M nodes/s
+  [  89.7s] done 0/22 (maker 0, breaker 0) | ETA ~64s | game 7 ply 37 M->41 depth 10 score 202 pot 60 | 212.1 M nodes/s
+  [  91.8s] done 0/22 (maker 0, breaker 0) | ETA ~62s | game 17 ply 50 B->46 depth 2 score -575 pot 65 | 211.8 M nodes/s
+  [  93.8s] done 0/22 (maker 0, breaker 0) | ETA ~60s | game 12 ply 47 M->114 depth 8 score 291 pot 68 | 212.0 M nodes/s
+  [  95.9s] done 0/22 (maker 0, breaker 0) | ETA ~56s | game 14 ply 53 M->107 depth 11 score -49987 pot 49 | 213.9 M nodes/s
+  game 14: breaker at ply 65 (final pot 23)
+  [  97.9s] done 1/22 (maker 0, breaker 1) | ETA ~37s | game 20 ply 53 M->66 depth 4 score 501 pot 71 | 215.0 M nodes/s
+  [  99.9s] done 1/22 (maker 0, breaker 1) | ETA ~34s | game 3 ply 56 B->97 depth 2 score -502 pot 59 | 216.0 M nodes/s
+  game 9: breaker at ply 61 (final pot 20)
+  game 0: breaker at ply 61 (final pot 28)
+  [ 101.9s] done 3/22 (maker 0, breaker 3) | ETA ~24s | game 19 ply 53 M->1 depth 4 score 430 pot 69 | 216.0 M nodes/s
+  game 4: breaker at ply 61 (final pot 29)
+  [ 104.3s] done 4/22 (maker 0, breaker 4) | ETA ~20s | game 1 ply 47 M->83 depth 9 score 289 pot 59 | 215.4 M nodes/s
+  game 15: breaker at ply 63 (final pot 22)
+  game 13: breaker at ply 59 (final pot 21)
+  game 12: breaker at ply 65 (final pot 30)
+  game 16: breaker at ply 67 (final pot 20)
+  game 3: breaker at ply 71 (final pot 27)
+  [ 106.3s] done 9/22 (maker 0, breaker 9) | ETA ~14s | game 2 ply 47 M->31 depth 10 score 70 pot 44 | 217.4 M nodes/s
+  game 21: breaker at ply 71 (final pot 21)
+  game 20: breaker at ply 73 (final pot 24)
+  game 17: breaker at ply 73 (final pot 26)
+  [ 108.4s] done 12/22 (maker 0, breaker 12) | ETA ~13s | game 10 ply 49 M->106 depth 11 score -49989 pot 41 | 216.6 M nodes/s
+  game 10: breaker at ply 59 (final pot 31)
+  game 5: breaker at ply 59 (final pot 29)
+  game 7: breaker at ply 59 (final pot 28)
+  game 2: breaker at ply 61 (final pot 29)
+  [ 110.6s] done 16/22 (maker 0, breaker 16) | ETA ~5s | game 18 ply 49 M->68 depth 10 score 64 pot 40 | 215.5 M nodes/s
+  game 19: breaker at ply 75 (final pot 21)
+  game 11: breaker at ply 77 (final pot 24)
+  [ 112.7s] done 18/22 (maker 0, breaker 18) | ETA ~5s | game 1 ply 55 M->6 depth 10 score 181 pot 51 | 213.9 M nodes/s
+  game 18: breaker at ply 63 (final pot 28)
+  game 1: breaker at ply 67 (final pot 31)
+  game 8: breaker at ply 61 (final pot 29)
+  game 6: breaker at ply 65 (final pot 27)
+finished: 22 games this run, maker 0, breaker 22, 114.3s, 212.4 M nodes/s, max depth 13
+mb: Maker-Breaker on 109 lines; 22 games to play (0 done), 22 threads; Maker 1000000 nodes/move, Breaker 40000000 nodes/move
+    estimate: about 12.3 min wall if games last ~72 plies; hard upper bound 21.4 min (125 plies)
+    stop: Ctrl-C or create file 'STOP'; continue with --resume
+  [   0.2s] done 0/22 (maker 0, breaker 0) | ETA ~269s | game 8 ply 1 M->4 depth 7 score 219 pot 116 | 5.9 M nodes/s
+  [   5.7s] done 0/22 (maker 0, breaker 0) | ETA ~387s | game 11 ply 2 B->0 depth 9 score -149 pot 108 | 10.9 M nodes/s
+  [  11.2s] done 0/22 (maker 0, breaker 0) | ETA ~254s | game 7 ply 4 B->14 depth 8 score -230 pot 103 | 85.9 M nodes/s
+  [  16.7s] done 0/22 (maker 0, breaker 0) | ETA ~221s | game 13 ply 6 B->28 depth 8 score -242 pot 102 | 111.8 M nodes/s
+  [  21.5s] done 0/22 (maker 0, breaker 0) | ETA ~198s | game 10 ply 8 B->43 depth 8 score -266 pot 106 | 128.9 M nodes/s
+  [  23.7s] done 0/22 (maker 0, breaker 0) | ETA ~167s | game 6 ply 8 B->101 depth 9 score -162 pot 99 | 153.3 M nodes/s
+  [  25.9s] done 0/22 (maker 0, breaker 0) | ETA ~180s | game 10 ply 10 B->6 depth 7 score -193 pot 103 | 141.9 M nodes/s
+  [  27.9s] done 0/22 (maker 0, breaker 0) | ETA ~166s | game 20 ply 11 M->87 depth 6 score 201 pot 113 | 153.6 M nodes/s
+  [  30.5s] done 0/22 (maker 0, breaker 0) | ETA ~168s | game 10 ply 12 B->3 depth 7 score -212 pot 99 | 149.9 M nodes/s
+  [  32.5s] done 0/22 (maker 0, breaker 0) | ETA ~158s | game 9 ply 12 B->94 depth 7 score -189 pot 101 | 158.3 M nodes/s
+  [  34.6s] done 0/22 (maker 0, breaker 0) | ETA ~157s | game 6 ply 13 M->81 depth 6 score 174 pot 107 | 157.1 M nodes/s
+  [  36.7s] done 0/22 (maker 0, breaker 0) | ETA ~150s | game 9 ply 14 B->37 depth 7 score -197 pot 98 | 163.8 M nodes/s
+  [  39.0s] done 0/22 (maker 0, breaker 0) | ETA ~147s | game 5 ply 16 B->98 depth 7 score -251 pot 102 | 164.3 M nodes/s
+  [  41.1s] done 0/22 (maker 0, breaker 0) | ETA ~141s | game 16 ply 17 M->83 depth 6 score 233 pot 109 | 168.1 M nodes/s
+  [  43.1s] done 0/22 (maker 0, breaker 0) | ETA ~138s | game 20 ply 19 M->32 depth 6 score 209 pot 101 | 169.7 M nodes/s
+  [  45.1s] done 0/22 (maker 0, breaker 0) | ETA ~135s | game 21 ply 18 B->64 depth 9 score -295 pot 103 | 172.1 M nodes/s
+  [  47.4s] done 0/22 (maker 0, breaker 0) | ETA ~133s | game 5 ply 20 B->54 depth 9 score -211 pot 88 | 171.8 M nodes/s
+  [  49.4s] done 0/22 (maker 0, breaker 0) | ETA ~127s | game 15 ply 21 M->38 depth 6 score 316 pot 108 | 175.6 M nodes/s
+  [  51.5s] done 0/22 (maker 0, breaker 0) | ETA ~124s | game 12 ply 22 B->38 depth 7 score -327 pot 99 | 177.2 M nodes/s
+  [  53.5s] done 0/22 (maker 0, breaker 0) | ETA ~120s | game 8 ply 21 M->103 depth 7 score 263 pot 83 | 178.8 M nodes/s
+  [  55.6s] done 0/22 (maker 0, breaker 0) | ETA ~116s | game 19 ply 24 B->101 depth 5 score -363 pot 91 | 182.6 M nodes/s
+  [  57.6s] done 0/22 (maker 0, breaker 0) | ETA ~114s | game 16 ply 24 B->52 depth 7 score -219 pot 82 | 181.9 M nodes/s
+  [  59.7s] done 0/22 (maker 0, breaker 0) | ETA ~109s | game 7 ply 24 B->115 depth 7 score -222 pot 85 | 185.9 M nodes/s
+  [  61.7s] done 0/22 (maker 0, breaker 0) | ETA ~106s | game 16 ply 26 B->5 depth 10 score -197 pot 76 | 186.5 M nodes/s
+  [  63.8s] done 0/22 (maker 0, breaker 0) | ETA ~104s | game 12 ply 30 B->15 depth 3 score -453 pot 95 | 186.7 M nodes/s
+  [  65.9s] done 0/22 (maker 0, breaker 0) | ETA ~99s | game 14 ply 33 M->82 depth 4 score 411 pot 92 | 190.8 M nodes/s
+  [  67.9s] done 0/22 (maker 0, breaker 0) | ETA ~96s | game 15 ply 32 B->60 depth 3 score -392 pot 84 | 192.3 M nodes/s
+  [  70.0s] done 0/22 (maker 0, breaker 0) | ETA ~93s | game 0 ply 29 M->81 depth 7 score 194 pot 74 | 193.0 M nodes/s
+  [  72.1s] done 0/22 (maker 0, breaker 0) | ETA ~88s | game 8 ply 29 M->24 depth 7 score 269 pot 78 | 196.5 M nodes/s
+  [  74.1s] done 0/22 (maker 0, breaker 0) | ETA ~86s | game 17 ply 40 B->50 depth 4 score -472 pot 79 | 197.3 M nodes/s
+  [  76.2s] done 0/22 (maker 0, breaker 0) | ETA ~83s | game 10 ply 31 M->84 depth 6 score 161 pot 71 | 198.4 M nodes/s
+  [  78.5s] done 0/22 (maker 0, breaker 0) | ETA ~80s | game 2 ply 34 B->70 depth 10 score -156 pot 61 | 199.2 M nodes/s
+  [  80.5s] done 0/22 (maker 0, breaker 0) | ETA ~77s | game 9 ply 41 M->98 depth 4 score 403 pot 82 | 201.9 M nodes/s
+  [  82.7s] done 0/22 (maker 0, breaker 0) | ETA ~74s | game 17 ply 46 B->84 depth 3 score -402 pot 70 | 202.6 M nodes/s
+  [  84.7s] done 0/22 (maker 0, breaker 0) | ETA ~71s | game 19 ply 44 B->7 depth 3 score -364 pot 59 | 204.0 M nodes/s
+  [  87.0s] done 0/22 (maker 0, breaker 0) | ETA ~69s | game 7 ply 40 B->116 depth 9 score -288 pot 60 | 203.9 M nodes/s
+  [  89.1s] done 0/22 (maker 0, breaker 0) | ETA ~65s | game 4 ply 37 M->82 depth 7 score 233 pot 70 | 206.0 M nodes/s
+  game 14: breaker at ply 61 (final pot 27)
+  [  91.1s] done 1/22 (maker 0, breaker 1) | ETA ~38s | game 12 ply 48 B->85 depth 7 score -298 pot 58 | 206.6 M nodes/s
+  [  93.2s] done 1/22 (maker 0, breaker 1) | ETA ~35s | game 10 ply 37 M->40 depth 7 score 213 pot 62 | 206.8 M nodes/s
+  game 19: breaker at ply 61 (final pot 21)
+  [  95.2s] done 2/22 (maker 0, breaker 2) | ETA ~31s | game 9 ply 51 M->44 depth 4 score 294 pot 60 | 208.4 M nodes/s
+  game 5: breaker at ply 57 (final pot 30)
+  [  97.2s] done 3/22 (maker 0, breaker 3) | ETA ~25s | game 12 ply 52 B->11 depth 7 score -269 pot 49 | 208.3 M nodes/s
+  game 17: breaker at ply 69 (final pot 25)
+  game 12: breaker at ply 67 (final pot 20)
+  [  99.3s] done 5/22 (maker 0, breaker 5) | ETA ~27s | game 16 ply 45 M->117 depth 6 score 197 pot 54 | 208.8 M nodes/s
+  [ 101.3s] done 5/22 (maker 0, breaker 5) | ETA ~25s | game 1 ply 51 M->103 depth 6 score 155 pot 53 | 208.7 M nodes/s
+  [ 103.3s] done 5/22 (maker 0, breaker 5) | ETA ~24s | game 15 ply 56 B->13 depth 9 score -119 pot 38 | 208.6 M nodes/s
+  [ 105.5s] done 5/22 (maker 0, breaker 5) | ETA ~22s | game 2 ply 46 B->89 depth 10 score -73 pot 41 | 208.5 M nodes/s
+  game 15: breaker at ply 69 (final pot 22)
+  [ 107.5s] done 6/22 (maker 0, breaker 6) | ETA ~20s | game 11 ply 53 M->97 depth 8 score 103 pot 42 | 209.1 M nodes/s
+  game 21: breaker at ply 71 (final pot 26)
+  game 7: breaker at ply 61 (final pot 30)
+  game 16: breaker at ply 61 (final pot 20)
+  game 9: breaker at ply 71 (final pot 24)
+  game 11: breaker at ply 63 (final pot 29)
+  game 1: breaker at ply 67 (final pot 24)
+  game 3: breaker at ply 67 (final pot 21)
+  game 20: breaker at ply 67 (final pot 22)
+  [ 110.1s] done 14/22 (maker 0, breaker 14) | ETA ~12s | game 18 ply 42 B->68 depth 9 score -91 pot 49 | 208.6 M nodes/s
+  [ 112.5s] done 14/22 (maker 0, breaker 14) | ETA ~10s | game 6 ply 66 B->51 depth 7 score -245 pot 41 | 207.0 M nodes/s
+  game 6: breaker at ply 77 (final pot 24)
+  game 8: breaker at ply 63 (final pot 21)
+  game 2: breaker at ply 63 (final pot 28)
+  [ 115.7s] done 17/22 (maker 0, breaker 17) | ETA ~7s | game 18 ply 46 B->60 depth 9 score -81 pot 45 | 204.0 M nodes/s
+  [ 117.8s] done 17/22 (maker 0, breaker 17) | ETA ~7s | game 13 ply 54 B->39 depth 9 score -61 pot 34 | 202.1 M nodes/s
+  game 13: breaker at ply 65 (final pot 27)
+  game 4: breaker at ply 63 (final pot 31)
+  [ 120.3s] done 19/22 (maker 0, breaker 19) | ETA ~4s | game 18 ply 50 B->13 depth 9 score -74 pot 42 | 199.8 M nodes/s
+  game 10: breaker at ply 65 (final pot 27)
+  game 0: breaker at ply 67 (final pot 28)
+  game 18: breaker at ply 63 (final pot 25)
+finished: 22 games this run, maker 0, breaker 22, 122.2s, 198.1 M nodes/s, max depth 13

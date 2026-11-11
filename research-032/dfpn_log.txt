@@ -1,0 +1,164 @@
+﻿dfpn: 22 games (22 open), 22 threads, budget 50000000 nodes per position, table 128 MB per thread (2.8 GB in all)
+    each game walks back from its last position until one position exceeds the budget
+    wall-clock cap 540 s, then a clean stop with tables saved; stop early with Ctrl-C or file 'STOP'; continue with --resume
+  [   0.0s] 0 positions solved, 0/22 games closed | game 2 ply 65: 0.0/50.0 M nodes, phi 0 delta 1073741824 | inf M nodes/s | this position ends in <= 0s, wall cap in 540s
+  [   2.1s] 936 positions solved, 0/22 games closed | game 2 ply 26: 0.0/50.0 M nodes, phi 1073741824 delta 0 | 0.9 M nodes/s | this position ends in <= 1253s, wall cap in 538s
+  [   4.1s] 958 positions solved, 0/22 games closed | game 5 ply 26: 0.5/50.0 M nodes, phi 94 delta 650238 | 2.4 M nodes/s | this position ends in <= 445s, wall cap in 536s
+  [   6.1s] 964 positions solved, 0/22 games closed | game 10 ply 22: 1.0/50.0 M nodes, phi 4595 delta 102309 | 3.4 M nodes/s | this position ends in <= 313s, wall cap in 534s
+  [   8.1s] 966 positions solved, 0/22 games closed | game 17 ply 20: 1.0/50.0 M nodes, phi 2196 delta 173944 | 4.0 M nodes/s | this position ends in <= 270s, wall cap in 532s
+  [  10.2s] 968 positions solved, 0/22 games closed | game 3 ply 22: 1.5/50.0 M nodes, phi 682 delta 308658 | 3.9 M nodes/s | this position ends in <= 274s, wall cap in 530s
+  [  12.3s] 968 positions solved, 0/22 games closed | game 19 ply 16: 1.0/50.0 M nodes, phi 616 delta 362114 | 4.1 M nodes/s | this position ends in <= 261s, wall cap in 528s
+  [  14.3s] 972 positions solved, 0/22 games closed | game 0 ply 20: 2.0/50.0 M nodes, phi 7283 delta 167447 | 4.2 M nodes/s | this position ends in <= 253s, wall cap in 526s
+  [  16.5s] 972 positions solved, 0/22 games closed | game 1 ply 22: 3.0/50.0 M nodes, phi 7205 delta 152387 | 4.2 M nodes/s | this position ends in <= 246s, wall cap in 524s
+  [  18.5s] 974 positions solved, 0/22 games closed | game 2 ply 22: 3.0/50.0 M nodes, phi 96 delta 5191378 | 4.3 M nodes/s | this position ends in <= 242s, wall cap in 522s
+  [  20.6s] 976 positions solved, 0/22 games closed | game 18 ply 16: 5.0/50.0 M nodes, phi 9206 delta 324240 | 4.4 M nodes/s | this position ends in <= 227s, wall cap in 519s
+  [  22.7s] 976 positions solved, 0/22 games closed | game 4 ply 24: 1.0/50.0 M nodes, phi 4539 delta 115195 | 4.4 M nodes/s | this position ends in <= 243s, wall cap in 517s
+  [  24.8s] 976 positions solved, 0/22 games closed | game 4 ply 24: 1.5/50.0 M nodes, phi 6797 delta 122737 | 4.5 M nodes/s | this position ends in <= 237s, wall cap in 515s
+  [  27.0s] 976 positions solved, 0/22 games closed | game 4 ply 24: 2.0/50.0 M nodes, phi 6906 delta 145574 | 4.6 M nodes/s | this position ends in <= 232s, wall cap in 513s
+  [  29.0s] 976 positions solved, 0/22 games closed | game 4 ply 24: 2.5/50.0 M nodes, phi 6587 delta 170350 | 4.6 M nodes/s | this position ends in <= 226s, wall cap in 511s
+  [  31.1s] 976 positions solved, 0/22 games closed | game 4 ply 24: 3.0/50.0 M nodes, phi 7070 delta 188779 | 4.7 M nodes/s | this position ends in <= 221s, wall cap in 509s
+  [  33.1s] 976 positions solved, 0/22 games closed | game 3 ply 22: 6.5/50.0 M nodes, phi 5627 delta 444289 | 4.7 M nodes/s | this position ends in <= 202s, wall cap in 507s
+  [  35.2s] 976 positions solved, 0/22 games closed | game 14 ply 24: 7.0/50.0 M nodes, phi 6995 delta 355689 | 4.8 M nodes/s | this position ends in <= 199s, wall cap in 505s
+  [  37.2s] 976 positions solved, 0/22 games closed | game 21 ply 22: 9.0/50.0 M nodes, phi 8699 delta 357613 | 4.8 M nodes/s | this position ends in <= 188s, wall cap in 503s
+  [  39.2s] 976 positions solved, 0/22 games closed | game 19 ply 16: 7.5/50.0 M nodes, phi 3736 delta 584840 | 4.8 M nodes/s | this position ends in <= 193s, wall cap in 501s
+  [  41.5s] 976 positions solved, 0/22 games closed | game 7 ply 20: 6.5/50.0 M nodes, phi 8078 delta 336583 | 4.8 M nodes/s | this position ends in <= 197s, wall cap in 499s
+  [  43.5s] 976 positions solved, 0/22 games closed | game 5 ply 24: 6.5/50.0 M nodes, phi 253 delta 4057858 | 4.9 M nodes/s | this position ends in <= 197s, wall cap in 497s
+  [  45.5s] 976 positions solved, 0/22 games closed | game 7 ply 20: 7.5/50.0 M nodes, phi 8367 delta 352736 | 4.9 M nodes/s | this position ends in <= 191s, wall cap in 494s
+  [  47.8s] 976 positions solved, 0/22 games closed | game 7 ply 20: 8.0/50.0 M nodes, phi 8370 delta 360646 | 4.9 M nodes/s | this position ends in <= 189s, wall cap in 492s
+  [  49.9s] 976 positions solved, 0/22 games closed | game 7 ply 20: 8.5/50.0 M nodes, phi 8381 delta 368006 | 4.9 M nodes/s | this position ends in <= 186s, wall cap in 490s
+  [  51.9s] 976 positions solved, 0/22 games closed | game 19 ply 16: 10.5/50.0 M nodes, phi 7521 delta 654945 | 4.9 M nodes/s | this position ends in <= 177s, wall cap in 488s
+  [  54.0s] 976 positions solved, 0/22 games closed | game 7 ply 20: 9.5/50.0 M nodes, phi 8678 delta 390396 | 4.9 M nodes/s | this position ends in <= 182s, wall cap in 486s
+  [  56.0s] 976 positions solved, 0/22 games closed | game 7 ply 20: 10.0/50.0 M nodes, phi 8679 delta 397849 | 4.9 M nodes/s | this position ends in <= 179s, wall cap in 484s
+  [  58.0s] 976 positions solved, 0/22 games closed | game 7 ply 20: 10.5/50.0 M nodes, phi 8680 delta 405272 | 4.9 M nodes/s | this position ends in <= 178s, wall cap in 482s
+  [  60.0s] 976 positions solved, 0/22 games closed | game 21 ply 22: 14.5/50.0 M nodes, phi 8893 delta 616342 | 4.9 M nodes/s | this position ends in <= 160s, wall cap in 480s
+  [  62.0s] 976 positions solved, 0/22 games closed | game 6 ply 16: 14.5/50.0 M nodes, phi 9663 delta 574654 | 4.9 M nodes/s | this position ends in <= 159s, wall cap in 478s
+  [  64.1s] 976 positions solved, 0/22 games closed | game 3 ply 22: 13.5/50.0 M nodes, phi 7117 delta 570584 | 4.9 M nodes/s | this position ends in <= 164s, wall cap in 476s
+  [  66.1s] 976 positions solved, 0/22 games closed | game 7 ply 20: 12.5/50.0 M nodes, phi 8781 delta 437882 | 4.9 M nodes/s | this position ends in <= 168s, wall cap in 474s
+  [  68.1s] 976 positions solved, 0/22 games closed | game 10 ply 22: 15.0/50.0 M nodes, phi 8901 delta 469078 | 4.9 M nodes/s | this position ends in <= 157s, wall cap in 472s
+  [  70.2s] 976 positions solved, 0/22 games closed | game 17 ply 20: 15.5/50.0 M nodes, phi 8673 delta 572324 | 4.9 M nodes/s | this position ends in <= 154s, wall cap in 470s
+  [  72.5s] 976 positions solved, 0/22 games closed | game 7 ply 20: 14.0/50.0 M nodes, phi 8833 delta 466537 | 4.9 M nodes/s | this position ends in <= 161s, wall cap in 467s
+  [  74.6s] 976 positions solved, 0/22 games closed | game 11 ply 18: 17.0/50.0 M nodes, phi 9360 delta 381344 | 4.9 M nodes/s | this position ends in <= 147s, wall cap in 465s
+  [  76.7s] 976 positions solved, 0/22 games closed | game 11 ply 18: 17.5/50.0 M nodes, phi 9362 delta 395094 | 4.9 M nodes/s | this position ends in <= 145s, wall cap in 463s
+  [  78.7s] 976 positions solved, 0/22 games closed | game 7 ply 20: 15.5/50.0 M nodes, phi 8880 delta 533724 | 4.9 M nodes/s | this position ends in <= 154s, wall cap in 461s
+  [  80.8s] 976 positions solved, 0/22 games closed | game 20 ply 20: 17.5/50.0 M nodes, phi 7837 delta 658848 | 5.0 M nodes/s | this position ends in <= 144s, wall cap in 459s
+  [  82.8s] 976 positions solved, 0/22 games closed | game 4 ply 24: 16.0/50.0 M nodes, phi 8800 delta 630943 | 5.0 M nodes/s | this position ends in <= 150s, wall cap in 457s
+  [  84.9s] 976 positions solved, 0/22 games closed | game 19 ply 16: 18.0/50.0 M nodes, phi 8761 delta 862332 | 5.0 M nodes/s | this position ends in <= 141s, wall cap in 455s
+  [  87.0s] 976 positions solved, 0/22 games closed | game 18 ply 16: 20.0/50.0 M nodes, phi 9745 delta 821784 | 5.0 M nodes/s | this position ends in <= 132s, wall cap in 453s
+  [  89.0s] 976 positions solved, 0/22 games closed | game 8 ply 16: 20.0/50.0 M nodes, phi 9742 delta 722615 | 5.0 M nodes/s | this position ends in <= 132s, wall cap in 451s
+  [  91.2s] 978 positions solved, 0/22 games closed | game 18 ply 16: 21.0/50.0 M nodes, phi 9746 delta 870741 | 5.0 M nodes/s | this position ends in <= 128s, wall cap in 449s
+  [  93.4s] 978 positions solved, 0/22 games closed | game 1 ply 22: 21.5/50.0 M nodes, phi 9088 delta 848718 | 5.0 M nodes/s | this position ends in <= 126s, wall cap in 447s
+  [  95.5s] 978 positions solved, 0/22 games closed | game 1 ply 22: 22.0/50.0 M nodes, phi 9088 delta 866059 | 5.0 M nodes/s | this position ends in <= 123s, wall cap in 445s
+  [  97.5s] 978 positions solved, 0/22 games closed | game 1 ply 22: 22.5/50.0 M nodes, phi 9088 delta 882164 | 5.0 M nodes/s | this position ends in <= 121s, wall cap in 442s
+  [  99.6s] 978 positions solved, 0/22 games closed | game 15 ply 20: 22.0/50.0 M nodes, phi 8869 delta 903451 | 5.0 M nodes/s | this position ends in <= 123s, wall cap in 440s
+  [ 101.6s] 978 positions solved, 0/22 games closed | game 17 ply 20: 23.5/50.0 M nodes, phi 8840 delta 826422 | 5.0 M nodes/s | this position ends in <= 117s, wall cap in 438s
+  [ 103.7s] 978 positions solved, 0/22 games closed | game 8 ply 16: 23.5/50.0 M nodes, phi 9743 delta 848462 | 5.0 M nodes/s | this position ends in <= 117s, wall cap in 436s
+  [ 106.0s] 978 positions solved, 0/22 games closed | game 20 ply 20: 23.0/50.0 M nodes, phi 6379 delta 766532 | 5.0 M nodes/s | this position ends in <= 119s, wall cap in 434s
+  [ 108.1s] 978 positions solved, 0/22 games closed | game 13 ply 22: 25.0/50.0 M nodes, phi 8894 delta 829394 | 5.0 M nodes/s | this position ends in <= 110s, wall cap in 432s
+  [ 110.2s] 978 positions solved, 0/22 games closed | game 4 ply 24: 23.0/50.0 M nodes, phi 8996 delta 828869 | 5.0 M nodes/s | this position ends in <= 119s, wall cap in 430s
+  [ 112.2s] 978 positions solved, 0/22 games closed | game 4 ply 24: 23.5/50.0 M nodes, phi 8996 delta 842422 | 5.0 M nodes/s | this position ends in <= 116s, wall cap in 428s
+  [ 114.5s] 978 positions solved, 0/22 games closed | game 0 ply 20: 24.5/50.0 M nodes, phi 9373 delta 719031 | 5.0 M nodes/s | this position ends in <= 112s, wall cap in 426s
+  [ 116.5s] 978 positions solved, 0/22 games closed | game 7 ply 20: 24.5/50.0 M nodes, phi 9181 delta 777968 | 5.0 M nodes/s | this position ends in <= 112s, wall cap in 423s
+  [ 118.6s] 978 positions solved, 0/22 games closed | game 13 ply 22: 27.5/50.0 M nodes, phi 8894 delta 908095 | 5.0 M nodes/s | this position ends in <= 99s, wall cap in 421s
+  [ 120.7s] 978 positions solved, 0/22 games closed | game 5 ply 22: 7.0/50.0 M nodes, phi 383 delta 2249137 | 5.0 M nodes/s | this position ends in <= 188s, wall cap in 419s
+  [ 122.7s] 978 positions solved, 0/22 games closed | game 16 ply 20: 25.5/50.0 M nodes, phi 9274 delta 859656 | 5.0 M nodes/s | this position ends in <= 107s, wall cap in 417s
+  [ 124.8s] 978 positions solved, 0/22 games closed | game 1 ply 22: 29.0/50.0 M nodes, phi 9089 delta 1125393 | 5.0 M nodes/s | this position ends in <= 92s, wall cap in 415s
+  [ 126.8s] 978 positions solved, 0/22 games closed | game 10 ply 22: 28.0/50.0 M nodes, phi 8601 delta 632985 | 5.0 M nodes/s | this position ends in <= 96s, wall cap in 413s
+  [ 128.8s] 978 positions solved, 0/22 games closed | game 20 ply 20: 28.0/50.0 M nodes, phi 8204 delta 926937 | 5.0 M nodes/s | this position ends in <= 96s, wall cap in 411s
+  [ 131.1s] 978 positions solved, 0/22 games closed | game 20 ply 20: 28.5/50.0 M nodes, phi 8207 delta 939011 | 5.0 M nodes/s | this position ends in <= 94s, wall cap in 409s
+  [ 133.3s] 978 positions solved, 0/22 games closed | game 13 ply 22: 31.0/50.0 M nodes, phi 8895 delta 992105 | 5.0 M nodes/s | this position ends in <= 83s, wall cap in 407s
+  [ 135.3s] 978 positions solved, 0/22 games closed | game 12 ply 20: 30.5/50.0 M nodes, phi 8157 delta 832493 | 5.0 M nodes/s | this position ends in <= 86s, wall cap in 405s
+  [ 137.5s] 978 positions solved, 0/22 games closed | game 13 ply 22: 32.0/50.0 M nodes, phi 8896 delta 1023162 | 5.0 M nodes/s | this position ends in <= 79s, wall cap in 403s
+  [ 139.6s] 978 positions solved, 0/22 games closed | game 13 ply 22: 32.5/50.0 M nodes, phi 8896 delta 1026139 | 5.0 M nodes/s | this position ends in <= 77s, wall cap in 400s
+  [ 141.6s] 978 positions solved, 0/22 games closed | game 13 ply 22: 33.0/50.0 M nodes, phi 8896 delta 1042053 | 5.0 M nodes/s | this position ends in <= 74s, wall cap in 398s
+  [ 143.7s] 978 positions solved, 0/22 games closed | game 13 ply 22: 33.5/50.0 M nodes, phi 8896 delta 1056813 | 5.0 M nodes/s | this position ends in <= 72s, wall cap in 396s
+  [ 145.8s] 978 positions solved, 0/22 games closed | game 13 ply 22: 34.0/50.0 M nodes, phi 8896 delta 1062231 | 5.0 M nodes/s | this position ends in <= 70s, wall cap in 394s
+  [ 147.9s] 978 positions solved, 0/22 games closed | game 10 ply 22: 32.5/50.0 M nodes, phi 8406 delta 631107 | 5.0 M nodes/s | this position ends in <= 77s, wall cap in 392s
+  [ 150.0s] 978 positions solved, 0/22 games closed | game 15 ply 20: 33.0/50.0 M nodes, phi 9370 delta 1065306 | 5.0 M nodes/s | this position ends in <= 74s, wall cap in 390s
+  [ 152.1s] 978 positions solved, 0/22 games closed | game 12 ply 20: 34.0/50.0 M nodes, phi 8247 delta 914191 | 5.0 M nodes/s | this position ends in <= 70s, wall cap in 388s
+  [ 154.1s] 978 positions solved, 0/22 games closed | game 18 ply 16: 34.5/50.0 M nodes, phi 9748 delta 1348172 | 5.0 M nodes/s | this position ends in <= 68s, wall cap in 386s
+  [ 156.2s] 978 positions solved, 0/22 games closed | game 2 ply 22: 34.0/50.0 M nodes, phi 717 delta 8566091 | 5.0 M nodes/s | this position ends in <= 70s, wall cap in 384s
+  [ 158.4s] 978 positions solved, 0/22 games closed | game 2 ply 22: 34.5/50.0 M nodes, phi 719 delta 8596852 | 5.0 M nodes/s | this position ends in <= 68s, wall cap in 382s
+  [ 160.8s] 978 positions solved, 0/22 games closed | game 4 ply 24: 35.5/50.0 M nodes, phi 8998 delta 1184530 | 5.0 M nodes/s | this position ends in <= 64s, wall cap in 379s
+  [ 163.0s] 978 positions solved, 0/22 games closed | game 7 ply 20: 36.0/50.0 M nodes, phi 9278 delta 976019 | 5.0 M nodes/s | this position ends in <= 62s, wall cap in 377s
+  [ 165.1s] 978 positions solved, 0/22 games closed | game 7 ply 20: 36.5/50.0 M nodes, phi 9278 delta 984813 | 5.0 M nodes/s | this position ends in <= 59s, wall cap in 375s
+  [ 167.2s] 978 positions solved, 0/22 games closed | game 8 ply 16: 37.5/50.0 M nodes, phi 9746 delta 1304167 | 5.0 M nodes/s | this position ends in <= 55s, wall cap in 373s
+  [ 169.2s] 978 positions solved, 0/22 games closed | game 7 ply 20: 37.5/50.0 M nodes, phi 9278 delta 1003749 | 5.0 M nodes/s | this position ends in <= 55s, wall cap in 371s
+  [ 171.3s] 978 positions solved, 0/22 games closed | game 1 ply 22: 39.5/50.0 M nodes, phi 9091 delta 1475717 | 5.0 M nodes/s | this position ends in <= 46s, wall cap in 369s
+  [ 173.4s] 978 positions solved, 0/22 games closed | game 7 ply 20: 38.5/50.0 M nodes, phi 9279 delta 1020966 | 5.0 M nodes/s | this position ends in <= 51s, wall cap in 367s
+  [ 175.4s] 978 positions solved, 0/22 games closed | game 7 ply 20: 39.0/50.0 M nodes, phi 9279 delta 1027520 | 5.0 M nodes/s | this position ends in <= 48s, wall cap in 365s
+  [ 177.5s] 978 positions solved, 0/22 games closed | game 2 ply 22: 38.0/50.0 M nodes, phi 765 delta 8590018 | 5.0 M nodes/s | this position ends in <= 53s, wall cap in 363s
+  [ 179.5s] 978 positions solved, 0/22 games closed | game 7 ply 20: 40.0/50.0 M nodes, phi 9279 delta 1040935 | 5.0 M nodes/s | this position ends in <= 44s, wall cap in 361s
+  [ 181.5s] 978 positions solved, 0/22 games closed | game 7 ply 20: 40.5/50.0 M nodes, phi 9279 delta 1047971 | 5.0 M nodes/s | this position ends in <= 42s, wall cap in 358s
+  [ 183.6s] 978 positions solved, 0/22 games closed | game 7 ply 20: 41.0/50.0 M nodes, phi 9279 delta 1054507 | 5.0 M nodes/s | this position ends in <= 40s, wall cap in 356s
+  [ 185.6s] 978 positions solved, 0/22 games closed | game 12 ply 20: 41.0/50.0 M nodes, phi 8689 delta 983863 | 5.0 M nodes/s | this position ends in <= 40s, wall cap in 354s
+  [ 187.7s] 978 positions solved, 0/22 games closed | game 8 ply 16: 42.0/50.0 M nodes, phi 9747 delta 1441225 | 5.0 M nodes/s | this position ends in <= 35s, wall cap in 352s
+  [ 189.7s] 978 positions solved, 0/22 games closed | game 7 ply 20: 42.5/50.0 M nodes, phi 9279 delta 1073674 | 5.0 M nodes/s | this position ends in <= 33s, wall cap in 350s
+  [ 192.0s] 978 positions solved, 0/22 games closed | game 2 ply 22: 41.0/50.0 M nodes, phi 802 delta 7905501 | 5.0 M nodes/s | this position ends in <= 40s, wall cap in 348s
+  [ 194.2s] 978 positions solved, 0/22 games closed | game 15 ply 20: 43.0/50.0 M nodes, phi 9373 delta 1424024 | 5.0 M nodes/s | this position ends in <= 31s, wall cap in 346s
+  [ 196.3s] 978 positions solved, 0/22 games closed | game 14 ply 24: 46.5/50.0 M nodes, phi 8800 delta 1129119 | 5.0 M nodes/s | this position ends in <= 15s, wall cap in 344s
+  [ 198.4s] 978 positions solved, 0/22 games closed | game 16 ply 20: 42.0/50.0 M nodes, phi 9273 delta 1272758 | 5.0 M nodes/s | this position ends in <= 35s, wall cap in 342s
+  [ 200.6s] 978 positions solved, 0/22 games closed | game 17 ply 20: 47.0/50.0 M nodes, phi 9268 delta 1322333 | 5.0 M nodes/s | this position ends in <= 13s, wall cap in 339s
+  [ 202.7s] 980 positions solved, 0/22 games closed | game 17 ply 20: 47.5/50.0 M nodes, phi 9268 delta 1331480 | 5.0 M nodes/s | this position ends in <= 11s, wall cap in 337s
+  [ 204.8s] 980 positions solved, 0/22 games closed | game 5 ply 22: 26.0/50.0 M nodes, phi 1161 delta 3655459 | 5.0 M nodes/s | this position ends in <= 106s, wall cap in 335s
+  game 21: frontier at ply 23 of 63 (ply 22 not solved in 50000000 nodes)
+  [ 206.8s] 980 positions solved, 1/22 games closed | game 10 ply 20: 1.0/50.0 M nodes, phi 4429 delta 133912 | 5.0 M nodes/s | this position ends in <= 216s, wall cap in 333s
+  [ 208.9s] 980 positions solved, 1/22 games closed | game 19 ply 16: 45.5/50.0 M nodes, phi 9542 delta 1493159 | 5.0 M nodes/s | this position ends in <= 20s, wall cap in 331s
+  [ 210.9s] 980 positions solved, 1/22 games closed | game 2 ply 22: 45.0/50.0 M nodes, phi 862 delta 7620053 | 5.0 M nodes/s | this position ends in <= 22s, wall cap in 329s
+  game 14: frontier at ply 25 of 71 (ply 24 not solved in 50000000 nodes)
+  game 9: frontier at ply 19 of 65 (ply 18 not solved in 50000000 nodes)
+  game 17: frontier at ply 21 of 71 (ply 20 not solved in 50000000 nodes)
+  [ 213.0s] 980 positions solved, 4/22 games closed | game 2 ply 22: 45.5/50.0 M nodes, phi 783 delta 7662335 | 5.0 M nodes/s | this position ends in <= 20s, wall cap in 327s
+  [ 215.1s] 980 positions solved, 4/22 games closed | game 2 ply 22: 46.0/50.0 M nodes, phi 871 delta 7521675 | 5.0 M nodes/s | this position ends in <= 18s, wall cap in 325s
+  game 13: frontier at ply 23 of 63 (ply 22 not solved in 50000000 nodes)
+  [ 217.2s] 980 positions solved, 5/22 games closed | game 2 ply 22: 46.5/50.0 M nodes, phi 877 delta 7362519 | 5.0 M nodes/s | this position ends in <= 16s, wall cap in 323s
+  game 11: frontier at ply 19 of 61 (ply 18 not solved in 50000000 nodes)
+  game 1: frontier at ply 23 of 67 (ply 22 not solved in 50000000 nodes)
+  game 3: frontier at ply 23 of 65 (ply 22 not solved in 50000000 nodes)
+  [ 219.4s] 980 positions solved, 8/22 games closed | game 10 ply 20: 4.0/50.0 M nodes, phi 7453 delta 245040 | 5.0 M nodes/s | this position ends in <= 204s, wall cap in 321s
+  game 7: frontier at ply 21 of 61 (ply 20 not solved in 50000000 nodes)
+  [ 221.6s] 980 positions solved, 9/22 games closed | game 10 ply 20: 4.5/50.0 M nodes, phi 8165 delta 262292 | 4.9 M nodes/s | this position ends in <= 203s, wall cap in 318s
+  game 4: frontier at ply 25 of 69 (ply 24 not solved in 50000000 nodes)
+  game 6: frontier at ply 17 of 55 (ply 16 not solved in 50000000 nodes)
+  [ 223.6s] 980 positions solved, 11/22 games closed | game 10 ply 20: 5.0/50.0 M nodes, phi 8198 delta 282776 | 4.9 M nodes/s | this position ends in <= 201s, wall cap in 316s
+  game 8: frontier at ply 17 of 57 (ply 16 not solved in 50000000 nodes)
+  game 15: frontier at ply 21 of 57 (ply 20 not solved in 50000000 nodes)
+  game 18: frontier at ply 17 of 63 (ply 16 not solved in 50000000 nodes)
+  [ 225.6s] 980 positions solved, 14/22 games closed | game 0 ply 20: 49.5/50.0 M nodes, phi 9376 delta 1767709 | 4.9 M nodes/s | this position ends in <= 2s, wall cap in 314s
+  game 12: frontier at ply 21 of 61 (ply 20 not solved in 50000000 nodes)
+  game 19: frontier at ply 17 of 69 (ply 16 not solved in 50000000 nodes)
+  game 0: frontier at ply 21 of 67 (ply 20 not solved in 50000000 nodes)
+  [ 227.6s] 980 positions solved, 17/22 games closed | game 20 ply 20: 49.5/50.0 M nodes, phi 8303 delta 1328740 | 4.9 M nodes/s | this position ends in <= 2s, wall cap in 312s
+  game 20: frontier at ply 21 of 67 (ply 20 not solved in 50000000 nodes)
+  game 2: frontier at ply 23 of 65 (ply 22 not solved in 50000000 nodes)
+  game 16: frontier at ply 21 of 65 (ply 20 not solved in 50000000 nodes)
+  [ 229.7s] 980 positions solved, 20/22 games closed | game 5 ply 22: 33.0/50.0 M nodes, phi 1346 delta 3767065 | 4.9 M nodes/s | this position ends in <= 77s, wall cap in 310s
+  [ 231.9s] 980 positions solved, 20/22 games closed | game 10 ply 20: 9.0/50.0 M nodes, phi 8861 delta 381297 | 4.8 M nodes/s | this position ends in <= 187s, wall cap in 308s
+  [ 234.0s] 980 positions solved, 20/22 games closed | game 5 ply 22: 35.5/50.0 M nodes, phi 1436 delta 3797921 | 4.8 M nodes/s | this position ends in <= 66s, wall cap in 306s
+  [ 236.2s] 980 positions solved, 20/22 games closed | game 10 ply 20: 11.5/50.0 M nodes, phi 8963 delta 468996 | 4.8 M nodes/s | this position ends in <= 178s, wall cap in 304s
+  [ 238.5s] 980 positions solved, 20/22 games closed | game 5 ply 22: 38.0/50.0 M nodes, phi 1587 delta 3808935 | 4.7 M nodes/s | this position ends in <= 56s, wall cap in 302s
+  [ 241.1s] 980 positions solved, 20/22 games closed | game 5 ply 22: 39.5/50.0 M nodes, phi 1530 delta 3818550 | 4.7 M nodes/s | this position ends in <= 49s, wall cap in 299s
+  [ 243.4s] 980 positions solved, 20/22 games closed | game 5 ply 22: 41.0/50.0 M nodes, phi 1672 delta 3826321 | 4.7 M nodes/s | this position ends in <= 42s, wall cap in 297s
+  [ 245.5s] 980 positions solved, 20/22 games closed | game 5 ply 22: 42.5/50.0 M nodes, phi 1678 delta 3833532 | 4.6 M nodes/s | this position ends in <= 36s, wall cap in 294s
+  [ 247.7s] 980 positions solved, 20/22 games closed | game 10 ply 20: 18.5/50.0 M nodes, phi 9066 delta 692829 | 4.6 M nodes/s | this position ends in <= 151s, wall cap in 292s
+  [ 249.8s] 980 positions solved, 20/22 games closed | game 5 ply 22: 45.0/50.0 M nodes, phi 1862 delta 3793656 | 4.6 M nodes/s | this position ends in <= 24s, wall cap in 290s
+  [ 252.4s] 980 positions solved, 20/22 games closed | game 5 ply 22: 46.5/50.0 M nodes, phi 1934 delta 3791479 | 4.5 M nodes/s | this position ends in <= 17s, wall cap in 288s
+  [ 255.1s] 980 positions solved, 20/22 games closed | game 5 ply 22: 48.0/50.0 M nodes, phi 2019 delta 3765423 | 4.5 M nodes/s | this position ends in <= 10s, wall cap in 285s
+  [ 257.7s] 980 positions solved, 20/22 games closed | game 10 ply 20: 24.5/50.0 M nodes, phi 9173 delta 936474 | 4.5 M nodes/s | this position ends in <= 126s, wall cap in 282s
+  game 5: frontier at ply 23 of 77 (ply 22 not solved in 50000000 nodes)
+  [ 260.3s] 980 positions solved, 21/22 games closed | game 10 ply 20: 26.0/50.0 M nodes, phi 9174 delta 968720 | 4.4 M nodes/s | this position ends in <= 119s, wall cap in 280s
+  [ 262.8s] 980 positions solved, 21/22 games closed | game 10 ply 20: 27.5/50.0 M nodes, phi 9180 delta 1071627 | 4.4 M nodes/s | this position ends in <= 113s, wall cap in 277s
+  [ 265.6s] 980 positions solved, 21/22 games closed | game 10 ply 20: 29.0/50.0 M nodes, phi 9263 delta 1125679 | 4.4 M nodes/s | this position ends in <= 106s, wall cap in 274s
+  [ 267.7s] 980 positions solved, 21/22 games closed | game 10 ply 20: 30.5/50.0 M nodes, phi 9264 delta 1174465 | 4.3 M nodes/s | this position ends in <= 99s, wall cap in 272s
+  [ 270.3s] 980 positions solved, 21/22 games closed | game 10 ply 20: 32.5/50.0 M nodes, phi 9266 delta 1238465 | 4.3 M nodes/s | this position ends in <= 90s, wall cap in 270s
+  [ 272.9s] 980 positions solved, 21/22 games closed | game 10 ply 20: 34.5/50.0 M nodes, phi 7807 delta 1326222 | 4.3 M nodes/s | this position ends in <= 80s, wall cap in 267s
+  [ 275.5s] 980 positions solved, 21/22 games closed | game 10 ply 20: 36.5/50.0 M nodes, phi 9350 delta 1401179 | 4.2 M nodes/s | this position ends in <= 70s, wall cap in 265s
+  [ 278.1s] 980 positions solved, 21/22 games closed | game 10 ply 20: 38.5/50.0 M nodes, phi 8191 delta 1432360 | 4.2 M nodes/s | this position ends in <= 60s, wall cap in 262s
+  [ 280.3s] 980 positions solved, 21/22 games closed | game 10 ply 20: 40.0/50.0 M nodes, phi 9364 delta 1469982 | 4.2 M nodes/s | this position ends in <= 53s, wall cap in 260s
+  [ 282.3s] 980 positions solved, 21/22 games closed | game 10 ply 20: 41.5/50.0 M nodes, phi 9364 delta 1496947 | 4.1 M nodes/s | this position ends in <= 45s, wall cap in 258s
+  [ 284.3s] 980 positions solved, 21/22 games closed | game 10 ply 20: 43.0/50.0 M nodes, phi 9364 delta 1546392 | 4.1 M nodes/s | this position ends in <= 37s, wall cap in 256s
+  [ 286.3s] 980 positions solved, 21/22 games closed | game 10 ply 20: 44.5/50.0 M nodes, phi 9365 delta 1525919 | 4.1 M nodes/s | this position ends in <= 30s, wall cap in 254s
+  [ 288.4s] 980 positions solved, 21/22 games closed | game 10 ply 20: 46.0/50.0 M nodes, phi 9365 delta 1568388 | 4.1 M nodes/s | this position ends in <= 22s, wall cap in 252s
+  [ 291.0s] 980 positions solved, 21/22 games closed | game 10 ply 20: 48.0/50.0 M nodes, phi 9365 delta 1632156 | 4.0 M nodes/s | this position ends in <= 11s, wall cap in 249s
+  [ 293.5s] 980 positions solved, 21/22 games closed | game 10 ply 20: 50.0/50.0 M nodes, phi 9365 delta 1696520 | 4.0 M nodes/s | this position ends in <= 0s, wall cap in 247s
+  game 10: frontier at ply 21 of 61 (ply 20 not solved in 50000000 nodes)
+finished: 980 positions solved, 22 games closed, 293.5s, 4.0 M nodes/s
