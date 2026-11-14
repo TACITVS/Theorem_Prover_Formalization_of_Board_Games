@@ -1,0 +1,55 @@
+﻿density search: maximise 6L - 5F over valid GF(2) code regions; 24 seeds x 75s on 22 threads
+  [   5s] seed 16: current -48 (L 12 F 24 def 0), best valid -8 | overall best -8 | 2655 k evals/s
+  [  10s] seed 9: current -12 (L 3 F 6 def 0), best valid -12 | overall best -4 | 4485 k evals/s
+  [  15s] seed 0: current -12 (L 3 F 6 def 0), best valid -4 | overall best -4 | 5712 k evals/s
+  [  20s] seed 3: current -58 (L 12 F 26 def 0), best valid -32 | overall best -4 | 5692 k evals/s
+  [  25s] seed 5: current -60 (L 15 F 30 def 0), best valid -54 | overall best -4 | 5205 k evals/s
+  [  30s] seed 9: current -12 (L 3 F 6 def 0), best valid -12 | overall best -4 | 5471 k evals/s
+  [  35s] seed 13: current -60 (L 15 F 30 def 0), best valid -58 | overall best -4 | 5765 k evals/s
+  [  40s] seed 2: current -57 (L 8 F 21 def 0), best valid -20 | overall best -4 | 5514 k evals/s
+  [  45s] seed 16: current -17 (L 3 F 7 def 0), best valid -4 | overall best -4 | 5342 k evals/s
+  [  50s] seed 8: current -4 (L 1 F 2 def 0), best valid -4 | overall best -4 | 5571 k evals/s
+  [  55s] seed 0: current -16 (L 4 F 8 def 0), best valid -4 | overall best -4 | 5717 k evals/s
+  [  60s] seed 17: current -45 (L 10 F 21 def 0), best valid -12 | overall best -4 | 5500 k evals/s
+  [  65s] seed 17: current -12 (L 3 F 6 def 0), best valid -12 | overall best -4 | 5483 k evals/s
+  [  70s] seed 16: current -4 (L 1 F 2 def 0), best valid -4 | overall best -4 | 5672 k evals/s
+  seed 8 (F>=2) done: best valid 6L-5F = -4 (L 1, F 2)
+  seed 3 (F>=15) done: best valid 6L-5F = -32 (L 8, F 16)
+  seed 17 (F>=6) done: best valid 6L-5F = -12 (L 3, F 6)
+  seed 11 (F>=15) done: best valid 6L-5F = -32 (L 8, F 16)
+  seed 4 (F>=20) done: best valid 6L-5F = -40 (L 10, F 20)
+  seed 1 (F>=6) done: best valid 6L-5F = -12 (L 3, F 6)
+  seed 10 (F>=10) done: best valid 6L-5F = -20 (L 5, F 10)
+  seed 19 (F>=15) done: best valid 6L-5F = -32 (L 8, F 16)
+  seed 6 (F>=45) done: best valid 6L-5F = -86 (L 24, F 46)
+  seed 18 (F>=10) done: best valid 6L-5F = -20 (L 5, F 10)
+  seed 20 (F>=20) done: best valid 6L-5F = -40 (L 10, F 20)
+  seed 13 (F>=30) done: best valid 6L-5F = -58 (L 17, F 32)
+  seed 0 (F>=2) done: best valid 6L-5F = -4 (L 1, F 2)
+  seed 21 (F>=30) done: best valid 6L-5F = -60 (L 15, F 30)
+  seed 5 (F>=30) done: best valid 6L-5F = -54 (L 16, F 30)
+  seed 12 (F>=20) done: best valid 6L-5F = -40 (L 10, F 20)
+  seed 9 (F>=6) done: best valid 6L-5F = -12 (L 3, F 6)
+  seed 2 (F>=10) done: best valid 6L-5F = -20 (L 5, F 10)
+  seed 16 (F>=2) done: best valid 6L-5F = -4 (L 1, F 2)
+  seed 14 (F>=45) done: best valid 6L-5F = -86 (L 24, F 46)
+  seed 15 (F>=65) done: best valid 6L-5F = -126 (L 34, F 66)
+  [  75s] seed 22: current -271 (L 38 F 47 def 22), best valid -1073741824 | overall best -4 | 5736 k evals/s
+  seed 7 (F>=65) done: best valid 6L-5F = -132 (L 33, F 66)
+  [  80s] seed 23: current -133 (L 32 F 65 def 0), best valid -132 | overall best -4 | 5389 k evals/s
+  [  85s] seed 23: current -132 (L 33 F 66 def 0), best valid -132 | overall best -4 | 5083 k evals/s
+  [  90s] seed 22: current -92 (L 23 F 46 def 0), best valid -86 | overall best -4 | 4810 k evals/s
+  [  95s] seed 22: current -111 (L 19 F 45 def 0), best valid -86 | overall best -4 | 4566 k evals/s
+  [ 100s] seed 22: current -93 (L 22 F 45 def 0), best valid -86 | overall best -4 | 4347 k evals/s
+  [ 105s] seed 23: current -132 (L 33 F 66 def 0), best valid -132 | overall best -4 | 4149 k evals/s
+  [ 110s] seed 22: current -92 (L 23 F 46 def 0), best valid -86 | overall best -4 | 3969 k evals/s
+  [ 115s] seed 22: current -105 (L 22 F 45 def 1), best valid -86 | overall best -4 | 3804 k evals/s
+  [ 120s] seed 22: current -93 (L 22 F 45 def 0), best valid -86 | overall best -4 | 3654 k evals/s
+  [ 125s] seed 22: current -93 (L 22 F 45 def 0), best valid -86 | overall best -4 | 3515 k evals/s
+  [ 130s] seed 22: current -92 (L 23 F 46 def 0), best valid -86 | overall best -4 | 3387 k evals/s
+  [ 135s] seed 22: current -93 (L 22 F 45 def 0), best valid -86 | overall best -4 | 3268 k evals/s
+  [ 140s] seed 22: current -93 (L 22 F 45 def 0), best valid -86 | overall best -4 | 3158 k evals/s
+  [ 145s] seed 23: current -132 (L 33 F 66 def 0), best valid -126 | overall best -4 | 3056 k evals/s
+  seed 22 (F>=45) done: best valid 6L-5F = -86 (L 24, F 46)
+  seed 23 (F>=65) done: best valid 6L-5F = -126 (L 34, F 66)
+DONE: maximum valid 6L - 5F found = -4 (positive would refute the density lemma)
