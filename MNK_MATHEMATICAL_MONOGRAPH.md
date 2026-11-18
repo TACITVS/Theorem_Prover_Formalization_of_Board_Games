@@ -1,7 +1,7 @@
 # Formalization, Hypergraph Geometry, and the Sharp Phase Transition of $(m, n, k)$ Games Without Gravity
 
 **Authors:** Formal Mathematics & Combinatorial Game Theory Research Initiative  
-**System Verification:** Rocq Prover 9.1 (109 / 109 Theorems Closed) | Lean 4.35.0 (61 / 61 Theorems Verified)  
+**System Verification:** Rocq Prover 9.1 (114 / 114 Theorems Closed) | Lean 4.35.0 (63 / 63 Theorems Verified)  
 **Computational Cross-Check:** 64-bit bitboard negamax engine and bounded-horizon search (`solver/audit_mnk.c`)  
 **Typography Standard:** Classic LaTeX Mathematical Typesetting (Native MathJax / KaTeX)
 
@@ -27,9 +27,10 @@ Every game-theoretic statement is a statement about an explicit semantics of the
 | Every $(m, n, k)$ game is a first-player win or a draw (constructively) | Rocq |
 | Erdős–Selfridge theorem (Maker–Breaker, either move order, any hypergraph) | Rocq and Lean |
 | $\mathcal{L}(m,n,k) < 2^{k-1} \Rightarrow$ draw, for all $m, n, k$ | Rocq, universal |
-| Every board with $11 \le k \le m, n < 2k$ is a draw; every $(k, k, k)$ with $k \ge 5$ is a draw | Rocq, universal |
+| Every board with $11 \le k \le m, n < 2k$ is a draw | Rocq, universal |
+| $(k, k, k)$ is a draw if and only if $k \ge 3$, for every $k \ge 1$ | Rocq; the $(4,4,4)$ draw also in Lean |
 | Draws of $(11,7,7)$, $(17,13,11)$, $(19,17,13)$ | Rocq and Lean |
-| $(4,4,4)$ and $(5,4,4)$ are draws | negamax computation only |
+| $(5,4,4)$ is a draw | negamax computation only |
 
 The values of the $(m, n, 3)$ games, the Erdős–Selfridge theorem and strategy stealing are classical. The contribution here is a complete, axiom-free, machine-checked proof of all of them, for **all** $m$, $n$ and $k$, together with the corrections listed in Section 10. To our knowledge (see the "Related Formal Work" section of the README), neither of the two general theorems had been machine-checked before.
 
@@ -328,8 +329,14 @@ The last step is proved by induction from $6 \cdot 11^2 = 726 < 1024$. The bound
 
 **Conclusion (formal, `mnk_near_square_draw`).** Every board with $11 \le k \le m, n < 2k$ is a draw. In particular, every consecutive prime triple game $(p_{i+2}, p_{i+1}, p_i)$ with $p_i \ge 11$ is a draw. The only cited ingredient is Ramanujan's $p_{i+2} < 2p_i$.
 
-### 8.5 Square boards $(k, k, k)$
-On a $k \times k$ board with $k$ in a row there are $k$ rows, $k$ columns and two diagonals, so $\mathcal{L}(k, k, k) = 2k + 2$. For $k \ge 5$ we have $2k + 2 < 2^{k-1}$ (`pow2_beats_linear`), hence **every $(k, k, k)$ game with $k \ge 5$ is a draw** (`mnk_square_k_draw`).
+### 8.5 Square boards $(k, k, k)$: complete classification
+On a $k \times k$ board with $k$ in a row there are $k$ rows, $k$ columns and two diagonals, so $\mathcal{L}(k, k, k) = 2k + 2$. For $k \ge 5$ we have $2k + 2 < 2^{k-1}$ (`pow2_beats_linear`), hence every $(k, k, k)$ game with $k \ge 5$ is a draw (`mnk_square_k_draw`).
+
+For $k = 4$ the simple criterion fails ($10 \ge 2^3$), but the potential invariant itself can be checked on the empty board. `erdos_selfridge_draw_refined` states: if $\Phi_\emptyset + \mathrm{wgt}_\emptyset(x) < 2^K$ for every cell $x$ (Player 2 as Breaker, moving second) and $\Phi_\emptyset < 2^K$ (Player 1 as Breaker, moving first), then the strong game is a draw. Since $\mathrm{wgt}(x) \le \Phi$, this test is never weaker than $2\Phi_\emptyset < 2^K$. On the $4 \times 4$ board, $\Phi_\emptyset = 10$ and every cell lies on at most 3 lines, so $10 + 3 = 13 < 16$ (`mnk_4_4_4_draw`, Rocq and Lean). With $(1,1,1)$ and $(2,2,2)$ (first-player wins) and the $(3,3,3)$ draw, this completes the family:
+
+$$
+\forall k \ge 1: \quad \mathrm{Value}(k, k, k) = \mathrm{DRAW} \iff k \ge 3 \qquad (\texttt{mnk\_square\_classification})
+$$
 
 ---
 
@@ -338,17 +345,17 @@ On a $k \times k$ board with $k$ in a row there are $k$ rows, $k$ columns and tw
 ### Rocq Prover 9.1 (`build.ps1`)
 ```text
 === Compiling Generalized (m, n, k) Games Formal Mathematical Proof in Rocq 9.1 ===
-Compiling MNKBoard.v... OK (2.38s)
-Compiling MNKGame.v... OK (0.64s)
-Compiling MNKCertChecker.v... OK (0.68s)
-Compiling MNKWindow.v... OK (0.79s)
-Compiling MNKPairing.v... OK (0.69s)
-Compiling MNKPhaseTransition.v... OK (23.05s)
-Compiling MNKErdosSelfridge.v... OK (0.86s)
-Compiling MNKStrategyStealing.v... OK (0.77s)
-Compiling CheckAssumptions.v... OK (9.07s)
+Compiling MNKBoard.v... OK (2.52s)
+Compiling MNKGame.v... OK (0.8s)
+Compiling MNKCertChecker.v... OK (0.65s)
+Compiling MNKWindow.v... OK (0.94s)
+Compiling MNKPairing.v... OK (0.79s)
+Compiling MNKPhaseTransition.v... OK (22.18s)
+Compiling MNKErdosSelfridge.v... OK (0.66s)
+Compiling MNKStrategyStealing.v... OK (0.54s)
+Compiling CheckAssumptions.v... OK (9.11s)
 ...
-SUCCESS: 109/109 theorems closed under global context (0 axioms, 0 admits)!
+SUCCESS: 114/114 theorems closed under global context (0 axioms, 0 admits)!
 ```
 `build.ps1` counts the `Print Assumptions` commands in `CheckAssumptions.v`, and fails unless every one of them reports *Closed under the global context*.
 
@@ -367,8 +374,10 @@ SUCCESS: 109/109 theorems closed under global context (0 axioms, 0 admits)!
 'steal' depends on axioms: [propext, Quot.sound]
 'not_both' depends on axioms: [propext]
 'strategy_stealing' depends on axioms: [propext, Quot.sound]
-Axiom dependency report (61 theorems audited, 33 use only standard axioms):
-SUCCESS: 61 Lean 4 theorems verified with 0 sorry and 0 custom axioms (15.34s)!
+'erdos_selfridge_draw_refined' depends on axioms: [propext, Quot.sound]
+'mnk_4_4_4_draw' depends on axioms: [propext, Quot.sound]
+Axiom dependency report (63 theorems audited, 35 use only standard axioms):
+SUCCESS: 63 Lean 4 theorems verified with 0 sorry and 0 custom axioms (11.32s)!
 ```
 Only Lean's three standard axioms occur.
 

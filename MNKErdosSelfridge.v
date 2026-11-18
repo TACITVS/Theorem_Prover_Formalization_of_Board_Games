@@ -29,12 +29,17 @@
         (m, n, k) game is a draw; hence the formal draws of (11,7,7),
         (17,13,11), (19,17,13), of every near-square board with k >= 11, and
         of every (k, k, k) board with k >= 5.
+      - [erdos_selfridge_draw_refined]: the sharper test es_sum + wgt(x) < 2^K
+        on the empty board, which settles (4, 4, 4).
+      - [mnk_square_classification]: for every k >= 1, the (k, k, k) game is
+        a draw if and only if k >= 3.
 
     Zero axioms, zero admits. *)
 
 From Stdlib Require Import List Arith Lia Bool.
 Import ListNotations.
 From MNK Require Import MNKBoard MNKGame.
+From MNK Require MNKPhaseTransition.
 
 (* ========================================================================= *)
 (** * 1. Maker–Breaker semantics                                             *)
@@ -460,6 +465,29 @@ Proof.
     apply (Hno d). apply forces_win_maker_wins. exact Hf.
 Qed.
 
+(** Refined strong-game draw.  Instead of the crude bound 2 * es_sum < 2^K,
+    use the potential invariant itself on the empty board,
+    es_sum + wgt(x) < 2^K for every cell x (Player 2 as Breaker, moving
+    second), together with es_sum < 2^K (Player 1 as Breaker, moving first).
+    Since wgt(x) <= es_sum, this is never weaker, and it is strictly stronger
+    whenever no cell lies on all lines. *)
+Theorem erdos_selfridge_draw_refined : forall N,
+  (forall x, x < N -> es_sum + wgt K (empty_board N) P1 lines x < 2 ^ K) ->
+  es_sum < 2 ^ K -> game_is_draw lines (empty_board N).
+Proof.
+  intros N Hinv H. split.
+  - intros d Hf. apply (erdos_selfridge_potential P1 d (empty_board N)).
+    + intros x Hx. rewrite phi_empty. apply Hinv.
+      apply legal_move_lt in Hx. rewrite empty_board_length in Hx. exact Hx.
+    + apply forces_win_maker_wins. exact Hf.
+  - intros d [[m0 Hm0] Hall].
+    assert (HN : 0 < N).
+    { apply legal_move_lt in Hm0. rewrite empty_board_length in Hm0. lia. }
+    destruct (erdos_selfridge_breaker_first N P1 HN H) as [m [Hm Hno]].
+    destruct (Hall m Hm) as [_ Hf].
+    apply (Hno d). apply forces_win_maker_wins. exact Hf.
+Qed.
+
 End ErdosSelfridge.
 
 (* ========================================================================= *)
@@ -533,4 +561,50 @@ Proof.
       diag1_lines_count, diag2_lines_count.
     rewrite Nat.leb_refl. simpl. rewrite !Nat.sub_diag. lia. }
   rewrite E. apply pow2_beats_linear. exact Hk.
+Qed.
+
+(* ========================================================================= *)
+(** * 6. The square family (k, k, k): complete classification               *)
+(* ========================================================================= *)
+
+(** (4, 4, 4) is a draw.  The crude criterion fails (L = 10 is not < 2^3), but
+    the refined invariant holds on the empty board: es_sum = 10 and every cell
+    lies on at most 3 lines, so 10 + 3 = 13 < 16 = 2^4. *)
+Theorem mnk_4_4_4_draw : game_is_draw (gen_lines 4 4 4) (empty_board (4 * 4)).
+Proof.
+  apply (erdos_selfridge_draw_refined (gen_lines 4 4 4) 4).
+  - intros L HL. split.
+    + eapply gen_lines_nodup. exact HL.
+    + rewrite (gen_lines_uniform 4 4 4 L HL). lia.
+  - intros x Hx.
+    assert (Hb : forallb (fun y => es_sum (gen_lines 4 4 4) 4
+                    + wgt 4 (empty_board (4 * 4)) P1 (gen_lines 4 4 4) y <? 2 ^ 4)
+                   (seq 0 (4 * 4)) = true) by (vm_compute; reflexivity).
+    rewrite forallb_forall in Hb.
+    apply Nat.ltb_lt. apply Hb. apply in_seq. lia.
+  - apply Nat.ltb_lt. vm_compute. reflexivity.
+Qed.
+
+(** The two tiny boards are first-player wins: (1, 1, 1) in one ply, and
+    (2, 2, 2) in three plies, since any two cells of a 2 x 2 board form a line. *)
+Theorem mnk_1_1_1_first_player_win :
+  forces_win (gen_lines 1 1 1) P1 1 (empty_board (1 * 1)).
+Proof. apply wins_b_spec. vm_compute. reflexivity. Qed.
+
+Theorem mnk_2_2_2_first_player_win :
+  forces_win (gen_lines 2 2 2) P1 2 (empty_board (2 * 2)).
+Proof. apply wins_b_spec. vm_compute. reflexivity. Qed.
+
+(** Complete classification of the square family: for every k >= 1, the
+    (k, k, k) game is a draw if and only if k >= 3 (for k <= 2 Player 1 wins). *)
+Theorem mnk_square_classification : forall k, 1 <= k ->
+  (game_is_draw (gen_lines k k k) (empty_board (k * k)) <-> 3 <= k).
+Proof.
+  intros k Hk.
+  destruct k as [| [| [| [| [| k']]]]]; try lia.
+  - split; [| lia]. intros [H _]. exfalso. exact (H 1 mnk_1_1_1_first_player_win).
+  - split; [| lia]. intros [H _]. exfalso. exact (H 2 mnk_2_2_2_first_player_win).
+  - split; [lia | intros _]. exact MNKPhaseTransition.mnk_3_3_3_draw.
+  - split; [lia | intros _]. exact mnk_4_4_4_draw.
+  - split; [lia | intros _]. apply mnk_square_k_draw. lia.
 Qed.

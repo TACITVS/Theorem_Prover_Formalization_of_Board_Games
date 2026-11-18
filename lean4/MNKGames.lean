@@ -22,7 +22,8 @@ development (see `../MNK_MATHEMATICAL_MONOGRAPH.md` for the full statement list)
    (MNKWindow.v, MNKPairing.v, MNKPhaseTransition.v), not in this file.
 6. The Erdős–Selfridge theorem (Maker–Breaker, Breaker second or first, for
    arbitrary hypergraphs) and its strong-game corollary `erdos_selfridge_draw`,
-   giving formal draws of (11,7,7), (17,13,11) and (19,17,13).
+   giving formal draws of (11,7,7), (17,13,11) and (19,17,13), and the refined
+   version erdos_selfridge_draw_refined, which settles (4,4,4).
 7. Strategy stealing: on every hypergraph the second player never forces a win
    (`strategy_stealing`).
 
@@ -881,6 +882,34 @@ theorem mnk_prime_triple_17_13_11_draw : GameIsDraw (genLines 17 13 11) (emptyBo
 theorem mnk_prime_triple_19_17_13_draw : GameIsDraw (genLines 19 17 13) (emptyBoard (19 * 17)) :=
   erdos_selfridge_draw _ 13 (by decide +kernel) _ (by decide +kernel)
 
+/-- Refined strong-game draw: the potential invariant itself on the empty board
+    (Σ + wgt(x) < 2^K for every cell, Player 2 as Breaker moving second), plus
+    Σ < 2^K (Player 1 as Breaker moving first). -/
+theorem erdos_selfridge_draw_refined (lines : List (List Nat)) (K : Nat)
+    (hlines : ∀ L, L ∈ lines → L.Nodup ∧ L.length ≤ K) (N : Nat)
+    (hinv : ∀ x, x < N → esSum lines K + wgt K (emptyBoard N) .P1 lines x < 2 ^ K)
+    (h : esSum lines K < 2 ^ K) : GameIsDraw lines (emptyBoard N) := by
+  have hes : esInv lines K .P1 (emptyBoard N) := by
+    unfold esInv
+    intro x hx
+    rw [phi_empty]
+    apply hinv
+    have := ((isLegalMove_iff _ x).mp hx).1
+    simpa [emptyBoard] using this
+  refine ⟨fun d hf => erdos_selfridge_potential lines K hlines .P1 d (emptyBoard N) hes
+    (forcesWin_makerWins hf), ?_⟩
+  rintro d ⟨⟨m0, hm0⟩, hall⟩
+  have hN : 0 < N := by
+    have := ((isLegalMove_iff _ m0).mp hm0).1
+    simp [emptyBoard] at this; omega
+  obtain ⟨m, hm, hno⟩ := erdos_selfridge_breaker_first lines K hlines N .P1 hN h
+  exact hno d (forcesWin_makerWins (hall m hm).2)
+
+/-- (4, 4, 4) is a draw: Σ = 10 and no cell lies on more than 3 lines, so
+    10 + 3 = 13 < 16 = 2^4, although the crude test 2 · 10 < 16 fails. -/
+theorem mnk_4_4_4_draw : GameIsDraw (genLines 4 4 4) (emptyBoard (4 * 4)) :=
+  erdos_selfridge_draw_refined _ 4 (by decide) _ (by decide +kernel) (by decide)
+
 -- ============================================================================
 -- Section 7: Strategy Stealing (independent re-proof)
 -- The second player never forces a win, on any hypergraph (see MNKStrategyStealing.v).
@@ -1208,6 +1237,8 @@ theorem mnk_second_player_never_wins (m n k d : Nat) :
 #print axioms mnk_prime_triple_11_7_7_draw
 #print axioms mnk_prime_triple_17_13_11_draw
 #print axioms mnk_prime_triple_19_17_13_draw
+#print axioms erdos_selfridge_draw_refined
+#print axioms mnk_4_4_4_draw
 #print axioms setCell_comm
 #print axioms checkWin_other_stone
 #print axioms forcesWin_swap

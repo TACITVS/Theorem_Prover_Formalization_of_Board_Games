@@ -2,8 +2,8 @@
 
 [![Rocq 9.1](https://img.shields.io/badge/Rocq%20Prover-9.1.0-blue.svg)](https://rocq-prover.org/)
 [![Lean 4.35.0](https://img.shields.io/badge/Lean-4.35.0-brightgreen.svg)](https://leanprover.github.io/)
-[![Theorems Closed](https://img.shields.io/badge/Rocq%20Theorems-109%20Closed%20(0%20adm)-success.svg)](CheckAssumptions.v)
-[![Lean Theorems](https://img.shields.io/badge/Lean%20Theorems-61%20Verified%20(0%20sorry)-success.svg)](lean4/MNKGames.lean)
+[![Theorems Closed](https://img.shields.io/badge/Rocq%20Theorems-114%20Closed%20(0%20adm)-success.svg)](CheckAssumptions.v)
+[![Lean Theorems](https://img.shields.io/badge/Lean%20Theorems-63%20Verified%20(0%20sorry)-success.svg)](lean4/MNKGames.lean)
 
 Machine-checked formalization of the family of **$(m, n, k)$ games without gravity** (generalized Tic-Tac-Toe / Gomoku) in **Rocq 9.1**, with an independent **Lean 4.35.0** cross-check of the computational core and of the Erdős–Selfridge and strategy-stealing theorems. Details are in the [Mathematical Monograph](MNK_MATHEMATICAL_MONOGRAPH.md).
 
@@ -107,7 +107,11 @@ $$
 
 machine-checked universally as `erdos_selfridge_hypothesis_near_square`. With the formal Erdős–Selfridge theorem this gives `mnk_near_square_draw`: **every** board with $11 \le k \le m, n < 2k$ is a draw. Hence every game $(r, q, p)$ on a consecutive prime triple with $p \ge 11$ is a draw. Only Ramanujan's number-theoretic input $r < 2p$ is cited.
 
-Similarly, $\mathcal{L}(k, k, k) = 2k + 2 < 2^{k-1}$ for $k \ge 5$, so **every square $(k, k, k)$ game with $k \ge 5$ is a draw** (`mnk_square_k_draw`).
+For square boards with $k$ in a row, $\mathcal{L}(k, k, k) = 2k + 2$, and the whole family is now classified (`mnk_square_classification`): **for every $k \ge 1$, the $(k, k, k)$ game is a draw if and only if $k \ge 3$.**
+* $k = 1, 2$: first-player wins, in 1 and 3 plies (`mnk_1_1_1_first_player_win`, `mnk_2_2_2_first_player_win`).
+* $k = 3$: the verified evaluator (`mnk_3_3_3_draw`).
+* $k = 4$: here $\mathcal{L} = 10 \ge 2^3$, so the simple criterion fails. The refined form `erdos_selfridge_draw_refined` asks instead that the total weight plus the weight of any single cell stay below $2^k$. Every cell of the $4 \times 4$ board lies on at most 3 lines, and $10 + 3 = 13 < 16$, so the game is a draw (`mnk_4_4_4_draw`, Rocq and Lean).
+* $k \ge 5$: $2k + 2 < 2^{k-1}$ (`mnk_square_k_draw`).
 
 ---
 
@@ -125,7 +129,7 @@ $$
 
 These are `gen_lines_count` and `mnk_handshaking`. Every generated line has exactly $k$ distinct in-grid cells (`gen_lines_uniform`, `gen_lines_nodup`, `gen_lines_in_range`).
 
-Landmark line counts (formal): $(3,3,3){:}\ 8$, $(3,4,3){:}\ 14$, $(4,4,4){:}\ 10$, $(5,4,4){:}\ 17$, $(6,4,4){:}\ 24$, $(7,4,4){:}\ 31$, $(8,4,4){:}\ 38$, $(5,5,4){:}\ 28$, $(8,8,5){:}\ 96$, $(15,15,5){:}\ 572$. The game values $(4,4,4) = (5,4,4) = \mathrm{DRAW}$ are confirmed only computationally, by the negamax harness. No game value is claimed for $(6,4,4)$, $(7,4,4)$, $(8,4,4)$, $(5,5,4)$, $(8,8,5)$ or $(15,15,5)$.
+Landmark line counts (formal): $(3,3,3){:}\ 8$, $(3,4,3){:}\ 14$, $(4,4,4){:}\ 10$, $(5,4,4){:}\ 17$, $(6,4,4){:}\ 24$, $(7,4,4){:}\ 31$, $(8,4,4){:}\ 38$, $(5,5,4){:}\ 28$, $(8,8,5){:}\ 96$, $(15,15,5){:}\ 572$. The value $(4,4,4) = \mathrm{DRAW}$ is now formal (see above). The value $(5,4,4) = \mathrm{DRAW}$ is confirmed only computationally, by the negamax harness. No game value is claimed for $(6,4,4)$, $(7,4,4)$, $(8,4,4)$, $(5,5,4)$, $(8,8,5)$ or $(15,15,5)$.
 
 ---
 
@@ -159,14 +163,14 @@ mnk-games/
 ├── MNKWindow.v                       # Window Simulation Theorem (lifting window certificates)
 ├── MNKPairing.v                      # Pairing strategies; draws for min(m, n) <= 2
 ├── MNKPhaseTransition.v              # Certificates, (3,3,3) draw, (3,n,3) transition, (m,n,3) characterization
-├── MNKErdosSelfridge.v               # Erdős–Selfridge theorem (Maker–Breaker) + strong-game draws
+├── MNKErdosSelfridge.v               # Erdős–Selfridge theorem (Maker–Breaker), strong-game draws, (k,k,k) classification
 ├── MNKStrategyStealing.v             # Strategy stealing: the second player never wins; win-or-draw dichotomy
-├── CheckAssumptions.v                # Strict audit (109 theorems closed, 0 axioms)
+├── CheckAssumptions.v                # Strict audit (114 theorems closed, 0 axioms)
 ├── build.ps1                         # Rocq 9.1 build + audit (counts every Print Assumptions)
 ├── lean4/
 │   ├── lakefile.toml                 # Lake project definition
 │   ├── lean-toolchain                # Lean 4.35.0 toolchain
-│   └── MNKGames.lean                 # 61 audited Lean theorems: checker soundness, certificates, E-S, strategy stealing
+│   └── MNKGames.lean                 # 63 audited Lean theorems: checker soundness, certificates, E-S, strategy stealing
 ├── build_lean.ps1                    # Lean 4 compilation and axiom auditor
 ├── solver/
 │   ├── mnk_solver.c                  # 64-bit bitboard negamax engine with transposition table
@@ -189,17 +193,17 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 ```
 ```text
 === Compiling Generalized (m, n, k) Games Formal Mathematical Proof in Rocq 9.1 ===
-Compiling MNKBoard.v... OK (2.38s)
-Compiling MNKGame.v... OK (0.64s)
-Compiling MNKCertChecker.v... OK (0.68s)
-Compiling MNKWindow.v... OK (0.79s)
-Compiling MNKPairing.v... OK (0.69s)
-Compiling MNKPhaseTransition.v... OK (23.05s)
-Compiling MNKErdosSelfridge.v... OK (0.86s)
-Compiling MNKStrategyStealing.v... OK (0.77s)
-Compiling CheckAssumptions.v... OK (9.07s)
+Compiling MNKBoard.v... OK (2.52s)
+Compiling MNKGame.v... OK (0.8s)
+Compiling MNKCertChecker.v... OK (0.65s)
+Compiling MNKWindow.v... OK (0.94s)
+Compiling MNKPairing.v... OK (0.79s)
+Compiling MNKPhaseTransition.v... OK (22.18s)
+Compiling MNKErdosSelfridge.v... OK (0.66s)
+Compiling MNKStrategyStealing.v... OK (0.54s)
+Compiling CheckAssumptions.v... OK (9.11s)
 ...
-SUCCESS: 109/109 theorems closed under global context (0 axioms, 0 admits)!
+SUCCESS: 114/114 theorems closed under global context (0 axioms, 0 admits)!
 ```
 
 ### 2. Compile the Lean 4.35.0 cross-check
@@ -207,8 +211,8 @@ SUCCESS: 109/109 theorems closed under global context (0 axioms, 0 admits)!
 powershell -ExecutionPolicy Bypass -File .\build_lean.ps1
 ```
 ```text
-Axiom dependency report (61 theorems audited, 33 use only standard axioms):
-SUCCESS: 61 Lean 4 theorems verified with 0 sorry and 0 custom axioms (15.34s)!
+Axiom dependency report (63 theorems audited, 35 use only standard axioms):
+SUCCESS: 63 Lean 4 theorems verified with 0 sorry and 0 custom axioms (11.32s)!
 ```
 
 ### 3. Run the C verification harness

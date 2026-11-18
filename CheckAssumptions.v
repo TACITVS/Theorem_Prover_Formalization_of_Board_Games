@@ -130,6 +130,11 @@ Print Assumptions mnk_prime_triple_17_13_11_draw.
 Print Assumptions mnk_prime_triple_19_17_13_draw.
 Print Assumptions mnk_near_square_draw.
 Print Assumptions mnk_square_k_draw.
+Print Assumptions erdos_selfridge_draw_refined.
+Print Assumptions mnk_4_4_4_draw.
+Print Assumptions mnk_1_1_1_first_player_win.
+Print Assumptions mnk_2_2_2_first_player_win.
+Print Assumptions mnk_square_classification.
 
 (* MNKStrategyStealing.v: strategy stealing *)
 Print Assumptions set_cell_comm.
@@ -151,3 +156,4 @@ Check erdos_selfridge_breaker_first.
 Check mnk_erdos_selfridge_draw.
 Check strategy_stealing.
 Check mnk_value_win_or_draw.
+Check mnk_square_classification.
