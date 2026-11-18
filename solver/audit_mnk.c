@@ -245,8 +245,9 @@ int main(void) {
     printf("  -> PASS 3: Game-theoretic values fully match formal theorems!\n\n");
 
     // Pass 4: arithmetic hypothesis of the Erdos-Selfridge criterion.
-    // (Only the inequality is checked here; the draw then follows from the cited
-    //  Erdos-Selfridge theorem (1973) plus strategy stealing, which are not formalized.)
+    // (Only the inequality is checked numerically here; the draw itself follows
+    //  from the Erdos-Selfridge theorem, formalized in MNKErdosSelfridge.v and
+    //  re-proved in lean4/MNKGames.lean.)
     printf("[PASS 4] Verifying the Erdos-Selfridge hypothesis L < 2^(k-1)...\n");
     struct { int m, n, k; const char* note; } prime_cases[] = {
         {11, 7, 7, "Prime dimensions (11, 7, 7)"},

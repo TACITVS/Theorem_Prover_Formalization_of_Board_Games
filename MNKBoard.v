@@ -415,9 +415,9 @@ Proof. vm_compute. reflexivity. Qed.
 
 (** The following three theorems verify ONLY the arithmetic hypothesis
     |E| < 2^(k-1) of the Erdos-Selfridge criterion (1973) for the k-uniform
-    hypergraph of winning lines.  The game-theoretic consequence (Player 2 can
-    block every line, hence by strategy stealing the game is a draw) is a
-    classical theorem that is cited, NOT formalized, in this development. *)
+    hypergraph of winning lines.  The game-theoretic consequence (the game is
+    a draw) is proved in MNKErdosSelfridge.v, which formalizes the
+    Erdos-Selfridge theorem itself (mnk_prime_triple_*_draw). *)
 
 Theorem mnk_prime_triple_11_7_7_erdos_bound :
   total_lines_formula 11 7 7 < 2^(7 - 1).

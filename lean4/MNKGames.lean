@@ -20,6 +20,11 @@ development (see `../MNK_MATHEMATICAL_MONOGRAPH.md` for the full statement list)
    (`window_certificate_lifts`), the (3, 3, 3) draw, the pairing-strategy draws
    and the complete (m, n, 3) characterization are proved in Rocq
    (MNKWindow.v, MNKPairing.v, MNKPhaseTransition.v), not in this file.
+6. The Erdős–Selfridge theorem (Maker–Breaker, Breaker second or first, for
+   arbitrary hypergraphs) and its strong-game corollary `erdos_selfridge_draw`,
+   giving formal draws of (11,7,7), (17,13,11) and (19,17,13).
+7. Strategy stealing: on every hypergraph the second player never forces a win
+   (`strategy_stealing`).
 
 Zero `sorry`, zero custom axioms.
 -/
@@ -421,6 +426,733 @@ def cert_corner : WinCert :=
 theorem cert_corner_valid : wcheck 4 4 3 true true 3 (emptyBoard 16) 0 cert_corner = true := by
   decide
 
+-- ============================================================================
+-- Section 6: The Erdős–Selfridge Theorem (independent re-proof)
+-- Potential-function argument with weights scaled by 2^K (see MNKErdosSelfridge.v).
+-- ============================================================================
+
+/-- Maker–Breaker semantics: Maker `p` claims a whole line within `d` own moves
+    against every Breaker reply; Breaker's lines are irrelevant. -/
+inductive MakerWins (lines : List (List Nat)) (p : Player) : Nat → Board → Prop where
+  | now (d : Nat) (b : Board) (m : Nat) :
+      isLegalMove b m = true →
+      checkWin (setCell b m p) p lines = true →
+      MakerWins lines p (d + 1) b
+  | next (d : Nat) (b : Board) (m : Nat) :
+      isLegalMove b m = true →
+      (∃ c, isLegalMove (setCell b m p) c = true) →
+      (∀ c, isLegalMove (setCell b m p) c = true →
+        MakerWins lines p d (setCell (setCell b m p) c (otherPlayer p))) →
+      MakerWins lines p (d + 1) b
+
+theorem forcesWin_makerWins {lines : List (List Nat)} {p : Player} {d : Nat} {b : Board}
+    (h : ForcesWin lines p d b) : MakerWins lines p d b := by
+  induction h with
+  | now d b m hm hw => exact MakerWins.now d b m hm hw
+  | next d b m hm hex _ _ ih => exact MakerWins.next d b m hm hex ih
+
+theorem setCell_eq_set : ∀ (b : Board) (i : Nat) (p : Player), setCell b i p = b.set i (some p)
+  | [], _, _ => rfl
+  | _ :: _, 0, _ => rfl
+  | hd :: tl, i + 1, p => by simp [setCell, setCell_eq_set tl i p]
+
+theorem getCell_eq (b : Board) (j : Nat) : getCell b j = (b[j]?).getD none := by
+  simp [getCell, List.getD_eq_getElem?_getD]
+
+theorem setCell_length' (b : Board) (i : Nat) (p : Player) : (setCell b i p).length = b.length := by
+  simp [setCell_eq_set]
+
+theorem getCell_setCell (b : Board) (i j : Nat) (r : Player) (hi : i < b.length) :
+    getCell (setCell b i r) j = if j = i then some r else getCell b j := by
+  rw [getCell_eq, getCell_eq, setCell_eq_set, List.getElem?_set]
+  by_cases h : i = j
+  · subst h; simp [hi]
+  · simp [h, Ne.symm h]
+
+theorem isLegalMove_iff (b : Board) (x : Nat) :
+    isLegalMove b x = true ↔ x < b.length ∧ getCell b x = none := by
+  unfold isLegalMove isCellEmpty
+  cases hc : getCell b x <;> simp
+
+theorem checkWin_iff (b : Board) (p : Player) (lines : List (List Nat)) :
+    checkWin b p lines = true ↔ ∃ L, L ∈ lines ∧ ∀ y, y ∈ L → getCell b y = some p := by
+  unfold checkWin lineOwnedBy cellOwnedBy
+  simp only [List.any_eq_true, List.all_eq_true]
+  constructor
+  · rintro ⟨L, hL, h⟩
+    refine ⟨L, hL, fun y hy => ?_⟩
+    have := h y hy
+    cases hc : getCell b y with
+    | none => rw [hc] at this; simp at this
+    | some q => rw [hc] at this; simp at this; rw [this]
+  · rintro ⟨L, hL, h⟩
+    exact ⟨L, hL, fun y hy => by rw [h y hy]; simp⟩
+
+theorem cellOwnedBy_setCell (b : Board) (x : Nat) (r s : Player) (y : Nat) (hx : x < b.length) :
+    cellOwnedBy (setCell b x r) s y = if y = x then (r == s) else cellOwnedBy b s y := by
+  unfold cellOwnedBy
+  rw [getCell_setCell b x y r hx]
+  by_cases h : y = x <;> simp [h]
+
+theorem cellOwnedBy_none (b : Board) (s : Player) (x : Nat) (h : getCell b x = none) :
+    cellOwnedBy b s x = false := by
+  unfold cellOwnedBy; rw [h]
+
+theorem otherPlayer_ne (p : Player) : (otherPlayer p == p) = false := by cases p <;> rfl
+theorem player_beq_self (p : Player) : (p == p) = true := by cases p <;> rfl
+
+theorem sum_map_add (l : List (List Nat)) (f g : List Nat → Nat) :
+    (l.map (fun x => f x + g x)).sum = (l.map f).sum + (l.map g).sum := by
+  induction l with
+  | nil => simp
+  | cons a l ih => simp [ih]; omega
+
+theorem sum_map_le (l : List (List Nat)) (f g : List Nat → Nat) (h : ∀ x, x ∈ l → f x ≤ g x) :
+    (l.map f).sum ≤ (l.map g).sum := by
+  induction l with
+  | nil => simp
+  | cons a l ih =>
+    simp only [List.map_cons, List.sum_cons]
+    have h1 := h a List.mem_cons_self
+    have h2 := ih (fun x hx => h x (List.mem_cons_of_mem a hx))
+    omega
+
+theorem sum_map_congr (l : List (List Nat)) (f g : List Nat → Nat) (h : ∀ x, x ∈ l → f x = g x) :
+    (l.map f).sum = (l.map g).sum := by
+  rw [List.map_congr_left h]
+
+theorem le_sum_map (l : List (List Nat)) (f : List Nat → Nat) (a : List Nat) (ha : a ∈ l) :
+    f a ≤ (l.map f).sum := by
+  induction l with
+  | nil => simp at ha
+  | cons x l ih =>
+    simp only [List.map_cons, List.sum_cons]
+    rcases List.mem_cons.mp ha with h | h
+    · subst h; omega
+    · have := ih h; omega
+
+theorem all_congr_mem {f g : Nat → Bool} : ∀ (l : List Nat), (∀ y, y ∈ l → f y = g y) →
+    l.all f = l.all g
+  | [], _ => rfl
+  | a :: l, h => by
+      simp only [List.all_cons, h a List.mem_cons_self,
+        all_congr_mem l (fun y hy => h y (List.mem_cons_of_mem a hy))]
+
+theorem filter_congr_mem {f g : Nat → Bool} : ∀ (l : List Nat), (∀ y, y ∈ l → f y = g y) →
+    l.filter f = l.filter g
+  | [], _ => rfl
+  | a :: l, h => by
+      rw [List.filter_cons, List.filter_cons, h a List.mem_cons_self,
+        filter_congr_mem l (fun y hy => h y (List.mem_cons_of_mem a hy))]
+
+theorem filter_all_true {f : Nat → Bool} : ∀ (l : List Nat), (∀ y, y ∈ l → f y = true) →
+    l.filter f = l
+  | [], _ => rfl
+  | a :: l, h => by
+      rw [List.filter_cons, ite_eq_left (h a List.mem_cons_self),
+        filter_all_true l (fun y hy => h y (List.mem_cons_of_mem a hy))]
+
+theorem filter_all_false {f : Nat → Bool} : ∀ (l : List Nat), (∀ y, y ∈ l → f y = false) →
+    l.filter f = []
+  | [], _ => rfl
+  | a :: l, h => by
+      rw [List.filter_cons, ite_eq_right (by simp [h a List.mem_cons_self]),
+        filter_all_false l (fun y hy => h y (List.mem_cons_of_mem a hy))]
+
+theorem getCell_emptyBoard (N y : Nat) : getCell (emptyBoard N) y = none := by
+  rw [getCell_eq]; unfold emptyBoard; rw [List.getElem?_replicate]; split <;> rfl
+
+/-- A line is alive for Maker `p` when Breaker owns none of its cells. -/
+def alive (b : Board) (p : Player) (L : List Nat) : Bool :=
+  L.all (fun x => !cellOwnedBy b (otherPlayer p) x)
+
+def owned (b : Board) (p : Player) (L : List Nat) : Nat :=
+  (L.filter (cellOwnedBy b p)).length
+
+/-- Scaled weight 2^K * 2^(-(cells still to claim)) of a live line. -/
+def lw (K : Nat) (b : Board) (p : Player) (L : List Nat) : Nat :=
+  if alive b p L then 2 ^ (K - L.length + owned b p L) else 0
+
+def phi (K : Nat) (b : Board) (p : Player) (lines : List (List Nat)) : Nat :=
+  (lines.map (lw K b p)).sum
+
+def wgt (K : Nat) (b : Board) (p : Player) (lines : List (List Nat)) (x : Nat) : Nat :=
+  (lines.map (fun L => if x ∈ L then lw K b p L else 0)).sum
+
+theorem alive_maker (b : Board) (x : Nat) (p : Player) (L : List Nat)
+    (hx : isLegalMove b x = true) : alive (setCell b x p) p L = alive b p L := by
+  obtain ⟨hlt, he⟩ := (isLegalMove_iff b x).mp hx
+  unfold alive
+  congr 1
+  funext y
+  rw [cellOwnedBy_setCell b x p (otherPlayer p) y hlt]
+  by_cases h : y = x
+  · rw [ite_eq_left h, h, cellOwnedBy_none b _ x he]; cases p <;> rfl
+  · rw [ite_eq_right h]
+
+theorem owned_maker (b : Board) (x : Nat) (p : Player) (hx : isLegalMove b x = true) :
+    ∀ (L : List Nat), L.Nodup →
+      owned (setCell b x p) p L = owned b p L + (if x ∈ L then 1 else 0) := by
+  obtain ⟨hlt, he⟩ := (isLegalMove_iff b x).mp hx
+  intro L
+  induction L with
+  | nil => intro _; simp [owned]
+  | cons a l ih =>
+    intro hnd
+    obtain ⟨hnot, hnd'⟩ := List.nodup_cons.mp hnd
+    have ih' := ih hnd'
+    unfold owned at ih' ⊢
+    rw [List.filter_cons, List.filter_cons, cellOwnedBy_setCell b x p p a hlt]
+    by_cases h : a = x
+    · have hcx : cellOwnedBy b p a = false := by rw [h]; exact cellOwnedBy_none b p x he
+      have hxl : x ∉ l := by rw [← h]; exact hnot
+      have hxm : x ∈ a :: l := by rw [h]; exact List.mem_cons_self
+      rw [ite_eq_left h, player_beq_self, ite_eq_left rfl, hcx, ite_eq_left hxm,
+        ite_eq_right (by decide : ¬ (false = true)), List.length_cons]
+      rw [ite_eq_right hxl] at ih'
+      omega
+    · have hxm : (x ∈ a :: l) ↔ x ∈ l := by simp [List.mem_cons, Ne.symm h]
+      rw [ite_eq_right h]
+      by_cases hc : cellOwnedBy b p a = true
+      · rw [ite_eq_left hc, ite_eq_left hc, List.length_cons, List.length_cons]
+        by_cases hm : x ∈ l
+        · rw [ite_eq_left (hxm.mpr hm)]; rw [ite_eq_left hm] at ih'; omega
+        · rw [ite_eq_right (fun e => hm (hxm.mp e))]; rw [ite_eq_right hm] at ih'; omega
+      · rw [ite_eq_right hc, ite_eq_right hc]
+        by_cases hm : x ∈ l
+        · rw [ite_eq_left (hxm.mpr hm)]; rw [ite_eq_left hm] at ih'; omega
+        · rw [ite_eq_right (fun e => hm (hxm.mp e))]; rw [ite_eq_right hm] at ih'; omega
+
+theorem lw_maker (K : Nat) (b : Board) (x : Nat) (p : Player) (L : List Nat)
+    (hx : isLegalMove b x = true) (hnd : L.Nodup) :
+    lw K (setCell b x p) p L = lw K b p L + (if x ∈ L then lw K b p L else 0) := by
+  unfold lw
+  rw [alive_maker b x p L hx, owned_maker b x p hx L hnd]
+  by_cases ha : alive b p L = true
+  · by_cases hm : x ∈ L
+    · have key : ∀ e : Nat, 2 ^ (e + 1) = 2 ^ e + 2 ^ e := fun e => by rw [Nat.pow_succ]; omega
+      simp [ha, hm, ← Nat.add_assoc, key]
+    · simp [ha, hm]
+  · simp [ha]
+
+theorem lw_breaker (K : Nat) (b : Board) (x : Nat) (p : Player) (L : List Nat)
+    (hx : isLegalMove b x = true) :
+    lw K (setCell b x (otherPlayer p)) p L = if x ∈ L then 0 else lw K b p L := by
+  obtain ⟨hlt, he⟩ := (isLegalMove_iff b x).mp hx
+  by_cases hm : x ∈ L
+  · have hdead : alive (setCell b x (otherPlayer p)) p L = false := by
+      cases hc : alive (setCell b x (otherPlayer p)) p L
+      · rfl
+      · exfalso
+        unfold alive at hc
+        have := (List.all_eq_true.mp hc) x hm
+        try dsimp only at this
+        rw [cellOwnedBy_setCell b x _ _ x hlt, ite_eq_left rfl, player_beq_self] at this
+        exact absurd this (by decide)
+    simp [lw, hdead, hm]
+  · have hal : alive (setCell b x (otherPlayer p)) p L = alive b p L := by
+      unfold alive
+      apply all_congr_mem
+      intro y hy
+      have hyx : y ≠ x := fun e => hm (e ▸ hy)
+      try dsimp only
+      rw [cellOwnedBy_setCell b x _ _ y hlt, ite_eq_right hyx]
+    have how : owned (setCell b x (otherPlayer p)) p L = owned b p L := by
+      unfold owned
+      rw [filter_congr_mem L (fun y hy => by
+        have hyx : y ≠ x := fun e => hm (e ▸ hy)
+        rw [cellOwnedBy_setCell b x _ _ y hlt, ite_eq_right hyx])]
+    simp [lw, hal, how, hm]
+
+theorem phi_maker (K : Nat) (b : Board) (x : Nat) (p : Player) (lines : List (List Nat))
+    (hnd : ∀ L, L ∈ lines → L.Nodup) (hx : isLegalMove b x = true) :
+    phi K (setCell b x p) p lines = phi K b p lines + wgt K b p lines x := by
+  unfold phi wgt
+  rw [← sum_map_add]
+  exact sum_map_congr _ _ _ (fun L hL => lw_maker K b x p L hx (hnd L hL))
+
+theorem phi_breaker (K : Nat) (b : Board) (x : Nat) (p : Player) (lines : List (List Nat))
+    (hx : isLegalMove b x = true) :
+    phi K (setCell b x (otherPlayer p)) p lines + wgt K b p lines x = phi K b p lines := by
+  unfold phi wgt
+  rw [← sum_map_add]
+  apply sum_map_congr
+  intro L _
+  show lw K (setCell b x (otherPlayer p)) p L + (if x ∈ L then lw K b p L else 0) = lw K b p L
+  rw [lw_breaker K b x p L hx]
+  by_cases hm : x ∈ L <;> simp [hm]
+
+theorem wgt_breaker_le (K : Nat) (b : Board) (x : Nat) (p : Player) (lines : List (List Nat))
+    (y : Nat) (hx : isLegalMove b x = true) :
+    wgt K (setCell b x (otherPlayer p)) p lines y ≤ wgt K b p lines y := by
+  unfold wgt
+  apply sum_map_le
+  intro L _
+  show (if y ∈ L then lw K (setCell b x (otherPlayer p)) p L else 0) ≤ (if y ∈ L then lw K b p L else 0)
+  rw [lw_breaker K b x p L hx]
+  by_cases hy : y ∈ L <;> by_cases hx' : x ∈ L <;> simp [hy, hx']
+
+theorem wgt_le_phi (K : Nat) (b : Board) (p : Player) (lines : List (List Nat)) (x : Nat) :
+    wgt K b p lines x ≤ phi K b p lines := by
+  unfold wgt phi
+  apply sum_map_le
+  intro L _
+  show (if x ∈ L then lw K b p L else 0) ≤ lw K b p L
+  by_cases h : x ∈ L <;> simp [h]
+
+theorem phi_full (K : Nat) (b : Board) (p : Player) (lines : List (List Nat)) (L : List Nat)
+    (hL : L ∈ lines) (hK : L.length ≤ K) (hown : ∀ y, y ∈ L → getCell b y = some p) :
+    2 ^ K ≤ phi K b p lines := by
+  have ha : alive b p L = true := by
+    unfold alive
+    apply List.all_eq_true.mpr
+    intro y hy
+    try dsimp only
+    unfold cellOwnedBy; rw [hown y hy]; cases p <;> rfl
+  have ho : owned b p L = L.length := by
+    unfold owned
+    rw [filter_all_true L (fun y hy => by unfold cellOwnedBy; rw [hown y hy]; cases p <;> rfl)]
+  have hw : lw K b p L = 2 ^ K := by
+    unfold lw; rw [ite_eq_left ha, ho]
+    congr 1; omega
+  have := le_sum_map lines (lw K b p) L hL
+  unfold phi; omega
+
+theorem legal_after_set (b : Board) (c : Nat) (r : Player) (y : Nat)
+    (hc : isLegalMove b c = true) (hy : isLegalMove (setCell b c r) y = true) :
+    isLegalMove b y = true ∧ y ≠ c := by
+  obtain ⟨hclt, _⟩ := (isLegalMove_iff b c).mp hc
+  obtain ⟨hylt, hye⟩ := (isLegalMove_iff _ y).mp hy
+  rw [setCell_length'] at hylt
+  rw [getCell_setCell b c y r hclt] at hye
+  by_cases h : y = c
+  · simp [h] at hye
+  · simp [h] at hye
+    exact ⟨(isLegalMove_iff b y).mpr ⟨hylt, hye⟩, h⟩
+
+theorem argmax_in (f : Nat → Nat) : ∀ (l : List Nat), l ≠ [] →
+    ∃ c, c ∈ l ∧ ∀ y, y ∈ l → f y ≤ f c
+  | [], h => absurd rfl h
+  | [a], _ => ⟨a, by simp, fun y hy => by
+      simp at hy; subst hy; exact Nat.le_refl _⟩
+  | a :: a' :: l, _ => by
+      obtain ⟨c, hc, hmax⟩ := argmax_in f (a' :: l) (by simp)
+      by_cases h : f a ≤ f c
+      · refine ⟨c, List.mem_cons_of_mem a hc, fun y hy => ?_⟩
+        rcases List.mem_cons.mp hy with e | e
+        · rw [e]; exact h
+        · exact hmax y e
+      · refine ⟨a, List.mem_cons_self, fun y hy => ?_⟩
+        rcases List.mem_cons.mp hy with e | e
+        · rw [e]; exact Nat.le_refl _
+        · have := hmax y e; omega
+
+section ErdosSelfridge
+
+variable (lines : List (List Nat)) (K : Nat)
+
+/-- `esSum` = 2^K * Σ_L 2^(-|L|). -/
+def esSum : Nat := (lines.map (fun L => 2 ^ (K - L.length))).sum
+
+theorem phi_empty (N : Nat) (p : Player) : phi K (emptyBoard N) p lines = esSum lines K := by
+  unfold phi esSum
+  apply sum_map_congr
+  intro L _
+  have ha : alive (emptyBoard N) p L = true := by
+    unfold alive
+    apply List.all_eq_true.mpr
+    intro y _
+    try dsimp only
+    rw [cellOwnedBy_none _ _ y (getCell_emptyBoard N y)]
+    rfl
+  have ho : owned (emptyBoard N) p L = 0 := by
+    unfold owned
+    rw [filter_all_false L (fun y _ => cellOwnedBy_none _ _ y (getCell_emptyBoard N y))]
+    rfl
+  unfold lw; rw [ite_eq_left ha, ho, Nat.add_zero]
+
+def esInv (p : Player) (b : Board) : Prop :=
+  ∀ x, isLegalMove b x = true → phi K b p lines + wgt K b p lines x < 2 ^ K
+
+theorem breaker_choice (p : Player) (b : Board) (h : ∃ c, isLegalMove b c = true) :
+    ∃ c, isLegalMove b c = true ∧
+      ∀ y, isLegalMove b y = true → wgt K b p lines y ≤ wgt K b p lines c := by
+  obtain ⟨c0, hc0⟩ := h
+  have hne : legalMoves b ≠ [] := by
+    intro e; have := mem_legalMoves.mpr hc0; rw [e] at this; simp at this
+  obtain ⟨c, hc, hmax⟩ := argmax_in (wgt K b p lines) (legalMoves b) hne
+  exact ⟨c, mem_legalMoves.mp hc, fun y hy => hmax y (mem_legalMoves.mpr hy)⟩
+
+theorem breaker_reply_bound (p : Player) (b : Board) (c : Nat)
+    (hc : isLegalMove b c = true)
+    (hmax : ∀ y, isLegalMove b y = true → wgt K b p lines y ≤ wgt K b p lines c)
+    (y : Nat) (hy : isLegalMove (setCell b c (otherPlayer p)) y = true) :
+    phi K (setCell b c (otherPlayer p)) p lines + wgt K (setCell b c (otherPlayer p)) p lines y
+      ≤ phi K b p lines := by
+  have e := phi_breaker K b c p lines hc
+  have hle := wgt_breaker_le K b c p lines y hc
+  have hm := hmax y (legal_after_set b c _ y hc hy).1
+  omega
+
+variable (hlines : ∀ L, L ∈ lines → L.Nodup ∧ L.length ≤ K)
+include hlines
+
+theorem erdos_selfridge_potential (p : Player) (d : Nat) (b : Board)
+    (hinv : esInv lines K p b) : ¬ MakerWins lines p d b := by
+  intro h
+  revert hinv
+  induction h with
+  | now d b m hm hw =>
+    intro hinv
+    obtain ⟨L, hL, hown⟩ := (checkWin_iff _ _ _).mp hw
+    have hlt := hinv m hm
+    rw [← phi_maker K b m p lines (fun L hL => (hlines L hL).1) hm] at hlt
+    have hge := phi_full K (setCell b m p) p lines L hL (hlines L hL).2 hown
+    omega
+  | next d b m hm hex _ ih =>
+    intro hinv
+    obtain ⟨c, hc, hmax⟩ := breaker_choice lines K p (setCell b m p) hex
+    apply ih c hc
+    unfold esInv
+    intro y hy
+    have hb := breaker_reply_bound lines K p (setCell b m p) c hc hmax y hy
+    have hlt := hinv m hm
+    rw [← phi_maker K b m p lines (fun L hL => (hlines L hL).1) hm] at hlt
+    omega
+
+/-- Erdős–Selfridge, Breaker second: Σ 2^(-|L|) < 1/2 ⇒ Maker never claims a line. -/
+theorem erdos_selfridge_breaker_second (N : Nat) (p : Player) (h : 2 * esSum lines K < 2 ^ K)
+    (d : Nat) : ¬ MakerWins lines p d (emptyBoard N) := by
+  apply erdos_selfridge_potential lines K hlines
+  unfold esInv
+  intro x _
+  have hw := wgt_le_phi K (emptyBoard N) p lines x
+  rw [phi_empty] at hw ⊢
+  omega
+
+/-- Erdős–Selfridge, Breaker `p` first: Σ 2^(-|L|) < 1 ⇒ after a greedy opening,
+    Maker never claims a line. -/
+theorem erdos_selfridge_breaker_first (N : Nat) (p : Player) (hN : 0 < N)
+    (h : esSum lines K < 2 ^ K) :
+    ∃ m, isLegalMove (emptyBoard N) m = true ∧
+      ∀ d, ¬ MakerWins lines (otherPlayer p) d (setCell (emptyBoard N) m p) := by
+  have h0 : ∃ c, isLegalMove (emptyBoard N) c = true :=
+    ⟨0, (isLegalMove_iff _ 0).mpr ⟨by simp [emptyBoard]; omega, getCell_emptyBoard N 0⟩⟩
+  obtain ⟨m, hm, hmax⟩ := breaker_choice lines K (otherPlayer p) (emptyBoard N) h0
+  refine ⟨m, hm, fun d => ?_⟩
+  apply erdos_selfridge_potential lines K hlines
+  unfold esInv
+  intro y hy
+  have hb := breaker_reply_bound lines K (otherPlayer p) (emptyBoard N) m hm hmax y
+  rw [otherPlayer_involutive, phi_empty] at hb
+  have := hb hy
+  omega
+
+end ErdosSelfridge
+
+def SecondForcesWin (lines : List (List Nat)) (d : Nat) (b : Board) : Prop :=
+  (∃ m, isLegalMove b m = true) ∧
+  ∀ m, isLegalMove b m = true →
+    checkWin (setCell b m .P1) .P1 lines = false ∧ ForcesWin lines .P2 d (setCell b m .P1)
+
+def GameIsDraw (lines : List (List Nat)) (b : Board) : Prop :=
+  (∀ d, ¬ ForcesWin lines .P1 d b) ∧ (∀ d, ¬ SecondForcesWin lines d b)
+
+/-- Strong-game corollary: Σ 2^(-|L|) < 1/2 makes the game a draw. -/
+theorem erdos_selfridge_draw (lines : List (List Nat)) (K : Nat)
+    (hlines : ∀ L, L ∈ lines → L.Nodup ∧ L.length ≤ K) (N : Nat)
+    (h : 2 * esSum lines K < 2 ^ K) : GameIsDraw lines (emptyBoard N) := by
+  refine ⟨fun d hf => erdos_selfridge_breaker_second lines K hlines N .P1 h d
+    (forcesWin_makerWins hf), ?_⟩
+  rintro d ⟨⟨m0, hm0⟩, hall⟩
+  have hN : 0 < N := by
+    have := ((isLegalMove_iff _ m0).mp hm0).1
+    simp [emptyBoard] at this; omega
+  obtain ⟨m, hm, hno⟩ := erdos_selfridge_breaker_first lines K hlines N .P1 hN (by omega)
+  exact hno d (forcesWin_makerWins (hall m hm).2)
+
+-- The three prime-dimension draws, now fully formal (generator facts by `decide`).
+theorem mnk_prime_triple_11_7_7_draw : GameIsDraw (genLines 11 7 7) (emptyBoard (11 * 7)) :=
+  erdos_selfridge_draw _ 7 (by decide) _ (by decide)
+
+theorem mnk_prime_triple_17_13_11_draw : GameIsDraw (genLines 17 13 11) (emptyBoard (17 * 13)) :=
+  erdos_selfridge_draw _ 11 (by decide +kernel) _ (by decide +kernel)
+
+theorem mnk_prime_triple_19_17_13_draw : GameIsDraw (genLines 19 17 13) (emptyBoard (19 * 17)) :=
+  erdos_selfridge_draw _ 13 (by decide +kernel) _ (by decide +kernel)
+
+-- ============================================================================
+-- Section 7: Strategy Stealing (independent re-proof)
+-- The second player never forces a win, on any hypergraph (see MNKStrategyStealing.v).
+-- ============================================================================
+
+theorem neq_other (p : Player) : p ≠ otherPlayer p := by cases p <;> decide
+theorem other_neq (p : Player) : otherPlayer p ≠ p := by cases p <;> decide
+
+theorem getCell_setCell_ne (b : Board) (i j : Nat) (r : Player) (h : j ≠ i) :
+    getCell (setCell b i r) j = getCell b j := by
+  rw [getCell_eq, getCell_eq, setCell_eq_set, List.getElem?_set, ite_eq_right (Ne.symm h)]
+
+theorem getCell_some_lt (b : Board) (i : Nat) (p : Player) (h : getCell b i = some p) :
+    i < b.length := by
+  by_cases hc : i < b.length
+  · exact hc
+  · rw [getCell_eq, List.getElem?_eq_none (by omega)] at h
+    simp at h
+
+theorem checkWin_extra (b : Board) (x : Nat) (p : Player) (lines : List (List Nat))
+    (h : checkWin b p lines = true) : checkWin (setCell b x p) p lines = true := by
+  obtain ⟨L, hL, hown⟩ := (checkWin_iff _ _ _).mp h
+  refine (checkWin_iff _ _ _).mpr ⟨L, hL, fun y hy => ?_⟩
+  by_cases hyx : y = x
+  · rw [hyx] at hy ⊢
+    rw [getCell_setCell b x x p (getCell_some_lt b x p (hown x hy)), ite_eq_left rfl]
+  · rw [getCell_setCell_ne b x y p hyx]; exact hown y hy
+
+theorem setCell_comm : ∀ (b : Board) (i j : Nat) (p q : Player), i ≠ j →
+    setCell (setCell b i p) j q = setCell (setCell b j q) i p
+  | [], _, _, _, _, _ => rfl
+  | _ :: _, 0, 0, _, _, h => absurd rfl h
+  | _ :: _, 0, _ + 1, _, _, _ => rfl
+  | _ :: _, _ + 1, 0, _, _, _ => rfl
+  | a :: tl, i + 1, j + 1, p, q, h => by
+      show a :: setCell (setCell tl i p) j q = a :: setCell (setCell tl j q) i p
+      rw [setCell_comm tl i j p q (fun e => h (by rw [e]))]
+
+theorem legal_set_other (b : Board) (y x : Nat) (r : Player)
+    (hy : isLegalMove b y = true) (hne : y ≠ x) : isLegalMove (setCell b x r) y = true := by
+  obtain ⟨hlt, he⟩ := (isLegalMove_iff b y).mp hy
+  exact (isLegalMove_iff _ y).mpr
+    ⟨by rw [setCell_length']; exact hlt, by rw [getCell_setCell_ne b x y r hne]; exact he⟩
+
+theorem needsMove {lines : List (List Nat)} {p : Player} {d : Nat} {b : Board}
+    (h : ForcesWin lines p d b) : ∃ m, isLegalMove b m = true := by
+  cases h with
+  | now _ _ m hm _ => exact ⟨m, hm⟩
+  | next _ _ m hm _ _ _ => exact ⟨m, hm⟩
+
+/-- A stone of one player is irrelevant to the other player's lines. -/
+theorem checkWin_other_stone (b : Board) (x : Nat) (p q : Player) (lines : List (List Nat))
+    (hpq : p ≠ q) (hx : isLegalMove b x = true) :
+    checkWin (setCell b x p) q lines = checkWin b q lines := by
+  obtain ⟨hlt, he⟩ := (isLegalMove_iff b x).mp hx
+  have hf : cellOwnedBy (setCell b x p) q = cellOwnedBy b q := by
+    funext y
+    rw [cellOwnedBy_setCell b x p q y hlt]
+    by_cases h : y = x
+    · rw [ite_eq_left h, h, cellOwnedBy_none b q x he]
+      cases p <;> cases q <;> first | rfl | exact absurd rfl hpq
+    · rw [ite_eq_right h]
+  unfold checkWin lineOwnedBy
+  rw [hf]
+
+def swapBoard (b : Board) : Board := b.map (Option.map otherPlayer)
+
+theorem swap_length (b : Board) : (swapBoard b).length = b.length := by simp [swapBoard]
+
+theorem swap_get (b : Board) (x : Nat) :
+    getCell (swapBoard b) x = (getCell b x).map otherPlayer := by
+  rw [getCell_eq, getCell_eq]; unfold swapBoard; rw [List.getElem?_map]
+  cases h : b[x]? <;> rfl
+
+theorem legal_swap (b : Board) (x : Nat) : isLegalMove (swapBoard b) x = isLegalMove b x := by
+  unfold isLegalMove isCellEmpty
+  rw [swap_length, swap_get]
+  cases getCell b x <;> rfl
+
+theorem swap_setCell : ∀ (b : Board) (x : Nat) (p : Player),
+    setCell (swapBoard b) x (otherPlayer p) = swapBoard (setCell b x p)
+  | [], _, _ => rfl
+  | _ :: _, 0, _ => rfl
+  | a :: tl, x + 1, p => by
+      show (Option.map otherPlayer a) :: setCell (swapBoard tl) x (otherPlayer p)
+        = (Option.map otherPlayer a) :: swapBoard (setCell tl x p)
+      rw [swap_setCell tl x p]
+
+theorem owned_swap (b : Board) (p : Player) (x : Nat) :
+    cellOwnedBy (swapBoard b) (otherPlayer p) x = cellOwnedBy b p x := by
+  unfold cellOwnedBy
+  rw [swap_get]
+  cases getCell b x with
+  | none => rfl
+  | some q => cases p <;> cases q <;> rfl
+
+theorem checkWin_swap (b : Board) (p : Player) (lines : List (List Nat)) :
+    checkWin (swapBoard b) (otherPlayer p) lines = checkWin b p lines := by
+  have hf : cellOwnedBy (swapBoard b) (otherPlayer p) = cellOwnedBy b p := funext (owned_swap b p)
+  unfold checkWin lineOwnedBy
+  rw [hf]
+
+theorem swap_empty (N : Nat) : swapBoard (emptyBoard N) = emptyBoard N := by
+  unfold swapBoard emptyBoard; simp [List.map_replicate]
+
+theorem forcesWin_swap {lines : List (List Nat)} {p : Player} {d : Nat} {b : Board}
+    (h : ForcesWin lines p d b) : ForcesWin lines (otherPlayer p) d (swapBoard b) := by
+  induction h with
+  | now d b m hm hw =>
+    apply ForcesWin.now d _ m
+    · rw [legal_swap]; exact hm
+    · rw [swap_setCell, checkWin_swap]; exact hw
+  | next d b m hm hex hno _ ih =>
+    apply ForcesWin.next d _ m
+    · rw [legal_swap]; exact hm
+    · obtain ⟨c, hc⟩ := hex
+      exact ⟨c, by rw [swap_setCell, legal_swap]; exact hc⟩
+    · intro c hc
+      rw [swap_setCell] at hc ⊢
+      rw [legal_swap] at hc
+      rw [swap_setCell, checkWin_swap]
+      exact hno c hc
+    · intro c hc
+      rw [swap_setCell] at hc ⊢
+      rw [legal_swap] at hc
+      rw [swap_setCell]
+      exact ih c hc
+
+/-- An extra stone of your own colour never hurts. -/
+theorem steal {lines : List (List Nat)} {p : Player} {d : Nat} {b : Board}
+    (h : ForcesWin lines p d b) : ∀ x, isLegalMove b x = true →
+      checkWin (setCell b x p) p lines = true ∨ ForcesWin lines p d (setCell b x p) := by
+  induction h with
+  | now d b m hm hw =>
+    intro x hx
+    by_cases hmx : m = x
+    · rw [← hmx]; exact Or.inl hw
+    · right
+      apply ForcesWin.now d _ m (legal_set_other b m x p hm hmx)
+      rw [setCell_comm b x m p p (Ne.symm hmx)]
+      exact checkWin_extra _ x p lines hw
+  | next d b m hm hex hno hfw ih =>
+    intro x hx
+    right
+    by_cases hmx : m = x
+    · -- the strategy asks for the cell we already own: play a free cell z instead
+      rw [← hmx]
+      obtain ⟨z, hz⟩ := hex
+      cases ew : checkWin (setCell (setCell b m p) z p) p lines with
+      | true => exact ForcesWin.now d _ z hz ew
+      | false =>
+        apply ForcesWin.next d _ z hz
+        · obtain ⟨c, hc⟩ := needsMove (hfw z hz)
+          obtain ⟨hc1, hcz⟩ := legal_after_set _ _ _ _ hz hc
+          exact ⟨c, legal_set_other _ c z p hc1 hcz⟩
+        · intro c hc
+          obtain ⟨hc1, hcz⟩ := legal_after_set _ _ _ _ hz hc
+          rw [setCell_comm (setCell b m p) z c p (otherPlayer p) (Ne.symm hcz),
+            checkWin_other_stone _ z p (otherPlayer p) lines (neq_other p)
+              (legal_set_other _ z c _ hz (Ne.symm hcz))]
+          exact hno c hc1
+        · intro c hc
+          obtain ⟨hc1, hcz⟩ := legal_after_set _ _ _ _ hz hc
+          rcases ih c hc1 z (legal_set_other _ z c _ hz (Ne.symm hcz)) with hw' | hf'
+          · exfalso
+            rw [← setCell_comm (setCell b m p) z c p (otherPlayer p) (Ne.symm hcz),
+              checkWin_other_stone _ c (otherPlayer p) p lines (other_neq p) hc, ew] at hw'
+            exact absurd hw' (by decide)
+          · rw [setCell_comm (setCell b m p) z c p (otherPlayer p) (Ne.symm hcz)]
+            exact hf'
+    · -- the strategy move m is still free: play it
+      have hm' := legal_set_other b m x p hm hmx
+      have hx1 := legal_set_other b x m p hx (Ne.symm hmx)
+      have hcomm : setCell (setCell b x p) m p = setCell (setCell b m p) x p :=
+        setCell_comm b x m p p (Ne.symm hmx)
+      cases ew : checkWin (setCell (setCell b x p) m p) p lines with
+      | true => exact ForcesWin.now d _ m hm' ew
+      | false =>
+        apply ForcesWin.next d _ m hm'
+        · obtain ⟨c, hc⟩ := needsMove (hfw x hx1)
+          obtain ⟨hc1, hcx⟩ := legal_after_set _ _ _ _ hx1 hc
+          exact ⟨c, by rw [hcomm]; exact legal_set_other _ c x p hc1 hcx⟩
+        · intro c hc
+          rw [hcomm] at hc ⊢
+          obtain ⟨hc1, hcx⟩ := legal_after_set _ _ _ _ hx1 hc
+          rw [setCell_comm (setCell b m p) x c p (otherPlayer p) (Ne.symm hcx),
+            checkWin_other_stone _ x p (otherPlayer p) lines (neq_other p)
+              (legal_set_other _ x c _ hx1 (Ne.symm hcx))]
+          exact hno c hc1
+        · intro c hc
+          rw [hcomm] at hc ⊢
+          obtain ⟨hc1, hcx⟩ := legal_after_set _ _ _ _ hx1 hc
+          rcases ih c hc1 x (legal_set_other _ x c _ hx1 (Ne.symm hcx)) with hw' | hf'
+          · exfalso
+            rw [← setCell_comm (setCell b m p) x c p (otherPlayer p) (Ne.symm hcx),
+              checkWin_other_stone _ c (otherPlayer p) p lines (other_neq p) hc,
+              ← hcomm, ew] at hw'
+            exact absurd hw' (by decide)
+          · rw [setCell_comm (setCell b m p) x c p (otherPlayer p) (Ne.symm hcx)]
+            exact hf'
+
+/-- Two players cannot both force a win from the same position. -/
+theorem not_both {lines : List (List Nat)} {p : Player} {d : Nat} {b : Board}
+    (h : ForcesWin lines p d b) : ∀ d', (∀ m, isLegalMove b m = true →
+      checkWin (setCell b m p) p lines = false ∧
+      ForcesWin lines (otherPlayer p) d' (setCell b m p)) → False := by
+  induction h with
+  | now d b m hm hw =>
+    intro d' hopp
+    have := (hopp m hm).1
+    rw [hw] at this
+    exact absurd this (by decide)
+  | next d b m hm hex hno hfw ih =>
+    intro d' hopp
+    have hq := (hopp m hm).2
+    cases hq with
+    | now d1 _ c hc hwq =>
+      rw [hno c hc] at hwq
+      exact absurd hwq (by decide)
+    | next d1 _ c hc hexq hnoq hfwq =>
+      apply ih c hc d1
+      intro m' hm'
+      rw [otherPlayer_involutive] at hnoq hfwq
+      exact ⟨hnoq m' hm', hfwq m' hm'⟩
+
+/-- Strategy stealing: on every hypergraph and board size, the second player has
+    no forced win from the empty board. -/
+theorem strategy_stealing (lines : List (List Nat)) (N d : Nat) :
+    ¬ SecondForcesWin lines d (emptyBoard N) := by
+  rintro ⟨⟨m0, hm0⟩, hall⟩
+  -- colour symmetry: Player 1 answering ANY Player 2 opening wins
+  have hsw : ∀ y, isLegalMove (emptyBoard N) y = true →
+      checkWin (setCell (emptyBoard N) y .P2) .P2 lines = false ∧
+      ForcesWin lines .P1 d (setCell (emptyBoard N) y .P2) := by
+    intro y hy
+    obtain ⟨hn, hf⟩ := hall y hy
+    have hs := forcesWin_swap hf
+    rw [← swap_setCell, swap_empty] at hs
+    have e1 := checkWin_swap (setCell (emptyBoard N) y .P1) .P1 lines
+    rw [← swap_setCell, swap_empty] at e1
+    exact ⟨e1.trans hn, hs⟩
+  -- Player 1 steals that strategy: open at m0, then pretend it is not there
+  have hwin : ForcesWin lines .P1 (d + 1) (emptyBoard N) := by
+    cases ew : checkWin (setCell (emptyBoard N) m0 .P1) .P1 lines with
+    | true => exact ForcesWin.now d _ m0 hm0 ew
+    | false =>
+      apply ForcesWin.next d _ m0 hm0
+      · exact needsMove (hall m0 hm0).2
+      · intro y hy
+        obtain ⟨hy0, hne⟩ := legal_after_set _ _ _ _ hm0 hy
+        show checkWin (setCell (setCell (emptyBoard N) m0 .P1) y .P2) .P2 lines = false
+        rw [setCell_comm (emptyBoard N) m0 y .P1 .P2 (Ne.symm hne),
+          checkWin_other_stone _ m0 .P1 .P2 lines (by decide)
+            (legal_set_other _ m0 y _ hm0 (Ne.symm hne))]
+        exact (hsw y hy0).1
+      · intro y hy
+        obtain ⟨hy0, hne⟩ := legal_after_set _ _ _ _ hm0 hy
+        show ForcesWin lines .P1 d (setCell (setCell (emptyBoard N) m0 .P1) y .P2)
+        rcases steal (hsw y hy0).2 m0 (legal_set_other _ m0 y _ hm0 (Ne.symm hne)) with hc | hc
+        · exfalso
+          rw [← setCell_comm (emptyBoard N) m0 y .P1 .P2 (Ne.symm hne),
+            checkWin_other_stone _ y .P2 .P1 lines (by decide) hy, ew] at hc
+          exact absurd hc (by decide)
+        · rw [setCell_comm (emptyBoard N) m0 y .P1 .P2 (Ne.symm hne)]
+          exact hc
+  exact not_both hwin d hall
+
+/-- In particular the second player never wins any (m, n, k) game. -/
+theorem mnk_second_player_never_wins (m n k d : Nat) :
+    ¬ SecondForcesWin (genLines m n k) d (emptyBoard (m * n)) :=
+  strategy_stealing _ _ _
+
 -- Strict Axiom Validation
 #print axioms otherPlayer_involutive
 #print axioms mnk_3_3_3_lines
@@ -460,3 +1192,26 @@ theorem cert_corner_valid : wcheck 4 4 3 true true 3 (emptyBoard 16) 0 cert_corn
 #print axioms cert_strip_valid
 #print axioms cert_tall_valid
 #print axioms cert_corner_valid
+#print axioms forcesWin_makerWins
+#print axioms owned_maker
+#print axioms lw_maker
+#print axioms lw_breaker
+#print axioms phi_maker
+#print axioms phi_breaker
+#print axioms wgt_breaker_le
+#print axioms phi_full
+#print axioms breaker_reply_bound
+#print axioms erdos_selfridge_potential
+#print axioms erdos_selfridge_breaker_second
+#print axioms erdos_selfridge_breaker_first
+#print axioms erdos_selfridge_draw
+#print axioms mnk_prime_triple_11_7_7_draw
+#print axioms mnk_prime_triple_17_13_11_draw
+#print axioms mnk_prime_triple_19_17_13_draw
+#print axioms setCell_comm
+#print axioms checkWin_other_stone
+#print axioms forcesWin_swap
+#print axioms steal
+#print axioms not_both
+#print axioms strategy_stealing
+#print axioms mnk_second_player_never_wins

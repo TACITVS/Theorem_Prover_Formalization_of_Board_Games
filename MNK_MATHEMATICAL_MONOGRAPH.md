@@ -1,7 +1,7 @@
 # Formalization, Hypergraph Geometry, and the Sharp Phase Transition of $(m, n, k)$ Games Without Gravity
 
 **Authors:** Formal Mathematics & Combinatorial Game Theory Research Initiative  
-**System Verification:** Rocq Prover 9.1 (82 / 82 Theorems Closed) | Lean 4.35.0 (38 / 38 Theorems Verified)  
+**System Verification:** Rocq Prover 9.1 (109 / 109 Theorems Closed) | Lean 4.35.0 (61 / 61 Theorems Verified)  
 **Computational Cross-Check:** 64-bit bitboard negamax engine and bounded-horizon search (`solver/audit_mnk.c`)  
 **Typography Standard:** Classic LaTeX Mathematical Typesetting (Native MathJax / KaTeX)
 
@@ -9,7 +9,7 @@
 
 ## 1. Abstract & Summary of Results
 
-We formalize the positional $(m, n, k)$ games without gravity in the **Rocq Prover 9.1**, with an independent cross-check of the computational core in **Lean 4.35.0**. Stones are permanent and gravity plays no role, so the winning sets are monotone: an extra stone never harms the player who owns it.
+We formalize the positional $(m, n, k)$ games without gravity in the **Rocq Prover 9.1**, with an independent cross-check in **Lean 4.35.0** of the computational core and of the two general theorems of positional game theory used here: Erdős–Selfridge and strategy stealing. Stones are permanent and gravity plays no role, so the winning sets are monotone: an extra stone never harms the player who owns it.
 
 Every game-theoretic statement is a statement about an explicit semantics of the **strong (maker-maker) game**, defined in Section 3. In this game, the first player to complete a line wins, so *both* players' lines matter.
 
@@ -23,11 +23,15 @@ Every game-theoretic statement is a statement about an explicit semantics of the
 | $(m, n, 3)$ is a draw whenever $\min(m, n) \le 2$ | Rocq (pairing strategies) |
 | Complete characterization of all $(m, n, 3)$ | Rocq |
 | The former "Subgrid Monotone Projection" argument is false | Rocq and Lean (explicit counterexample) |
-| $\mathcal{L}(m,n,k) < 2^{k-1}$ whenever $11 \le k \le m, n < 2k$ | Rocq, universal |
-| Draws of $(11,7,7)$, $(17,13,11)$, $(19,17,13)$ | Erdős–Selfridge + strategy stealing (cited); inequality formal |
+| Strategy stealing: the second player never forces a win, on any hypergraph | Rocq and Lean |
+| Every $(m, n, k)$ game is a first-player win or a draw (constructively) | Rocq |
+| Erdős–Selfridge theorem (Maker–Breaker, either move order, any hypergraph) | Rocq and Lean |
+| $\mathcal{L}(m,n,k) < 2^{k-1} \Rightarrow$ draw, for all $m, n, k$ | Rocq, universal |
+| Every board with $11 \le k \le m, n < 2k$ is a draw; every $(k, k, k)$ with $k \ge 5$ is a draw | Rocq, universal |
+| Draws of $(11,7,7)$, $(17,13,11)$, $(19,17,13)$ | Rocq and Lean |
 | $(4,4,4)$ and $(5,4,4)$ are draws | negamax computation only |
 
-The values of the $(m, n, 3)$ games are classical. The contribution here is a complete, axiom-free, machine-checked proof for **all** $m$ and $n$, together with the corrections listed in Section 10.
+The values of the $(m, n, 3)$ games, the Erdős–Selfridge theorem and strategy stealing are classical. The contribution here is a complete, axiom-free, machine-checked proof of all of them, for **all** $m$, $n$ and $k$, together with the corrections listed in Section 10. To our knowledge (see the "Related Formal Work" section of the README), neither of the two general theorems had been machine-checked before.
 
 ---
 
@@ -242,14 +246,28 @@ Theorem extra_stone_preserves_win : forall b p idx lines,
   check_win b p lines = true -> check_win (set_cell b idx p) p lines = true.
 ```
 
-### 7.2 Strategy stealing (Nash; cited, not formalized)
-Moves are additive, positions are finite, and an extra stone is never a liability. Suppose Player 2 had a winning strategy. Player 1 could then play an arbitrary first move and follow that strategy as if it were the second player, and would win: a contradiction. Hence
+### 7.2 Strategy stealing (Nash; formal, `MNKStrategyStealing.v`)
+Moves are additive, positions are finite, and an extra stone is never a liability. Suppose Player 2 had a winning strategy. Player 1 could then play an arbitrary first move and follow that strategy as if it were the second player, and would win: a contradiction.
+
+The informal argument hides three lemmas about `forces_win`, each proved by induction on the strategy:
+
+1. **Colour symmetry** (`forces_win_swap`). Let `swap_board` exchange the colours of all stones. Then `forces_win lines p d b` implies `forces_win lines (other_player p) d (swap_board b)`. A Player 2 strategy against every opening therefore becomes a Player 1 strategy that answers every Player 2 opening.
+2. **An extra stone never hurts** (`steal`). If $p$ forces a win from $b$ within $d$ moves and $x$ is empty, then $p$, given a free stone on $x$, either has a completed line at once or still forces a win within $d$ moves. When the strategy later asks for $x$, any other free cell is played instead. This is where monotonicity and the absence of gravity are used. The opponent's lines are unaffected, because a stone of one colour never helps the other colour (`check_win_other_stone`).
+3. **No double wins** (`not_both`). Two players cannot both force a win from the same position, by induction on the first strategy.
+
+Player 1 opens anywhere, then plays the stolen strategy while ignoring the opening stone. By (2) this is a forced win for Player 1. By (3) it contradicts the assumed Player 2 win:
+
+```coq
+Theorem strategy_stealing : forall lines N d, ~ second_forces_win lines d (empty_board N).
+```
+
+The theorem holds for every hypergraph. Combined with the verified evaluator `wins_b` (Section 3), it gives a dichotomy proved **constructively**, without excluded middle:
 
 $$
-\forall (m, n, k): \quad \mathrm{Value}(m, n, k) \in \{\mathrm{WIN}_{P1}, \mathrm{DRAW}\}
+\forall (m, n, k): \quad \mathrm{Value}(m, n, k) \in \{\mathrm{WIN}_{P1}, \mathrm{DRAW}\} \qquad (\texttt{mnk\_value\_win\_or\_draw})
 $$
 
-This general meta-theorem is **not** part of the formal development. The instances needed above (the $(3,3,3)$ draw and the pairing draws) are proved directly.
+The Lean file proves `strategy_stealing` independently.
 
 ---
 
@@ -262,28 +280,40 @@ Primality or coprimality of $m$ and $n$ plays **no role** in any proof in this r
 
 What decides the criterion below is only the ratio of $\mathcal{L}(m, n, k)$ to $2^{k-1}$.
 
-### 8.2 The Erdős–Selfridge criterion (1973, cited)
-For a hypergraph $\mathcal{H} = (V, E)$ with $\lvert e \rvert = k$ for every edge:
+### 8.2 The Erdős–Selfridge theorem (1973; formal, `MNKErdosSelfridge.v`)
+In the **Maker–Breaker** game, Maker wins by claiming a whole edge, and Breaker's own claims never win. `maker_wins lines p d b` says that Maker $p$, to move, claims a whole line within $d$ moves against every Breaker reply. For an arbitrary hypergraph $\mathcal{H} = (V, E)$, with edges of possibly different sizes:
 
 $$
-\lvert E \rvert < 2^{k - 1} \implies \text{the second player can prevent the first from claiming a whole edge.}
+\sum_{A \in E} 2^{-\lvert A \rvert} < \frac{1}{2} \implies \text{Breaker, moving second, prevents Maker from claiming a whole edge.}
 $$
 
-In the strong $(m, n, k)$ game, Player 2 can therefore block every line, and strategy stealing (Section 7.2) excludes a Player 2 win:
-
 $$
-\mathcal{L}(m, n, k) < 2^{k - 1} \implies \mathrm{Value}(m, n, k) = \mathrm{DRAW}
+\sum_{A \in E} 2^{-\lvert A \rvert} < 1 \implies \text{Breaker, moving first, prevents Maker from claiming a whole edge.}
 $$
 
-Only the inequality is machine-checked. The criterion and strategy stealing are cited.
+These are `erdos_selfridge_breaker_second` and `erdos_selfridge_breaker_first`.
+
+**Proof (potential function, scaled to $\mathbb{N}$).** Fix $K \ge \max_A \lvert A \rvert$. A line $A$ is *alive* if Breaker owns none of its cells. It weighs $w(A) = 2^{K - \lvert A \rvert + o(A)}$ when alive, where $o(A)$ is the number of Maker stones on it, and $0$ otherwise. Let $\Phi = \sum_A w(A)$ and $\mathrm{wgt}(x) = \sum_{A \ni x} w(A)$.
+* A Maker move at $x$ adds exactly $\mathrm{wgt}(x)$, since it doubles every alive line through $x$ (`phi_maker`).
+* A Breaker move at $y$ removes exactly $\mathrm{wgt}(y)$ and never increases any weight (`phi_breaker`, `wgt_breaker_le`).
+* Breaker always takes a cell of maximum weight (`breaker_choice`). The invariant $\Phi + \mathrm{wgt}(z) < 2^K$ for every free $z$ then survives each Maker–Breaker exchange (`breaker_reply_bound`).
+* A completed Maker line alone weighs $2^K$ (`phi_full`), which the invariant forbids.
+
+In the strong game each player can use the Breaker strategy against the other. So both $\forall d, \lnot$`forces_win P1` and $\forall d, \lnot$`second_forces_win` follow, without strategy stealing (`erdos_selfridge_draw`). For $(m, n, k)$ boards every line has $k$ cells, which gives:
+
+$$
+\mathcal{L}(m, n, k) < 2^{k - 1} \implies \mathrm{Value}(m, n, k) = \mathrm{DRAW} \qquad (\texttt{mnk\_erdos\_selfridge\_draw})
+$$
+
+The Lean file proves the Maker–Breaker theorem, its strong-game corollary and the three draws below independently.
 
 ### 8.3 Consecutive prime triples $(p_{i+2}, p_{i+1}, p_i)$
 1. **$(7, 5, 3)$:** $\mathcal{L} = 76$ and $2^{2} = 4$, so the criterion does not apply. Since $7, 5 \ge 4$, this is a **first-player win within 5 plies** (formal, Section 6).
 2. **$(11, 7, 5)$:** $\mathcal{L} = 124 > 16$, so the criterion does not apply and no value is claimed. The central cell $(5, 3)$ lies on $3 + 5 + 3 + 3 = 14$ lines.
 3. **$(13, 11, 7)$:** $\mathcal{L} = 212 > 64$, so no value is claimed.
-4. **$(11, 7, 7)$:** $\mathcal{L} = 56 < 64 = 2^6$, hence a **draw** by Erdős–Selfridge (`mnk_prime_triple_11_7_7_erdos_bound`).
-5. **$(17, 13, 11)$:** $\mathcal{L} = 184 < 1024 = 2^{10}$, hence a **draw** (`mnk_prime_triple_17_13_11_erdos_bound`).
-6. **$(19, 17, 13)$:** $\mathcal{L} = 284 < 4096 = 2^{12}$, hence a **draw** (`mnk_prime_triple_19_17_13_erdos_bound`).
+4. **$(11, 7, 7)$:** $\mathcal{L} = 56 < 64 = 2^6$, hence a **draw** (formal: `mnk_prime_triple_11_7_7_draw`).
+5. **$(17, 13, 11)$:** $\mathcal{L} = 184 < 1024 = 2^{10}$, hence a **draw** (formal: `mnk_prime_triple_17_13_11_draw`).
+6. **$(19, 17, 13)$:** $\mathcal{L} = 284 < 4096 = 2^{12}$, hence a **draw** (formal: `mnk_prime_triple_19_17_13_draw`).
 
 ### 8.4 The prime-triple law (corrected)
 **Number theory (cited).** For $x \ge 11$ there are at least two primes in $(x/2, x]$; equivalently, the second Ramanujan prime is $R_2 = 11$ (Ramanujan, 1919). For consecutive primes $p < q < r$ with $p \ge 7$, taking $x = 2p$ gives $q, r < 2p$. This is **not** a consequence of Bertrand's postulate, which only gives $q < 2p$. The inequality fails for $(3, 5, 7)$ and $(5, 7, 11)$.
@@ -296,7 +326,10 @@ $$
 
 The last step is proved by induction from $6 \cdot 11^2 = 726 < 1024$. The bound $\mathcal{L} < 4p_i^2$ asserted by an earlier revision did not follow from its hypotheses.
 
-**Conclusion.** Every consecutive prime triple game $(p_{i+2}, p_{i+1}, p_i)$ with $p_i \ge 11$ satisfies the Erdős–Selfridge hypothesis, and is therefore a draw.
+**Conclusion (formal, `mnk_near_square_draw`).** Every board with $11 \le k \le m, n < 2k$ is a draw. In particular, every consecutive prime triple game $(p_{i+2}, p_{i+1}, p_i)$ with $p_i \ge 11$ is a draw. The only cited ingredient is Ramanujan's $p_{i+2} < 2p_i$.
+
+### 8.5 Square boards $(k, k, k)$
+On a $k \times k$ board with $k$ in a row there are $k$ rows, $k$ columns and two diagonals, so $\mathcal{L}(k, k, k) = 2k + 2$. For $k \ge 5$ we have $2k + 2 < 2^{k-1}$ (`pow2_beats_linear`), hence **every $(k, k, k)$ game with $k \ge 5$ is a draw** (`mnk_square_k_draw`).
 
 ---
 
@@ -305,15 +338,17 @@ The last step is proved by induction from $6 \cdot 11^2 = 726 < 1024$. The bound
 ### Rocq Prover 9.1 (`build.ps1`)
 ```text
 === Compiling Generalized (m, n, k) Games Formal Mathematical Proof in Rocq 9.1 ===
-Compiling MNKBoard.v... OK (2.99s)
-Compiling MNKGame.v... OK (0.73s)
+Compiling MNKBoard.v... OK (2.38s)
+Compiling MNKGame.v... OK (0.64s)
 Compiling MNKCertChecker.v... OK (0.68s)
-Compiling MNKWindow.v... OK (0.93s)
-Compiling MNKPairing.v... OK (0.86s)
-Compiling MNKPhaseTransition.v... OK (32.23s)
-Compiling CheckAssumptions.v... OK (8.5s)
+Compiling MNKWindow.v... OK (0.79s)
+Compiling MNKPairing.v... OK (0.69s)
+Compiling MNKPhaseTransition.v... OK (23.05s)
+Compiling MNKErdosSelfridge.v... OK (0.86s)
+Compiling MNKStrategyStealing.v... OK (0.77s)
+Compiling CheckAssumptions.v... OK (9.07s)
 ...
-SUCCESS: 82/82 theorems closed under global context (0 axioms, 0 admits)!
+SUCCESS: 109/109 theorems closed under global context (0 axioms, 0 admits)!
 ```
 `build.ps1` counts the `Print Assumptions` commands in `CheckAssumptions.v`, and fails unless every one of them reports *Closed under the global context*.
 
@@ -326,8 +361,14 @@ SUCCESS: 82/82 theorems closed under global context (0 axioms, 0 admits)!
 'cert_strip_valid' depends on axioms: [propext]
 'cert_tall_valid' depends on axioms: [propext]
 'cert_corner_valid' depends on axioms: [propext]
-Axiom dependency report (38 theorems audited, 11 use only standard axioms):
-SUCCESS: 38 Lean 4 theorems verified with 0 sorry and 0 custom axioms (7.41s)!
+'erdos_selfridge_potential' depends on axioms: [propext, Quot.sound]
+'erdos_selfridge_draw' depends on axioms: [propext, Quot.sound]
+'mnk_prime_triple_19_17_13_draw' depends on axioms: [propext, Quot.sound]
+'steal' depends on axioms: [propext, Quot.sound]
+'not_both' depends on axioms: [propext]
+'strategy_stealing' depends on axioms: [propext, Quot.sound]
+Axiom dependency report (61 theorems audited, 33 use only standard axioms):
+SUCCESS: 61 Lean 4 theorems verified with 0 sorry and 0 custom axioms (15.34s)!
 ```
 Only Lean's three standard axioms occur.
 
@@ -353,7 +394,7 @@ ALL AUDIT PASSES COMPLETED WITH ZERO ERRORS!
 4. **False projection argument.** The claim that exterior moves are dummy moves is refuted (Section 5.1). It is replaced by the Window Simulation Theorem.
 5. **Tautological "universal line counting theorem".** `mnk_line_count_formula_closed` only unfolds its definition. The real statement is `gen_lines_count`.
 6. **Unformalized claims presented as proved.** These were the handshaking identity, the $(3,3,3)$ draw and the $(m, n, 3)$ characterization; all three are now proved.
-7. **Erdős–Selfridge overclaim.** The draws were called "machine-checked", but only the inequality is.
+7. **Erdős–Selfridge overclaim.** The draws were called "machine-checked" when only the inequality was. The Erdős–Selfridge theorem and strategy stealing are now formalized (Sections 7.2 and 8.2), so the draws are now genuinely machine-checked.
 8. **Wrong number theory.** "Bertrand's postulate $\Rightarrow p_{i+2} < 2p_i$" is false, and the bound $\mathcal{L} < 4p_i^2$ was unjustified. Both are corrected in Section 8.4.
 9. **Wrong reason for small boards.** "$\min(m, n) \le 2$: DRAW (no 3-lines)" gave the wrong reason. The correct reason is a pairing strategy, which is now formal.
 10. **False coprimality/tiling claim.** Removed.

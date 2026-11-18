@@ -2,7 +2,8 @@
     CheckAssumptions.v: Strict Axiom & Admission Audit for the MNK Library
 
     Prints the assumptions of every theorem of MNKBoard.v, MNKGame.v,
-    MNKCertChecker.v, MNKWindow.v, MNKPairing.v and MNKPhaseTransition.v.
+    MNKCertChecker.v, MNKWindow.v, MNKPairing.v, MNKPhaseTransition.v,
+    MNKErdosSelfridge.v and MNKStrategyStealing.v.
     build.ps1 fails unless EVERY entry reports
     "Closed under the global context" (zero axioms, zero admissions).
     ************************************************************************** *)
@@ -13,6 +14,8 @@ Require Import MNK.MNKCertChecker.
 Require Import MNK.MNKWindow.
 Require Import MNK.MNKPairing.
 Require Import MNK.MNKPhaseTransition.
+Require Import MNK.MNKErdosSelfridge.
+Require Import MNK.MNKStrategyStealing.
 
 (* MNKBoard.v: geometry, verified line generator, counting *)
 Print Assumptions coord_to_idx_inv.
@@ -108,7 +111,43 @@ Print Assumptions sharp_phase_transition_3_n_3.
 Print Assumptions mnk_k3_first_player_wins.
 Print Assumptions mnk_k3_complete_characterization.
 
+(* MNKErdosSelfridge.v: the Erdos-Selfridge theorem *)
+Print Assumptions forces_win_maker_wins.
+Print Assumptions lw_maker.
+Print Assumptions lw_breaker.
+Print Assumptions phi_maker.
+Print Assumptions phi_breaker.
+Print Assumptions wgt_breaker_le.
+Print Assumptions phi_full.
+Print Assumptions breaker_reply_bound.
+Print Assumptions erdos_selfridge_potential.
+Print Assumptions erdos_selfridge_breaker_second.
+Print Assumptions erdos_selfridge_breaker_first.
+Print Assumptions erdos_selfridge_draw.
+Print Assumptions mnk_erdos_selfridge_draw.
+Print Assumptions mnk_prime_triple_11_7_7_draw.
+Print Assumptions mnk_prime_triple_17_13_11_draw.
+Print Assumptions mnk_prime_triple_19_17_13_draw.
+Print Assumptions mnk_near_square_draw.
+Print Assumptions mnk_square_k_draw.
+
+(* MNKStrategyStealing.v: strategy stealing *)
+Print Assumptions set_cell_comm.
+Print Assumptions check_win_other_stone.
+Print Assumptions forces_win_swap.
+Print Assumptions steal.
+Print Assumptions not_both.
+Print Assumptions strategy_stealing.
+Print Assumptions positional_game_win_or_draw.
+Print Assumptions mnk_second_player_never_wins.
+Print Assumptions mnk_value_win_or_draw.
+
 (* Statements of the headline theorems, for the record *)
 Check sharp_phase_transition_3_n_3.
 Check mnk_k3_complete_characterization.
 Check window_certificate_lifts.
+Check erdos_selfridge_breaker_second.
+Check erdos_selfridge_breaker_first.
+Check mnk_erdos_selfridge_draw.
+Check strategy_stealing.
+Check mnk_value_win_or_draw.
