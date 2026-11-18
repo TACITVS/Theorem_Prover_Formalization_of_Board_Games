@@ -28,7 +28,7 @@ The three lines are `mnk_3_3_3_draw`, `mnk_3_4_3_exactly_7_plies` and `mnk_3_n_3
 ### How it is proved
 1. **$(3, 3, 3)$ draw.** A verified exhaustive evaluator `wins_b` (`wins_b_spec`: `wins_b = true` $\iff$ `forces_win`) shows that neither player can force a win.
 2. **$(3, 4, 3)$ win.** The original 132-node certificate (opening at cell $1 = (0, 1)$) is re-checked by a **sound** checker, and `check_cert_sound` turns the check into `forces_win (gen_lines 3 4 3) P1 4`. The evaluator also proves that no forced win exists within 5 plies.
-3. **All $n \ge 4$: Window Simulation Theorem** (`window_certificate_lifts`, [`MNKWindow.v`](MNKWindow.v)). Player 1 plays inside the $3 \times 4$ window. Any Player 2 move in a column $\ge 4$ is a *far* move, recorded only by a counter. A line through a far cell meets the window only in columns $2..3$, so Player 2 is conservatively deemed to have won once it owns a window line, or once $\mathrm{far} \ge 1$ and $\mathrm{far} + \#(\text{P2 stones in columns } 2..3) \ge 3$. A 158-node certificate passes this check, and the theorem lifts it to a forced win on the empty $3 \times n$ board for every $n \ge 4$.
+3. **All $n \ge 4$: Window Simulation Theorem** (`window_certificate_lifts`, [`MNKWindow.v`](MNKWindow.v)). Player 1 plays inside the $3 \times 4$ window. Any Player 2 move in a column $\ge 4$ is a *far* move, recorded only by a counter. A line through a far cell meets the window only in columns $2..3$, so Player 2 is conservatively deemed to have won once it owns a window line, or once $f \ge 1$ and $f + e \ge 3$. Here $f$ is the number of far moves and $e$ is the number of Player 2 stones in columns $2..3$. A 158-node certificate passes this check, and the theorem lifts it to a forced win on the empty $3 \times n$ board for every $n \ge 4$.
 
 ### Why the former "Subgrid Monotone Projection" argument was wrong
 Earlier revisions claimed that cells outside the $3 \times 4$ core "intersect zero winning lines", so that Player 2's exterior moves would be harmless dummy moves. **That is false**, because lines cross the boundary of the core. Following the 132-node strategy on $3 \times 5$:
@@ -59,7 +59,7 @@ Proved as `mnk_k3_complete_characterization`:
 
 ## Prime Dimensions and the Erdős–Selfridge Criterion
 
-**Erdős–Selfridge (1973), cited and not formalized here.** On a $k$-uniform hypergraph with $|E| < 2^{k-1}$, the second player can prevent the first from claiming a whole edge. In the strong game, Player 2 can therefore block every line. Strategy stealing rules out a Player 2 win, so the game is a **draw**. The repository machine-checks only the **arithmetic hypothesis** $\mathcal{L}(m, n, k) < 2^{k-1}$.
+**Erdős–Selfridge (1973), cited and not formalized here.** On a $k$-uniform hypergraph with $\lvert E \rvert < 2^{k-1}$, the second player can prevent the first from claiming a whole edge. In the strong game, Player 2 can therefore block every line. Strategy stealing rules out a Player 2 win, so the game is a **draw**. The repository machine-checks only the **arithmetic hypothesis** $\mathcal{L}(m, n, k) < 2^{k-1}$.
 
 Primality and coprimality of $m, n$ play **no role** in any of the arguments. (An earlier revision claimed that $\gcd(m, n) = 1$ prevents rectangular tilings of the board, which is false: $1 \times n$ strips tile every board.)
 

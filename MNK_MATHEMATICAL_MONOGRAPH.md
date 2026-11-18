@@ -37,10 +37,10 @@ An $(m, n, k)$ game is played on a grid of $m$ rows and $n$ columns. Cell $(r, c
 
 | Direction | Cells ($i = 0..k-1$) | Corner range | Count |
 | :--- | :--- | :--- | :--- |
-| **Horizontal** | $(r, c + i)$ | $r < m, \; c + k \le n$ | $m(n - k + 1)$ |
-| **Vertical** | $(r + i, c)$ | $r + k \le m, \; c < n$ | $n(m - k + 1)$ |
-| **Main diagonal ($\searrow$)** | $(r + i, c + i)$ | $r + k \le m, \; c + k \le n$ | $(m - k + 1)(n - k + 1)$ |
-| **Anti-diagonal ($\nearrow$)** | $(r + k - 1 - i, c + i)$ | $r + k \le m, \; c + k \le n$ | $(m - k + 1)(n - k + 1)$ |
+| **Horizontal** | $(r, c + i)$ | $r < m$, $c + k \le n$ | $m(n - k + 1)$ |
+| **Vertical** | $(r + i, c)$ | $r + k \le m$, $c < n$ | $n(m - k + 1)$ |
+| **Main diagonal ($\searrow$)** | $(r + i, c + i)$ | $r + k \le m$, $c + k \le n$ | $(m - k + 1)(n - k + 1)$ |
+| **Anti-diagonal ($\nearrow$)** | $(r + k - 1 - i, c + i)$ | $r + k \le m$, $c + k \le n$ | $(m - k + 1)(n - k + 1)$ |
 
 The generator `gen_lines m n k`, written $G(m, n, k)$ below, lists exactly these lines (`in_gen_lines`). The following hold for **all** $m, n, k$ (`gen_lines_count`, `mnk_handshaking`):
 
@@ -163,10 +163,10 @@ Player 2 now owns $(0,2)$, $(0,3)$ and $(0,4)$, and **wins at ply 6**, before Pl
 Fix an $R \times C$ window in the top-left corner of an $m \times n$ board ($R \le m$, $C \le n$). In the **window game**:
 * Player 1 plays inside the window and wins only with lines of the window. These are lines of the big board (`embed_window_line`).
 * Player 2 replies inside the window, or **far** (anywhere outside it). A far reply is recorded only as an increment of a counter $f$.
-* Call a window cell an **edge cell** if it lies within $k - 1$ rows (or columns) of a side of the window that borders the rest of the board. Player 2 is **deemed to have won** as soon as it owns a window line, or as soon as
+* Call a window cell an **edge cell** if it lies within $k - 1$ rows (or columns) of a side of the window that borders the rest of the board. Let $e$ be the number of Player 2 stones on edge cells. Player 2 is **deemed to have won** as soon as it owns a window line, or as soon as
 
 $$
-f \ge 1 \quad\text{and}\quad f + \#\{\text{P2 stones on edge cells}\} \ge k .
+f \ge 1 \quad\text{and}\quad f + e \ge k .
 $$
 
 This rule is conservative (`danger_detects`). Let $L$ be a line of the big board that Player 2 owns. If $L$ lies inside the window, it is a window line (`restrict_board_line`). Otherwise $L$ contains a far cell, so by the bounding-box lemma all of its window cells are edge cells (`crossing_line_edge`). Its far cells are distinct far stones, at most $f$ of them, and its window cells are distinct P2 edge stones. Since $\lvert L \rvert = k$, the inequality holds.
