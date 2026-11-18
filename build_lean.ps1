@@ -32,8 +32,14 @@ if ($joined -match "sorry") {
 }
 
 # Verify axioms output
+$audited = ($output | Where-Object { $_ -match "^'.*' (depends on axioms:|does not depend on any axioms)" }).Count
+$expected = (Select-String -Path (Join-Path $PSScriptRoot "lean4\MNKGames.lean") -Pattern "^#print axioms ").Count
+if ($audited -ne $expected) {
+    Write-Host "ERROR: expected $expected axiom reports, got $audited" -ForegroundColor Red
+    exit 1
+}
 $lines = $output | Where-Object { $_ -match "^'.*' depends on axioms:" }
-Write-Host "Axiom dependency report ($($lines.Count) theorems checked):" -ForegroundColor Magenta
+Write-Host "Axiom dependency report ($audited theorems audited, $($lines.Count) use only standard axioms):" -ForegroundColor Magenta
 $customAxioms = @()
 foreach ($l in $lines) {
     $axioms = $l -replace "^'.*' depends on axioms: \[(.*)\]$", '$1'
@@ -53,4 +59,4 @@ if ($customAxioms.Count -gt 0) {
     exit 1
 }
 
-Write-Host "SUCCESS: Lean 4 proof verified with 0 sorry and 0 custom axioms ($([math]::Round($sw.Elapsed.TotalSeconds, 2))s)!" -ForegroundColor Green
+Write-Host "SUCCESS: $audited Lean 4 theorems verified with 0 sorry and 0 custom axioms ($([math]::Round($sw.Elapsed.TotalSeconds, 2))s)!" -ForegroundColor Green

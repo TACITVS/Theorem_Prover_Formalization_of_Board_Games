@@ -130,6 +130,41 @@ int solve_mnk(int m, int n, int k) {
     return negamax(0, 0, -1, 1, 0);
 }
 
+/* Bounded-horizon strong-game search, independent of the negamax/TT engine:
+   can the side to move force completing a line within d of its own moves,
+   with the opponent never completing a line first?  (Mirrors forces_win.) */
+static int owns_line(uint64_t me) {
+    for (int i = 0; i < num_lines; i++) if ((me & lines[i]) == lines[i]) return 1;
+    return 0;
+}
+
+static int forces_win_within(uint64_t me, uint64_t opp, int d) {
+    uint64_t full = (num_cells == 64) ? ~0ULL : ((1ULL << num_cells) - 1);
+    uint64_t empty = full & ~(me | opp);
+    if (d <= 0) return 0;
+    for (uint64_t cs = empty; cs; cs &= cs - 1)
+        if (owns_line(me | (cs & -cs))) return 1;
+    if (d == 1) return 0;
+    for (uint64_t cs = empty; cs; cs &= cs - 1) {
+        uint64_t mv = cs & -cs, me1 = me | mv, emp1 = empty & ~mv;
+        if (!emp1) continue;                       /* board full: draw */
+        int ok = 1;
+        for (uint64_t rs = emp1; ok && rs; rs &= rs - 1) {
+            uint64_t opp1 = opp | (rs & -rs);
+            if (owns_line(opp1) || !forces_win_within(me1, opp1, d - 1)) ok = 0;
+        }
+        if (ok) return 1;
+    }
+    return 0;
+}
+
+/* Smallest d <= maxd with a forced win, or 0 if none. */
+static int min_horizon(int m, int n, int k, int maxd) {
+    init_lines(m, n, k);
+    for (int d = 1; d <= maxd; d++) if (forces_win_within(0, 0, d)) return d;
+    return 0;
+}
+
 int main(void) {
     printf("====================================================================\n");
     printf("       AUDIT & VERIFICATION SUITE: (m, n, k) POSITIONAL GAMES        \n");
@@ -209,8 +244,10 @@ int main(void) {
 
     printf("  -> PASS 3: Game-theoretic values fully match formal theorems!\n\n");
 
-    // Pass 4: Erdos-Selfridge Pairing Strategy Barrier (Fair Game / Exact Draw Threshold)
-    printf("[PASS 4] Verifying Erdos-Selfridge Fair-Game Barrier (L < 2^(k-1) -> DRAW)...\n");
+    // Pass 4: arithmetic hypothesis of the Erdos-Selfridge criterion.
+    // (Only the inequality is checked here; the draw then follows from the cited
+    //  Erdos-Selfridge theorem (1973) plus strategy stealing, which are not formalized.)
+    printf("[PASS 4] Verifying the Erdos-Selfridge hypothesis L < 2^(k-1)...\n");
     struct { int m, n, k; const char* note; } prime_cases[] = {
         {11, 7, 7, "Prime dimensions (11, 7, 7)"},
         {17, 13, 11, "Consecutive prime triple (17, 13, 11)"},
@@ -222,11 +259,41 @@ int main(void) {
         int k = prime_cases[i].k;
         int L = formula_lines(m, n, k);
         uint64_t erdos_threshold = 1ULL << (k - 1);
-        printf("  %s: L(%d, %d, %d) = %d < 2^%d = %llu -> PROVED EXACT DRAW (FAIR) [OK]\n",
-               prime_cases[i].note, m, n, k, L, k - 1, (unsigned long long)erdos_threshold);
         assert((uint64_t)L < erdos_threshold);
+        printf("  %s: L(%d, %d, %d) = %d < 2^%d = %llu -> draw by Erdos-Selfridge [OK]\n",
+               prime_cases[i].note, m, n, k, L, k - 1, (unsigned long long)erdos_threshold);
     }
-    printf("  -> PASS 4: All prime barrier thresholds formally confirmed.\n\n");
+    printf("  -> PASS 4: Erdos-Selfridge hypothesis holds for all three instances.\n\n");
+
+    // Pass 5: exact forced-win horizons (in Player 1 moves) with an independent search.
+    printf("[PASS 5] Verifying exact forced-win horizons in the strong game...\n");
+    struct { int m, n, k, expect; } horizons[] = {
+        {3, 3, 3, 0},   /* no forced win at all (5 P1 moves fill the board) */
+        {3, 4, 3, 4}, {3, 5, 3, 4}, {3, 6, 3, 4}, {3, 7, 3, 4}, {3, 8, 3, 4},
+        {4, 3, 3, 4}, {5, 3, 3, 4}, {6, 3, 3, 4},
+        {4, 4, 3, 3}, {4, 5, 3, 3}, {5, 5, 3, 3}
+    };
+    for (size_t i = 0; i < sizeof(horizons)/sizeof(horizons[0]); i++) {
+        int h = min_horizon(horizons[i].m, horizons[i].n, horizons[i].k, 5);
+        assert(h == horizons[i].expect);
+        if (h) printf("  (%d, %d, %d): P1 forces a win in exactly %d own moves = %d plies [OK]\n",
+                      horizons[i].m, horizons[i].n, horizons[i].k, h, 2 * h - 1);
+        else   printf("  (%d, %d, %d): no forced P1 win [OK]\n",
+                      horizons[i].m, horizons[i].n, horizons[i].k);
+    }
+    printf("  -> PASS 5: horizons match the Rocq theorems (<= 7 plies for k = 3, max(m,n) >= 4).\n\n");
+
+    // Pass 6: the former "subgrid projection" argument fails on 3 x 5.
+    printf("[PASS 6] Replaying the refuted subgrid-projection line on 3 x 5...\n");
+    init_lines(3, 5, 3);
+    {
+        uint64_t p1 = (1ULL << 1) | (1ULL << 0) | (1ULL << 6);  /* P1: 1, 0, 6 (= 3x4 moves 1, 0, 5) */
+        uint64_t p2 = (1ULL << 3) | (1ULL << 2);                /* P2: 3, 2 */
+        assert(!owns_line(p1) && !owns_line(p2));
+        assert(owns_line(p2 | (1ULL << 4)));                    /* P2 plays (0, 4) and wins at ply 6 */
+        printf("  P1 1, P2 3, P1 0, P2 2, P1 6, P2 4: Player 2 completes (0,2)-(0,3)-(0,4) [OK]\n");
+    }
+    printf("  -> PASS 6: exterior moves are NOT dummy moves; see MNKWindow.v for the sound argument.\n\n");
 
     printf("ALL AUDIT PASSES COMPLETED WITH ZERO ERRORS!\n");
     return 0;

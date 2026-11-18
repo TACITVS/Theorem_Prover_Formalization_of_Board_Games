@@ -2,5 +2,7 @@
 MNKBoard.v
 MNKGame.v
 MNKCertChecker.v
+MNKWindow.v
+MNKPairing.v
 MNKPhaseTransition.v
 CheckAssumptions.v

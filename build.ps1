@@ -12,6 +12,8 @@ $files = @(
     "MNKBoard.v",
     "MNKGame.v",
     "MNKCertChecker.v",
+    "MNKWindow.v",
+    "MNKPairing.v",
     "MNKPhaseTransition.v",
     "CheckAssumptions.v"
 )
@@ -35,17 +37,20 @@ try {
             $assumptionsOutput = $out
         }
     }
+    $expected = (Select-String -Path "CheckAssumptions.v" -Pattern "^Print Assumptions ").Count
 } finally {
     Pop-Location
 }
 
 $assumptionsOutput | ForEach-Object { Write-Host $_ }
 $joined = ($assumptionsOutput | Out-String)
+$closed = ([regex]::Matches($joined, "Closed under the global context")).Count
 if ($joined -match "Axioms:") {
     Write-Host "ERROR: Proof contains unproven axioms or assumptions!" -ForegroundColor Red
     exit 1
-} elseif ($joined -match "Closed under the global context") {
-    Write-Host "SUCCESS: 45/45 theorems closed under global context (0 axioms, 0 admits)!" -ForegroundColor Green
+} elseif ($closed -eq $expected -and $expected -gt 0) {
+    Write-Host "SUCCESS: $closed/$expected theorems closed under global context (0 axioms, 0 admits)!" -ForegroundColor Green
 } else {
-    Write-Host "WARNING: Unexpected assumptions output format." -ForegroundColor Yellow
+    Write-Host "ERROR: only $closed of $expected audited theorems reported 'Closed under the global context'." -ForegroundColor Red
+    exit 1
 }

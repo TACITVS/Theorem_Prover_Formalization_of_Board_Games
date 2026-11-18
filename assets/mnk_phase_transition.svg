@@ -27,10 +27,10 @@
 
   <!-- Title & Banner -->
   <text x="500" y="45" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="1">
-    SHARP PHASE TRANSITION &amp; SUBGRID PROJECTION IN (m, n, k) GAMES
+    SHARP PHASE TRANSITION &amp; WINDOW SIMULATION IN (m, n, k) GAMES
   </text>
   <text x="500" y="72" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="13" fill="#00f2fe" text-anchor="middle">
-    Novel Theorem: Strict Critical Dimension Threshold at n = 4 for Width-3 Positional Grids
+    Machine-Checked: (3, 3, 3) is a draw, (3, n, 3) is a first-player win for every n &gt;= 4 (strong game)
   </text>
 
   <!-- Left Card: (3, 3, 3) Draw -->
@@ -126,10 +126,10 @@
         • Certificate Size: 132 nodes
       </text>
       <text x="15" y="96" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="11" fill="#cbd5e1">
-        • P2 Branches: 100% covered
+        • P2 replies covered, P2 lines checked
       </text>
       <text x="15" y="118" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="11" fill="#cbd5e1">
-        • Max Horizon: &lt;= 7 Plies
+        • Horizon: exactly 7 plies (optimal)
       </text>
       <text x="15" y="140" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="11" fill="#4ade80" font-weight="bold">
         • Rocq &amp; Lean: 0 Axioms / Sorry
@@ -143,22 +143,25 @@
     </text>
   </g>
 
-  <!-- Bottom Panel: Universal Subgrid Monotone Projection Theorem -->
-  <g transform="translate(60, 435)">
-    <rect width="880" height="135" rx="12" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
-    <text x="440" y="30" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="15" font-weight="bold" fill="#facc15" text-anchor="middle">
-      UNIVERSAL SUBGRID MONOTONE PROJECTION THEOREM: FOR ALL n &gt;= 4, Value(3, n, 3) = WIN P1
+  <!-- Bottom Panel: Window Simulation Theorem (replaces the refuted "subgrid projection") -->
+  <g transform="translate(60, 430)">
+    <rect width="880" height="155" rx="12" fill="#0f172a" stroke="#475569" stroke-width="1.5"/>
+    <text x="440" y="28" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="15" font-weight="bold" fill="#facc15" text-anchor="middle">
+      WINDOW SIMULATION THEOREM: FOR ALL n &gt;= 4, (3, n, 3) IS A FIRST-PLAYER WIN IN &lt;= 7 PLIES
     </text>
-    
+
     <!-- Explanatory Flow -->
-    <text x="30" y="65" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="12" fill="#cbd5e1">
-      <tspan font-weight="bold" fill="#38bdf8">1. Monotone Injection:</tspan> The 3x4 core grid embeds directly into any 3xn board (n &gt;= 4) via embed(idx) = (idx/4)*n + (idx%4).
+    <text x="30" y="55" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="12" fill="#fca5a5">
+      <tspan font-weight="bold" fill="#f87171">0. Naive projection is FALSE:</tspan> replaying the 3x4 tree on 3x5 lets P2 complete (0,2)-(0,3)-(0,4) at ply 6 -- lines CROSS the core boundary.
     </text>
-    <text x="30" y="90" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="12" fill="#cbd5e1">
-      <tspan font-weight="bold" fill="#38bdf8">2. Zero Hitting Obstruction:</tspan> Any move by Player 2 outside the 3x4 core (col &gt;= 4) hits ZERO winning lines of Player 1's strategy tree.
+    <text x="30" y="80" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="12" fill="#cbd5e1">
+      <tspan font-weight="bold" fill="#38bdf8">1. Window game:</tspan> P1 plays inside the 3x4 window; a P2 move in a column &gt;= 4 is a "far" move, recorded only by a counter.
     </text>
-    <text x="30" y="115" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="12" fill="#cbd5e1">
-      <tspan font-weight="bold" fill="#38bdf8">3. Uniform Horizon Bound:</tspan> Player 1 ignores exterior dummy moves and completes victory within &lt;= 7 plies regardless of board width.
+    <text x="30" y="105" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="12" fill="#cbd5e1">
+      <tspan font-weight="bold" fill="#38bdf8">2. Conservative P2 test:</tspan> a line through a far cell meets the window only in columns 2-3, so P2 is deemed to win once far + edge stones &gt;= 3.
+    </text>
+    <text x="30" y="130" font-family="'Segoe UI', Ubuntu, sans-serif" font-size="12" fill="#cbd5e1">
+      <tspan font-weight="bold" fill="#38bdf8">3. Lifting (MNKWindow.v):</tspan> a 158-node window certificate passes this test, hence a forced win within 7 plies on EVERY 3 x n board.
     </text>
   </g>
 </svg>
