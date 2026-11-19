@@ -79,12 +79,37 @@
  *          Breaker-to-move nodes are OR nodes, Maker-to-move nodes are AND nodes.
  *          Uses the 1 + epsilon threshold rule (epsilon = 1/2, see DFPN_EPSILON_INVERSE).
  *
+ *   PDFPN  (default) parallel df-pn: every thread runs df-pn from the root over the shared
+ *          table.  A thread inside a node raises that node's selection key for the others
+ *          ("virtual proof numbers"), so threads spread over the most promising siblings.
+ *          Which proof is found, and the counts, vary from run to run; soundness does not,
+ *          because a solved table entry is a proven fact that is never overwritten (see the
+ *          table).  With one thread it is exactly DFPN.
+ *
+ *   Threads in DFPN (OpenMP builds)
+ *          Node evaluation dominates the run time, and nearly all evaluations come from the
+ *          first look-up of the children of a newly expanded node.  Those children are
+ *          evaluated in parallel, in order, and handed to the selection loop, which stores each
+ *          one at the moment the serial program would have evaluated it.  Once a child ends the
+ *          loop (a proved reply at an OR node, a Maker win at an AND node), evaluations of
+ *          later children are cancelled and discarded, since the serial program never makes
+ *          them.  The table therefore sees exactly the serial sequence of operations, evictions
+ *          included, and the proof is exactly that of the serial program.  Batches whose
+ *          expected cost is too small to repay waking the threads stay serial.  The speed-up is
+ *          limited by the single longest evaluation in each batch.
+ *
+ *   Shared state.  Evaluation is a pure function of the position.  The component cache and
+ *          the transposition table are guarded by striped spin locks and copied in and out
+ *          whole; counters are per thread and summed at the end.
+ *
  * ------------------------------------------------------------------------------------------
  * Build
  * ------------------------------------------------------------------------------------------
  *
- *   Linux / WSL:   gcc -std=c11 -O3 -march=native -o mnk_prover mnk_prover.c
- *   Windows:       clang -std=c11 -O3 -march=native -o mnk_prover.exe mnk_prover.c
+ *   Linux / WSL:   gcc -std=c11 -O3 -march=native -fopenmp -o mnk_prover mnk_prover.c
+ *   Windows:       clang -std=c11 -O3 -march=native -fopenmp -o mnk_prover.exe mnk_prover.c
+ *
+ *   Without -fopenmp the program builds and runs single-threaded.
  *
  *   With MinGW-w64 GCC on Windows add -Wa,-muse-unaligned-vector-move: that compiler does not
  *   align the stack to 32 bytes, yet emits aligned AVX moves for 32-byte stack objects
@@ -95,21 +120,34 @@
  * Usage
  * ------------------------------------------------------------------------------------------
  *
- *   mnk_prover m n k [MB|SG] [flags] [tt_log2] [DFS|DFPN] [time_limit_seconds]
+ *   mnk_prover m n k [MB|SG] [flags] [tt_log2] [PDFPN|DFPN|DFS] [time_limit_seconds] [threads]
  *
  *   flags (default 1023 = all):
  *       1 components          2 2-matching pairing      4 subsumption
  *       8 restrict Maker      16 double-threat stop     32 greedy pair+ES hybrid
  *       64 dominance          128 reduced MB state      256 exact pair cover
  *       512 twin pairs
+ *
+ *   threads: worker threads for DFPN and PDFPN (default: every logical processor; DFS is
+ *            serial).  A build without -fopenmp always uses one.
  */
 
+#include <stdatomic.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+
+#ifdef _OPENMP
+#include <omp.h>
+/* OMP(parallel for ...) expands to the OpenMP pragma, and to nothing in a serial build. */
+#define OMP_PRAGMA(text) _Pragma(#text)
+#define OMP(directive)   OMP_PRAGMA(omp directive)
+#else
+#define OMP(directive)
+#endif
 
 typedef uint64_t Bitboard;
 
@@ -125,6 +163,33 @@ enum {
 /* Recursion nodes per exact pair-cover attempt (override with -DCOVER_BUDGET=n). */
 #ifndef COVER_BUDGET
 #define COVER_BUDGET 20000
+#endif
+
+/*
+ * Shape of the cover search, after Hsu et al. (TCS 815, 2020, Section 5).
+ *
+ * COVER_BRANCH_LIMIT is the number of candidate pairs tried per level; 0 means all of them.
+ *
+ * COVER_PAIR_SCORE picks how candidates are ranked:
+ *   0  by the number c of open lines the pair covers;
+ *   1  by Hsu et al.'s score 2c - |E(u) xor E(v)| = 4c - deg(u) - deg(v), with degrees
+ *      counted over the open lines.
+ *
+ * A limited search may miss covers; it never reports a false one.  Measured on (7,7,5) MB,
+ * one thread:
+ *   all candidates, score 0   4.7 s (the earlier default)
+ *   2 candidates, score 0     1.9 s
+ *   1 candidate,  score 1     2.3 s
+ *   2 candidates, score 1     1.2 s
+ *   3 candidates, score 1     3.0 s
+ * Hsu et al. also found N = 2 best.  With N = 2 the tree is small enough that COVER_BUDGET
+ * (2,000 to 100,000) makes no difference.
+ */
+#ifndef COVER_BRANCH_LIMIT
+#define COVER_BRANCH_LIMIT 2
+#endif
+#ifndef COVER_PAIR_SCORE
+#define COVER_PAIR_SCORE 1
 #endif
 
 /* Partial cover levels tried after the full cover: cover the lines with at most k-1, k-2, ...
@@ -159,11 +224,12 @@ static inline Bitboard cell_bit(int cell)
  * ========================================================================================= */
 
 typedef enum { RULES_MAKER_BREAKER, RULES_STRONG } Rules;
-typedef enum { ENGINE_DFS, ENGINE_DFPN } Engine;
+typedef enum { ENGINE_DFS, ENGINE_DFPN, ENGINE_PARALLEL_DFPN } Engine;
 
 typedef struct {
     Rules  rules;
     Engine engine;
+    int    threads;         /* worker threads (OpenMP builds; DFS always uses one)      */
     bool   components;      /* split into independent subgames                          */
     bool   matching;        /* 2-matching pairing test                                  */
     bool   subsumption;     /* drop lines containing another line's free set            */
@@ -201,12 +267,128 @@ typedef struct {
     uint64_t tt_evictions;
     uint64_t component_cache_hits;
     uint64_t component_cache_misses;
+    uint64_t evaluations_cancelled;         /* speculative evaluations stopped early  */
 } Statistics;
 
-static Options    options;
-static Statistics stats;
-static bool       search_aborted = false;
-static double     start_time;
+enum { STATISTICS_SCALARS = 18, STATISTICS_ARRAYS = 5 };
+_Static_assert(sizeof(Statistics) ==
+                   (STATISTICS_SCALARS + STATISTICS_ARRAYS * (MAX_K + 1)) * sizeof(uint64_t),
+               "a Statistics field was added or removed: update statistics_add");
+
+static Options options;
+static double  start_time;
+
+/* Search control, shared by every thread (static atomics start at zero: false). */
+static atomic_bool        search_aborted;        /* time limit reached: result unresolved */
+static atomic_bool        search_finished;       /* root solved: all threads stop          */
+static atomic_ullong      search_call_counter;   /* all threads' search calls              */
+
+static inline bool search_should_stop(void)
+{
+    return atomic_load_explicit(&search_aborted, memory_order_relaxed) ||
+           atomic_load_explicit(&search_finished, memory_order_relaxed);
+}
+
+/*
+ * Spin lock for very short critical sections (copying a table entry).  0 = free.  Locks are
+ * striped: one lock guards many slots, so the lock arrays stay small.
+ */
+static inline void spin_lock(atomic_int* lock)
+{
+    while (atomic_exchange_explicit(lock, 1, memory_order_acquire)) {
+        while (atomic_load_explicit(lock, memory_order_relaxed)) {
+            /* spin until the holder releases it */
+        }
+    }
+}
+
+static inline void spin_unlock(atomic_int* lock)
+{
+    atomic_store_explicit(lock, 0, memory_order_release);
+}
+
+/*
+ * Counters are thread-local, so evaluation threads never contend for them.  At the end of each
+ * parallel batch every helper thread adds its counters to `helper_totals` and clears them;
+ * the searching thread keeps its own in `stats`.  report_totals() combines the two.
+ */
+static _Thread_local Statistics stats;
+static Statistics               helper_totals;
+
+static void statistics_add(Statistics* into, const Statistics* from)
+{
+    into->search_calls            += from->search_calls;
+    into->evaluations             += from->evaluations;
+    into->safe_by_es              += from->safe_by_es;
+    into->safe_by_matching        += from->safe_by_matching;
+    into->safe_by_cover           += from->safe_by_cover;
+    into->safe_by_cover_es        += from->safe_by_cover_es;
+    into->safe_by_greedy_hybrid   += from->safe_by_greedy_hybrid;
+    into->safe_by_twins           += from->safe_by_twins;
+    into->twin_pairs              += from->twin_pairs;
+    into->unsafe_by_double_threat += from->unsafe_by_double_threat;
+    for (int i = 0; i <= MAX_K; i++) {
+        into->cover_attempts[i]  += from->cover_attempts[i];
+        into->cover_exhausted[i] += from->cover_exhausted[i];
+        into->cover_refuted[i]   += from->cover_refuted[i];
+        into->cover_found[i]     += from->cover_found[i];
+        into->cover_safe[i]      += from->cover_safe[i];
+    }
+    into->cover_budget_exhausted  += from->cover_budget_exhausted;
+    into->breaker_first_leaves    += from->breaker_first_leaves;
+    into->maker_wins_detected     += from->maker_wins_detected;
+    into->dominated_moves         += from->dominated_moves;
+    into->tt_evictions            += from->tt_evictions;
+    into->component_cache_hits    += from->component_cache_hits;
+    into->component_cache_misses  += from->component_cache_misses;
+    into->evaluations_cancelled   += from->evaluations_cancelled;
+}
+
+/*
+ * A speculative evaluation (see prefetch_children) is the evaluation of child `index` while an
+ * earlier child may still end the parent's loop.  It is cancelled once `cutoff` drops below
+ * `index`.  The long-running tests poll speculation_cancelled(); after cancellation every test
+ * fails fast, the result is discarded, and nothing is cached.  `cutoff` is NULL outside
+ * speculative evaluations (always, in a serial build).
+ */
+typedef struct {
+    const atomic_int* cutoff;
+    int               index;
+    bool              cancelled;
+} Speculation;
+
+static _Thread_local Speculation speculation;
+
+static bool speculation_cancelled(void)
+{
+    if (!speculation.cancelled && speculation.cutoff &&
+        atomic_load_explicit(speculation.cutoff, memory_order_relaxed) < speculation.index) {
+        speculation.cancelled = true;
+    }
+    return speculation.cancelled;
+}
+
+#ifdef _OPENMP
+/* Called by every thread of a parallel team just before the team ends. */
+static void statistics_fold_helper(void)
+{
+    if (omp_get_thread_num() != 0) {
+        OMP(critical(statistics))
+        {
+            statistics_add(&helper_totals, &stats);
+        }
+        memset(&stats, 0, sizeof stats);
+    }
+}
+#endif
+
+/* All counters so far; called by the searching thread outside parallel regions. */
+static Statistics report_totals(void)
+{
+    Statistics total = stats;
+    statistics_add(&total, &helper_totals);
+    return total;
+}
 
 /* Wall-clock seconds (clock() measures process CPU time on POSIX systems). */
 static double wall_seconds(void)
@@ -779,7 +961,14 @@ static bool cover_recurse(CoverSearch* s, const Bitboard* open, int open_count)
     if (open_count == 0) {
         return true;   /* every line contains a chosen pair */
     }
-    if (--s->budget < 0 || !cover_may_exist(open, open_count)) {
+    if (--s->budget < 0) {
+        return false;
+    }
+    if ((s->budget & 63) == 0 && speculation_cancelled()) {
+        s->budget = -1;   /* unwind as if exhausted; the caller sees the cancellation */
+        return false;
+    }
+    if (!cover_may_exist(open, open_count)) {
         return false;
     }
 
@@ -794,7 +983,19 @@ static bool cover_recurse(CoverSearch* s, const Bitboard* open, int open_count)
         }
     }
 
-    /* Candidate pairs inside that line, ordered by how many open lines they cover. */
+    /* Open-line degree of each cell of that line (only needed by the Hsu et al. score). */
+    int degree[MAX_CELLS];
+    if (COVER_PAIR_SCORE == 1) {
+        for (Bitboard a = open[best_line]; a; a &= a - 1) {
+            const int u = lowest_cell(a);
+            degree[u] = 0;
+            for (int i = 0; i < open_count; i++) {
+                degree[u] += (int)((open[i] >> u) & 1);
+            }
+        }
+    }
+
+    /* Candidate pairs inside that line, best score first. */
     int cand_u[MAX_LINE_PAIRS];
     int cand_v[MAX_LINE_PAIRS];
     int cand_score[MAX_LINE_PAIRS];
@@ -807,6 +1008,9 @@ static bool cover_recurse(CoverSearch* s, const Bitboard* open, int open_count)
             int score = 0;
             for (int i = 0; i < open_count; i++) {
                 score += (open[i] & pair) == pair;
+            }
+            if (COVER_PAIR_SCORE == 1) {
+                score = 4 * score - degree[u] - degree[v];
             }
             int j = cand_count++;
             while (j > 0 && cand_score[j - 1] < score) {
@@ -821,7 +1025,9 @@ static bool cover_recurse(CoverSearch* s, const Bitboard* open, int open_count)
         }
     }
 
-    for (int q = 0; q < cand_count; q++) {
+    const int tries = COVER_BRANCH_LIMIT > 0 && cand_count > COVER_BRANCH_LIMIT ? COVER_BRANCH_LIMIT
+                                                                              : cand_count;
+    for (int q = 0; q < tries; q++) {
         const Bitboard pair = cell_bit(cand_u[q]) | cell_bit(cand_v[q]);
         Bitboard child[MAX_LINES];
         int      child_count = 0;
@@ -864,6 +1070,9 @@ static bool pair_cover_safe(const Component* comp)
         memset(&s, 0, sizeof s);
         s.budget = COVER_BUDGET;
         if (!cover_recurse(&s, open, open_count)) {
+            if (speculation.cancelled) {
+                return false;   /* the result is discarded anyway */
+            }
             if (s.budget < 0) {
                 stats.cover_budget_exhausted++;
                 stats.cover_exhausted[hot]++;
@@ -1029,9 +1238,25 @@ typedef struct {
     bool     breaker_first;  /* Breaker-first ES holds (sum of weights < 1)                  */
 } ComponentCacheEntry;
 
-enum { COMPONENT_CACHE_LOG2 = 21 };
+enum {
+    COMPONENT_CACHE_LOG2 = 21,
+    COMPONENT_CACHE_LOCKS = 4096   /* striped locks; a power of two */
+};
 
 static ComponentCacheEntry* component_cache = NULL;
+
+/*
+ * Evaluation threads share the cache.  An entry is two words plus flags, so an unguarded
+ * reader could see half of one entry and half of another; each slot is therefore read and
+ * written under the spin lock of its stripe.  A lock is held only for that copy, never during
+ * the safety tests, so contention is negligible.  Static atomics start at zero, i.e. unlocked.
+ */
+static atomic_int component_cache_lock[COMPONENT_CACHE_LOCKS];
+
+static inline atomic_int* cache_lock_of(size_t slot_index)
+{
+    return &component_cache_lock[slot_index & (COMPONENT_CACHE_LOCKS - 1)];
+}
 
 static bool component_cache_allocate(void)
 {
@@ -1051,11 +1276,11 @@ static void component_cache_free(void)
     component_cache = NULL;
 }
 
-static inline ComponentCacheEntry* component_cache_slot(Bitboard free_cells, Bitboard maker_near)
+static inline size_t component_cache_index(Bitboard free_cells, Bitboard maker_near)
 {
     uint64_t h = (free_cells * 0x9E3779B97F4A7C15ull) ^ (maker_near * 0xD6E8FEB86659FD93ull);
     h ^= h >> 31;
-    return &component_cache[(size_t)h & (((size_t)1 << COMPONENT_CACHE_LOG2) - 1)];
+    return (size_t)h & (((size_t)1 << COMPONENT_CACHE_LOG2) - 1);
 }
 
 static inline Bitboard reach_of(Bitboard cells)
@@ -1070,23 +1295,34 @@ static inline Bitboard reach_of(Bitboard cells)
 /* Safety of one component, memoized.  `breaker_first` receives the Breaker-first ES test. */
 static bool component_safety(const Component* comp, Bitboard maker, bool* breaker_first)
 {
+    if (speculation.cancelled) {
+        *breaker_first = false;
+        return false;   /* the evaluation is being discarded */
+    }
     const Bitboard maker_near = maker & reach_of(comp->cells);
-    ComponentCacheEntry* slot = component_cache_slot(comp->cells, maker_near);
-    if (slot->free_cells == comp->cells && slot->maker_near == maker_near) {
+    const size_t   index = component_cache_index(comp->cells, maker_near);
+
+    spin_lock(cache_lock_of(index));
+    const ComponentCacheEntry seen = component_cache[index];
+    spin_unlock(cache_lock_of(index));
+    if (seen.free_cells == comp->cells && seen.maker_near == maker_near) {
         stats.component_cache_hits++;
-        *breaker_first = slot->breaker_first;
-        return slot->safe;
+        *breaker_first = seen.breaker_first;
+        return seen.safe;
     }
     stats.component_cache_misses++;
 
     uint64_t potential = 0;
     const bool safe = component_is_safe(comp, &potential);
     *breaker_first = potential < board.potential_limit;
+    if (speculation.cancelled) {
+        return safe;   /* possibly cut short: never cache it */
+    }
 
-    slot->free_cells = comp->cells;
-    slot->maker_near = maker_near;
-    slot->safe = safe;
-    slot->breaker_first = *breaker_first;
+    const ComponentCacheEntry entry = { comp->cells, maker_near, safe, *breaker_first };
+    spin_lock(cache_lock_of(index));
+    component_cache[index] = entry;
+    spin_unlock(cache_lock_of(index));
     return safe;
 }
 
@@ -1371,14 +1607,27 @@ typedef struct {
     Bitboard     maker;
     Bitboard     breaker;
     ProofNumbers value;
-    uint32_t     work;      /* subtree effort, used for replacement            */
-    uint8_t      turn;      /* 0 = empty, 1 = Breaker to move, 2 = Maker to move */
+    uint32_t     work;        /* subtree effort, used for replacement                */
+    uint8_t      turn;        /* 0 = empty, 1 = Breaker to move, 2 = Maker to move  */
+    uint8_t      searchers;   /* threads currently searching below this node        */
 } TTEntry;
 
-enum { TT_BUCKET = 4 };
+enum {
+    TT_BUCKET = 4,
+    TT_LOCKS  = 1 << 16   /* striped bucket locks; a power of two */
+};
 
 static TTEntry* tt_table = NULL;
 static size_t   tt_mask = 0;
+
+/*
+ * Threads share the table.  Every bucket is read and written under the spin lock of its
+ * stripe and lookups copy the entry out, so no thread sees a half-written entry or keeps a
+ * pointer into the table.  A solved value is a proven fact and is never replaced by an
+ * unsolved one: a thread may finish a selection loop with values read before another thread
+ * solved the node.
+ */
+static atomic_int tt_lock[TT_LOCKS];
 
 static bool tt_allocate(int log2_entries)
 {
@@ -1404,70 +1653,115 @@ static void tt_free(void)
     tt_mask = 0;
 }
 
-static inline TTEntry* tt_bucket(Position p, uint8_t turn)
-{
-    uint64_t h = (p.maker * 0x9E3779B97F4A7C15ull) ^ (p.breaker * 0xC2B2AE3D27D4EB4Full) ^ turn;
-    h ^= h >> 29;
-    return &tt_table[(size_t)h & tt_mask & ~(size_t)(TT_BUCKET - 1)];
-}
-
 static inline uint8_t turn_code(bool maker_to_move)
 {
     return maker_to_move ? 2 : 1;
 }
 
-static bool tt_lookup(Position p, bool maker_to_move, ProofNumbers* out)
+/* Index of the first entry of the bucket of (p, turn). */
+static inline size_t tt_bucket_index(Position p, uint8_t turn)
 {
-    const uint8_t turn = turn_code(maker_to_move);
-    const TTEntry* bucket = tt_bucket(p, turn);
+    uint64_t h = (p.maker * 0x9E3779B97F4A7C15ull) ^ (p.breaker * 0xC2B2AE3D27D4EB4Full) ^ turn;
+    h ^= h >> 29;
+    return (size_t)h & tt_mask & ~(size_t)(TT_BUCKET - 1);
+}
+
+static inline atomic_int* tt_lock_of(size_t bucket)
+{
+    return &tt_lock[(bucket / TT_BUCKET) & (TT_LOCKS - 1)];
+}
+
+/* The entry of (p, turn) in the bucket starting at `bucket`, or NULL.  Caller holds the lock. */
+static inline TTEntry* tt_find(size_t bucket, Position p, uint8_t turn)
+{
     for (int i = 0; i < TT_BUCKET; i++) {
-        const TTEntry* e = &bucket[i];
+        TTEntry* e = &tt_table[bucket + i];
         if (e->turn == turn && e->maker == p.maker && e->breaker == p.breaker) {
-            *out = e->value;
-            return true;
+            return e;
         }
     }
-    return false;
+    return NULL;
+}
+
+/* Copies out the value of (p, side to move); `searchers`, if not NULL, gets its thread count. */
+static bool tt_lookup(Position p, bool maker_to_move, ProofNumbers* out, int* searchers)
+{
+    const uint8_t turn = turn_code(maker_to_move);
+    const size_t  bucket = tt_bucket_index(p, turn);
+
+    spin_lock(tt_lock_of(bucket));
+    const TTEntry* e = tt_find(bucket, p, turn);
+    if (e) {
+        *out = e->value;
+        if (searchers) {
+            *searchers = e->searchers;
+        }
+    }
+    spin_unlock(tt_lock_of(bucket));
+    return e != NULL;
 }
 
 static void tt_store(Position p, bool maker_to_move, ProofNumbers value, uint64_t work)
 {
     const uint8_t turn = turn_code(maker_to_move);
-    TTEntry* bucket = tt_bucket(p, turn);
-    TTEntry* slot = NULL;
+    const size_t  bucket = tt_bucket_index(p, turn);
+    uint32_t      effort = work > UINT32_MAX ? UINT32_MAX : (uint32_t)work;
 
-    for (int i = 0; i < TT_BUCKET && !slot; i++) {
-        TTEntry* e = &bucket[i];
-        if (e->turn == turn && e->maker == p.maker && e->breaker == p.breaker) {
-            slot = e;
+    spin_lock(tt_lock_of(bucket));
+    TTEntry* slot = tt_find(bucket, p, turn);
+    if (slot) {
+        if (pn_solved(slot->value) && !pn_solved(value)) {
+            value = slot->value;   /* already solved by another thread: keep the fact */
         }
-    }
-    for (int i = 0; i < TT_BUCKET && !slot; i++) {
-        if (bucket[i].turn == 0) {
-            slot = &bucket[i];
+        if (slot->work > effort) {
+            effort = slot->work;
         }
-    }
-    if (!slot) {
-        slot = &bucket[0];
-        for (int i = 1; i < TT_BUCKET; i++) {
-            if (bucket[i].work < slot->work) {
-                slot = &bucket[i];
+    } else {
+        for (int i = 0; i < TT_BUCKET && !slot; i++) {
+            if (tt_table[bucket + i].turn == 0) {
+                slot = &tt_table[bucket + i];
             }
         }
-        slot->work = 0;   /* evicting: do not inherit the old entry's effort */
-        stats.tt_evictions++;
+        if (!slot) {
+            /* Evict the least effort, preferring an entry that no thread is searching. */
+            slot = &tt_table[bucket];
+            for (int i = 1; i < TT_BUCKET; i++) {
+                TTEntry* e = &tt_table[bucket + i];
+                const bool e_idle = e->searchers == 0;
+                const bool slot_idle = slot->searchers == 0;
+                if ((e_idle && !slot_idle) || (e_idle == slot_idle && e->work < slot->work)) {
+                    slot = e;
+                }
+            }
+            stats.tt_evictions++;
+        }
+        slot->maker = p.maker;
+        slot->breaker = p.breaker;
+        slot->turn = turn;
+        slot->searchers = 0;
     }
-
-    uint32_t effort = work > UINT32_MAX ? UINT32_MAX : (uint32_t)work;
-    if (slot->turn == turn && slot->maker == p.maker && slot->breaker == p.breaker &&
-        slot->work > effort) {
-        effort = slot->work;
-    }
-    slot->maker = p.maker;
-    slot->breaker = p.breaker;
     slot->value = value;
     slot->work = effort;
-    slot->turn = turn;
+    spin_unlock(tt_lock_of(bucket));
+}
+
+/*
+ * Adds `delta` to the searcher count of (p, side to move).  Returns false, changing nothing,
+ * if the position is not in the table (then the matching decrement must be skipped too).
+ */
+static bool tt_add_searchers(Position p, bool maker_to_move, int delta)
+{
+    const uint8_t turn = turn_code(maker_to_move);
+    const size_t  bucket = tt_bucket_index(p, turn);
+
+    spin_lock(tt_lock_of(bucket));
+    TTEntry* e = tt_find(bucket, p, turn);
+    if (e) {
+        const int count = e->searchers + delta;
+        e->searchers = (uint8_t)(count < 0 ? 0 : count > UINT8_MAX ? UINT8_MAX : count);
+    }
+    spin_unlock(tt_lock_of(bucket));
+    return e != NULL;
 }
 
 /* =========================================================================================
@@ -1477,13 +1771,13 @@ static void tt_store(Position p, bool maker_to_move, ProofNumbers value, uint64_
 static void note_search_call(void)
 {
     stats.search_calls++;
-    if ((stats.search_calls & 4095) == 0 && options.time_limit > 0 &&
-        elapsed_seconds() > options.time_limit) {
-        search_aborted = true;
+    const unsigned long long calls =
+        atomic_fetch_add_explicit(&search_call_counter, 1, memory_order_relaxed) + 1;
+    if ((calls & 4095) == 0 && options.time_limit > 0 && elapsed_seconds() > options.time_limit) {
+        atomic_store_explicit(&search_aborted, true, memory_order_relaxed);
     }
-    if (stats.search_calls % PROGRESS_INTERVAL == 0) {
-        fprintf(stderr, "  [%7.1fs] search calls %llu, evaluations %llu\n", elapsed_seconds(),
-                (unsigned long long)stats.search_calls, (unsigned long long)stats.evaluations);
+    if (calls % PROGRESS_INTERVAL == 0) {
+        fprintf(stderr, "  [%7.1fs] search calls %llu (all threads)\n", elapsed_seconds(), calls);
     }
 }
 
@@ -1494,12 +1788,12 @@ static void note_search_call(void)
 static bool dfs_p1_wins(Position p, bool maker_to_move)
 {
     note_search_call();
-    if (search_aborted) {
+    if (search_should_stop()) {
         return false;
     }
 
     ProofNumbers known;
-    if (tt_lookup(p, maker_to_move, &known) && pn_solved(known)) {
+    if (tt_lookup(p, maker_to_move, &known, NULL) && pn_solved(known)) {
         return known.disproof == 0;
     }
 
@@ -1514,17 +1808,17 @@ static bool dfs_p1_wins(Position p, bool maker_to_move)
         p1_wins = true;
     } else if (maker_to_move) {
         p1_wins = false;
-        for (int i = 0; i < moves.count && !p1_wins && !search_aborted; i++) {
+        for (int i = 0; i < moves.count && !p1_wins && !search_should_stop(); i++) {
             p1_wins = dfs_p1_wins(child_state(p, true, moves.cell[i]), false);
         }
     } else {
         p1_wins = true;
-        for (int i = 0; i < moves.count && p1_wins && !search_aborted; i++) {
+        for (int i = 0; i < moves.count && p1_wins && !search_should_stop(); i++) {
             p1_wins = dfs_p1_wins(child_state(p, false, moves.cell[i]), true);
         }
     }
 
-    if (search_aborted) {
+    if (search_should_stop()) {
         return false;   /* incomplete: never store */
     }
     tt_store(p, maker_to_move, p1_wins ? PN_DISPROVED : PN_PROVED, stats.search_calls - calls_before);
@@ -1600,24 +1894,207 @@ static ProofNumbers initial_numbers(Status status, bool maker_to_move, int move_
     return value;
 }
 
-/* Proof numbers of a canonical state, evaluating (and storing) it on a table miss. */
-static ProofNumbers lookup_or_evaluate(Position p, bool maker_to_move)
+/*
+ * Deterministic DFPN with threads: running mean of the cost of one child evaluation, kept by
+ * the searching thread.  A batch of children is shared out only when its expected serial cost
+ * repays waking a thread team (PARALLEL_BATCH_SECONDS); cheap evaluations, as on k = 4
+ * boards, stay serial.  The estimate only decides speed: both paths give the same search.
+ */
+#ifndef PARALLEL_BATCH_SECONDS
+#define PARALLEL_BATCH_SECONDS 5e-4
+#endif
+
+static double evaluation_seconds_mean = 0.0;
+
+static inline bool measuring_evaluations(void)
+{
+    return options.engine == ENGINE_DFPN && options.threads > 1;
+}
+
+static inline void note_evaluation_seconds(double seconds)
+{
+    evaluation_seconds_mean += (seconds - evaluation_seconds_mean) / 32.0;
+}
+
+/*
+ * Proof numbers of a canonical state, evaluating (and storing) it on a table miss.
+ * `searchers` receives the number of threads currently searching below it.
+ */
+static ProofNumbers lookup_or_evaluate(Position p, bool maker_to_move, int* searchers)
 {
     ProofNumbers value;
-    if (tt_lookup(p, maker_to_move, &value)) {
+    *searchers = 0;
+    if (tt_lookup(p, maker_to_move, &value, searchers)) {
         return value;
     }
-    MoveList moves;
+    const bool   measure = measuring_evaluations();
+    const double started = measure ? wall_seconds() : 0.0;
+    MoveList     moves;
     const Status status = evaluate(p, maker_to_move, &moves);
+    if (measure) {
+        note_evaluation_seconds(wall_seconds() - started);
+    }
     value = initial_numbers(status, maker_to_move, moves.count);
     tt_store(p, maker_to_move, value, 1);
     return value;
 }
 
+/*
+ * Children evaluated ahead of the selection loop.  ready[i] means value[i] is child i's
+ * evaluation and is not yet in the table: the selection loop stores it at the moment the
+ * serial program would have evaluated and stored it, so the table goes through exactly the
+ * serial sequence of operations, evictions included.
+ */
+typedef struct {
+    ProofNumbers value[MAX_CELLS];
+    bool         ready[MAX_CELLS];
+} Prefetch;
+
+#ifdef _OPENMP
+/*
+ * True when this child's value ends the parent's selection loop: a proved Maker-to-move child
+ * of an OR node, or a disproved (Maker wins) Breaker-to-move child of an AND node.
+ */
+static inline bool child_ends_loop(ProofNumbers value, bool child_maker_to_move)
+{
+    return child_maker_to_move ? value.proof == 0 : value.disproof == 0;
+}
+
+static void atomic_lower(atomic_int* target, int value)
+{
+    int current = atomic_load_explicit(target, memory_order_relaxed);
+    while (value < current &&
+           !atomic_compare_exchange_weak_explicit(target, &current, value, memory_order_relaxed,
+                                                  memory_order_relaxed)) {
+        /* `current` was reloaded; retry while `value` is still lower */
+    }
+}
+#endif
+
+/*
+ * Deterministic DFPN with threads: evaluates in parallel the children that the serial
+ * selection loop is about to evaluate, i.e. those missing from the table up to the first
+ * child that ends the loop.  Threads take children in index order; once a child ends the
+ * loop, evaluations of later children are cancelled (or never started) and discarded, so
+ * `out` holds exactly the evaluations the serial loop would make.  Workers touch only their
+ * own locals, their own counters and the locked component cache.
+ */
+static void prefetch_children(const Position* child, int count, bool child_maker_to_move, Prefetch* out)
+{
+    for (int i = 0; i < count; i++) {
+        out->ready[i] = false;
+    }
+#ifdef _OPENMP
+    if (options.engine != ENGINE_DFPN || options.threads < 2 || omp_in_parallel()) {
+        return;
+    }
+    int missing[MAX_CELLS];
+    int missing_count = 0;
+    for (int i = 0; i < count; i++) {
+        ProofNumbers known;
+        if (!tt_lookup(child[i], child_maker_to_move, &known, NULL)) {
+            missing[missing_count++] = i;
+        } else if (child_ends_loop(known, child_maker_to_move)) {
+            break;   /* the serial loop stops here: later children are never needed */
+        }
+    }
+    if (missing_count < 2 || missing_count * evaluation_seconds_mean < PARALLEL_BATCH_SECONDS) {
+        return;   /* too little work to share out: the selection loop evaluates on demand */
+    }
+
+    ProofNumbers value[MAX_CELLS];
+    double       seconds[MAX_CELLS];
+    bool         complete[MAX_CELLS];
+    atomic_int   cutoff;   /* lowest j whose child ends the loop; missing_count while none */
+    atomic_init(&cutoff, missing_count);
+    const int team = missing_count < options.threads ? missing_count : options.threads;
+
+    OMP(parallel num_threads(team))
+    {
+        OMP(for schedule(dynamic, 1))
+        for (int j = 0; j < missing_count; j++) {
+            complete[j] = false;
+            if (atomic_load_explicit(&cutoff, memory_order_relaxed) < j) {
+                continue;   /* an earlier child already ends the loop */
+            }
+            speculation.cutoff = &cutoff;
+            speculation.index = j;
+            speculation.cancelled = false;
+
+            const double started = wall_seconds();
+            MoveList     moves;
+            const Status status = evaluate(child[missing[j]], child_maker_to_move, &moves);
+            seconds[j] = wall_seconds() - started;
+
+            const bool cancelled = speculation.cancelled;
+            speculation.cutoff = NULL;
+            if (cancelled) {
+                stats.evaluations_cancelled++;
+                continue;
+            }
+            value[j] = initial_numbers(status, child_maker_to_move, moves.count);
+            complete[j] = true;
+            if (child_ends_loop(value[j], child_maker_to_move)) {
+                atomic_lower(&cutoff, j);
+            }
+        }
+        statistics_fold_helper();
+    }
+
+    /* Every j up to the final cutoff is complete (a j is cancelled only beyond the cutoff,
+       and the cutoff never rises); later ones are discarded. */
+    const int last = atomic_load(&cutoff) < missing_count ? atomic_load(&cutoff) : missing_count - 1;
+    for (int j = 0; j <= last; j++) {
+        out->value[missing[j]] = value[j];
+        out->ready[missing[j]] = complete[j];
+        if (complete[j]) {
+            note_evaluation_seconds(seconds[j]);
+        }
+    }
+#else
+    (void)child;
+    (void)child_maker_to_move;
+#endif
+}
+/*
+ * At an AND node (Maker to move) a child is selected by its disproof number, the smallest of
+ * which is the node's disproof number, while the children's proof numbers add up.  At an OR
+ * node the roles swap.  `key` is the selected-by number, `sum` the added-up one.
+ */
+static inline uint32_t key_of(ProofNumbers v, bool and_node)
+{
+    return and_node ? v.disproof : v.proof;
+}
+
+static inline uint32_t sum_of(ProofNumbers v, bool and_node)
+{
+    return and_node ? v.proof : v.disproof;
+}
+
+static inline ProofNumbers from_key_and_sum(uint32_t key, uint32_t sum, bool and_node)
+{
+    const ProofNumbers v = { and_node ? sum : key, and_node ? key : sum };
+    return v;
+}
+
+/*
+ * Selection key of a child that `searchers` other threads are working on (parallel engine):
+ * it looks (1 + searchers) times harder, so idle threads spread over promising siblings
+ * instead of piling into one subtree ("virtual proof numbers").
+ */
+static inline uint32_t virtual_key(uint32_t key, int searchers)
+{
+    if (searchers == 0 || key >= PN_INFINITY) {
+        return key;
+    }
+    const uint64_t v = (uint64_t)key * (uint64_t)(1 + searchers) + (uint64_t)searchers;
+    return v >= PN_INFINITY ? PN_INFINITY - 1 : (uint32_t)v;
+}
+
 static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, uint32_t disproof_threshold)
 {
     note_search_call();
-    if (search_aborted) {
+    if (search_should_stop()) {
         return;
     }
 
@@ -1625,7 +2102,7 @@ static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, u
        move list (a table miss here means the root, or an entry evicted since the parent's
        look-up). */
     ProofNumbers value;
-    if (tt_lookup(p, maker_to_move, &value) &&
+    if (tt_lookup(p, maker_to_move, &value, NULL) &&
         (pn_solved(value) || value.proof >= proof_threshold || value.disproof >= disproof_threshold)) {
         return;
     }
@@ -1639,92 +2116,125 @@ static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, u
     for (int i = 0; i < moves.count; i++) {
         child[i] = child_state(p, maker_to_move, moves.cell[i]);
     }
+    Prefetch prefetch;
+    prefetch_children(child, moves.count, !maker_to_move, &prefetch);
 
+    const bool     and_node = maker_to_move;
+    const uint32_t key_threshold = and_node ? disproof_threshold : proof_threshold;
+    const uint32_t sum_threshold = and_node ? proof_threshold : disproof_threshold;
+    const bool     entered = tt_add_searchers(p, maker_to_move, +1);
     const uint64_t calls_before = stats.search_calls;
+
     for (;;) {
-        uint32_t proof, disproof;
-        uint32_t best = PN_INFINITY;
-        uint32_t second = PN_INFINITY;
-        int      best_index = -1;
-        ProofNumbers best_value = { 0, 0 };
+        uint32_t     key = PN_INFINITY;   /* min over children */
+        uint32_t     sum = 0;             /* sum over children */
+        int          best_index = -1;     /* serial choice: smallest key        */
+        uint32_t     second = PN_INFINITY;
+        int          virtual_index = -1;  /* choice with other threads counted  */
+        uint32_t     virtual_best = PN_INFINITY;
+        uint32_t     virtual_second = PN_INFINITY;
+        ProofNumbers child_value[MAX_CELLS];
 
-        if (maker_to_move) {   /* AND: proof = sum, disproof = min */
-            proof = 0;
-            disproof = PN_INFINITY;
-            for (int i = 0; i < moves.count; i++) {
-                const ProofNumbers c = lookup_or_evaluate(child[i], false);
-                proof = pn_add(proof, c.proof);
-                disproof = pn_min(disproof, c.disproof);
-                if (c.disproof < best) {
-                    second = best;
-                    best = c.disproof;
-                    best_index = i;
-                    best_value = c;
-                } else if (c.disproof < second) {
-                    second = c.disproof;
-                }
-                if (disproof == 0) {
-                    break;
-                }
+        for (int i = 0; i < moves.count; i++) {
+            int          searchers = 0;
+            ProofNumbers c;
+            if (prefetch.ready[i]) {
+                c = prefetch.value[i];   /* evaluated ahead: store it where the serial loop would */
+                prefetch.ready[i] = false;
+                tt_store(child[i], !maker_to_move, c, 1);
+            } else {
+                c = lookup_or_evaluate(child[i], !maker_to_move, &searchers);
             }
-        } else {               /* OR: proof = min, disproof = sum */
-            proof = PN_INFINITY;
-            disproof = 0;
-            for (int i = 0; i < moves.count; i++) {
-                const ProofNumbers c = lookup_or_evaluate(child[i], true);
-                proof = pn_min(proof, c.proof);
-                disproof = pn_add(disproof, c.disproof);
-                if (c.proof < best) {
-                    second = best;
-                    best = c.proof;
-                    best_index = i;
-                    best_value = c;
-                } else if (c.proof < second) {
-                    second = c.proof;
-                }
-                if (proof == 0) {
-                    break;
-                }
+            child_value[i] = c;
+            const uint32_t k = key_of(c, and_node);
+            sum = pn_add(sum, sum_of(c, and_node));
+            if (k < key) {
+                second = key;
+                key = k;
+                best_index = i;
+            } else if (k < second) {
+                second = k;
+            }
+            const uint32_t vk = virtual_key(k, searchers);
+            if (vk < virtual_best) {
+                virtual_second = virtual_best;
+                virtual_best = vk;
+                virtual_index = i;
+            } else if (vk < virtual_second) {
+                virtual_second = vk;
+            }
+            if (key == 0) {
+                break;   /* solved: the remaining children cannot change that */
             }
         }
 
-        value.proof = proof;
-        value.disproof = disproof;
+        value = from_key_and_sum(key, sum, and_node);
         tt_store(p, maker_to_move, value, stats.search_calls - calls_before + 1);
-        if (pn_solved(value) || proof >= proof_threshold || disproof >= disproof_threshold ||
-            best_index < 0) {
-            return;
+        if (pn_solved(value) || key >= key_threshold || sum >= sum_threshold || best_index < 0) {
+            break;
         }
 
-        uint32_t child_proof_threshold, child_disproof_threshold;
-        if (maker_to_move) {
-            child_disproof_threshold = pn_min(disproof_threshold, pn_second_threshold(second));
-            child_proof_threshold = pn_child_threshold(proof_threshold, proof, best_value.proof);
-        } else {
-            child_proof_threshold = pn_min(proof_threshold, pn_second_threshold(second));
-            child_disproof_threshold = pn_child_threshold(disproof_threshold, disproof, best_value.disproof);
+        /* Take the virtual choice unless its true key already reaches this node's threshold
+           (it would return at once); the serial choice always makes progress. */
+        int      chosen = best_index;
+        uint32_t chosen_second = second;
+        if (virtual_index >= 0 && key_of(child_value[virtual_index], and_node) < key_threshold) {
+            chosen = virtual_index;
+            chosen_second = virtual_second;
         }
-        dfpn_mid(child[best_index], !maker_to_move, child_proof_threshold, child_disproof_threshold);
-        if (search_aborted) {
-            return;
+        const uint32_t child_key_threshold = pn_min(key_threshold, pn_second_threshold(chosen_second));
+        const uint32_t child_sum_threshold =
+            pn_child_threshold(sum_threshold, sum, sum_of(child_value[chosen], and_node));
+        const ProofNumbers child_threshold =
+            from_key_and_sum(child_key_threshold, child_sum_threshold, and_node);
+
+        dfpn_mid(child[chosen], !maker_to_move, child_threshold.proof, child_threshold.disproof);
+        if (search_should_stop()) {
+            break;
+        }
+    }
+    if (entered) {
+        tt_add_searchers(p, maker_to_move, -1);
+    }
+}
+
+/* One searching thread: root iterations until the root is solved or the time runs out. */
+static void dfpn_root_loop(Position root)
+{
+    while (!search_should_stop()) {
+        dfpn_mid(root, true, PN_INFINITY, PN_INFINITY);
+        ProofNumbers value;
+        if (tt_lookup(root, true, &value, NULL) && pn_solved(value)) {
+            atomic_store_explicit(&search_finished, true, memory_order_relaxed);
         }
     }
 }
 
-/* Returns 1 if P1 wins, 0 if P1 cannot win, -1 if unresolved. */
+/*
+ * Returns 1 if P1 wins, 0 if P1 cannot win, -1 if unresolved.  The parallel engine runs one
+ * root loop per thread over the shared table; the first thread to see the root solved stops
+ * them all.
+ */
 static int dfpn_solve(Position root)
 {
-    ProofNumbers value = { 1, 1 };
-    while (!search_aborted) {
-        dfpn_mid(root, true, PN_INFINITY, PN_INFINITY);
-        if (!tt_lookup(root, true, &value)) {
-            return -1;   /* root entry evicted; should not happen */
+#ifdef _OPENMP
+    if (options.engine == ENGINE_PARALLEL_DFPN && options.threads > 1) {
+        OMP(parallel)
+        {
+            dfpn_root_loop(root);
+            statistics_fold_helper();
         }
-        if (pn_solved(value)) {
-            return value.disproof == 0 ? 1 : 0;
-        }
+    } else {
+        dfpn_root_loop(root);
     }
-    return -1;
+#else
+    dfpn_root_loop(root);
+#endif
+    ProofNumbers value;
+    if (!tt_lookup(root, true, &value, NULL) || !pn_solved(value)) {
+        return -1;
+    }
+    return value.disproof == 0 ? 1 : 0;
 }
 
 /* =========================================================================================
@@ -1745,14 +2255,27 @@ static void options_from_flags(int flags)
     options.twins          = flags & 512;
 }
 
+static const char* engine_name(Engine engine)
+{
+    switch (engine) {
+    case ENGINE_DFS:           return "DFS";
+    case ENGINE_DFPN:          return "DFPN";
+    case ENGINE_PARALLEL_DFPN: return "PDFPN";
+    }
+    return "?";
+}
+
 static void print_usage(const char* program)
 {
     fprintf(stderr,
-            "usage: %s m n k [MB|SG] [flags] [tt_log2] [DFS|DFPN] [time_limit_seconds]\n"
+            "usage: %s m n k [MB|SG] [flags] [tt_log2] [PDFPN|DFPN|DFS] [time_limit_seconds] [threads]\n"
             "  flags: 1 components, 2 2-matching, 4 subsumption, 8 restrict Maker,\n"
             "         16 double-threat stop, 32 greedy hybrid, 64 dominance,\n"
             "         128 reduced MB state, 256 exact pair cover, 512 twin pairs\n"
-            "         (default 1023 = all)\n",
+            "         (default 1023 = all)\n"
+            "  engines: PDFPN (default; all threads search the tree, the proof varies run to run),\n"
+            "           DFPN (children evaluated in parallel; exactly the serial proof), DFS (serial)\n"
+            "  threads: default all logical processors\n",
             program);
 }
 
@@ -1769,8 +2292,25 @@ int main(int argc, char** argv)
     options.rules = (argc > 4 && argv[4][0] == 'S') ? RULES_STRONG : RULES_MAKER_BREAKER;
     options_from_flags(argc > 5 ? atoi(argv[5]) : 1023);
     options.tt_log2 = argc > 6 ? atoi(argv[6]) : 24;
-    options.engine = (argc > 7 && strcmp(argv[7], "DFS") == 0) ? ENGINE_DFS : ENGINE_DFPN;
+    options.engine = ENGINE_PARALLEL_DFPN;
+    if (argc > 7 && strcmp(argv[7], "DFS") == 0) {
+        options.engine = ENGINE_DFS;
+    } else if (argc > 7 && strcmp(argv[7], "DFPN") == 0) {
+        options.engine = ENGINE_DFPN;
+    }
     options.time_limit = argc > 8 ? atof(argv[8]) : 0.0;
+
+    options.threads = 1;
+#ifdef _OPENMP
+    options.threads = argc > 9 ? atoi(argv[9]) : omp_get_num_procs();
+    if (options.threads < 1) {
+        options.threads = 1;
+    }
+    omp_set_num_threads(options.threads);
+#endif
+    if (options.engine == ENGINE_DFS) {
+        options.threads = 1;   /* the DFS engine is serial */
+    }
 
     if (options.rules == RULES_STRONG) {
         /* Unsound with P2 lines in play (see the header). Breaker dominance stays allowed. */
@@ -1790,11 +2330,12 @@ int main(int argc, char** argv)
     int result;
     if (options.engine == ENGINE_DFS) {
         const bool p1_wins = dfs_p1_wins(root, true);
-        result = search_aborted ? -1 : (p1_wins ? 1 : 0);
+        result = atomic_load(&search_aborted) ? -1 : (p1_wins ? 1 : 0);
     } else {
         result = dfpn_solve(root);
     }
     const double seconds = elapsed_seconds();
+    const Statistics total = report_totals();
 
     const char* verdict;
     if (result < 0) {
@@ -1809,31 +2350,36 @@ int main(int argc, char** argv)
 
     printf("(%d,%d,%d) %s %s: %s\n", rows, cols, k,
            options.rules == RULES_STRONG ? "SG" : "MB",
-           options.engine == ENGINE_DFS ? "DFS" : "DFPN", verdict);
-    printf("  search calls %llu, evaluations %llu, time %.2f s\n",
-           (unsigned long long)stats.search_calls, (unsigned long long)stats.evaluations, seconds);
+           engine_name(options.engine), verdict);
+    printf("  search calls %llu, evaluations %llu, time %.2f s, threads %d\n",
+           (unsigned long long)total.search_calls, (unsigned long long)total.evaluations, seconds,
+           options.threads);
     printf("  safe components: ES %llu, 2-matching %llu, cover %llu, cover+ES %llu, greedy hybrid %llu"
            " (cover budget exhausted %llu)\n",
-           (unsigned long long)stats.safe_by_es, (unsigned long long)stats.safe_by_matching,
-           (unsigned long long)stats.safe_by_cover, (unsigned long long)stats.safe_by_cover_es,
-           (unsigned long long)stats.safe_by_greedy_hybrid, (unsigned long long)stats.cover_budget_exhausted);
+           (unsigned long long)total.safe_by_es, (unsigned long long)total.safe_by_matching,
+           (unsigned long long)total.safe_by_cover, (unsigned long long)total.safe_by_cover_es,
+           (unsigned long long)total.safe_by_greedy_hybrid, (unsigned long long)total.cover_budget_exhausted);
     for (int hot = board.k; hot >= 2 && options.pair_cover; hot--) {
         printf("  cover, lines of size <= %d: %llu attempts, %llu refuted at once, %llu exhausted, %llu covers found, %llu safe\n",
-               hot, (unsigned long long)stats.cover_attempts[hot], (unsigned long long)stats.cover_refuted[hot],
-               (unsigned long long)stats.cover_exhausted[hot],
-               (unsigned long long)stats.cover_found[hot], (unsigned long long)stats.cover_safe[hot]);
+               hot, (unsigned long long)total.cover_attempts[hot], (unsigned long long)total.cover_refuted[hot],
+               (unsigned long long)total.cover_exhausted[hot],
+               (unsigned long long)total.cover_found[hot], (unsigned long long)total.cover_safe[hot]);
     }
     printf("  twin pairs removed %llu (components emptied %llu), unsafe by double threat %llu\n",
-           (unsigned long long)stats.twin_pairs, (unsigned long long)stats.safe_by_twins,
-           (unsigned long long)stats.unsafe_by_double_threat);
+           (unsigned long long)total.twin_pairs, (unsigned long long)total.safe_by_twins,
+           (unsigned long long)total.unsafe_by_double_threat);
     printf("  Breaker-first leaves %llu, Maker wins detected %llu, dominated moves skipped %llu\n",
-           (unsigned long long)stats.breaker_first_leaves, (unsigned long long)stats.maker_wins_detected,
-           (unsigned long long)stats.dominated_moves);
-    printf("  component cache: %llu hits, %llu misses\n", (unsigned long long)stats.component_cache_hits,
-           (unsigned long long)stats.component_cache_misses);
+           (unsigned long long)total.breaker_first_leaves, (unsigned long long)total.maker_wins_detected,
+           (unsigned long long)total.dominated_moves);
+    printf("  component cache: %llu hits, %llu misses\n", (unsigned long long)total.component_cache_hits,
+           (unsigned long long)total.component_cache_misses);
+    if (options.engine == ENGINE_DFPN && options.threads > 1) {
+        printf("  speculative evaluations cancelled: %llu\n",
+               (unsigned long long)total.evaluations_cancelled);
+    }
     printf("  transposition table: 2^%d entries, %llu evictions\n", options.tt_log2,
-           (unsigned long long)stats.tt_evictions);
-    if (result < 0 && options.engine == ENGINE_DFPN && stats.tt_evictions > tt_mask) {
+           (unsigned long long)total.tt_evictions);
+    if (result < 0 && options.engine != ENGINE_DFS && total.tt_evictions > tt_mask) {
         /* df-pn can cycle when evicted nodes come back with fresh (smaller) proof numbers. */
         printf("  warning: heavy eviction; df-pn may be cycling - try a larger tt_log2\n");
     }

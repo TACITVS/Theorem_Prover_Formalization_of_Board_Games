@@ -200,11 +200,31 @@ calls; "evals" are node evaluations.
 | + refutation at every cover node, budget 20000 | 4,502 | 48,227 | 8.7 s |
 | + partial cover+ES levels dropped, open-line cover state, Kuhn fast path | 4,502 | 48,227 | 5.8–7.9 s |
 | + 1+ε thresholds (ε = 1/2) | 2,490 | 36,096 | 5.2 s |
+| + Hsu et al. cover shape: pair score 4c − deg u − deg v, best 2 candidates per level | 4,700 | 65,518 | 1.2 s |
 
 The SG rules give the same picture (for example 4,009 calls and 45,152 evals before 1+ε).
 For comparison:
 - the GPU greedy pipeline needed 1.68×10^9 P1 nodes and 946 s;
-- Hsu et al. report 2.5 s.
+- Hsu et al. report 2.5 s on one thread of a Xeon Gold 6154.
+
+**The last row trades proof size for leaf cost.**
+- The limited cover search misses some covers, so the proof grows: calls ×1.9, evaluations
+  ×1.8.
+- Each evaluation became about 7× cheaper. The old search exhausted its 20,000-node budget on
+  most infeasible components, even with the 2-matching refutation; a 2-way search fails within
+  a few hundred nodes.
+- Candidates tried per level (N), MB, one thread:
+
+  | N | Pair score | Time |
+  |---|---|---:|
+  | all | c | 4.7 s |
+  | 2 | c | 1.9 s |
+  | 1 | Hsu | 2.3 s |
+  | 2 | Hsu | 1.2 s |
+  | 3 | Hsu | 3.0 s |
+
+- Hsu et al. also found N = 2 best (Section 3.2).
+- On (8,4,4) SG the change is neutral: 17.7 s against 18.5 s. The leaves there are cheap.
 
 Wall times on this machine vary by about ±25% between identical runs, so the call and
 evaluation counts are the reliable measures. The proof is now about 10^4–10^5 nodes, which is
@@ -229,28 +249,216 @@ The net effect is positive, so ε = 1/2 is the default.
 Infeasibility was therefore the bottleneck, which led to the 2-matching refutation. Inside
 the search, that test refutes 40–70% of nodes at every depth.
 
+### 2.6 Parallel search (OpenMP, 24 logical processors)
+
+**Where the serial time goes** ((7,7,5) MB, 4.7 s of evaluation in that run):
+
+| Evaluation context | Time | Count |
+|---|---:|---:|
+| A node's own re-evaluation in `dfpn_mid` (component cache hits) | 0.01 s | 2,490 |
+| Children of AND nodes (Breaker to move) | 1.21 s | 15,928 |
+| Children of OR nodes (Maker to move) | 3.45 s | 17,678, of which 1,108 proved |
+
+Evaluation is essentially the whole run time, and it is a pure function of the position.
+
+**Scheme 1: `DFPN` with children evaluated in parallel (deterministic).**
+- When a node is expanded, the children missing from the table are evaluated in parallel,
+  then stored by the searching thread, so df-pn makes exactly the serial choices.
+- **Evaluating every child failed.** Evaluations doubled (36K → 77K) with no speed-up. At an
+  OR node the serial loop stops at the first proved reply, and good move ordering puts it
+  first, so the extra children are the expensive failing cover searches.
+- **Ordered speculation with cancellation fixed that.** Threads take children in index order.
+  Once a child ends the loop, evaluations of later children are cancelled (the cover search
+  polls every 64 nodes) and discarded, never cached.
+- **Result:** the same proof at every thread count (2,490 calls), but the speed-up stops at
+  about 1.7× (5.0 s → 2.9 s) from 8 threads on.
+- **Why:** over 2,000 parallel batches, the single longest evaluation of each batch accounts
+  for 2.36 s of the 2.73 s spent in batches. The critical path is individual evaluations.
+  Lowering the cover budget shortens it, but the proof grows: 2.47 s at budget 5,000, 2.63 s
+  at 10,000.
+- **Two defects found by the validation matrix, both fixed.**
+  1. **Not exact under eviction.** (8,4,4) SG differed from serial: 1,530,794 against
+     1,530,097 calls. The serial run makes 653,595 evictions, and storing a whole batch at
+     once changes which entries are evicted. Now the selection loop stores each prefetched
+     child at the moment the serial loop would have evaluated it, and children past the
+     cutoff are discarded. The table sees exactly the serial sequence of operations, and the
+     counts match even with heavy eviction.
+  2. **Slower than serial on cheap boards.** Waking a 24-thread team for every expansion
+     costs about 65–95 µs, far more than a k = 4 evaluation. For example, (7,4,4) MB with
+     flags 31 took 38 s against 3.1 s serial. A batch is now shared out only if (missing
+     children) × (running mean evaluation cost) ≥ 0.5 ms, and the team is sized to the
+     batch. Afterwards (7,4,4) took 3.16 s against 2.82 s serial, and (7,7,5) 2.89 s against
+     5.96 s serial.
+
+**Scheme 2: `PDFPN`, tree-parallel df-pn over a shared table.**
+- Every thread runs df-pn from the root. A thread inside a node increments that entry's
+  searcher count. When choosing a child, the others use the *virtual* key
+  key × (1 + searchers) + searchers. Threads therefore spread over promising siblings
+  (after Kaneko 2010 and Pawlewicz–Hayward 2013).
+- If the virtual choice's true key already reaches the node's threshold, the thread takes the
+  serial choice instead. Otherwise it would return at once and could spin.
+- **Soundness under concurrency:**
+  - a solved value is derived only from solved child values;
+  - `tt_store` never replaces a solved entry with an unsolved one (a thread may finish a
+    selection loop on values read before another thread solved the node);
+  - every table and component-cache access is a whole-entry copy under a striped spin lock,
+    with no nesting, hence no deadlock.
+- With one thread, the program is exactly the serial program (2,490 calls).
+
+| (7,7,5) MB, PDFPN | 1 thread | 4 | 8 | 12 | 24 |
+|---|---:|---:|---:|---:|---:|
+| Time | 5.24 s | 2.09 s | 1.44 s | 1.16 s | **0.91 s** |
+| df-pn calls, all threads | 2,490 | 3,920 | 5,195 | 4,476 | 5,718 |
+
+**Validation of PDFPN.**
+- Setup: 13 boards, (3,3,3) through (8,4,4) plus (7,7,5); MB and SG; flags 31 and 1023;
+  three runs each.
+- Every verdict matches the known value. This includes the P1-win boards (4,3,3), (5,5,4)
+  MB, (6,5,4), (6,6,4) and (8,4,4) MB, which come out as Maker wins under MB and "not proved"
+  under SG.
+- It is faster than serial on every non-trivial board. Final build, same machine, same run of
+  the matrix:
+
+| Board, rules, flags | Serial DFPN | DFPN, 24 threads (same calls) | PDFPN, 24 threads (3 runs) |
+|---|---:|---:|---:|
+| (7,7,5) MB 1023 | 4.69 s | 2.75 s | 0.89–0.92 s |
+| (7,7,5) SG 1023 | 5.54 s | 2.66 s | 1.02–1.14 s |
+| (8,4,4) SG 1023 | 23.8 s | 24.3 s | 2.30–2.45 s |
+| (8,4,4) SG 31 | 16.3 s | 16.6 s | 1.96–2.34 s |
+| (8,4,4) MB 31 (Maker wins) | 37.2 s | 39.4 s | 0.20–0.79 s |
+| (7,4,4) MB 31 | 3.32 s | 3.53 s | 0.40–0.65 s |
+
+- **DFPN with 24 threads** gives exactly the serial call count on all 50 configurations,
+  including (8,4,4) MB with flags 31 at 7.3M calls. It helps only where evaluations are
+  expensive ((7,7,5)); elsewhere the cost gate keeps it within about 5–10% of serial.
+- **PDFPN on (8,4,4) MB with flags 31** is 50–180× faster than serial. A disproof needs only
+  one winning Maker line, and with many threads exploring siblings, one of them finds a short
+  win long before serial df-pn's ordering reaches it.
+
+PDFPN is therefore the default engine. DFPN stays available for exactly reproducible runs.
+
+The speed-up is about 6× on 24 logical processors. Hsu et al. report 2.5 s on **one
+thread** of a Xeon Gold 6154 at 3.0 GHz (Section 3.2). With the cover shape above, this
+prover was about 2× slower than that per thread (4.7–6.6 s serial).
+
+**After adopting Hsu et al.'s cover shape** (Section 2.5, last row). The same matrix was re-run
+on 2026-11-19:
+- all 50 verdicts are identical to the run above;
+- DFPN-24 again reproduces the serial call count on every configuration;
+- all 150 PDFPN runs are correct.
+
+| Board, rules, flags | Serial DFPN | DFPN, 24 threads | PDFPN, 24 threads (3 runs) |
+|---|---:|---:|---:|
+| (7,7,5) MB 1023 | 1.19 s (4,700 calls) | 1.12 s | 0.23–0.24 s |
+| (7,7,5) SG 1023 | 1.25 s (4,681 calls) | 1.09 s | 0.24–0.26 s |
+| (8,4,4) SG 1023 | 17.5 s | 17.3 s | 2.33–2.49 s |
+| (8,4,4) SG 31 | 12.5 s | 12.5 s | 2.11–2.67 s |
+| (8,4,4) MB 31 (Maker wins) | 30.6 s | 30.9 s | 0.22–0.90 s |
+| (7,4,4) MB 31 | 2.68 s | 2.76 s | 0.46–0.49 s |
+
+- **Per thread:** (7,7,5) now takes 1.2 s serial against Hsu et al.'s 2.5 s. The CPUs differ,
+  so this is a comparison of published figures, not a controlled one.
+- **24 threads:** 0.23–0.26 s, about 10× under their figure.
+- **Small proofs:** DFPN-24 no longer gains on (7,7,5). Its leaves are now cheap enough that
+  the cost gate keeps most nodes serial.
+
 ## 3. Literature: what is already known
 
 ### 3.1 Hsu, Ko, Hsueh, Wu, *Solving 7,7,5-game and 8,8,5-game*, ICGA J. 40(3) 2018
 
+- **DOI:** 10.3233/ICG-180061.
 - The 7,7,5 and 8,8,5 games are solved as draws, with methods based on pairing strategies and
   potential weights.
 - Solve times: about 1 minute for 7,7,5 and about 3 days for 8,8,5.
 
 ### 3.2 Hsu, Ko, Chen, Wei, Hsueh, Wu, *On solving the 7,7,5-game and the 8,8,5-game*, TCS 815 (2020) 79–94
 
+- **DOI:** 10.1016/j.tcs.2020.02.023 (ScienceDirect PII S0304397520301146).
+
 - **Abstract:** an AND/OR search tree algorithm for mnk-games, three novel methods to reduce
   the branching factor, and a new method for finding pairing strategies.
 - **Keywords:** pairing strategy, relevancy-zone.
-- **Solve times:** 7,7,5 in 2.5 s; 8,8,5 draw in 17.4 h.
-- **Access:** the full text could not be retrieved (paywalled: ScienceDirect returns 403, and
-  no repository copy was found). The exact definitions of the three branching-factor
-  reductions and of the pairing-finding method are therefore **not verified here**.
-- **What a citing paper credits them with** (Czifra et al., below):
-  - partial pairings that remove parts of the hypergraph without changing the proof value;
-  - relevance zones in breaker-win (draw) proofs;
-  - transposition tables;
-  - move ordering by potential.
+- **Solve times:** 7,7,5 in 2.5 s; 8,8,5 draw in 17.4 h (62,634 s).
+- **Hardware:** "The experiments were performed with **one thread** on the machine equipped
+  with Intel(R) Xeon(R) Gold 6154 CPU @ 3.00 GHz" (Section 6). The 2.5 s is single-threaded.
+- **Sources read (2026-11-19):**
+  - the paper itself, supplied by the user;
+  - W.-Y. Hsu's master's thesis, *Solving 7,7,5-Game and 8,8,5-Game* (National Chiao Tung
+    University, July 2019; advisors J.-C. Chen and I-C. Wu). It contains the same tables and
+    the same hardware statement.
+
+  Both are scans without a text layer; they were read as rendered page images.
+
+**Search.** Plain recursive AND/OR search with a transposition table, no proof numbers.
+- Maker nodes are AND and Breaker nodes OR.
+- Moves are ordered by potential weight w(v) = Σ_{e∋v} 2^{M(e)} over unblocked lines, where
+  M(e) is the number of Maker marks on e.
+- Early return: at a Breaker node, each Breaker move is first tested for an immediate pairing
+  strategy.
+
+**Three reductions** (Section 4).
+1. **Partial pairing (Theorem 1).**
+   - Definition: V_pair is a set of free cells that can be split into disjoint pairs so that
+     every line meeting V_pair contains a whole pair.
+   - (V, E) and (V − V_pair, E − E_pair) have the same value.
+   - Implemented only for *mutually dominated* cells (E(u) = E(v), removed repeatedly) plus
+     cells on no line. That is exactly our twin pairs (flag 512).
+2. **Vertex domination (Theorem 2).** If E(v_i) ⊇ E(v_j), the dominated cell v_j can be
+   skipped by either player. This is our dominance (flag 64). They apply it to both players;
+   we apply it to Breaker always and to Maker in MB only.
+3. **Breaker relevance zones (Section 4.3).** This is what we lack.
+   - R(s) is the set of cells Breaker might mark under its winning strategy s.
+   - **Property 2:** if Breaker wins after Maker plays v, using strategy s, then Breaker
+     also wins after any Maker move v' ∉ R(s), with the same s.
+   - **Property 3:** at a Maker node, if the zones of the refuted moves v_1..v_t have an
+     empty intersection, the node is a Breaker win with zone ∪ R(s_i).
+   - Algorithm 4: a Maker node keeps V_tocheck ← V_tocheck ∩ R_subtree after each refuted
+     move, skips moves outside V_tocheck, and returns R = ∪ R_subtree.
+   - Zones at leaves come from the pairing strategy: R = the cells of the pairs (Theorem 3).
+   - Zones of reduced games are extended by the partial pairs (Theorem 4) and by the
+     dominating cell for each skipped dominated move (Theorem 5).
+   - Breaker nodes return {v} ∪ R(child).
+
+**Pairing search** (Section 5, Algorithms 2, 3 and 9).
+- Pairs may be shared by several lines. This is the same "set matching" as our exact cover.
+- Greedy rule 1: a free line with exactly two unassigned cells takes them as its pair
+  (forced).
+- Greedy rule 2: two cells with identical free-line sets form a pair (twins).
+- Then backtracking on the line with the fewest unassigned cells (the hyperedge score).
+  Candidate pairs on that line are ranked by the pair score
+  2|E(v₁)∩E(v₂)| − |E(v₁) △ E(v₂)|, and **only the best N candidates are tried per level.**
+- Effect of N on (7,7,5): N = 0 (greedy rules only) 1,870 s; **N = 2: 2.5 s**; N = 3: 9.4 s;
+  N = 4: 16.7 s; N = 5: 29.0 s. On 8,8,5 only N = 2 finished within 72 h.
+
+**Ablation without pairing terminals** (Table 1, 7,7,5):
+
+| Methods | Time |
+|---|---:|
+| All three methods | 7,457 s |
+| Partial pairing + r-zones | 31,441 s |
+| Partial pairing + domination | 33,856 s |
+| Any one method alone | > 72 h |
+
+They give no ablation of the r-zones *with* pairing terminals on.
+
+**Earlier result cited by them.** C.-Y. Chen (2013 master's thesis, National Taiwan Normal
+University) solved 7,7,5 in about 5 days on 10 threads, with df-pn and heuristics.
+
+**Comparison with this prover.**
+- Same per-node ideas: pairing leaves including shared pairs, twins, domination, potential
+  ordering.
+- Things they have that we lack:
+  - relevance zones;
+  - a far cheaper pairing search (N = 2 per level, against our 20,000-node budget with a
+    2-matching refutation).
+- Things we have that they lack:
+  - df-pn with 1+ε;
+  - component decomposition and the component cache;
+  - ES and pairs+ES leaves;
+  - the 2-matching infeasibility test;
+  - symmetry reduction;
+  - parallel search.
+- Per thread they remain about 2× faster on 7,7,5.
 
 ### 3.3 Czifra, Csóka, Zombori, Makay, *Towards solving the 7-in-a-row game* (arXiv 2107.05363)
 
@@ -286,13 +494,13 @@ This is relevant to finding pairings when one pair must cover several lines.
 | Technique | Hsu et al. | Czifra et al. | Ours (GPU pipeline) | Ours (`mnk_prover.c`, now) |
 |---|---|---|---|---|
 | OR nodes searched (best reply found) | yes (AND/OR search) | yes (PNS) | **no**: one greedy reply, repaired afterwards | yes (df-pn, 1+ε) |
-| Pairing-strategy leaves | yes (core method) | partial pairings | **no** | yes: 2-matching, exact shared-pair cover, twin pairs, pairs+ES |
-| Relevance zones in draw proofs | yes | no | **no** | **no** (next) |
+| Pairing-strategy leaves | yes (core method: greedy rules, then the best N = 2 pairs per level) | partial pairings | **no** | yes: 2-matching, shared-pair cover (their score, N = 2, plus a 2-matching refutation at each node), twin pairs |
+| Relevance zones in draw proofs | yes (Breaker r-zones; essential without pairing leaves: Table 1) | no | **no** | **no** (next) |
 | Potential (ES) leaves | potential weights | yes | yes | yes (per component) |
 | Component decomposition | ? | yes (cut vertices) | **no** | yes (connected components, exact-key cache) |
 | Dominated squares / partial pairing | yes (credited) | yes | dead cells only | yes (bitboard test; SG-aware for P2) |
 | Symmetry-aware transpositions | yes | yes (dropped: too slow) | yes (cheap D4) | yes (canonical expansion) |
-| Massive GPU parallelism | no | no | **yes** | no (single thread so far) |
+| Massive GPU parallelism | no | no | **yes** | no GPU; 24-thread CPU search (PDFPN) |
 | Formal (Rocq/Lean) soundness of leaf rules | no | no | **yes** (ES, strategy stealing) | ES and strategy stealing; pairing lemma not yet |
 
 **Diagnosis.** The (7,7,5) proof DAG has 1.68×10^9 P1 nodes. A 2.5 s solve implies a proof
@@ -366,6 +574,9 @@ we know nobody has.
 - **Wall-clock timer (4.4.1).** Uses `timespec_get`, which is portable C11.
 - **1+ε thresholds (4.2).** ε = 1/2 measured best.
 - **No double evaluation in `dfpn_mid` (4.3).**
+- **24-thread parallel df-pn (4.4).** Shared table with striped locks and virtual proof
+  numbers (Section 2.6), plus a deterministic variant that only evaluates children in
+  parallel.
 
 **Not needed at present (measured).**
 - **Collinear O(n) subsumption (3.2.1)** and the **nibble symmetry table (5.1).** Together
@@ -375,7 +586,6 @@ we know nobody has.
 **Deferred: high value, larger work.**
 - Constructive relevance zones with certificate export (3.1, 7).
 - A standalone `mnk_verify.c`.
-- 24-thread parallel df-pn (4.4).
 - The GPU items (6.x):
   - VRAM over-commit: the guard sounds plausible for the (10,5,5) pass-1 slowdown, but is not
     verified yet;
@@ -390,6 +600,65 @@ we know nobody has.
   free Maker can still play it later.
 - **The cover pre-check.** It applies exactly when two size-2 lines share a cell *with
   different partners*. Two identical size-2 lines are fine.
+
+### 5.7 Design: Breaker relevance zones in df-pn (MB only)
+
+**Definition.** A *zone* of a Breaker-win position P is a set Z of free cells such that
+Breaker still wins after Maker is given every free cell outside Z, at no cost in tempo. This
+is Hsu et al.'s R(s), stated as a property of the position rather than of a strategy, so it
+can be stored in the TT next to a proved value.
+
+**Pruning (their Property 2).** At a Maker node P, suppose the child P + v is proved with zone
+Z. Then every sibling P + u with u ∉ Z ∪ {v} is proved too.
+- *Why:* compare P + u with P + v + (free \ Z \ {v}) given to Maker, which is a Breaker win.
+  - Maker's cells in P + u are a subset of Maker's cells there, since u ∉ Z.
+  - P + u has the same Breaker cells and a superset of the free cells, Z ⊆ free(P + u).
+  - Breaker plays that position's strategy and treats every Maker move outside Z as a pass;
+    in Maker–Breaker an extra Breaker move never hurts.
+
+**Zones returned upward.**
+- **Breaker node:** if Breaker's move b proves the child with zone Z, the node's zone is
+  {b} ∪ Z.
+- **Maker node:** the union of
+  - the zones of the children proved by search;
+  - the strategy cells of the safe components, whose moves `restrict_maker` skips;
+  - the dominating cell of every skipped dominated move (their Theorem 5).
+
+  Each skipped child u lies outside some proved sibling zone Z_v ⊆ R, and the comparison
+  above still holds inside the smaller game.
+- **Leaves:** the strategy cells of each component.
+  - Cells used by a 2-matching, a cover or twin pairs: every line keeps a pair, so the
+    cells outside cannot complete it.
+  - All free cells of an ES-safe component: Erdős–Selfridge needs the whole component.
+  - The empty set for a full board.
+
+**Fit with this prover.**
+- **Canonical states.** A child's zone is stored in that child's canonical coordinates, so
+  it must be mapped back through the inverse of the symmetry that `symmetry_canonical`
+  applied. `symmetry_canonical` must therefore report which transform it used. When several
+  transforms give the same image, any of them yields a valid zone, because they differ by an
+  automorphism of the child.
+- **Reduced state.** It only turns dead free cells into Breaker stones. Maker gains nothing
+  from dead cells, so zones in reduced coordinates stay valid.
+- **df-pn.** At an AND node, while children are looked up, keep `allowed`, the intersection
+  of Z_v ∪ {v} over the proved children seen so far. Children outside `allowed` count as
+  proved (proof number 0).
+  - The mask is recomputed on every visit from the TT, so nothing new is stored for open
+    nodes.
+  - If a proved child's entry is evicted, the only loss is less pruning.
+- **TT cost.** A 64-bit zone on proved entries takes `TTEntry` from 32 to 40 bytes: 640 MB
+  at 2^24 entries, in RAM.
+- **Component cache.** Its entries need the strategy cells as well as the verdict.
+- **SG.** Zones apply to MB only. In SG, cells given to Maker would destroy P2's own winning
+  lines, which the proof may rely on. That is no loss: an MB proof already shows that P1
+  cannot win the strong game.
+
+**Expected gain.**
+- Hsu et al. measured zones as essential with pairing leaves off: 7,457 s with them, over
+  72 h without.
+- With pairing leaves on, the gain is not measured. Our components and `restrict_maker`
+  already skip the safe parts of the board.
+- The larger effect is expected on (8,8,5), where 17.4 h is their figure to beat.
 
 ## 6. Status log
 
@@ -410,6 +679,23 @@ we know nobody has.
     on (5,5,4), (8,4,4), (6,6,5) and (7,6,5).
   - The CPU prover proves (7,7,5) on one thread:
     - MB rules: 2,490 df-pn calls, 36,096 evaluations, about 5.5 s;
-    - SG rules: 2,849 calls, 39,720 evaluations, about 7.7 s. The validation matrix covers (3,3,3) through (8,4,4) under MB
-    and SG, flags 31 and 1023, and DFS and df-pn. It includes the negative tests (4,3,3),
-    (6,5,4) and (6,6,4), and every verdict matches the known values.
+    - SG rules: 2,849 calls, 39,720 evaluations, about 7.7 s.
+  - The validation matrix covers (3,3,3) through (8,4,4) under MB and SG, flags 31 and 1023,
+    and DFS and df-pn. It includes the negative tests (4,3,3), (6,5,4) and (6,6,4), and every
+    verdict matches the known values.
+- **2026-11-19:**
+  - Parallel search was added (Section 2.6).
+  - PDFPN, the tree-parallel df-pn over a shared locked table, is now the default. It proves
+    (7,7,5) in 0.89–0.92 s (MB) and 1.02–1.14 s (SG) on 24 logical processors, against 4.7 s
+    and 5.5 s serial in the same run. Validation: 150 PDFPN runs, all verdicts correct.
+  - The deterministic DFPN mode evaluates children in parallel and reproduces the serial
+    proof exactly, evictions included. It reaches about 2× on (7,7,5).
+  - The Hsu et al. TCS paper and W.-Y. Hsu's thesis were read, both supplied by the user
+    (Section 3.2). Their 2.5 s is single-threaded on a Xeon Gold 6154.
+  - Their cover-search shape was adopted:
+    - pair score 2|E(u)∩E(v)| − |E(u)△E(v)|;
+    - only the best 2 candidate pairs tried per level.
+
+    (7,7,5) MB now takes 1.2 s serial and 0.23–0.24 s with PDFPN on 24 threads. All 50
+    validation verdicts are unchanged.
+  - Breaker relevance zones are designed (Section 5.7) but not implemented.
