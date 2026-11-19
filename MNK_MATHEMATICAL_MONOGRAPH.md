@@ -1,7 +1,7 @@
 # Formalization, Hypergraph Geometry, and the Sharp Phase Transition of $(m, n, k)$ Games Without Gravity
 
 **Authors:** Formal Mathematics & Combinatorial Game Theory Research Initiative  
-**System Verification:** Rocq Prover 9.1 (125 / 125 Theorems Closed) | Lean 4.35.0 (63 / 63 Theorems Verified)  
+**System Verification:** Rocq Prover 9.1 (148 / 148 Theorems Closed) | Lean 4.35.0 (63 / 63 Theorems Verified)  
 **Computational Cross-Check:** 64-bit bitboard negamax engine and bounded-horizon search (`solver/audit_mnk.c`)  
 **Typography Standard:** Classic LaTeX Mathematical Typesetting (Native MathJax / KaTeX)
 
@@ -351,6 +351,45 @@ $$
 
 **Pairing in the middle of the game** (`pairing_no_maker_win`). Let $\pi$ be an involution on the cells, where $\pi(x) = x$ marks an unpaired cell. Suppose Breaker owns $\pi(x)$ for every paired Maker stone $x$, and that every line either carries a Breaker stone or contains a whole pair $\{x, \pi(x)\}$ with $x \ne \pi(x)$. Then Maker cannot win from that position. Breaker answers every Maker move in its partner cell, or anywhere if the partner is unpaired or already taken. A line Maker completes has no Breaker stone, so it contains a whole pair, and Maker would own both of its cells, which Breaker's replies prevent. Lines Breaker has already blocked need no pair, so the rule applies at any position reached in play. It is the pairing leaf of a draw certificate.
 
+**Embeddings** (`maker_wins_simulate`). Let $e$ map the cells of a hypergraph $E$ injectively into the cells of $E'$, so that every edge of $E$ contains the preimage of an edge of $E'$. Then a Maker win for $E$ is a Maker win for $E'$, within the same number of moves. Maker plays the $E$-strategy through $e$ and keeps an imagined $E$-position. It has the same Maker stones, and every real Breaker stone on the image of $e$ is an imagined one. A Breaker reply on the image of a free imagined cell is copied. Any other reply is answered in the imagined game by a Breaker stone on an arbitrary free cell, which only makes that game harder for Maker. When the imagined game is won, the image of the completed edge contains a completed edge of $E'$. Two embeddings apply to boards:
+* $(r, c) \mapsto (r, c)$ maps $G(m', n', k)$ into $G(m, n, k)$ when $m' \le m$ and $n' \le n$ (`mnk_maker_wins_subboard`);
+* $(r, c) \mapsto (c, r)$ maps $G(m, n, k)$ onto $G(n, m, k)$ (`mnk_maker_wins_transpose`). An anti-diagonal is traversed in the opposite order, which is why the hypothesis asks only for containment of cell sets.
+
+With the refinement theorem and `breaker_win_draw`, one Breaker win settles a whole family (`mnk_breaker_win_family`): if Breaker wins $(m, n, k)$, then $(m', n', k')$ is a draw whenever $m' \times n'$ fits inside $m \times n$ (either way round) and $k' \ge k$.
+
+### 8.7 The Hales–Jewett pairing: $k \ge 9$ is always a draw (formal, `MNKHalesJewett.v`)
+$$
+\forall m, n,\; \forall k \ge 9: \quad \mathrm{Value}(m, n, k) = \mathrm{DRAW} \qquad (\texttt{mnk\_hales\_jewett\_draw})
+$$
+
+This is the classical pairing result usually credited to Hales and Jewett (1963). The proof is one pairing of $\mathbb{Z}^2$ with period 8. Dominoes in the four line directions tile the plane. Every row, column, diagonal class ($r - c \bmod 8$) and anti-diagonal class ($r + c \bmod 8$) carries exactly one domino of its own direction per period. The densities add up: four directions, each covering $2/8$ of every line of its direction, tile the plane exactly. A window of 9 consecutive cells of a line contains the domino starting at the unique position $\equiv a \pmod 8$ in its first 8 cells, together with that domino's second cell.
+
+The tile ($\mathrm{H}$: horizontal, $\mathrm{V}$: vertical, $\mathrm{D}$: diagonal, $\mathrm{A}$: anti-diagonal, with the arrow pointing to the partner):
+
+```text
+H< H> V^ V^ V^ V^ V^ V^
+H< H> Vv Vv Vv Vv Vv Vv
+H< H> A^ A^ A^ D^ D^ D^
+Dv Av Av Av H< H> Dv Dv
+V^ V^ D^ A^ H< H> D^ A^
+Vv Vv Av Dv H< H> Av Dv
+H< H> A^ A^ A^ D^ D^ D^
+Dv Av Av Av H< H> Dv Dv
+```
+
+Formalization:
+* `hj_partner m n` pairs the cells of the $m \times n$ board. A cell whose partner falls outside the board is left unpaired; a line of the board never needs it, because the domino found in a line lies inside that line.
+* `hj_tile_consistent` checks by computation over one period that the two ends of every domino point at each other. `hj_partner_invol` and `hj_partner_range` lift this to every board, using $(a \pm j) \bmod 8 = ((a \bmod 8) \pm j) \bmod 8$.
+* `hj_tile_lines` checks by computation that every window of 8 consecutive cells, in each direction and at each of the 64 starting residues, contains the first end of a domino of that direction. `hj_line_has_pair` lifts this to every line of every board with $k \ge 9$. An anti-diagonal is walked from its top-right cell, so its columns decrease.
+* The existing pairing theorem `pairing_draw` then gives the draw. The new mid-game pairing theorem gives the Maker–Breaker version: Breaker wins on every board with $k \ge 9$, whoever moves first (`mnk_hales_jewett_breaker_wins`).
+
+### 8.8 Maker–Breaker wins and the gap with the strong game (formal, `MNKMakerBreakerCert.v`, `MNKMakerWins.v`)
+A Maker–Breaker win certificate (`mbcert`) gives Maker's move at each node, and a sub-certificate for every Breaker reply that leaves Maker no cell completing a line. The checker settles every other reply itself, by finding a line whose only non-Maker cell is a single empty cell (`threat_line_win`). After a Maker threat, only the blocking reply is listed; after a double threat, none is. `check_mb_sound` turns an accepted certificate into `maker_wins`. The certificates come from `solver/mb_win_cert.c`, which picks the strategy with the fewest certificate nodes by an exact memoised search over canonical positions:
+* $(3, 3, 3)$: Maker wins within 4 moves, 17 nodes (`mnk_3_3_3_maker_wins`).
+* $(5, 5, 4)$: Maker wins within 6 moves, 1,945 nodes (`mnk_5_5_4_maker_wins`).
+
+Tic-tac-toe is a draw (`mnk_3_3_3_draw`), so the two games really differ (`mnk_tic_tac_toe_gap`). In the strong game Player 2 survives only by making threats of its own. No Breaker strategy alone can hold tic-tac-toe or $(5, 5, 4)$ (`mnk_5_5_4_no_breaker_win`). The known draw of $(5, 5, 4)$ therefore cannot be proved through `breaker_win_draw`: it needs a certificate checker for the strong game. By the embedding and refinement theorems, Maker wins the Maker–Breaker game on every board with $m, n \ge 3$ and $k \le 3$ (`mnk_maker_wins_k3_family`), and on every board with $m, n \ge 5$ and $k \le 4$ (`mnk_maker_wins_k4_family`).
+
 ---
 
 ## 9. Strict Axiom & Verification Audit
@@ -358,18 +397,22 @@ $$
 ### Rocq Prover 9.1 (`build.ps1`)
 ```text
 === Compiling Generalized (m, n, k) Games Formal Mathematical Proof in Rocq 9.1 ===
-Compiling MNKBoard.v... OK (2.53s)
-Compiling MNKGame.v... OK (0.65s)
-Compiling MNKCertChecker.v... OK (0.47s)
+Compiling MNKBoard.v... OK (2.52s)
+Compiling MNKGame.v... OK (0.71s)
+Compiling MNKCertChecker.v... OK (0.52s)
 Compiling MNKWindow.v... OK (0.87s)
-Compiling MNKPairing.v... OK (0.75s)
-Compiling MNKPhaseTransition.v... OK (28.45s)
-Compiling MNKErdosSelfridge.v... OK (0.66s)
-Compiling MNKStrategyStealing.v... OK (0.55s)
-Compiling MNKMakerBreaker.v... OK (0.56s)
-Compiling CheckAssumptions.v... OK (12.3s)
+Compiling MNKPairing.v... OK (0.79s)
+Compiling MNKPhaseTransition.v... OK (27.89s)
+Compiling MNKErdosSelfridge.v... OK (0.73s)
+Compiling MNKStrategyStealing.v... OK (0.64s)
+Compiling MNKMakerBreaker.v... OK (0.8s)
+Compiling MNKHalesJewett.v... OK (0.94s)
+Compiling MNKMakerBreakerCert.v... OK (0.48s)
+Compiling MNKMakerWinCerts.v... OK (0.7s)
+Compiling MNKMakerWins.v... OK (3.5s)
+Compiling CheckAssumptions.v... OK (15.4s)
 ...
-SUCCESS: 125/125 theorems closed under global context (0 axioms, 0 admits)!
+SUCCESS: 148/148 theorems closed under global context (0 axioms, 0 admits)!
 ```
 `build.ps1` counts the `Print Assumptions` commands in `CheckAssumptions.v`, and fails unless every one of them reports *Closed under the global context*.
 

@@ -3,7 +3,8 @@
 
     Prints the assumptions of every theorem of MNKBoard.v, MNKGame.v,
     MNKCertChecker.v, MNKWindow.v, MNKPairing.v, MNKPhaseTransition.v,
-    MNKErdosSelfridge.v, MNKStrategyStealing.v and MNKMakerBreaker.v.
+    MNKErdosSelfridge.v, MNKStrategyStealing.v, MNKMakerBreaker.v,
+    MNKHalesJewett.v, MNKMakerBreakerCert.v and MNKMakerWins.v.
     build.ps1 fails unless EVERY entry reports
     "Closed under the global context" (zero axioms, zero admissions).
     ************************************************************************** *)
@@ -17,6 +18,9 @@ Require Import MNK.MNKPhaseTransition.
 Require Import MNK.MNKErdosSelfridge.
 Require Import MNK.MNKStrategyStealing.
 Require Import MNK.MNKMakerBreaker.
+Require Import MNK.MNKHalesJewett.
+Require Import MNK.MNKMakerBreakerCert.
+Require Import MNK.MNKMakerWins.
 
 (* MNKBoard.v: geometry, verified line generator, counting *)
 Print Assumptions coord_to_idx_inv.
@@ -160,6 +164,35 @@ Print Assumptions mnk_draw_longer_lines.
 Print Assumptions harmless_after_moves.
 Print Assumptions pairing_no_maker_win.
 Print Assumptions pairing_no_maker_win_empty.
+Print Assumptions maker_wins_simulate.
+Print Assumptions mnk_maker_wins_subboard.
+Print Assumptions mnk_maker_wins_transpose.
+Print Assumptions mnk_breaker_win_subboard.
+Print Assumptions mnk_breaker_win_transpose.
+Print Assumptions mnk_breaker_win_family.
+
+(* MNKHalesJewett.v: every (m, n, k) game with k >= 9 is a draw *)
+Print Assumptions hj_tile_consistent.
+Print Assumptions hj_tile_lines.
+Print Assumptions hj_partner_invol.
+Print Assumptions hj_partner_range.
+Print Assumptions hj_line_has_pair.
+Print Assumptions mnk_hales_jewett_breaker_wins.
+Print Assumptions mnk_hales_jewett_draw.
+
+(* MNKMakerBreakerCert.v: sound checker for Maker-Breaker wins *)
+Print Assumptions threat_line_win.
+Print Assumptions quick_win_sound.
+Print Assumptions check_mb_sound.
+
+(* MNKMakerWins.v: checked Maker wins and the Maker-Breaker / strong-game gap *)
+Print Assumptions mnk_3_3_3_maker_wins.
+Print Assumptions mnk_5_5_4_maker_wins.
+Print Assumptions mnk_tic_tac_toe_gap.
+Print Assumptions mnk_5_5_4_no_breaker_win.
+Print Assumptions maker_win_spreads.
+Print Assumptions mnk_maker_wins_k3_family.
+Print Assumptions mnk_maker_wins_k4_family.
 
 (* Statements of the headline theorems, for the record *)
 Check sharp_phase_transition_3_n_3.
@@ -174,3 +207,9 @@ Check mnk_square_classification.
 Check breaker_win_draw.
 Check mnk_draw_longer_lines.
 Check pairing_no_maker_win.
+Check mnk_breaker_win_family.
+Check mnk_hales_jewett_draw.
+Check mnk_hales_jewett_breaker_wins.
+Check check_mb_sound.
+Check mnk_tic_tac_toe_gap.
+Check mnk_maker_wins_k4_family.

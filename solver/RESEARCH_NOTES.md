@@ -729,3 +729,21 @@ Z. Then every sibling P + u with u ∉ Z ∪ {v} is proved too.
       k' >= k;
     - the pairing strategy at any mid-game position: the pairing leaf rule for a future
       draw-certificate checker.
+  - Further formal results (Rocq, 0 axioms):
+    - **Embeddings** (`maker_wins_simulate`): a Breaker win for (m, n, k) is a Breaker win,
+      and a draw, for every board fitting inside m × n (either way round) with k' >= k.
+      One draw certificate therefore covers a whole family of boards.
+    - **Hales–Jewett** (`MNKHalesJewett.v`): every (m, n, k) game with k >= 9 is a draw, for
+      all m, n. It uses one 8 × 8 periodic domino pairing, found by
+      `solver/hales_jewett_tile.py` and checked by computation over one period.
+    - **Maker–Breaker win certificates** (`MNKMakerBreakerCert.v`, generator
+      `solver/mb_win_cert.c`): (3,3,3) in 17 nodes, (5,5,4) in 1,945 nodes, checked in
+      about 3 s. Replies after which Maker has a winning cell are settled by the checker,
+      so a threat costs one listed reply. Since tic-tac-toe is a draw, Maker–Breaker and the
+      strong game provably differ. The known (5,5,4) draw can never come from a Breaker
+      strategy: it needs a strong-game draw checker.
+    - The generator's plain search (iterative deepening, symmetric table, no Breaker-safe
+      leaves) did not finish (8,4,4). The first run's table passed 9 GB. A second run, with
+      Breaker replies ordered by value and an Erdős–Selfridge prune, was stopped after about
+      6 minutes at 2.3 GB. The df-pn prover proves that win in 0.37 s, so exporting its
+      disproof tree is the way to larger Maker wins.

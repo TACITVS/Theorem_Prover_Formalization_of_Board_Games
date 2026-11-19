@@ -1,7 +1,7 @@
 (** * MNKMakerBreaker.v: From Maker-Breaker Strategies to Game Values
 
-    Three general facts, valid for every board and every family of winning
-    lines, that turn a Breaker strategy into game-theoretic values.
+    General facts, valid for every board and every family of winning lines,
+    that turn a Breaker strategy into game-theoretic values.
 
     1. [breaker_win_draw]: if Maker (= Player 1) cannot win the Maker-Breaker
        game from the empty board, the strong game is a draw.  Player 2 stops
@@ -22,6 +22,14 @@
        Maker cannot win.  Unlike [pairing_no_forced_win] (MNKPairing.v), lines
        Breaker has already blocked need no pair, so the rule applies at any
        position reached in play: it is the pairing leaf of draw certificates.
+
+    4. [maker_wins_simulate]: Maker wins transfer along any injective map of
+       the cells that sends lines onto lines.  The m' x n' board embeds in the
+       m x n board when m' <= m and n' <= n ([mnk_maker_wins_subboard]), and
+       every board embeds in its transpose ([mnk_maker_wins_transpose]).  So a
+       single Breaker win for (m, n, k) makes every (m', n', k') with the
+       board fitting inside m x n, either way round, and k' >= k a draw
+       ([mnk_breaker_win_family]).
 
     Zero axioms, zero admits. *)
 
@@ -262,3 +270,346 @@ Proof.
 Qed.
 
 End MidGamePairing.
+
+(* ========================================================================= *)
+(** * 4. Embeddings: Maker wins transfer to larger boards                   *)
+(* ========================================================================= *)
+
+Lemma player_cases : forall p q, q = p \/ q = other_player p.
+Proof. destruct p, q; auto. Qed.
+
+(** A bounded search, decided without excluded middle. *)
+Lemma bounded_exists_dec : forall (f : nat -> bool) N,
+  (exists x, x < N /\ f x = true) \/ (forall x, x < N -> f x = false).
+Proof.
+  intros f N. induction N as [| N [[x [Hx Hf]] | Hall]].
+  - right. intros x Hx. lia.
+  - left. exists x. split; [lia | exact Hf].
+  - destruct (f N) eqn:E.
+    + left. exists N. split; [lia | exact E].
+    + right. intros x Hx. destruct (Nat.eq_dec x N) as [-> | Hne]; [exact E |].
+      apply Hall. lia.
+Qed.
+
+(** An injective map [e] from the cells of a small board into a big board
+    such that every small line contains the preimage of a big line.  Maker
+    plays the small-board strategy through [e].  A Breaker reply on the image
+    of a free cell is copied into the imagined small game; any other reply is
+    answered there by an imagined Breaker stone on some free cell, which only
+    makes the imagined game harder for Maker. *)
+Section Embedding.
+
+Variables small_lines big_lines : list (list nat).
+Variables Ns Nb : nat.
+Variable e : nat -> nat.
+Hypothesis e_range : forall x, x < Ns -> e x < Nb.
+Hypothesis e_inj : forall x y, x < Ns -> y < Ns -> e x = e y -> x = y.
+Hypothesis small_range : forall L x, In L small_lines -> In x L -> x < Ns.
+Hypothesis lines_embed : forall L, In L small_lines ->
+  exists L', In L' big_lines /\ forall y, In y L' -> exists x, In x L /\ y = e x.
+Variable p : player.
+
+(** The real board [bb] simulates the imagined board [bs]: the same Maker
+    stones on the embedded cells, and every real Breaker stone on an embedded
+    cell is an imagined one (the imagined board may have more). *)
+Definition simulates (bs bb : board_t) : Prop :=
+  length bs = Ns /\ length bb = Nb /\
+  forall x, x < Ns ->
+    (get_cell bs x = Some p <-> get_cell bb (e x) = Some p) /\
+    (get_cell bb (e x) = Some (other_player p) -> get_cell bs x = Some (other_player p)).
+
+Lemma simulates_empty : simulates (empty_board Ns) (empty_board Nb).
+Proof.
+  split; [apply empty_board_length |]. split; [apply empty_board_length |].
+  intros x _. rewrite !get_cell_empty_board. split; [split |]; discriminate.
+Qed.
+
+Lemma simulates_legal : forall bs bb m,
+  simulates bs bb -> is_legal_move bs m = true -> is_legal_move bb (e m) = true.
+Proof.
+  intros bs bb m [Hls [Hlb Hsim]] Hm.
+  pose proof (legal_move_lt bs m Hm) as Hlt. rewrite Hls in Hlt.
+  pose proof (legal_move_empty bs m Hm) as Em.
+  apply legal_move_intro; [rewrite Hlb; apply e_range; exact Hlt |].
+  destruct (get_cell bb (e m)) as [q |] eqn:Eq; [| reflexivity].
+  exfalso. destruct (Hsim m Hlt) as [Hp Ho].
+  destruct (player_cases p q) as [-> | ->].
+  - apply Hp in Eq. congruence.
+  - apply Ho in Eq. congruence.
+Qed.
+
+Lemma simulates_win : forall bs bb,
+  simulates bs bb -> check_win bs p small_lines = true -> check_win bb p big_lines = true.
+Proof.
+  intros bs bb [_ [_ Hsim]] Hw.
+  apply check_win_iff in Hw as [L [HL Hown]].
+  destruct (lines_embed L HL) as [L' [HL' Hsub]].
+  apply check_win_iff. exists L'. split; [exact HL' |].
+  intros y Hy. destruct (Hsub y Hy) as [x [Hx ->]].
+  apply (proj1 (Hsim x (small_range L x HL Hx))). apply Hown. exact Hx.
+Qed.
+
+Lemma simulates_maker_move : forall bs bb m,
+  simulates bs bb -> is_legal_move bs m = true ->
+  simulates (set_cell bs m p) (set_cell bb (e m) p).
+Proof.
+  intros bs bb m Hs Hm.
+  pose proof (simulates_legal bs bb m Hs Hm) as Hbm.
+  destruct Hs as [Hls [Hlb Hsim]].
+  pose proof (legal_move_lt bs m Hm) as Hlt.
+  pose proof (legal_move_lt bb (e m) Hbm) as Hblt.
+  split; [rewrite set_cell_length; exact Hls |].
+  split; [rewrite set_cell_length; exact Hlb |].
+  intros x Hx. destruct (Nat.eq_dec x m) as [-> | Hxm].
+  - rewrite (get_set_cell_same bs m p Hlt), (get_set_cell_same bb (e m) p Hblt).
+    split; [tauto |]. intros H. exfalso. apply (mb_other_neq p). congruence.
+  - assert (Hem : e m <> e x).
+    { intros E. apply Hxm. symmetry. apply e_inj; [rewrite <- Hls; exact Hlt | exact Hx | exact E]. }
+    rewrite (get_set_cell_other bs m x p) by congruence.
+    rewrite (get_set_cell_other bb (e m) (e x) p Hem).
+    apply Hsim. exact Hx.
+Qed.
+
+(** After a real Breaker reply [y], an imagined reply [c] keeps the
+    simulation, provided [c] is the free cell mapped to [y] if there is one. *)
+Lemma simulates_reply : forall bs bb y c,
+  simulates bs bb -> is_legal_move bb y = true -> is_legal_move bs c = true ->
+  (forall x, x < Ns -> e x = y -> get_cell bs x = None -> x = c) ->
+  simulates (set_cell bs c (other_player p)) (set_cell bb y (other_player p)).
+Proof.
+  intros bs bb y c [Hls [Hlb Hsim]] Hy Hc Hcover.
+  pose proof (legal_move_empty bb y Hy) as Ey.
+  pose proof (legal_move_empty bs c Hc) as Ec.
+  pose proof (legal_move_lt bb y Hy) as Hylt.
+  pose proof (legal_move_lt bs c Hc) as Hclt.
+  split; [rewrite set_cell_length; exact Hls |].
+  split; [rewrite set_cell_length; exact Hlb |].
+  intros x Hx. destruct (Hsim x Hx) as [Hp Ho].
+  destruct (Nat.eq_dec x c) as [-> | Hxc].
+  - (* the imagined reply itself *)
+    rewrite (get_set_cell_same bs c (other_player p) Hclt).
+    split; [| reflexivity].
+    split; intros H; exfalso.
+    + apply (mb_other_neq p). congruence.
+    + destruct (Nat.eq_dec y (e c)) as [Hyc | Hyc].
+      * rewrite <- Hyc, (get_set_cell_same bb y (other_player p) Hylt) in H.
+        apply (mb_other_neq p). congruence.
+      * rewrite (get_set_cell_other bb y (e c) _ Hyc) in H.
+        apply Hp in H. congruence.
+  - rewrite (get_set_cell_other bs c x _ (not_eq_sym Hxc)).
+    destruct (Nat.eq_dec y (e x)) as [Hyx | Hyx].
+    + (* the real reply lands on e x: the imagined cell x is Breaker's already *)
+      rewrite <- Hyx, (get_set_cell_same bb y (other_player p) Hylt).
+      assert (Hbx : get_cell bs x = Some (other_player p)).
+      { destruct (get_cell bs x) as [q |] eqn:Eq.
+        - destruct (player_cases p q) as [-> | ->]; [| reflexivity].
+          exfalso. pose proof (proj1 Hp eq_refl) as Hb. rewrite <- Hyx in Hb. congruence.
+        - exfalso. apply Hxc. apply Hcover; [exact Hx | symmetry; exact Hyx | exact Eq]. }
+      rewrite Hbx. split; [| reflexivity].
+      split; intros H; exfalso; apply (mb_other_neq p); congruence.
+    + rewrite (get_set_cell_other bb y (e x) _ Hyx). split; [exact Hp | exact Ho].
+Qed.
+
+Theorem maker_wins_simulate : forall d bs bb,
+  simulates bs bb -> maker_wins small_lines p d bs -> maker_wins big_lines p d bb.
+Proof.
+  intros d bs bb Hs H. revert bb Hs.
+  induction H as [d bs m Hm Hw | d bs m Hm Hex Hnext IH]; intros bb Hs.
+  - apply (mw_now big_lines p d bb (e m)); [exact (simulates_legal bs bb m Hs Hm) |].
+    apply (simulates_win (set_cell bs m p)); [| exact Hw].
+    apply simulates_maker_move; assumption.
+  - pose proof (simulates_maker_move bs bb m Hs Hm) as Hs1.
+    apply (mw_next big_lines p d bb (e m)); [exact (simulates_legal bs bb m Hs Hm) | |].
+    + destruct Hex as [c0 Hc0]. exists (e c0).
+      exact (simulates_legal _ _ c0 Hs1 Hc0).
+    + intros y Hy. destruct Hex as [c0 Hc0].
+      destruct (bounded_exists_dec
+                  (fun x => (e x =? y) && is_legal_move (set_cell bs m p) x) Ns)
+        as [[x0 [Hx0 Hf]] | Hnone].
+      * (* y is the image of a free imagined cell x0: copy the reply *)
+        apply andb_true_iff in Hf as [Hey Hleg]. apply Nat.eqb_eq in Hey.
+        apply (IH x0 Hleg). apply simulates_reply; [exact Hs1 | exact Hy | exact Hleg |].
+        intros x Hx Hxy _. apply e_inj; [exact Hx | exact Hx0 | congruence].
+      * (* otherwise the imagined Breaker plays anywhere *)
+        apply (IH c0 Hc0). apply simulates_reply; [exact Hs1 | exact Hy | exact Hc0 |].
+        intros x Hx Hxy Ex. exfalso.
+        assert (Hlx : is_legal_move (set_cell bs m p) x = true).
+        { apply legal_move_intro; [| exact Ex].
+          destruct Hs1 as [Hl _]. rewrite Hl. exact Hx. }
+        specialize (Hnone x Hx). rewrite Hxy, Nat.eqb_refl, Hlx in Hnone.
+        discriminate.
+Qed.
+
+End Embedding.
+
+(** ** Sub-boards: the m' x n' board sits in the top-left corner of m x n *)
+
+Definition grid_embed (n' n x : nat) : nat := (x / n') * n + x mod n'.
+
+Lemma grid_embed_coords : forall n' n r c, c < n' ->
+  grid_embed n' n (r * n' + c) = r * n + c.
+Proof. intros n' n r c Hc. unfold grid_embed. rewrite idx_div, idx_mod by lia. reflexivity. Qed.
+
+Lemma grid_embed_range : forall m' n' m n x, m' <= m -> n' <= n -> x < m' * n' ->
+  grid_embed n' n x < m * n.
+Proof.
+  intros m' n' m n x Hm Hn Hx. unfold grid_embed.
+  assert (Hn' : n' <> 0) by (intros ->; lia).
+  pose proof (Nat.mod_upper_bound x n' Hn') as Hr.
+  assert (Hq : x / n' < m') by (apply Nat.Div0.div_lt_upper_bound; lia).
+  nia.
+Qed.
+
+Lemma grid_embed_inj : forall m' n' n x y, n' <= n -> x < m' * n' -> y < m' * n' ->
+  grid_embed n' n x = grid_embed n' n y -> x = y.
+Proof.
+  intros m' n' n x y Hn Hx Hy E. unfold grid_embed in E.
+  assert (Hn' : n' <> 0) by (intros ->; lia).
+  pose proof (Nat.mod_upper_bound x n' Hn') as Hrx.
+  pose proof (Nat.mod_upper_bound y n' Hn') as Hry.
+  assert (Hq : x / n' = y / n').
+  { rewrite <- (idx_div n (x / n') (x mod n')) by lia. rewrite E. apply idx_div. lia. }
+  assert (Hr : x mod n' = y mod n').
+  { rewrite <- (idx_mod n (x / n') (x mod n')) by lia. rewrite E. apply idx_mod. lia. }
+  rewrite (Nat.div_mod_eq x n'), (Nat.div_mod_eq y n'), Hq, Hr. reflexivity.
+Qed.
+
+Lemma grid_lines_embed : forall m' n' m n k L, m' <= m -> n' <= n ->
+  In L (gen_lines m' n' k) ->
+  exists L', In L' (gen_lines m n k) /\
+    forall y, In y L' -> exists x, In x L /\ y = grid_embed n' n x.
+Proof.
+  intros m' n' m n k L Hm Hn HL.
+  apply in_gen_lines in HL as (d & r & c & Hfit & ->).
+  exists (mkline n k d r c). split.
+  - apply in_gen_lines. exists d, r, c. split; [| reflexivity]. destruct d; simpl in *; lia.
+  - intros y Hy. apply in_mkline in Hy as [i [Hi ->]].
+    pose proof (cell_at_bounds m' n' k d r c i Hfit Hi) as B.
+    exists (fst (cell_at k d r c i) * n' + snd (cell_at k d r c i)). split.
+    + apply in_mkline. exists i. split; [exact Hi | reflexivity].
+    + rewrite grid_embed_coords by lia. reflexivity.
+Qed.
+
+(** A Maker win on the m' x n' board is a Maker win on every larger board,
+    within the same number of moves. *)
+Theorem mnk_maker_wins_subboard : forall m' n' m n k p d, m' <= m -> n' <= n ->
+  maker_wins (gen_lines m' n' k) p d (empty_board (m' * n')) ->
+  maker_wins (gen_lines m n k) p d (empty_board (m * n)).
+Proof.
+  intros m' n' m n k p d Hm Hn Hw.
+  apply (maker_wins_simulate (gen_lines m' n' k) (gen_lines m n k) (m' * n') (m * n)
+           (grid_embed n' n)) with (bs := empty_board (m' * n')); [| | | | | exact Hw].
+  - intros x Hx. apply (grid_embed_range m'); assumption.
+  - intros x y Hx Hy. apply (grid_embed_inj m' n' n); assumption.
+  - intros L x HL Hx. exact (gen_lines_in_range m' n' k L x HL Hx).
+  - intros L HL. apply (grid_lines_embed m'); assumption.
+  - apply simulates_empty.
+Qed.
+
+(** ** Transposition: rows become columns *)
+
+Definition transpose_cell (m n x : nat) : nat := (x mod n) * m + x / n.
+
+Definition swap_direction (d : direction) : direction :=
+  match d with DH => DV | DV => DH | DD => DD | DA => DA end.
+
+Lemma transpose_coords : forall m n r c, r < m -> c < n ->
+  transpose_cell m n (r * n + c) = c * m + r.
+Proof. intros m n r c Hr Hc. unfold transpose_cell. rewrite idx_div, idx_mod by lia. reflexivity. Qed.
+
+Lemma transpose_range : forall m n x, x < m * n -> transpose_cell m n x < n * m.
+Proof.
+  intros m n x Hx. unfold transpose_cell.
+  assert (Hn : n <> 0) by (intros ->; lia).
+  pose proof (Nat.mod_upper_bound x n Hn) as Hc.
+  assert (Hr : x / n < m) by (apply Nat.Div0.div_lt_upper_bound; lia).
+  nia.
+Qed.
+
+Lemma transpose_inj : forall m n x y, x < m * n -> y < m * n ->
+  transpose_cell m n x = transpose_cell m n y -> x = y.
+Proof.
+  intros m n x y Hx Hy E. unfold transpose_cell in E.
+  assert (Hn : n <> 0) by (intros ->; lia).
+  assert (Hrx : x / n < m) by (apply Nat.Div0.div_lt_upper_bound; lia).
+  assert (Hry : y / n < m) by (apply Nat.Div0.div_lt_upper_bound; lia).
+  assert (Hc : x mod n = y mod n).
+  { rewrite <- (idx_div m (x mod n) (x / n)) by lia. rewrite E. apply idx_div. lia. }
+  assert (Hr : x / n = y / n).
+  { rewrite <- (idx_mod m (x mod n) (x / n)) by lia. rewrite E. apply idx_mod. lia. }
+  rewrite (Nat.div_mod_eq x n), (Nat.div_mod_eq y n), Hc, Hr. reflexivity.
+Qed.
+
+(** The transpose of a line is a line of the transposed board; an
+    anti-diagonal is traversed in the opposite order. *)
+Lemma transpose_lines_embed : forall m n k L, In L (gen_lines m n k) ->
+  exists L', In L' (gen_lines n m k) /\
+    forall y, In y L' -> exists x, In x L /\ y = transpose_cell m n x.
+Proof.
+  intros m n k L HL. apply in_gen_lines in HL as (d & r & c & Hfit & ->).
+  exists (mkline m k (swap_direction d) c r). split.
+  - apply in_gen_lines. exists (swap_direction d), c, r. split; [| reflexivity].
+    destruct d; simpl in *; lia.
+  - intros y Hy. apply in_mkline in Hy as [i [Hi ->]].
+    assert (Hj : exists j, j < k /\
+      fst (cell_at k (swap_direction d) c r i) * m + snd (cell_at k (swap_direction d) c r i) =
+      snd (cell_at k d r c j) * m + fst (cell_at k d r c j)).
+    { destruct d; simpl.
+      - exists i. split; [exact Hi | reflexivity].
+      - exists i. split; [exact Hi | reflexivity].
+      - exists i. split; [exact Hi | reflexivity].
+      - exists (k - 1 - i). split; [lia |].
+        replace (k - 1 - (k - 1 - i)) with i by lia. reflexivity. }
+    destruct Hj as [j [Hj Heq]].
+    pose proof (cell_at_bounds m n k d r c j Hfit Hj) as B.
+    exists (fst (cell_at k d r c j) * n + snd (cell_at k d r c j)). split.
+    + apply in_mkline. exists j. split; [exact Hj | reflexivity].
+    + rewrite transpose_coords by lia. exact Heq.
+Qed.
+
+Theorem mnk_maker_wins_transpose : forall m n k p d,
+  maker_wins (gen_lines m n k) p d (empty_board (m * n)) ->
+  maker_wins (gen_lines n m k) p d (empty_board (n * m)).
+Proof.
+  intros m n k p d Hw.
+  apply (maker_wins_simulate (gen_lines m n k) (gen_lines n m k) (m * n) (n * m)
+           (transpose_cell m n)) with (bs := empty_board (m * n)); [| | | | | exact Hw].
+  - apply transpose_range.
+  - apply transpose_inj.
+  - intros L x HL Hx. exact (gen_lines_in_range m n k L x HL Hx).
+  - apply transpose_lines_embed.
+  - apply simulates_empty.
+Qed.
+
+(** ** Breaker wins and draws for whole families of boards *)
+
+Corollary mnk_breaker_win_subboard : forall m n m' n' k, m' <= m -> n' <= n ->
+  (forall d, ~ maker_wins (gen_lines m n k) P1 d (empty_board (m * n))) ->
+  forall d, ~ maker_wins (gen_lines m' n' k) P1 d (empty_board (m' * n')).
+Proof.
+  intros m n m' n' k Hm Hn Hbreaker d Hw.
+  apply (Hbreaker d). apply (mnk_maker_wins_subboard m' n'); assumption.
+Qed.
+
+Corollary mnk_breaker_win_transpose : forall m n k,
+  (forall d, ~ maker_wins (gen_lines m n k) P1 d (empty_board (m * n))) ->
+  forall d, ~ maker_wins (gen_lines n m k) P1 d (empty_board (n * m)).
+Proof.
+  intros m n k Hbreaker d Hw.
+  apply (Hbreaker d). apply mnk_maker_wins_transpose. exact Hw.
+Qed.
+
+(** One Breaker win settles a whole family: every board that fits inside
+    m x n (either way round), with lines at least as long, is a draw. *)
+Theorem mnk_breaker_win_family : forall m n k m' n' k',
+  ((m' <= m /\ n' <= n) \/ (m' <= n /\ n' <= m)) -> k <= k' ->
+  (forall d, ~ maker_wins (gen_lines m n k) P1 d (empty_board (m * n))) ->
+  game_is_draw (gen_lines m' n' k') (empty_board (m' * n')).
+Proof.
+  intros m n k m' n' k' Hfit Hk Hbreaker.
+  apply (mnk_draw_longer_lines m' n' k k' Hk).
+  destruct Hfit as [[Hm Hn] | [Hm Hn]].
+  - apply (mnk_breaker_win_subboard m n); assumption.
+  - apply (mnk_breaker_win_subboard n m); [exact Hm | exact Hn |].
+    apply mnk_breaker_win_transpose. exact Hbreaker.
+Qed.

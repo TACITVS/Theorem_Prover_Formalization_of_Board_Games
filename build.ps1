@@ -18,6 +18,10 @@ $files = @(
     "MNKErdosSelfridge.v",
     "MNKStrategyStealing.v",
     "MNKMakerBreaker.v",
+    "MNKHalesJewett.v",
+    "MNKMakerBreakerCert.v",
+    "MNKMakerWinCerts.v",
+    "MNKMakerWins.v",
     "CheckAssumptions.v"
 )
 
