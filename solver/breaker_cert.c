@@ -29,12 +29,15 @@
  * Search
  * ------------------------------------------------------------------------------------------
  *
- *   1. Does Breaker hold?  AND over Maker moves, OR over Breaker replies, with a table of
- *      solved positions keyed by the canonical form under the board's symmetries.  When
- *      Maker threatens to complete a line, only the block is tried.
- *   2. The smallest certificate: at every node and for every Maker move, the holding reply
- *      whose sub-certificate has the fewest positions (exact, memoised per canonical
- *      position and bound).
+ *   1. Does Breaker hold?  Depth-first proof-number search (df-pn): AND over Maker moves, OR
+ *      over Breaker replies, with one table entry per node keyed by the canonical form under
+ *      the board's symmetries.  When Maker threatens to complete a line, only the block is
+ *      tried; replies on cells that lie on no open line are never tried (such a reply is a
+ *      pass, never better than another reply).  The table is never pruned, so once the root
+ *      is proved the whole proof is in it.
+ *   2. The smallest certificate: at every node and for every Maker move, the proved reply
+ *      whose sub-certificate has the fewest positions (exact over the proved nodes,
+ *      memoised per canonical position and bound).
  *   3. The certificate is written in real board coordinates.  Leaf rules are recomputed on
  *      the real position, so the canonical table never leaks into the output.
  *
@@ -66,8 +69,8 @@ enum {
     MAX_SYMMETRIES   = 8,
     UNBOUNDED        = 127,            /* the bound of a "draw" job                       */
     TABLE_LOG2       = 20,             /* initial table size; tables double when needed   */
-    TABLE_LOG2_LIMIT = 27,             /* give up beyond 2^27 solved positions (3 GB)     */
-    PAIRING_BUDGET   = 200000,         /* search steps allowed per pairing attempt        */
+    TABLE_LOG2_LIMIT = 27,             /* give up beyond 2^27 search nodes (4 GB)         */
+    PAIRING_BUDGET   = 20000,          /* search steps allowed per pairing attempt        */
 };
 
 static const uint32_t SIZE_INFINITE = UINT32_MAX;
@@ -106,6 +109,7 @@ typedef struct {
     Bitboard line[MAX_LINES];
     int      symmetry_count;
     int      image[MAX_SYMMETRIES][MAX_CELLS];
+    int      preimage[MAX_SYMMETRIES][MAX_CELLS];
 } Board;
 
 static Board board;
@@ -170,6 +174,7 @@ static void board_init(int rows, int cols, int k)
                 default: nr = last_c - c; nc = last_r - r; break;
                 }
                 board.image[t][r * cols + c] = nr * cols + nc;
+                board.preimage[t][nr * cols + nc] = r * cols + c;
             }
         }
     }
@@ -192,16 +197,25 @@ typedef struct {
     Bitboard breaker;
 } Position;
 
-static Position canonical(Position p)
+/* The canonical form of `p` under the board's symmetries, and the symmetry reaching it. */
+static Position canonical_with(Position p, int* symmetry)
 {
     Position best = p;
+    *symmetry = 0;
     for (int t = 1; t < board.symmetry_count; t++) {
         const Position q = { apply_symmetry(t, p.maker), apply_symmetry(t, p.breaker) };
         if (q.maker < best.maker || (q.maker == best.maker && q.breaker < best.breaker)) {
             best = q;
+            *symmetry = t;
         }
     }
     return best;
+}
+
+static Position canonical(Position p)
+{
+    int symmetry;
+    return canonical_with(p, &symmetry);
 }
 
 static inline Bitboard free_cells(Position p)
@@ -225,22 +239,58 @@ static Bitboard winning_cells(Position p)
     return cells;
 }
 
+/*
+ * Maker, to move, has a double threat: a cell on two open lines that both miss exactly two
+ * cells, with different second cells.  Playing it leaves two winning cells, so Maker wins
+ * within two moves.
+ */
+static bool has_double_threat(Position p)
+{
+    Bitboard seen = 0;              /* cells on some open line missing two cells         */
+    Bitboard partner[MAX_CELLS];    /* for c in seen: the other missing cell of one line */
+    for (int i = 0; i < board.line_count; i++) {
+        const Bitboard line = board.line[i];
+        if ((line & p.breaker) != 0) {
+            continue;
+        }
+        const Bitboard missing = line & ~p.maker;
+        if (popcount(missing) != 2) {
+            continue;
+        }
+        for (Bitboard f = missing; f; f &= f - 1) {
+            const int c = lowest_cell(f);
+            const Bitboard other = missing & ~cell_bit(c);
+            if (seen & cell_bit(c)) {
+                if (partner[c] != other) {
+                    return true;
+                }
+            } else {
+                seen |= cell_bit(c);
+                partner[c] = other;
+            }
+        }
+    }
+    return false;
+}
+
 typedef struct {
     int count;
     int cell[MAX_CELLS];
 } MoveList;
 
 /*
- * The cells of `candidates`, most valuable to Maker first: a cell scores the sum over the open
- * lines through it of 8^(Maker stones on the line).  Ties keep cell order.
+ * The cells of `candidates`, most valuable first: a cell scores the sum over the open lines
+ * through it of base^(Maker stones on the line), with base = 2^shift.  shift = 1 gives the
+ * Erdos-Selfridge weights (Breaker's greedy reply comes first); shift = 3 stresses the lines
+ * nearest completion (Maker's likeliest refutations).  Ties keep cell order.
  */
-static void order_cells(Position p, Bitboard candidates, MoveList* moves)
+static void order_cells(Position p, Bitboard candidates, int shift, MoveList* moves)
 {
     int score[MAX_CELLS] = { 0 };
     for (int i = 0; i < board.line_count; i++) {
         const Bitboard line = board.line[i];
         if ((line & p.breaker) == 0) {
-            const int weight = 1 << (3 * popcount(line & p.maker));
+            const int weight = 1 << (shift * popcount(line & p.maker));
             Bitboard open = line & ~p.maker;
             while (open) {
                 const int cell = lowest_cell(open);
@@ -322,72 +372,240 @@ static bool es_leaf(Position p)
     return true;
 }
 
-static bool line_has_pair(Bitboard line, const Pairing* pairing)
+static void pairing_push(Pairing* pairing, int x, int y)
 {
-    for (int i = 0; i < pairing->count; i++) {
-        if ((line & pairing->cells[i]) == pairing->cells[i]) {
+    const int slot = pairing->count++;
+    pairing->first[slot] = x;
+    pairing->second[slot] = y;
+    pairing->cells[slot] = cell_bit(x) | cell_bit(y);
+}
+
+/*
+ * 2-matching (Kuhn's augmenting paths): every line gets two private cells, and those two cells
+ * form its pair.  Slots 2i and 2i+1 belong to line i; owner[c] is valid for c in `owned`.
+ */
+typedef struct {
+    const Bitboard* lines;
+    int             owner[MAX_CELLS];
+    Bitboard        owned;
+    Bitboard        visited;
+} Matching;
+
+static bool matching_augment(Matching* m, int slot)
+{
+    const Bitboard line = m->lines[slot / 2];
+    const Bitboard unowned = line & ~m->owned;
+    if (unowned) {
+        const int c = lowest_cell(unowned);
+        m->owner[c] = slot;
+        m->owned |= cell_bit(c);
+        return true;
+    }
+    for (Bitboard candidates = line; candidates; candidates &= candidates - 1) {
+        const int c = lowest_cell(candidates);
+        if (m->visited & cell_bit(c)) {
+            continue;
+        }
+        m->visited |= cell_bit(c);
+        if (matching_augment(m, m->owner[c])) {
+            m->owner[c] = slot;
             return true;
         }
     }
     return false;
 }
 
-/* Backtracking: cover the open line with the fewest available cells first. */
-static bool extend_pairing(const Bitboard* lines, int count, Bitboard available,
-                           Pairing* pairing, long* budget)
+static bool two_matching(const Bitboard* lines, int count, Pairing* pairing)
 {
+    Bitboard cells = 0;
+    for (int i = 0; i < count; i++) {
+        cells |= lines[i];
+    }
+    if (2 * count > popcount(cells)) {
+        return false;
+    }
+    Matching m;
+    m.lines = lines;
+    m.owned = 0;
+    for (int slot = 0; slot < 2 * count; slot++) {
+        m.visited = 0;
+        if (!matching_augment(&m, slot)) {
+            return false;
+        }
+    }
+    if (pairing != NULL) {
+        int first[MAX_LINES];
+        for (Bitboard f = m.owned; f; f &= f - 1) {
+            const int c = lowest_cell(f);
+            if (m.owner[c] % 2 == 0) {
+                first[m.owner[c] / 2] = c;
+            }
+        }
+        pairing->count = 0;
+        for (Bitboard f = m.owned; f; f &= f - 1) {
+            const int c = lowest_cell(f);
+            if (m.owner[c] % 2 == 1) {
+                pairing_push(pairing, first[m.owner[c] / 2], c);
+            }
+        }
+    }
+    return true;
+}
+
+/*
+ * Necessary condition for a cover: open lines sharing at most one cell pairwise need distinct,
+ * hence disjoint, pairs, so such a family (chosen greedily, shortest lines first) must have a
+ * 2-matching.
+ */
+static bool cover_may_exist(const Bitboard* open, int count)
+{
+    Bitboard family[MAX_LINES];
+    int m = 0;
+    for (int size = 2; size <= board.k; size++) {
+        for (int i = 0; i < count; i++) {
+            if (popcount(open[i]) != size) {
+                continue;
+            }
+            bool independent = true;
+            for (int j = 0; j < m && independent; j++) {
+                const Bitboard shared = open[i] & family[j];
+                independent = (shared & (shared - 1)) == 0;
+            }
+            if (independent) {
+                family[m++] = open[i];
+            }
+        }
+    }
+    return two_matching(family, m, NULL);
+}
+
+enum { COVER_BRANCH_LIMIT = 2, MAX_LINE_PAIRS = 64 };
+
+/*
+ * Exact shared-pair cover by backtracking, after the prover (Hsu et al.'s pair score
+ * 4c - deg(u) - deg(v), two candidates per level).  `open` holds the lines still lacking a
+ * pair, each reduced to its unused free cells.
+ */
+static bool cover_recurse(const Bitboard* open, int count, Pairing* pairing, long* budget)
+{
+    if (count == 0) {
+        return true;
+    }
     if (--*budget < 0) {
         return false;
     }
-    int best = -1;
-    int best_free = MAX_CELLS + 1;
     for (int i = 0; i < count; i++) {
-        if (line_has_pair(lines[i], pairing)) {
-            continue;
-        }
-        const int f = popcount(lines[i] & available);
-        if (f < 2) {
+        if (popcount(open[i]) < 2) {
             return false;
         }
-        if (f < best_free) {
-            best_free = f;
+    }
+    if (!cover_may_exist(open, count)) {
+        return false;
+    }
+
+    int best = 0;
+    for (int i = 1; i < count; i++) {
+        if (popcount(open[i]) < popcount(open[best])) {
             best = i;
         }
     }
-    if (best < 0) {
-        return true;
+    int degree[MAX_CELLS];
+    for (Bitboard a = open[best]; a; a &= a - 1) {
+        const int u = lowest_cell(a);
+        degree[u] = 0;
+        for (int i = 0; i < count; i++) {
+            degree[u] += (int)((open[i] >> u) & 1);
+        }
     }
-    const Bitboard cells = lines[best] & available;
-    for (Bitboard xs = cells; xs; xs &= xs - 1) {
-        const int x = lowest_cell(xs);
-        for (Bitboard ys = xs & (xs - 1); ys; ys &= ys - 1) {
-            const int y = lowest_cell(ys);
-            const int slot = pairing->count++;
-            pairing->first[slot] = x;
-            pairing->second[slot] = y;
-            pairing->cells[slot] = cell_bit(x) | cell_bit(y);
-            if (extend_pairing(lines, count, available & ~pairing->cells[slot], pairing, budget)) {
-                return true;
+
+    int cand_u[MAX_LINE_PAIRS];
+    int cand_v[MAX_LINE_PAIRS];
+    int cand_score[MAX_LINE_PAIRS];
+    int cand_count = 0;
+    for (Bitboard a = open[best]; a; a &= a - 1) {
+        const int u = lowest_cell(a);
+        for (Bitboard b = a & (a - 1); b; b &= b - 1) {
+            const int v = lowest_cell(b);
+            if (cand_count == MAX_LINE_PAIRS) {
+                break;
             }
-            pairing->count--;
+            const Bitboard pair = cell_bit(u) | cell_bit(v);
+            int covered = 0;
+            for (int i = 0; i < count; i++) {
+                covered += (open[i] & pair) == pair;
+            }
+            const int score = 4 * covered - degree[u] - degree[v];
+            int j = cand_count++;
+            while (j > 0 && cand_score[j - 1] < score) {
+                cand_u[j] = cand_u[j - 1];
+                cand_v[j] = cand_v[j - 1];
+                cand_score[j] = cand_score[j - 1];
+                j--;
+            }
+            cand_u[j] = u;
+            cand_v[j] = v;
+            cand_score[j] = score;
+        }
+    }
+
+    const int tries = cand_count < COVER_BRANCH_LIMIT ? cand_count : COVER_BRANCH_LIMIT;
+    for (int q = 0; q < tries; q++) {
+        const Bitboard pair = cell_bit(cand_u[q]) | cell_bit(cand_v[q]);
+        Bitboard child[MAX_LINES];
+        int child_count = 0;
+        for (int i = 0; i < count; i++) {
+            if ((open[i] & pair) != pair) {
+                child[child_count++] = open[i] & ~pair;
+            }
+        }
+        pairing_push(pairing, cand_u[q], cand_v[q]);
+        if (cover_recurse(child, child_count, pairing, budget)) {
+            return true;
+        }
+        pairing->count--;
+        if (*budget < 0) {
+            return false;
         }
     }
     return false;
 }
 
 /* Disjoint pairs of free cells such that every open line contains a whole pair. */
-static bool pairing_leaf(Position p, Pairing* pairing)
+static bool pairing_search(Position p, Pairing* pairing)
 {
     Bitboard open[MAX_LINES];
     int count = 0;
+    const Bitboard free = free_cells(p);
     for (int i = 0; i < board.line_count; i++) {
         if ((board.line[i] & p.breaker) == 0) {
-            open[count++] = board.line[i];
+            open[count++] = board.line[i] & free;
         }
+    }
+    if (two_matching(open, count, pairing)) {
+        return true;
     }
     pairing->count = 0;
     long budget = PAIRING_BUDGET;
-    return extend_pairing(open, count, free_cells(p), pairing, &budget);
+    return cover_recurse(open, count, pairing, &budget);
+}
+
+/*
+ * The pairing search runs on the canonical form and its pairs are mapped back, so symmetric
+ * positions (which share one table entry) always get the same answer.
+ */
+static bool pairing_leaf(Position p, Pairing* pairing)
+{
+    int symmetry;
+    const Position q = canonical_with(p, &symmetry);
+    if (!pairing_search(q, pairing)) {
+        return false;
+    }
+    for (int i = 0; i < pairing->count; i++) {
+        pairing->first[i] = board.preimage[symmetry][pairing->first[i]];
+        pairing->second[i] = board.preimage[symmetry][pairing->second[i]];
+        pairing->cells[i] = cell_bit(pairing->first[i]) | cell_bit(pairing->second[i]);
+    }
+    return true;
 }
 
 /* The cheapest leaf rule that settles `p` (cheapest to check in Rocq first). */
@@ -413,13 +631,24 @@ static LeafKind classify(Position p, int bound, Pairing* pairing)
  * invalidated by the next insertion, so callers look an entry up again after any recursion.
  * ========================================================================================= */
 
+typedef enum {
+    TURN_NONE    = 0,                   /* marks an empty table slot                         */
+    TURN_MAKER   = 1,                   /* Maker to move: an AND node                        */
+    TURN_BREAKER = 2,                   /* Breaker to reply: an OR node                      */
+} Turn;
+
+typedef struct {
+    uint32_t proof;                     /* cost estimate of proving that Breaker holds       */
+    uint32_t disproof;                  /* cost estimate of proving that Maker gets through */
+} Numbers;
+
 typedef struct {
     Bitboard maker;
     Bitboard breaker;
-    int8_t   hold_bound;                /* largest bound known to hold; 0 = none known       */
-    int8_t   fail_bound;                /* smallest bound known to fail; 0 = none known      */
-    bool     used;
-} SolvedEntry;
+    Numbers  value;
+    int8_t   bound;                     /* Maker moves left                                  */
+    uint8_t  turn;                      /* a Turn                                            */
+} NodeEntry;
 
 typedef struct {
     Bitboard maker;
@@ -430,10 +659,10 @@ typedef struct {
 } SizeEntry;
 
 typedef struct {
-    SolvedEntry* slot;
-    size_t       mask;
-    size_t       used;
-} SolvedTable;
+    NodeEntry* slot;
+    size_t     mask;
+    size_t     used;
+} NodeTable;
 
 typedef struct {
     SizeEntry* slot;
@@ -441,9 +670,9 @@ typedef struct {
     size_t     used;
 } SizeTable;
 
-static SolvedTable solved;
-static SizeTable   sizes;
-static uint64_t    search_nodes;
+static NodeTable nodes;
+static SizeTable sizes;
+static uint64_t  search_calls;
 
 static inline size_t hash_key(Position key, int bound)
 {
@@ -463,76 +692,89 @@ static void* allocate_slots(size_t count, size_t size)
     return slots;
 }
 
-static void solved_reset(void)
+static void nodes_reset(void)
 {
-    free(solved.slot);
-    solved.mask = ((size_t)1 << TABLE_LOG2) - 1;
-    solved.slot = allocate_slots(solved.mask + 1, sizeof *solved.slot);
-    solved.used = 0;
+    free(nodes.slot);
+    nodes.mask = ((size_t)1 << TABLE_LOG2) - 1;
+    nodes.slot = allocate_slots(nodes.mask + 1, sizeof *nodes.slot);
+    nodes.used = 0;
+}
+
+static void size_table_init(SizeTable* table)
+{
+    table->mask = ((size_t)1 << TABLE_LOG2) - 1;
+    table->slot = allocate_slots(table->mask + 1, sizeof *table->slot);
+    table->used = 0;
 }
 
 static void sizes_reset(void)
 {
     free(sizes.slot);
-    sizes.mask = ((size_t)1 << TABLE_LOG2) - 1;
-    sizes.slot = allocate_slots(sizes.mask + 1, sizeof *sizes.slot);
-    sizes.used = 0;
+    size_table_init(&sizes);
 }
 
-static SolvedEntry* solved_find(Position key)
+static inline size_t node_hash(Position key, int bound, Turn turn)
 {
-    size_t index = hash_key(key, 0) & solved.mask;
-    while (solved.slot[index].used) {
-        if (solved.slot[index].maker == key.maker && solved.slot[index].breaker == key.breaker) {
-            return &solved.slot[index];
+    return hash_key(key, 2 * bound + (int)turn);
+}
+
+static NodeEntry* nodes_find(Position key, int bound, Turn turn)
+{
+    size_t index = node_hash(key, bound, turn) & nodes.mask;
+    while (nodes.slot[index].turn != TURN_NONE) {
+        NodeEntry* entry = &nodes.slot[index];
+        if (entry->maker == key.maker && entry->breaker == key.breaker && entry->bound == bound
+            && entry->turn == (uint8_t)turn) {
+            return entry;
         }
-        index = (index + 1) & solved.mask;
+        index = (index + 1) & nodes.mask;
     }
     return NULL;
 }
 
-static void solved_grow(void)
+static void nodes_grow(void)
 {
-    if (solved.mask + 1 >= ((size_t)1 << TABLE_LOG2_LIMIT)) {
-        fprintf(stderr, "solved table reached 2^%d entries: giving up\n", TABLE_LOG2_LIMIT);
+    if (nodes.mask + 1 >= ((size_t)1 << TABLE_LOG2_LIMIT)) {
+        fprintf(stderr, "node table reached 2^%d entries: giving up\n", TABLE_LOG2_LIMIT);
         exit(1);
     }
-    const SolvedTable old = solved;
-    solved.mask = 2 * old.mask + 1;
-    solved.slot = allocate_slots(solved.mask + 1, sizeof *solved.slot);
+    const NodeTable old = nodes;
+    nodes.mask = 2 * old.mask + 1;
+    nodes.slot = allocate_slots(nodes.mask + 1, sizeof *nodes.slot);
     for (size_t i = 0; i <= old.mask; i++) {
-        if (old.slot[i].used) {
-            const Position key = { old.slot[i].maker, old.slot[i].breaker };
-            size_t index = hash_key(key, 0) & solved.mask;
-            while (solved.slot[index].used) {
-                index = (index + 1) & solved.mask;
+        const NodeEntry* entry = &old.slot[i];
+        if (entry->turn != TURN_NONE) {
+            const Position key = { entry->maker, entry->breaker };
+            size_t index = node_hash(key, entry->bound, (Turn)entry->turn) & nodes.mask;
+            while (nodes.slot[index].turn != TURN_NONE) {
+                index = (index + 1) & nodes.mask;
             }
-            solved.slot[index] = old.slot[i];
+            nodes.slot[index] = *entry;
         }
     }
     free(old.slot);
 }
 
-/* The entry of `key`, created if absent.  Valid until the next insertion. */
-static SolvedEntry* solved_insert(Position key)
+/* Stores the numbers of a node, creating its entry if absent. */
+static void nodes_store(Position key, int bound, Turn turn, Numbers value)
 {
-    SolvedEntry* entry = solved_find(key);
-    if (entry != NULL) {
-        return entry;
+    NodeEntry* entry = nodes_find(key, bound, turn);
+    if (entry == NULL) {
+        if ((nodes.used + 1) * 4 > (nodes.mask + 1) * 3) {
+            nodes_grow();
+        }
+        size_t index = node_hash(key, bound, turn) & nodes.mask;
+        while (nodes.slot[index].turn != TURN_NONE) {
+            index = (index + 1) & nodes.mask;
+        }
+        nodes.used++;
+        entry = &nodes.slot[index];
+        entry->maker = key.maker;
+        entry->breaker = key.breaker;
+        entry->bound = (int8_t)bound;
+        entry->turn = (uint8_t)turn;
     }
-    if ((solved.used + 1) * 4 > (solved.mask + 1) * 3) {
-        solved_grow();
-    }
-    size_t index = hash_key(key, 0) & solved.mask;
-    while (solved.slot[index].used) {
-        index = (index + 1) & solved.mask;
-    }
-    solved.used++;
-    entry = &solved.slot[index];
-    entry->used = true;
-    entry->maker = key.maker;
-    entry->breaker = key.breaker;
-    return entry;
+    entry->value = value;
 }
 
 static const SizeEntry* sizes_find(Position key, int bound)
@@ -548,19 +790,19 @@ static const SizeEntry* sizes_find(Position key, int bound)
     return NULL;
 }
 
-static void sizes_grow(void)
+static void size_table_grow(SizeTable* table)
 {
-    const SizeTable old = sizes;
-    sizes.mask = 2 * old.mask + 1;
-    sizes.slot = allocate_slots(sizes.mask + 1, sizeof *sizes.slot);
+    const SizeTable old = *table;
+    table->mask = 2 * old.mask + 1;
+    table->slot = allocate_slots(table->mask + 1, sizeof *table->slot);
     for (size_t i = 0; i <= old.mask; i++) {
         if (old.slot[i].used) {
             const Position key = { old.slot[i].maker, old.slot[i].breaker };
-            size_t index = hash_key(key, old.slot[i].bound) & sizes.mask;
-            while (sizes.slot[index].used) {
-                index = (index + 1) & sizes.mask;
+            size_t index = hash_key(key, old.slot[i].bound) & table->mask;
+            while (table->slot[index].used) {
+                index = (index + 1) & table->mask;
             }
-            sizes.slot[index] = old.slot[i];
+            table->slot[index] = old.slot[i];
         }
     }
     free(old.slot);
@@ -569,7 +811,7 @@ static void sizes_grow(void)
 static void sizes_store(Position key, int bound, uint32_t size)
 {
     if ((sizes.used + 1) * 4 > (sizes.mask + 1) * 3) {
-        sizes_grow();
+        size_table_grow(&sizes);
     }
     size_t index = hash_key(key, bound) & sizes.mask;
     while (sizes.slot[index].used) {
@@ -585,12 +827,42 @@ static void sizes_store(Position key, int bound, uint32_t size)
 }
 
 /* =========================================================================================
- * Phase 1: does Breaker hold Maker for `bound` more moves?
+ * Phase 1: does Breaker hold Maker for `bound` more moves?  (df-pn)
+ *
+ * "Proved" means that Breaker holds.  A Maker node (Maker to move, `bound` Maker moves left)
+ * is an AND node over Maker's moves; a Breaker node (Maker has just moved, `bound` Maker moves
+ * left after that move) is an OR node over Breaker's replies.  A node is evaluated once, when
+ * first met, and its numbers are kept in the node table, which is never pruned.
  * ========================================================================================= */
 
+#define PN_INFINITY 0x3FFFFFFFu
+
+static const Numbers PN_PROVED    = { 0, PN_INFINITY };
+static const Numbers PN_DISPROVED = { PN_INFINITY, 0 };
+
+/* Sum of two numbers, each at most PN_INFINITY; an unsolved sum stays below PN_INFINITY. */
+static inline uint32_t pn_add(uint32_t a, uint32_t b)
+{
+    const uint32_t sum = a + b;
+    return sum >= PN_INFINITY ? PN_INFINITY - 1 : sum;
+}
+
+/* Free cells on open lines (lines without a Breaker stone). */
+static Bitboard live_cells(Position p)
+{
+    Bitboard live = 0;
+    for (int i = 0; i < board.line_count; i++) {
+        if ((board.line[i] & p.breaker) == 0) {
+            live |= board.line[i];
+        }
+    }
+    return live & free_cells(p);
+}
+
 /*
- * Breaker's candidate replies after Maker's move, best first.  When Maker still has a move and
- * threatens to complete a line, only the block can hold; against two threats nothing can.
+ * Breaker's candidate replies after Maker's move, best (Erdos-Selfridge greedy) first.  When
+ * Maker still has a move and threatens to complete a line, only the block can hold; against
+ * two threats nothing can.  A cell on no open line is tried only when no other cell is free.
  */
 static void breaker_replies(Position after, int bound, MoveList* replies)
 {
@@ -604,75 +876,184 @@ static void breaker_replies(Position after, int bound, MoveList* replies)
         replies->cell[0] = lowest_cell(threats);
         return;
     }
-    order_cells(after, free_cells(after), replies);
+    const Bitboard live = live_cells(after);
+    if (live != 0) {
+        order_cells(after, live, 1, replies);
+    } else if (free_cells(after) != 0) {
+        replies->count = 1;
+        replies->cell[0] = lowest_cell(free_cells(after));
+    }
 }
 
-static bool holds(Position p, int bound);
-
-/* Does Breaker have a reply to Maker's move `move` that holds for the remaining moves? */
-static bool move_held(Position p, int move, int bound)
+/* The moves of a node, best first: Maker's moves, or Breaker's replies. */
+static void node_moves(Position p, Turn turn, int bound, MoveList* moves)
 {
-    const Position after = { p.maker | cell_bit(move), p.breaker };
-    if (free_cells(after) == 0) {
-        return true;                       /* the board is full without a Maker line      */
+    if (turn == TURN_MAKER) {
+        order_cells(p, free_cells(p), 3, moves);
+    } else {
+        breaker_replies(p, bound, moves);
     }
-    const int rest = next_bound(bound);
-    MoveList replies;
-    breaker_replies(after, rest, &replies);
-    for (int i = 0; i < replies.count; i++) {
-        const Position next = { after.maker, after.breaker | cell_bit(replies.cell[i]) };
-        if (holds(next, rest)) {
-            return true;
+}
+
+static inline Position child_of(Position p, Turn turn, int cell)
+{
+    if (turn == TURN_MAKER) {
+        return (Position){ p.maker | cell_bit(cell), p.breaker };
+    }
+    return (Position){ p.maker, p.breaker | cell_bit(cell) };
+}
+
+/*
+ * Static evaluation, with mobility initialisation for open nodes.  A Maker node is proved
+ * exactly when `bound` is 0 or a leaf rule applies (so the printed leaf always exists).
+ */
+static Numbers evaluate_node(Position p, Turn turn, int bound)
+{
+    MoveList moves;
+    if (turn == TURN_MAKER) {
+        if (bound == 0) {
+            return PN_PROVED;
         }
+        if (winning_cells(p) != 0 || (bound >= 2 && has_double_threat(p))) {
+            return PN_DISPROVED;
+        }
+        if (classify(p, bound, NULL) != LEAF_NONE) {
+            return PN_PROVED;
+        }
+        node_moves(p, turn, bound, &moves);
+        return (Numbers){ (uint32_t)moves.count, 1 };
     }
-    return false;
+    if (bound == 0 || free_cells(p) == 0) {
+        return PN_PROVED;                      /* Maker has no move left, or the board is full */
+    }
+    node_moves(p, turn, bound, &moves);
+    if (moves.count == 0) {
+        return PN_DISPROVED;                   /* two threats */
+    }
+    return (Numbers){ 1, (uint32_t)moves.count };
 }
 
-static bool holds(Position p, int bound)
+/* The numbers of a node, evaluating and storing it when it is not in the table. */
+static Numbers node_value(Position p, Turn turn, int bound)
 {
-    if (bound == 0) {
-        return true;
-    }
-    if (winning_cells(p)) {
-        return false;
-    }
-    if (bound != UNBOUNDED && short_leaf(p, bound)) {
-        return true;
-    }
-    if (es_leaf(p)) {
-        return true;
-    }
     const Position key = canonical(p);
-    const SolvedEntry* known = solved_find(key);
-    if (known != NULL) {
-        if (known->hold_bound >= bound) {
-            return true;
-        }
-        if (known->fail_bound != 0 && known->fail_bound <= bound) {
-            return false;
-        }
+    const NodeEntry* entry = nodes_find(key, bound, turn);
+    if (entry != NULL) {
+        return entry->value;
     }
-    Pairing pairing;
-    bool result = pairing_leaf(p, &pairing);
-    if (!result) {
-        search_nodes++;
-        MoveList moves;
-        order_cells(p, free_cells(p), &moves);
-        result = true;
-        for (int i = 0; i < moves.count && result; i++) {
-            result = move_held(p, moves.cell[i], bound);
-        }
+    const Numbers value = evaluate_node(p, turn, bound);
+    nodes_store(key, bound, turn, value);
+    return value;
+}
+
+static inline bool pn_solved(Numbers value)
+{
+    return value.proof == 0 || value.disproof == 0;
+}
+
+/* A child's threshold for the summed number: the parent's slack, plus the child's share. */
+static inline uint32_t sum_threshold_of(uint32_t threshold, uint32_t sum, uint32_t child)
+{
+    return threshold >= PN_INFINITY ? PN_INFINITY : threshold - sum + child;
+}
+
+/*
+ * Nagai's MID: search below `p` until its proof number reaches `proof_threshold` or its
+ * disproof number reaches `disproof_threshold` (in particular, until it is solved).
+ */
+static void dfpn(Position p, Turn turn, int bound, uint32_t proof_threshold,
+                 uint32_t disproof_threshold)
+{
+    search_calls++;
+    if ((search_calls & ((1u << 22) - 1)) == 0) {
+        fprintf(stderr, "  [df-pn] %" PRIu64 " calls, %zu nodes\n", search_calls, nodes.used);
+    }
+    const Numbers start = node_value(p, turn, bound);
+    if (pn_solved(start) || start.proof >= proof_threshold || start.disproof >= disproof_threshold) {
+        return;
     }
 
-    SolvedEntry* entry = solved_insert(key);      /* looked up again: the table may have grown */
-    if (result) {
-        if (bound > entry->hold_bound) {
-            entry->hold_bound = (int8_t)bound;
-        }
-    } else if (entry->fail_bound == 0 || bound < entry->fail_bound) {
-        entry->fail_bound = (int8_t)bound;
+    MoveList moves;
+    node_moves(p, turn, bound, &moves);
+    const bool     and_node = turn == TURN_MAKER;
+    const Turn     child_turn = and_node ? TURN_BREAKER : TURN_MAKER;
+    const int      child_bound = and_node ? next_bound(bound) : bound;
+    const Position key = canonical(p);
+    Position       child[MAX_CELLS];
+    for (int i = 0; i < moves.count; i++) {
+        child[i] = child_of(p, turn, moves.cell[i]);
     }
-    return result;
+
+    for (;;) {
+        /* AND node: proof = sum of the children's proofs, disproof = their least disproof.
+           OR node: the other way round.  `min` and `sum` name those two roles. */
+        uint32_t min = PN_INFINITY;
+        uint32_t second = PN_INFINITY;
+        uint32_t sum = 0;
+        int      best = -1;
+        Numbers  best_value = PN_PROVED;
+        for (int i = 0; i < moves.count; i++) {
+            const Numbers c = node_value(child[i], child_turn, child_bound);
+            const uint32_t c_min = and_node ? c.disproof : c.proof;
+            const uint32_t c_sum = and_node ? c.proof : c.disproof;
+            sum = pn_add(sum, c_sum);
+            if (c_min < min) {
+                second = min;
+                min = c_min;
+                best = i;
+                best_value = c;
+            } else if (c_min < second) {
+                second = c_min;
+            }
+            if (c_min == 0) {
+                break;                         /* this child decides the node */
+            }
+        }
+
+        Numbers value;
+        if (min == 0) {
+            value = and_node ? PN_DISPROVED : PN_PROVED;
+        } else if (sum == 0) {
+            value = and_node ? PN_PROVED : PN_DISPROVED;
+        } else if (and_node) {
+            value = (Numbers){ sum, min };
+        } else {
+            value = (Numbers){ min, sum };
+        }
+        nodes_store(key, bound, turn, value);
+        if (pn_solved(value) || value.proof >= proof_threshold
+            || value.disproof >= disproof_threshold) {
+            return;
+        }
+
+        const uint32_t min_threshold = and_node ? disproof_threshold : proof_threshold;
+        const uint32_t sum_threshold = and_node ? proof_threshold : disproof_threshold;
+        const uint32_t child_min_threshold = min_threshold < second + 1 ? min_threshold : second + 1;
+        const uint32_t child_sum_threshold =
+            sum_threshold_of(sum_threshold, sum, and_node ? best_value.proof : best_value.disproof);
+        if (and_node) {
+            dfpn(child[best], child_turn, child_bound, child_sum_threshold, child_min_threshold);
+        } else {
+            dfpn(child[best], child_turn, child_bound, child_min_threshold, child_sum_threshold);
+        }
+    }
+}
+
+/* Proves or disproves that Breaker holds Maker for `bound` moves from `root`. */
+static bool breaker_holds(Position root, int bound)
+{
+    for (;;) {
+        dfpn(root, TURN_MAKER, bound, PN_INFINITY, PN_INFINITY);
+        const Numbers value = node_value(root, TURN_MAKER, bound);
+        if (pn_solved(value)) {
+            return value.proof == 0;
+        }
+    }
+}
+
+static inline bool node_proved(Position p, Turn turn, int bound)
+{
+    return node_value(p, turn, bound).proof == 0;
 }
 
 /* =========================================================================================
@@ -686,7 +1067,10 @@ static uint32_t saturating_add(uint32_t a, uint32_t b)
 
 static uint32_t certificate_size(Position p, int bound);
 
-/* Fewest positions below Maker's move `move`, over the holding replies; also the reply. */
+/*
+ * Fewest positions below Maker's move `move`, over the replies proved in phase 1 (or proved
+ * by a leaf rule now); also the reply.
+ */
 static uint32_t move_size(Position p, int move, int bound, int* best_reply)
 {
     const Position after = { p.maker | cell_bit(move), p.breaker };
@@ -697,7 +1081,7 @@ static uint32_t move_size(Position p, int move, int bound, int* best_reply)
     *best_reply = -1;
     for (int i = 0; i < replies.count && best > 1; i++) {
         const Position next = { after.maker, after.breaker | cell_bit(replies.cell[i]) };
-        if (holds(next, rest)) {
+        if (node_proved(next, TURN_MAKER, rest)) {
             const uint32_t size = certificate_size(next, rest);
             if (size < best) {
                 best = size;
@@ -741,9 +1125,47 @@ typedef struct {
     uint64_t short_leaves;
     uint64_t es_leaves;
     uint64_t pair_leaves;
+    uint64_t repeated;                  /* positions printed before (same real board)        */
+    uint64_t repeated_canonical;        /* positions whose canonical form was printed before */
 } PrintStats;
 
 static PrintStats printed;
+
+/*
+ * Sets of printed positions, by real board and by canonical form (size tables with the size
+ * unused).  They measure how much a certificate repeats itself: the gain that sharing
+ * repeated sub-certificates would bring.
+ */
+static SizeTable printed_real;
+static SizeTable printed_canonical;
+
+/* Inserts (key, bound) into `table`; returns whether it was there already. */
+static bool seen_before(SizeTable* table, Position key, int bound)
+{
+    size_t index = hash_key(key, bound) & table->mask;
+    while (table->slot[index].used) {
+        const SizeEntry* entry = &table->slot[index];
+        if (entry->maker == key.maker && entry->breaker == key.breaker && entry->bound == bound) {
+            return true;
+        }
+        index = (index + 1) & table->mask;
+    }
+    if ((table->used + 1) * 4 > (table->mask + 1) * 3) {
+        size_table_grow(table);
+        index = hash_key(key, bound) & table->mask;
+        while (table->slot[index].used) {
+            index = (index + 1) & table->mask;
+        }
+    }
+    table->used++;
+    SizeEntry* entry = &table->slot[index];
+    entry->used = true;
+    entry->maker = key.maker;
+    entry->breaker = key.breaker;
+    entry->bound = (int8_t)bound;
+    entry->size = 0;
+    return false;
+}
 
 static void print_indent(FILE* out, int indent)
 {
@@ -752,6 +1174,8 @@ static void print_indent(FILE* out, int indent)
 
 static void print_certificate(FILE* out, Position p, int bound, int indent)
 {
+    printed.repeated += seen_before(&printed_real, p, bound);
+    printed.repeated_canonical += seen_before(&printed_canonical, canonical(p), bound);
     Pairing pairing;
     switch (classify(p, bound, &pairing)) {
     case LEAF_SHORT:
@@ -816,9 +1240,9 @@ static bool solve_job(FILE* out, int rows, int cols, int k, int bound)
         return false;
     }
     board_init(rows, cols, k);
-    solved_reset();
+    nodes_reset();
     sizes_reset();
-    search_nodes = 0;
+    search_calls = 0;
 
     const Position root = { 0, 0 };
     char label[32];
@@ -827,7 +1251,7 @@ static bool solve_job(FILE* out, int rows, int cols, int k, int bound)
     } else {
         snprintf(label, sizeof label, "within_%d", bound);
     }
-    if (!holds(root, bound)) {
+    if (!breaker_holds(root, bound)) {
         fprintf(stderr, "(%d,%d,%d) %s: Breaker does not hold (Maker wins)\n",
                 rows, cols, k, label);
         return false;
@@ -843,16 +1267,22 @@ static bool solve_job(FILE* out, int rows, int cols, int k, int bound)
     }
     fprintf(out, "Definition br_cert_%d_%d_%d_%s : brcert :=\n  ", rows, cols, k, label);
     memset(&printed, 0, sizeof printed);
+    size_table_init(&printed_real);
+    size_table_init(&printed_canonical);
     print_certificate(out, root, bound, 1);
     fprintf(out, ".\n");
+    printf("  repeated positions: %" PRIu64 " same board, %" PRIu64 " same canonical form\n",
+           printed.repeated, printed.repeated_canonical);
+    free(printed_real.slot);
+    free(printed_canonical.slot);
 
     const uint64_t total = printed.nodes + printed.short_leaves + printed.es_leaves
                          + printed.pair_leaves;
     printf("(%d,%d,%d) %s: %" PRIu32 " positions (%" PRIu64 " nodes, %" PRIu64 " short, %"
            PRIu64 " ES, %" PRIu64 " pairing leaves)\n", rows, cols, k, label, size,
            printed.nodes, printed.short_leaves, printed.es_leaves, printed.pair_leaves);
-    printf("  search nodes %" PRIu64 ", solved positions %zu, sized positions %zu\n",
-           search_nodes, solved.used, sizes.used);
+    printf("  df-pn calls %" PRIu64 ", table nodes %zu, sized positions %zu\n",
+           search_calls, nodes.used, sizes.used);
     if (total != size) {
         fprintf(stderr, "internal error: printed %" PRIu64 " positions, expected %" PRIu32 "\n",
                 total, size);
@@ -889,7 +1319,7 @@ int main(int argc, char** argv)
         ok = solve_job(out, atoi(argv[arg]), atoi(argv[arg + 1]), atoi(argv[arg + 2]), bound) && ok;
     }
     fclose(out);
-    free(solved.slot);
+    free(nodes.slot);
     free(sizes.slot);
     return ok ? 0 : 1;
 }
