@@ -83,6 +83,12 @@ $$
 \mathcal{L}(m, n, k) < 2^{k-1} \;\Longrightarrow\; \mathrm{Value}(m, n, k) = \mathrm{DRAW}.
 $$
 
+### From Maker–Breaker strategies to game values
+[`MNKMakerBreaker.v`](MNKMakerBreaker.v) proves three general facts. Each holds for every board and every family of winning lines, and together they turn a Breaker strategy into game values:
+* **A Breaker win is a draw** (`breaker_win_draw`). Suppose Player 1, as Maker, cannot claim a line against some Breaker strategy. Then Player 2 uses that strategy to stop Player 1 in the strong game, and strategy stealing stops Player 2.
+* **Longer lines are harder for Maker** (`maker_wins_refine`, `mnk_lines_refine`). If every line of one family contains a line of another, a Maker win for the first family is a Maker win for the second. Every $k'$-in-a-row contains a $k$-in-a-row when $k \le k'$, so a Breaker win for $(m, n, k)$ is a Breaker win for every $(m, n, k')$ with $k' \ge k$, and all those games are draws (`mnk_draw_longer_lines`). One draw certificate therefore covers a whole family of line lengths.
+* **Pairing in the middle of the game** (`pairing_no_maker_win`). Breaker has answered every paired Maker stone with its partner. Every line either already carries a Breaker stone or contains a whole pair. Then Maker cannot win. Unlike `pairing_draw`, lines Breaker has already blocked need no pair, so the rule applies at any position reached in play; it is the pairing leaf of a draw certificate.
+
 ---
 
 ## Prime Dimensions and the Erdős–Selfridge Criterion
@@ -165,7 +171,8 @@ mnk-games/
 ├── MNKPhaseTransition.v              # Certificates, (3,3,3) draw, (3,n,3) transition, (m,n,3) characterization
 ├── MNKErdosSelfridge.v               # Erdős–Selfridge theorem (Maker–Breaker), strong-game draws, (k,k,k) classification
 ├── MNKStrategyStealing.v             # Strategy stealing: the second player never wins; win-or-draw dichotomy
-├── CheckAssumptions.v                # Strict audit (114 theorems closed, 0 axioms)
+├── MNKMakerBreaker.v                 # Breaker win => draw; monotonicity in k; mid-game pairing
+├── CheckAssumptions.v                # Strict audit (125 theorems closed, 0 axioms)
 ├── build.ps1                         # Rocq 9.1 build + audit (counts every Print Assumptions)
 ├── lean4/
 │   ├── lakefile.toml                 # Lake project definition
@@ -181,7 +188,7 @@ mnk-games/
 └── README.md                         # This file
 ```
 
-The Lean file independently re-checks every certificate and the counterexample, and proves the soundness of its own checker. It also re-proves the Erdős–Selfridge theorem, the three prime-dimension draws and strategy stealing. The lifting theorem, the (3,3,3) draw, the pairing draws, the characterization and the universal $(m, n, k)$ corollaries are proved in Rocq only.
+The Lean file independently re-checks every certificate and the counterexample, and proves the soundness of its own checker. It also re-proves the Erdős–Selfridge theorem, the three prime-dimension draws and strategy stealing. The lifting theorem, the (3,3,3) draw, the pairing draws, the characterization, the universal $(m, n, k)$ corollaries and the Maker–Breaker transfer theorems of `MNKMakerBreaker.v` are proved in Rocq only.
 
 ---
 
@@ -193,17 +200,18 @@ powershell -ExecutionPolicy Bypass -File .\build.ps1
 ```
 ```text
 === Compiling Generalized (m, n, k) Games Formal Mathematical Proof in Rocq 9.1 ===
-Compiling MNKBoard.v... OK (2.52s)
-Compiling MNKGame.v... OK (0.8s)
-Compiling MNKCertChecker.v... OK (0.65s)
-Compiling MNKWindow.v... OK (0.94s)
-Compiling MNKPairing.v... OK (0.79s)
-Compiling MNKPhaseTransition.v... OK (22.18s)
+Compiling MNKBoard.v... OK (2.53s)
+Compiling MNKGame.v... OK (0.65s)
+Compiling MNKCertChecker.v... OK (0.47s)
+Compiling MNKWindow.v... OK (0.87s)
+Compiling MNKPairing.v... OK (0.75s)
+Compiling MNKPhaseTransition.v... OK (28.45s)
 Compiling MNKErdosSelfridge.v... OK (0.66s)
-Compiling MNKStrategyStealing.v... OK (0.54s)
-Compiling CheckAssumptions.v... OK (9.11s)
+Compiling MNKStrategyStealing.v... OK (0.55s)
+Compiling MNKMakerBreaker.v... OK (0.56s)
+Compiling CheckAssumptions.v... OK (12.3s)
 ...
-SUCCESS: 114/114 theorems closed under global context (0 axioms, 0 admits)!
+SUCCESS: 125/125 theorems closed under global context (0 axioms, 0 admits)!
 ```
 
 ### 2. Compile the Lean 4.35.0 cross-check

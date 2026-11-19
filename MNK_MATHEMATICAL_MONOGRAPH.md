@@ -1,7 +1,7 @@
 # Formalization, Hypergraph Geometry, and the Sharp Phase Transition of $(m, n, k)$ Games Without Gravity
 
 **Authors:** Formal Mathematics & Combinatorial Game Theory Research Initiative  
-**System Verification:** Rocq Prover 9.1 (114 / 114 Theorems Closed) | Lean 4.35.0 (63 / 63 Theorems Verified)  
+**System Verification:** Rocq Prover 9.1 (125 / 125 Theorems Closed) | Lean 4.35.0 (63 / 63 Theorems Verified)  
 **Computational Cross-Check:** 64-bit bitboard negamax engine and bounded-horizon search (`solver/audit_mnk.c`)  
 **Typography Standard:** Classic LaTeX Mathematical Typesetting (Native MathJax / KaTeX)
 
@@ -338,6 +338,19 @@ $$
 \forall k \ge 1: \quad \mathrm{Value}(k, k, k) = \mathrm{DRAW} \iff k \ge 3 \qquad (\texttt{mnk\_square\_classification})
 $$
 
+### 8.6 From Maker–Breaker strategies to game values (formal, `MNKMakerBreaker.v`)
+Three general facts turn a Breaker strategy into game values. Each holds for every hypergraph.
+
+**A Breaker win is a draw** (`breaker_win_draw`). Suppose $\forall d, \lnot$`maker_wins lines P1 d` on the empty board. A forced win in the strong game is a Maker win (`forces_win_maker_wins`), so Player 1 has no forced win. Strategy stealing rules out a Player 2 win, so the strong game is a draw. Unlike `erdos_selfridge_draw`, only one Breaker strategy is needed: the one for Player 2.
+
+**Refinement** (`maker_wins_refine`). Say that $E$ refines $E'$ when every edge of $E'$ contains an edge of $E$. Then a Maker win for $E'$ is a Maker win for $E$, within the same number of moves: Maker plays the same strategy, and every $E'$-edge it completes contains an $E$-edge completed no later. On the $m \times n$ board, $G(m, n, k)$ refines $G(m, n, k')$ whenever $k \le k'$ (`mnk_lines_refine`). A horizontal, vertical or diagonal $k'$-line contains the $k$-line with the same starting cell. The anti-diagonal $k'$-line with bounding box at $(r, c)$ contains the $k$-line with box at $(r + k' - k, c)$. Hence
+
+$$
+k \le k' \;\wedge\; \text{Breaker wins } (m, n, k) \implies \text{Breaker wins } (m, n, k') \implies \mathrm{Value}(m, n, k') = \mathrm{DRAW} \qquad (\texttt{mnk\_draw\_longer\_lines}).
+$$
+
+**Pairing in the middle of the game** (`pairing_no_maker_win`). Let $\pi$ be an involution on the cells, where $\pi(x) = x$ marks an unpaired cell. Suppose Breaker owns $\pi(x)$ for every paired Maker stone $x$, and that every line either carries a Breaker stone or contains a whole pair $\{x, \pi(x)\}$ with $x \ne \pi(x)$. Then Maker cannot win from that position. Breaker answers every Maker move in its partner cell, or anywhere if the partner is unpaired or already taken. A line Maker completes has no Breaker stone, so it contains a whole pair, and Maker would own both of its cells, which Breaker's replies prevent. Lines Breaker has already blocked need no pair, so the rule applies at any position reached in play. It is the pairing leaf of a draw certificate.
+
 ---
 
 ## 9. Strict Axiom & Verification Audit
@@ -345,17 +358,18 @@ $$
 ### Rocq Prover 9.1 (`build.ps1`)
 ```text
 === Compiling Generalized (m, n, k) Games Formal Mathematical Proof in Rocq 9.1 ===
-Compiling MNKBoard.v... OK (2.52s)
-Compiling MNKGame.v... OK (0.8s)
-Compiling MNKCertChecker.v... OK (0.65s)
-Compiling MNKWindow.v... OK (0.94s)
-Compiling MNKPairing.v... OK (0.79s)
-Compiling MNKPhaseTransition.v... OK (22.18s)
+Compiling MNKBoard.v... OK (2.53s)
+Compiling MNKGame.v... OK (0.65s)
+Compiling MNKCertChecker.v... OK (0.47s)
+Compiling MNKWindow.v... OK (0.87s)
+Compiling MNKPairing.v... OK (0.75s)
+Compiling MNKPhaseTransition.v... OK (28.45s)
 Compiling MNKErdosSelfridge.v... OK (0.66s)
-Compiling MNKStrategyStealing.v... OK (0.54s)
-Compiling CheckAssumptions.v... OK (9.11s)
+Compiling MNKStrategyStealing.v... OK (0.55s)
+Compiling MNKMakerBreaker.v... OK (0.56s)
+Compiling CheckAssumptions.v... OK (12.3s)
 ...
-SUCCESS: 114/114 theorems closed under global context (0 axioms, 0 admits)!
+SUCCESS: 125/125 theorems closed under global context (0 axioms, 0 admits)!
 ```
 `build.ps1` counts the `Print Assumptions` commands in `CheckAssumptions.v`, and fails unless every one of them reports *Closed under the global context*.
 

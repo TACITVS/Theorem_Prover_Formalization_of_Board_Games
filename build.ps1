@@ -17,6 +17,7 @@ $files = @(
     "MNKPhaseTransition.v",
     "MNKErdosSelfridge.v",
     "MNKStrategyStealing.v",
+    "MNKMakerBreaker.v",
     "CheckAssumptions.v"
 )
 

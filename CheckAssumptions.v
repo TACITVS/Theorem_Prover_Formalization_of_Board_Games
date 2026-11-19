@@ -3,7 +3,7 @@
 
     Prints the assumptions of every theorem of MNKBoard.v, MNKGame.v,
     MNKCertChecker.v, MNKWindow.v, MNKPairing.v, MNKPhaseTransition.v,
-    MNKErdosSelfridge.v and MNKStrategyStealing.v.
+    MNKErdosSelfridge.v, MNKStrategyStealing.v and MNKMakerBreaker.v.
     build.ps1 fails unless EVERY entry reports
     "Closed under the global context" (zero axioms, zero admissions).
     ************************************************************************** *)
@@ -16,6 +16,7 @@ Require Import MNK.MNKPairing.
 Require Import MNK.MNKPhaseTransition.
 Require Import MNK.MNKErdosSelfridge.
 Require Import MNK.MNKStrategyStealing.
+Require Import MNK.MNKMakerBreaker.
 
 (* MNKBoard.v: geometry, verified line generator, counting *)
 Print Assumptions coord_to_idx_inv.
@@ -147,6 +148,19 @@ Print Assumptions positional_game_win_or_draw.
 Print Assumptions mnk_second_player_never_wins.
 Print Assumptions mnk_value_win_or_draw.
 
+(* MNKMakerBreaker.v: from Maker-Breaker strategies to game values *)
+Print Assumptions breaker_win_draw.
+Print Assumptions mnk_breaker_win_draw.
+Print Assumptions check_win_refine.
+Print Assumptions maker_wins_refine.
+Print Assumptions mnk_lines_refine.
+Print Assumptions mnk_maker_wins_shorter_lines.
+Print Assumptions mnk_breaker_win_longer_lines.
+Print Assumptions mnk_draw_longer_lines.
+Print Assumptions harmless_after_moves.
+Print Assumptions pairing_no_maker_win.
+Print Assumptions pairing_no_maker_win_empty.
+
 (* Statements of the headline theorems, for the record *)
 Check sharp_phase_transition_3_n_3.
 Check mnk_k3_complete_characterization.
@@ -157,3 +171,6 @@ Check mnk_erdos_selfridge_draw.
 Check strategy_stealing.
 Check mnk_value_win_or_draw.
 Check mnk_square_classification.
+Check breaker_win_draw.
+Check mnk_draw_longer_lines.
+Check pairing_no_maker_win.
