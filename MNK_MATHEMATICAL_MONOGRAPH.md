@@ -1,7 +1,7 @@
 # Formalization, Hypergraph Geometry, and the Sharp Phase Transition of $(m, n, k)$ Games Without Gravity
 
 **Authors:** Formal Mathematics & Combinatorial Game Theory Research Initiative  
-**System Verification:** Rocq Prover 9.1 (148 / 148 Theorems Closed) | Lean 4.35.0 (63 / 63 Theorems Verified)  
+**System Verification:** Rocq Prover 9.1 (166 / 166 Theorems Closed) | Lean 4.35.0 (63 / 63 Theorems Verified)  
 **Computational Cross-Check:** 64-bit bitboard negamax engine and bounded-horizon search (`solver/audit_mnk.c`)  
 **Typography Standard:** Classic LaTeX Mathematical Typesetting (Native MathJax / KaTeX)
 
@@ -30,7 +30,9 @@ Every game-theoretic statement is a statement about an explicit semantics of the
 | Every board with $11 \le k \le m, n < 2k$ is a draw | Rocq, universal |
 | $(k, k, k)$ is a draw if and only if $k \ge 3$, for every $k \ge 1$ | Rocq; the $(4,4,4)$ draw also in Lean |
 | Draws of $(11,7,7)$, $(17,13,11)$, $(19,17,13)$ | Rocq and Lean |
-| $(5,4,4)$ is a draw | negamax computation only |
+| $(5,4,4)$ is a draw, and so is every board inside $5 \times 4$ with $k \ge 4$ | Rocq (checked Breaker certificate) |
+| $(m, n, 3)$, $m, n \ge 4$, in exactly 5 plies; $(3, n, 3)$, $4 \le n \le 21$, in exactly 7 plies | Rocq (Breaker certificates for the lower bounds) |
+| Maker–Breaker $(3,3,3)$ and $(5,5,4)$: Maker wins in exactly 4 and exactly 5 moves | Rocq |
 
 The values of the $(m, n, 3)$ games, the Erdős–Selfridge theorem and strategy stealing are classical. The contribution here is a complete, axiom-free, machine-checked proof of all of them, for **all** $m$, $n$ and $k$, together with the corrections listed in Section 10. To our knowledge (see the "Related Formal Work" section of the README), neither of the two general theorems had been machine-checked before.
 
@@ -384,11 +386,35 @@ Formalization:
 * The existing pairing theorem `pairing_draw` then gives the draw. The new mid-game pairing theorem gives the Maker–Breaker version: Breaker wins on every board with $k \ge 9$, whoever moves first (`mnk_hales_jewett_breaker_wins`).
 
 ### 8.8 Maker–Breaker wins and the gap with the strong game (formal, `MNKMakerBreakerCert.v`, `MNKMakerWins.v`)
-A Maker–Breaker win certificate (`mbcert`) gives Maker's move at each node, and a sub-certificate for every Breaker reply that leaves Maker no cell completing a line. The checker settles every other reply itself, by finding a line whose only non-Maker cell is a single empty cell (`threat_line_win`). After a Maker threat, only the blocking reply is listed; after a double threat, none is. `check_mb_sound` turns an accepted certificate into `maker_wins`. The certificates come from `solver/mb_win_cert.c`, which picks the strategy with the fewest certificate nodes by an exact memoised search over canonical positions:
+A Maker–Breaker win certificate (`mbcert`) gives Maker's move at each node, and a sub-certificate for every Breaker reply that leaves Maker no cell completing a line. The checker settles every other reply itself, by finding a line whose only non-Maker cell is a single empty cell (`threat_line_win`). After a Maker threat, only the blocking reply is listed; after a double threat, none is. `check_mb_sound` turns an accepted certificate into `maker_wins`. The certificates come from `solver/mb_win_cert.c`. It finds the fastest win, and among the fastest strategies the one with the fewest certificate nodes, by an exact memoised search over canonical positions:
 * $(3, 3, 3)$: Maker wins within 4 moves, 17 nodes (`mnk_3_3_3_maker_wins`).
-* $(5, 5, 4)$: Maker wins within 6 moves, 1,945 nodes (`mnk_5_5_4_maker_wins`).
+* $(5, 5, 4)$: Maker wins within 5 moves, 1,993 nodes (`mnk_5_5_4_maker_wins`).
+
+Both are optimal in speed (Section 8.9).
 
 Tic-tac-toe is a draw (`mnk_3_3_3_draw`), so the two games really differ (`mnk_tic_tac_toe_gap`). In the strong game Player 2 survives only by making threats of its own. No Breaker strategy alone can hold tic-tac-toe or $(5, 5, 4)$ (`mnk_5_5_4_no_breaker_win`). The known draw of $(5, 5, 4)$ therefore cannot be proved through `breaker_win_draw`: it needs a certificate checker for the strong game. By the embedding and refinement theorems, Maker wins the Maker–Breaker game on every board with $m, n \ge 3$ and $k \le 3$ (`mnk_maker_wins_k3_family`), and on every board with $m, n \ge 5$ and $k \le 4$ (`mnk_maker_wins_k4_family`).
+
+### 8.9 Breaker certificates, exact speeds and the $(5, 4, 4)$ draw (formal, `MNKBreakerCert.v`, `MNKExactSpeed.v`, `MNKBreakerDraws.v`)
+A strategy is optimal in speed when it wins within $d$ own moves and no strategy wins within $d - 1$. The second half needs a defending strategy. A Breaker certificate (`brcert`) is a strategy tree: at each node Maker is to move, and the node gives one Breaker reply for every Maker move that leaves a free cell. No Maker move may complete a line. A leaf is a position the checker settles by computation:
+* `BrES`: for every free cell $x$, $\phi + w(x) < 2^K$, with $K$ the longest line length. This is `es_inv`, so `erdos_selfridge_potential` applies.
+* `BrPair ps`: the pairs `ps` define an involution on the cells. Every paired Maker stone has a Breaker partner, and every line is blocked or contains a whole pair. Then `pairing_no_maker_win` applies.
+* `BrShort`: every line carries a Breaker stone or lacks more than $d$ Maker stones, where $d$ is the number of Maker moves left. A Maker move fills at most one missing cell of a line, and a Breaker move fills none, so Maker cannot complete a line in time (`short_no_win`).
+
+`check_br lines p ob b ct` takes a bound `ob`. `Some d` allows $d$ Maker moves, and each node lowers it by one; `None` is unbounded and rejects `BrShort`. The soundness theorem `check_br_sound` reads: if the check succeeds, then `~ maker_wins lines p d b` for every $d$ within the bound. Since `forces_win` implies `maker_wins` with the same $d$, every bound also holds in the strong game. Without any certificate, `short_no_win` at the empty board gives `mnk_no_forced_win_before_k`: no player completes $k$ in a row in fewer than $k$ own moves.
+
+The certificates come from `solver/breaker_cert.c`. It runs an AND/OR search over canonical positions, then an exact memoised minimisation of the number of certificate positions:
+
+| Result | Lower-bound certificate | Theorem |
+| :--- | :--- | :--- |
+| $(m, n, 3)$, $m, n \ge 4$: P1 wins in exactly 3 own moves (5 plies) | none (`mnk_no_forced_win_before_k`) | `mnk_m_n_3_exactly_3_moves` |
+| $(3, n, 3)$, $4 \le n \le 21$: P1 wins in exactly 4 own moves (7 plies) | 133 to 3,907 positions ($3n + 1$ nodes) | `mnk_3_n_3_exactly_4_moves` |
+| Maker–Breaker $(3, 3, 3)$: Maker wins in exactly 4 moves | 73 positions | `mnk_3_3_3_mb_exactly_4_moves` |
+| Maker–Breaker $(5, 5, 4)$: Maker wins in exactly 5 moves | 601 positions | `mnk_5_5_4_mb_exactly_5_moves` |
+| $(5, 4, 4)$: Breaker wins, so the game is a draw | 381 positions (21 nodes, 170 ES and 190 pairing leaves) | `mnk_5_4_4_breaker_wins`, `mnk_5_4_4_draw` |
+
+The upper bound $n \le 21$ only reflects the 64-cell bitboards of the generator. The certificates have $3n + 1$ nodes, which suggests one uniform Breaker strategy that a direct proof could capture for all $n$. With the embedding theorems, the $(5, 4, 4)$ Breaker win makes every board inside $5 \times 4$, either way round, with $k \ge 4$ a draw (`mnk_draw_inside_5_4`).
+
+The search with only these three leaf rules does not finish $(6, 4, 4)$, $(6, 6, 5)$ or $(7, 6, 5)$: the table passes 3 GB. The df-pn prover settles them in under a second (5,040, 7 and 337 calls) because it also uses independent components, subsumption, mixed pairing and Erdős–Selfridge leaves, and dominance. Each of those rules needs its own Rocq lemma before it can appear in a certificate.
 
 ---
 
@@ -397,22 +423,26 @@ Tic-tac-toe is a draw (`mnk_3_3_3_draw`), so the two games really differ (`mnk_t
 ### Rocq Prover 9.1 (`build.ps1`)
 ```text
 === Compiling Generalized (m, n, k) Games Formal Mathematical Proof in Rocq 9.1 ===
-Compiling MNKBoard.v... OK (2.52s)
-Compiling MNKGame.v... OK (0.71s)
-Compiling MNKCertChecker.v... OK (0.52s)
-Compiling MNKWindow.v... OK (0.87s)
-Compiling MNKPairing.v... OK (0.79s)
-Compiling MNKPhaseTransition.v... OK (27.89s)
-Compiling MNKErdosSelfridge.v... OK (0.73s)
-Compiling MNKStrategyStealing.v... OK (0.64s)
-Compiling MNKMakerBreaker.v... OK (0.8s)
-Compiling MNKHalesJewett.v... OK (0.94s)
-Compiling MNKMakerBreakerCert.v... OK (0.48s)
-Compiling MNKMakerWinCerts.v... OK (0.7s)
-Compiling MNKMakerWins.v... OK (3.5s)
-Compiling CheckAssumptions.v... OK (15.4s)
+Compiling MNKBoard.v... OK (2.28s)
+Compiling MNKGame.v... OK (0.61s)
+Compiling MNKCertChecker.v... OK (0.43s)
+Compiling MNKWindow.v... OK (0.75s)
+Compiling MNKPairing.v... OK (0.68s)
+Compiling MNKPhaseTransition.v... OK (22.37s)
+Compiling MNKErdosSelfridge.v... OK (0.66s)
+Compiling MNKStrategyStealing.v... OK (0.56s)
+Compiling MNKMakerBreaker.v... OK (0.72s)
+Compiling MNKHalesJewett.v... OK (0.87s)
+Compiling MNKMakerBreakerCert.v... OK (0.46s)
+Compiling MNKMakerWinCerts.v... OK (0.66s)
+Compiling MNKMakerWins.v... OK (3.34s)
+Compiling MNKBreakerCert.v... OK (0.6s)
+Compiling MNKBreakerCerts.v... OK (4.35s)
+Compiling MNKExactSpeed.v... OK (27.8s)
+Compiling MNKBreakerDraws.v... OK (0.99s)
+Compiling CheckAssumptions.v... OK (15.87s)
 ...
-SUCCESS: 148/148 theorems closed under global context (0 axioms, 0 admits)!
+SUCCESS: 166/166 theorems closed under global context (0 axioms, 0 admits)!
 ```
 `build.ps1` counts the `Print Assumptions` commands in `CheckAssumptions.v`, and fails unless every one of them reports *Closed under the global context*.
 

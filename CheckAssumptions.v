@@ -4,7 +4,8 @@
     Prints the assumptions of every theorem of MNKBoard.v, MNKGame.v,
     MNKCertChecker.v, MNKWindow.v, MNKPairing.v, MNKPhaseTransition.v,
     MNKErdosSelfridge.v, MNKStrategyStealing.v, MNKMakerBreaker.v,
-    MNKHalesJewett.v, MNKMakerBreakerCert.v and MNKMakerWins.v.
+    MNKHalesJewett.v, MNKMakerBreakerCert.v, MNKMakerWins.v,
+    MNKBreakerCert.v, MNKExactSpeed.v and MNKBreakerDraws.v.
     build.ps1 fails unless EVERY entry reports
     "Closed under the global context" (zero axioms, zero admissions).
     ************************************************************************** *)
@@ -21,6 +22,9 @@ Require Import MNK.MNKMakerBreaker.
 Require Import MNK.MNKHalesJewett.
 Require Import MNK.MNKMakerBreakerCert.
 Require Import MNK.MNKMakerWins.
+Require Import MNK.MNKBreakerCert.
+Require Import MNK.MNKExactSpeed.
+Require Import MNK.MNKBreakerDraws.
 
 (* MNKBoard.v: geometry, verified line generator, counting *)
 Print Assumptions coord_to_idx_inv.
@@ -194,6 +198,30 @@ Print Assumptions maker_win_spreads.
 Print Assumptions mnk_maker_wins_k3_family.
 Print Assumptions mnk_maker_wins_k4_family.
 
+(* MNKBreakerCert.v: sound checker for Breaker strategies, bounded or not *)
+Print Assumptions short_no_win.
+Print Assumptions es_ok_sound.
+Print Assumptions pairing_ok_sound.
+Print Assumptions check_br_sound.
+Print Assumptions check_br_draw.
+Print Assumptions check_br_within.
+Print Assumptions mnk_no_win_before_k.
+Print Assumptions mnk_no_forced_win_before_k.
+
+(* MNKExactSpeed.v: exact winning speeds *)
+Print Assumptions mnk_m_n_3_exactly_3_moves.
+Print Assumptions mnk_m_n_3_mb_exactly_3_moves.
+Print Assumptions mnk_3_n_3_mb_no_win_within_3.
+Print Assumptions mnk_3_n_3_exactly_4_moves.
+Print Assumptions mnk_3_n_3_mb_exactly_4_moves.
+Print Assumptions mnk_3_3_3_mb_exactly_4_moves.
+Print Assumptions mnk_5_5_4_mb_exactly_5_moves.
+
+(* MNKBreakerDraws.v: draws from checked Breaker strategies *)
+Print Assumptions mnk_5_4_4_breaker_wins.
+Print Assumptions mnk_5_4_4_draw.
+Print Assumptions mnk_draw_inside_5_4.
+
 (* Statements of the headline theorems, for the record *)
 Check sharp_phase_transition_3_n_3.
 Check mnk_k3_complete_characterization.
@@ -213,3 +241,10 @@ Check mnk_hales_jewett_breaker_wins.
 Check check_mb_sound.
 Check mnk_tic_tac_toe_gap.
 Check mnk_maker_wins_k4_family.
+Check check_br_sound.
+Check mnk_no_forced_win_before_k.
+Check mnk_m_n_3_exactly_3_moves.
+Check mnk_3_n_3_exactly_4_moves.
+Check mnk_3_3_3_mb_exactly_4_moves.
+Check mnk_5_5_4_mb_exactly_5_moves.
+Check mnk_draw_inside_5_4.

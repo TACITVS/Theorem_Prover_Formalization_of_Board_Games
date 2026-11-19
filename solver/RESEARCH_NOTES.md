@@ -501,7 +501,7 @@ This is relevant to finding pairings when one pair must cover several lines.
 | Dominated squares / partial pairing | yes (credited) | yes | dead cells only | yes (bitboard test; SG-aware for P2) |
 | Symmetry-aware transpositions | yes | yes (dropped: too slow) | yes (cheap D4) | yes (canonical expansion) |
 | Massive GPU parallelism | no | no | **yes** | no GPU; 24-thread CPU search (PDFPN) |
-| Formal (Rocq/Lean) soundness of leaf rules | no | no | **yes** (ES, strategy stealing) | ES, strategy stealing, mid-game pairing (`pairing_no_maker_win`, Rocq); no draw-certificate checker yet |
+| Formal (Rocq/Lean) soundness of leaf rules | no | no | **yes** (ES, strategy stealing) | ES, strategy stealing, mid-game pairing (`pairing_no_maker_win`, Rocq); Breaker-certificate checker `check_br` with ES, pairing and move-bound leaves (no component or hybrid leaves yet) |
 
 **Diagnosis.** The (7,7,5) proof DAG has 1.68×10^9 P1 nodes. A 2.5 s solve implies a proof
 smaller by 3–4 orders of magnitude. The gap is **algorithmic (proof size)**, not throughput.
@@ -737,8 +737,9 @@ Z. Then every sibling P + u with u ∉ Z ∪ {v} is proved too.
       all m, n. It uses one 8 × 8 periodic domino pairing, found by
       `solver/hales_jewett_tile.py` and checked by computation over one period.
     - **Maker–Breaker win certificates** (`MNKMakerBreakerCert.v`, generator
-      `solver/mb_win_cert.c`): (3,3,3) in 17 nodes, (5,5,4) in 1,945 nodes, checked in
-      about 3 s. Replies after which Maker has a winning cell are settled by the checker,
+      `solver/mb_win_cert.c`): (3,3,3) in 17 nodes within 4 moves, (5,5,4) in 1,993 nodes
+      within 5 moves, checked in about 3 s. The generator now keeps the fastest win; a
+      1,945-node certificate exists for (5,5,4), but it takes 6 moves. Replies after which Maker has a winning cell are settled by the checker,
       so a threat costs one listed reply. Since tic-tac-toe is a draw, Maker–Breaker and the
       strong game provably differ. The known (5,5,4) draw can never come from a Breaker
       strategy: it needs a strong-game draw checker.
@@ -747,3 +748,27 @@ Z. Then every sibling P + u with u ∉ Z ∪ {v} is proved too.
       Breaker replies ordered by value and an Erdős–Selfridge prune, was stopped after about
       6 minutes at 2.3 GB. The df-pn prover proves that win in 0.37 s, so exporting its
       disproof tree is the way to larger Maker wins.
+  - **Breaker certificates** (`MNKBreakerCert.v`, generator `solver/breaker_cert.c`, Rocq,
+    0 axioms). One checker serves draws and speed lower bounds. It takes a move bound
+    (`Some d` or `None`) and has three leaf rules: Erdős–Selfridge (`es_inv`), mid-game
+    pairing, and "too slow", i.e. every open line lacks more than d Maker stones
+    (`short_no_win`). The generator runs an AND/OR search on canonical positions, then an
+    exact minimisation of the certificate size.
+    - Speed (optimal = fewest own moves, both bounds formal):
+      - (m,n,3), m,n >= 4: exactly 3 moves (5 plies). The lower bound needs no certificate.
+      - (3,n,3), 4 <= n <= 21: exactly 4 moves (7 plies); 133 to 3,907 positions, 3n + 1
+        nodes each.
+      - Maker–Breaker (3,3,3): exactly 4 moves (73 positions).
+      - Maker–Breaker (5,5,4): exactly 5 moves (601 positions).
+    - (5,4,4): Breaker win in 381 positions (21 nodes, 170 ES and 190 pairing leaves),
+      checked in 0.25 s. So every board inside 5 × 4 (either way round) with k >= 4 is a
+      formal draw.
+    - Limits: with only these leaves the search does not finish (6,4,4), (6,6,5) or (7,6,5)
+      (2^27 table entries, about 3 GB, after 150–200 s). The prover needs 5,040, 7 and 337
+      calls, thanks to components, subsumption, the pairing + ES hybrid and dominance. Next
+      step: Rocq lemmas for those rules (decomposition into independent components first),
+      then certificates that use them.
+    - The (3,n,3) certificates grow as 3n + 1 nodes, which suggests a uniform Breaker
+      strategy (answer next to Maker's first stone in its row, then block the one line
+      holding both Maker stones). A direct Rocq proof could give "exactly 7 plies" for
+      every n.

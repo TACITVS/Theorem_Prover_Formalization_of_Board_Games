@@ -26,9 +26,9 @@
  *      AND/OR search with a table of solved positions, keyed by the canonical form of the
  *      position under the board's symmetries.  Maker moves are restricted to free cells of
  *      live lines (lines without a Breaker stone): this only limits which wins are found.
- *   2. Among winning strategies within the depths tried, the one with the fewest certificate
- *      nodes: at each Maker node, the winning move minimising 1 + the sizes of the listed
- *      replies' sub-certificates (exact, memoised per canonical position and depth).
+ *   2. Among the fastest winning strategies, the one with the fewest certificate nodes: at each
+ *      Maker node, the winning move minimising 1 + the sizes of the listed replies'
+ *      sub-certificates (exact, memoised per canonical position and depth).
  *   3. The certificate is written in real board coordinates; the table is queried with
  *      canonical keys, so every symmetric position shares one entry.
  *
@@ -42,8 +42,9 @@
  *
  *   mb_win_cert output.v [extra_depth] m n k [m n k ...]
  *
- *   extra_depth (default 1): besides the shortest win, depths up to that many moves longer
- *   are tried, and the smallest certificate is kept.
+ *   extra_depth (default 0): the certificate is the fastest win.  With extra_depth > 0, depths
+ *   up to that many moves longer are tried too, and the smallest certificate is kept, which
+ *   may be a slower win.
  */
 
 #include <inttypes.h>
@@ -729,7 +730,7 @@ int main(int argc, char** argv)
         return 2;
     }
     int arg = 2;
-    int extra_depth = 1;
+    int extra_depth = 0;
     if ((argc - 2) % 3 == 1) {
         extra_depth = atoi(argv[arg++]);
     }

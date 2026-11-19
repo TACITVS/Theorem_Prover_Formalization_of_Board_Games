@@ -22,6 +22,10 @@ $files = @(
     "MNKMakerBreakerCert.v",
     "MNKMakerWinCerts.v",
     "MNKMakerWins.v",
+    "MNKBreakerCert.v",
+    "MNKBreakerCerts.v",
+    "MNKExactSpeed.v",
+    "MNKBreakerDraws.v",
     "CheckAssumptions.v"
 )
 
