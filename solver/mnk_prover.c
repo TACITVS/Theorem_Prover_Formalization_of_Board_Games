@@ -64,6 +64,32 @@
  *                  at least as good as u for either player, so u is skipped (MB only for
  *                  Maker; always allowed for Breaker, since it only removes P2 options).
  *
+ *   Relevance      (MB, df-pn engines; after Hsu, Ko, Chen, Wei, Hsueh and Wu, TCS 815, 2020.)
+ *   zones          A zone of a proved position is a set Z of free cells such that Breaker
+ *                  still wins when Maker is handed every free cell outside Z at no cost in
+ *                  tempo.  If Maker's move v is refuted with zone Z, every Maker move u
+ *                  outside Z is refuted too: compared with that position, Maker owns fewer
+ *                  cells and Breaker plays the same strategy, treating Maker moves outside Z
+ *                  as passes (extra Breaker moves never hurt in Maker-Breaker).  Zones are
+ *                  built bottom up:
+ *                    leaf           the strategy cells of every safe component: twin pairs,
+ *                                   2-matching cells, pair cells plus the lines no pair covers,
+ *                                   or the whole component for ES; with the Breaker-first
+ *                                   leaf, also the whole remaining component;
+ *                    Breaker node   {b} ∪ zone(child), b the refuting Breaker move;
+ *                    Maker node     the zones of the refuted children it relies on, plus the
+ *                                   safe components whose moves restrict-Maker skipped, plus
+ *                                   the dominating cell of every skipped dominated move.
+ *                  A child's zone is kept in that child's canonical coordinates and mapped
+ *                  back through the inverse symmetry.  Zones are not used in the strong game,
+ *                  where cells handed to P1 would also break P2's own winning lines.
+ *                  Off by default (flag 1024).  Measured on (7,7,5) MB: 4,700 -> 3,214 search
+ *                  calls and 65.5K -> 54.9K evaluations.  Zones cover about 80% of the free
+ *                  cells of a refuted child and 98% at a proved Maker node, because a zone must
+ *                  hold a blocking pair of every live line, and components and restrict-Maker
+ *                  already capture most of the pruning.  A certificate that relies on zones
+ *                  needs its own Rocq lemma, which this modest gain does not yet justify.
+ *
  *   Transpositions Positions are canonical under the board's symmetry group.  In MB the
  *                  state is reduced to (Maker stones on live lines, free cells on live
  *                  lines): dead stones and dead cells cannot matter.  Every node is expanded
@@ -122,11 +148,11 @@
  *
  *   mnk_prover m n k [MB|SG] [flags] [tt_log2] [PDFPN|DFPN|DFS] [time_limit_seconds] [threads]
  *
- *   flags (default 1023 = all):
+ *   flags (default 1023 = all but relevance zones; 2047 = all):
  *       1 components          2 2-matching pairing      4 subsumption
  *       8 restrict Maker      16 double-threat stop     32 greedy pair+ES hybrid
  *       64 dominance          128 reduced MB state      256 exact pair cover
- *       512 twin pairs
+ *       512 twin pairs        1024 relevance zones (MB, df-pn engines)
  *
  *   threads: worker threads for DFPN and PDFPN (default: every logical processor; DFS is
  *            serial).  A build without -fopenmp always uses one.
@@ -240,7 +266,8 @@ typedef struct {
     bool   reduced_state;   /* MB transposition key ignores dead stones and dead cells */
     bool   pair_cover;      /* exact shared-pair cover search (+ ES on the rest)        */
     bool   twins;           /* remove twin pairs before the safety tests                */
-    int    tt_log2;         /* transposition table holds 2^tt_log2 entries             */
+    bool   zones;           /* Breaker relevance zones prune Maker moves (MB, df-pn)    */
+    int    tt_log2;        /* transposition table holds 2^tt_log2 entries             */
     double time_limit;      /* seconds; 0 = unlimited                                   */
 } Options;
 
@@ -268,9 +295,13 @@ typedef struct {
     uint64_t component_cache_hits;
     uint64_t component_cache_misses;
     uint64_t evaluations_cancelled;         /* speculative evaluations stopped early  */
+    uint64_t zone_pruned_moves;             /* Maker moves refuted by a sibling's zone */
+    uint64_t zone_nodes;                    /* Maker nodes proved with a zone           */
+    uint64_t zone_cells;                    /* ... total zone size                       */
+    uint64_t zone_free_cells;               /* ... total free cells on live lines       */
 } Statistics;
 
-enum { STATISTICS_SCALARS = 18, STATISTICS_ARRAYS = 5 };
+enum { STATISTICS_SCALARS = 22, STATISTICS_ARRAYS = 5 };
 _Static_assert(sizeof(Statistics) ==
                    (STATISTICS_SCALARS + STATISTICS_ARRAYS * (MAX_K + 1)) * sizeof(uint64_t),
                "a Statistics field was added or removed: update statistics_add");
@@ -342,6 +373,10 @@ static void statistics_add(Statistics* into, const Statistics* from)
     into->component_cache_hits    += from->component_cache_hits;
     into->component_cache_misses  += from->component_cache_misses;
     into->evaluations_cancelled   += from->evaluations_cancelled;
+    into->zone_pruned_moves       += from->zone_pruned_moves;
+    into->zone_nodes              += from->zone_nodes;
+    into->zone_cells              += from->zone_cells;
+    into->zone_free_cells         += from->zone_free_cells;
 }
 
 /*
@@ -418,6 +453,7 @@ typedef struct {
     Bitboard line_reach[MAX_CELLS];  /* union of all lines through each cell              */
     uint64_t potential_limit;        /* 2^k: the ES threshold in integer weights        */
     int      symmetry_count;
+    int      symmetry_inverse[MAX_SYMMETRIES];   /* the transform undoing transform t     */
     /* symmetry_table[t][j][v] = image under transform t of byte value v at byte j. */
     Bitboard symmetry_table[MAX_SYMMETRIES][8][256];
 } Board;
@@ -501,6 +537,22 @@ static bool board_init(int rows, int cols, int k)
         }
     }
     for (int t = 0; t < board.symmetry_count; t++) {
+        board.symmetry_inverse[t] = -1;
+        for (int u = 0; u < board.symmetry_count && board.symmetry_inverse[t] < 0; u++) {
+            bool undoes = true;
+            for (int cell = 0; cell < board.cell_count && undoes; cell++) {
+                undoes = image[u][image[t][cell]] == cell;
+            }
+            if (undoes) {
+                board.symmetry_inverse[t] = u;
+            }
+        }
+        if (board.symmetry_inverse[t] < 0) {
+            fprintf(stderr, "internal error: symmetry %d has no inverse\n", t);
+            return false;
+        }
+    }
+    for (int t = 0; t < board.symmetry_count; t++) {
         for (int j = 0; j < 8; j++) {
             for (int v = 0; v < 256; v++) {
                 Bitboard out = 0;
@@ -540,15 +592,23 @@ static inline bool position_less(Position a, Position b)
     return a.maker < b.maker || (a.maker == b.maker && a.breaker < b.breaker);
 }
 
-/* The smallest image of the position under the symmetry group. */
-static Position symmetry_canonical(Position p)
+/*
+ * The smallest image of the position under the symmetry group.  `transform`, if not NULL,
+ * receives the transform that produced it (0 = identity).
+ */
+static Position symmetry_canonical(Position p, int* transform)
 {
     Position best = p;
+    int      best_t = 0;
     for (int t = 1; t < board.symmetry_count; t++) {
         const Position image = { apply_symmetry(t, p.maker), apply_symmetry(t, p.breaker) };
         if (position_less(image, best)) {
             best = image;
+            best_t = t;
         }
+    }
+    if (transform) {
+        *transform = best_t;
     }
     return best;
 }
@@ -559,8 +619,13 @@ static Position symmetry_canonical(Position p)
  * live exactly when it lies inside A ∪ B, and its free cells are its cells in B.  The state
  * is represented as the position with Maker stones A and Breaker stones on every other cell,
  * so the ordinary evaluation applies to it unchanged.
+ *
+ * The reduction keeps cell coordinates, so `transform` (if not NULL) receives the symmetry
+ * that maps the reduced position to the returned one.  A relevance zone of the result maps
+ * back through the inverse transform; dead cells, which the reduction hands to Breaker, lie
+ * on no live line and cannot matter to a zone.
  */
-static Position canonical_state(Position p)
+static Position canonical_state(Position p, int* transform)
 {
     if (options.rules == RULES_MAKER_BREAKER && options.reduced_state) {
         const Bitboard occupied = p.maker | p.breaker;
@@ -577,7 +642,7 @@ static Position canonical_state(Position p)
         p.maker = live_maker;
         p.breaker = board.all_cells & ~(live_maker | live_free);
     }
-    return symmetry_canonical(p);
+    return symmetry_canonical(p, transform);
 }
 
 /* =========================================================================================
@@ -774,7 +839,8 @@ static bool matching_augment(Matching* m, int slot)
     return false;
 }
 
-static bool has_two_matching(const Component* comp)
+/* On success `matched_out` receives the matched cells: the cells Breaker's pairing uses. */
+static bool has_two_matching(const Component* comp, Bitboard* matched_out)
 {
     if (2 * comp->n > popcount(comp->cells)) {
         return false;
@@ -788,6 +854,7 @@ static bool has_two_matching(const Component* comp)
             return false;
         }
     }
+    *matched_out = m.owned;
     return true;
 }
 
@@ -852,8 +919,27 @@ static bool pairs_plus_es(const Component* comp, const PairSet* pairs)
     return potential + max_weight < board.potential_limit;
 }
 
-/* Greedy hybrid: pair the lines with at most `hot` free cells using low-degree cells. */
-static bool greedy_hybrid_safe(const Component* comp)
+/*
+ * Relevance zone of the pairs + ES strategy: the paired cells, plus every cell of the lines no
+ * pair covers.  Handing Maker the cells outside it leaves each covered line its pair and each
+ * uncovered line unchanged, so the strategy still wins.
+ */
+static Bitboard pairs_zone(const Component* comp, const PairSet* pairs)
+{
+    Bitboard zone = pairs->cells;
+    for (int i = 0; i < comp->n; i++) {
+        if (!line_contains_pair(pairs, comp->lines[i])) {
+            zone |= comp->lines[i];
+        }
+    }
+    return zone;
+}
+
+/*
+ * Greedy hybrid: pair the lines with at most `hot` free cells using low-degree cells.  On
+ * success `zone_out` receives the strategy's relevance zone.
+ */
+static bool greedy_hybrid_safe(const Component* comp, Bitboard* zone_out)
 {
     int degree[MAX_CELLS] = { 0 };
     for (int i = 0; i < comp->n; i++) {
@@ -892,6 +978,7 @@ static bool greedy_hybrid_safe(const Component* comp)
         }
         if (pairs_plus_es(comp, &pairs)) {
             stats.safe_by_greedy_hybrid++;
+            *zone_out = pairs_zone(comp, &pairs);
             return true;
         }
     }
@@ -953,7 +1040,8 @@ static bool cover_may_exist(const Bitboard* open, int open_count)
         }
     }
     const Component family = { m, family_lines, family_sizes, cells };
-    return has_two_matching(&family);
+    Bitboard matched = 0;   /* not needed here */
+    return has_two_matching(&family, &matched);
 }
 
 static bool cover_recurse(CoverSearch* s, const Bitboard* open, int open_count)
@@ -1050,8 +1138,11 @@ static bool cover_recurse(CoverSearch* s, const Bitboard* open, int open_count)
     return false;
 }
 
-/* Cover all lines (strongest); optionally, cover only the short lines and use ES for the rest. */
-static bool pair_cover_safe(const Component* comp)
+/*
+ * Cover all lines (strongest); optionally, cover only the short lines and use ES for the rest.
+ * On success `zone_out` receives the strategy's relevance zone.
+ */
+static bool pair_cover_safe(const Component* comp, Bitboard* zone_out)
 {
     const int lowest_hot = board.k - COVER_ES_LEVELS < 2 ? 2 : board.k - COVER_ES_LEVELS;
     for (int hot = board.k; hot >= lowest_hot; hot--) {
@@ -1092,6 +1183,7 @@ static bool pair_cover_safe(const Component* comp)
             } else {
                 stats.safe_by_cover_es++;
             }
+            *zone_out = pairs_zone(comp, &s.pairs);
             return true;
         }
     }
@@ -1110,13 +1202,15 @@ static bool pair_cover_safe(const Component* comp)
  *
  * "Every line through u passes through v" is "v ∈ common[u]" with common[u] the intersection
  * of the lines through u (see undominated_moves).  Writes the remaining lines to `lines` and
- * `sizes` and returns their number.
+ * `sizes` and returns their number; `twin_cells` receives every removed twin cell (the cells
+ * the twin strategy uses).
  */
-static int remove_twin_pairs(const Component* comp, Bitboard* lines, uint8_t* sizes)
+static int remove_twin_pairs(const Component* comp, Bitboard* lines, uint8_t* sizes, Bitboard* twin_cells)
 {
     int n = comp->n;
     memcpy(lines, comp->lines, (size_t)n * sizeof lines[0]);
     memcpy(sizes, comp->sizes, (size_t)n * sizeof sizes[0]);
+    *twin_cells = 0;
 
     for (;;) {
         Bitboard covered = 0;
@@ -1153,6 +1247,7 @@ static int remove_twin_pairs(const Component* comp, Bitboard* lines, uint8_t* si
         if (!twins) {
             return n;
         }
+        *twin_cells |= twins;
 
         /* A line meeting a twin cell contains that cell's partner as well: drop it. */
         int kept = 0;
@@ -1172,18 +1267,24 @@ static int remove_twin_pairs(const Component* comp, Bitboard* lines, uint8_t* si
  * Is the component safe (Breaker wins it with Maker moving first)?  `potential_out` receives
  * the ES potential of the (reduced) component, for the Breaker-first test of the caller.
  * Tests run cheapest first; the exact pair cover, a bounded backtracking search, runs last.
+ *
+ * When safe, `zone_out` receives the relevance zone of the winning strategy: the twin cells,
+ * plus the cells the deciding test relies on (all cells of the reduced component for ES).
  */
-static bool component_is_safe(const Component* original, uint64_t* potential_out)
+static bool component_is_safe(const Component* original, uint64_t* potential_out, Bitboard* zone_out)
 {
     Bitboard   reduced_lines[MAX_LINES];
     uint8_t    reduced_sizes[MAX_LINES];
     Component  reduced;
     const Component* comp = original;
+    Bitboard   twin_cells = 0;
+    Bitboard   test_zone = 0;
 
     if (options.twins) {
-        const int n = remove_twin_pairs(original, reduced_lines, reduced_sizes);
+        const int n = remove_twin_pairs(original, reduced_lines, reduced_sizes, &twin_cells);
         if (n == 0) {
             *potential_out = 0;
+            *zone_out = twin_cells;
             stats.safe_by_twins++;
             return true;
         }
@@ -1199,6 +1300,9 @@ static bool component_is_safe(const Component* original, uint64_t* potential_out
 
     if (es_maker_first(comp, potential_out)) {
         stats.safe_by_es++;
+        /* ES relies on every cell of the component.  (Looking for a pairing with a smaller
+           zone as well was measured: no gain on (6,4,4), (7,4,4) or (7,7,5).) */
+        *zone_out = twin_cells | comp->cells;
         return true;
     }
     /* A cell on two 2-cell lines with different partners wins the component for Maker (who
@@ -1207,14 +1311,14 @@ static bool component_is_safe(const Component* original, uint64_t* potential_out
         stats.unsafe_by_double_threat++;
         return false;
     }
-    if (options.matching && has_two_matching(comp)) {
+    if (options.matching && has_two_matching(comp, &test_zone)) {
         stats.safe_by_matching++;
+        *zone_out = twin_cells | test_zone;
         return true;
     }
-    if (options.greedy_hybrid && greedy_hybrid_safe(comp)) {
-        return true;
-    }
-    if (options.pair_cover && pair_cover_safe(comp)) {
+    if ((options.greedy_hybrid && greedy_hybrid_safe(comp, &test_zone)) ||
+        (options.pair_cover && pair_cover_safe(comp, &test_zone))) {
+        *zone_out = twin_cells | test_zone;
         return true;
     }
     return false;
@@ -1234,6 +1338,7 @@ static bool component_is_safe(const Component* original, uint64_t* potential_out
 typedef struct {
     Bitboard free_cells;     /* F; 0 marks an empty slot (a component always has free cells) */
     Bitboard maker_near;     /* Maker stones on lines meeting F                              */
+    Bitboard zone;           /* relevance zone of Breaker's strategy, when safe              */
     bool     safe;
     bool     breaker_first;  /* Breaker-first ES holds (sum of weights < 1)                  */
 } ComponentCacheEntry;
@@ -1292,9 +1397,13 @@ static inline Bitboard reach_of(Bitboard cells)
     return reach;
 }
 
-/* Safety of one component, memoized.  `breaker_first` receives the Breaker-first ES test. */
-static bool component_safety(const Component* comp, Bitboard maker, bool* breaker_first)
+/*
+ * Safety of one component, memoized.  `breaker_first` receives the Breaker-first ES test and
+ * `zone`, when safe, the relevance zone of Breaker's strategy (otherwise all its cells).
+ */
+static bool component_safety(const Component* comp, Bitboard maker, bool* breaker_first, Bitboard* zone)
 {
+    *zone = comp->cells;
     if (speculation.cancelled) {
         *breaker_first = false;
         return false;   /* the evaluation is being discarded */
@@ -1308,18 +1417,19 @@ static bool component_safety(const Component* comp, Bitboard maker, bool* breake
     if (seen.free_cells == comp->cells && seen.maker_near == maker_near) {
         stats.component_cache_hits++;
         *breaker_first = seen.breaker_first;
+        *zone = seen.zone;
         return seen.safe;
     }
     stats.component_cache_misses++;
 
     uint64_t potential = 0;
-    const bool safe = component_is_safe(comp, &potential);
+    const bool safe = component_is_safe(comp, &potential, zone);
     *breaker_first = potential < board.potential_limit;
     if (speculation.cancelled) {
         return safe;   /* possibly cut short: never cache it */
     }
 
-    const ComponentCacheEntry entry = { comp->cells, maker_near, safe, *breaker_first };
+    const ComponentCacheEntry entry = { comp->cells, maker_near, *zone, safe, *breaker_first };
     spin_lock(cache_lock_of(index));
     component_cache[index] = entry;
     spin_unlock(cache_lock_of(index));
@@ -1332,6 +1442,7 @@ static bool component_safety(const Component* comp, Bitboard maker, bool* breake
 
 typedef struct {
     Bitboard unsafe_cells;          /* union of the cells of unsafe components             */
+    Bitboard safe_zone;             /* union of the relevance zones of safe components     */
     int      unsafe_components;
     bool     breaker_first_fix;     /* one unsafe component, and it passes Breaker-first ES */
     uint64_t weight[MAX_CELLS];     /* ES weights over all lines, for move ordering         */
@@ -1379,8 +1490,11 @@ static void analyse(const Hypergraph* h, Bitboard maker, Analysis* out)
         }
 
         const Component comp = { n, lines, sizes, cells };
-        bool breaker_first = false;
-        if (!component_safety(&comp, maker, &breaker_first)) {
+        bool     breaker_first = false;
+        Bitboard zone = 0;
+        if (component_safety(&comp, maker, &breaker_first, &zone)) {
+            out->safe_zone |= zone;
+        } else {
             out->unsafe_cells |= cells;
             out->unsafe_components++;
             out->breaker_first_fix = breaker_first;
@@ -1399,8 +1513,15 @@ static void analyse(const Hypergraph* h, Bitboard maker, Analysis* out)
  * lines through u", so the test needs one bitboard per cell: common[u] = AND of those lines.
  * Two lines in different directions meet only in u, so common[u] is usually just {u} and
  * almost every cell is decided by a single AND.
+ *
+ * `dominators` receives the cell that caused each removal.  A relevance zone that relies on
+ * skipping u must contain its dominator v: with Maker handed the cells outside the zone, v is
+ * still free and still dominates u.  A dominator may itself be removed later by its own
+ * dominator; the chain ends at a kept cell, since tied cells are removed only in favour of a
+ * lower one.
  */
-static Bitboard undominated_moves(const Hypergraph* h, Position p, Bitboard moves, bool include_p2_lines)
+static Bitboard undominated_moves(const Hypergraph* h, Position p, Bitboard moves, bool include_p2_lines,
+                                  Bitboard* dominators)
 {
     Bitboard common[MAX_CELLS];
     for (Bitboard f = moves; f; f &= f - 1) {
@@ -1425,6 +1546,7 @@ static Bitboard undominated_moves(const Hypergraph* h, Position p, Bitboard move
     }
 
     Bitboard keep = moves;
+    *dominators = 0;
     for (Bitboard f = moves; f; f &= f - 1) {
         const int u = lowest_cell(f);
         for (Bitboard g = common[u] & keep & ~cell_bit(u); g; g &= g - 1) {
@@ -1433,6 +1555,7 @@ static Bitboard undominated_moves(const Hypergraph* h, Position p, Bitboard move
             /* Strictly dominated, or equal and v is the kept representative. */
             if (!equal || v < u) {
                 keep &= ~cell_bit(u);
+                *dominators |= cell_bit(v);
                 break;
             }
         }
@@ -1447,9 +1570,18 @@ static Bitboard undominated_moves(const Hypergraph* h, Position p, Bitboard move
 
 typedef enum { STATUS_OPEN, STATUS_PROVED, STATUS_DISPROVED } Status;   /* PROVED = P1 cannot win */
 
+/*
+ * Result of an evaluation besides its status: the moves to search and a relevance zone.
+ *   PROVED   `zone` is a relevance zone of the position.
+ *   OPEN     `zone` holds the cells that every zone proved for this node must contain on top
+ *            of its children's zones: at a Maker node, the zones of the safe components whose
+ *            moves were skipped and the dominators of skipped dominated moves.
+ * The default, every cell, is always a valid zone.
+ */
 typedef struct {
-    int count;
-    int cell[MAX_CELLS];
+    int      count;
+    int      cell[MAX_CELLS];
+    Bitboard zone;
 } MoveList;
 
 /* Order moves by ES weight, putting `urgent` cells first. */
@@ -1500,6 +1632,7 @@ static Status evaluate_maker_to_move(Position p, MoveList* moves)
     Analysis a;
     analyse(&h, p.maker, &a);
     if (!a.unsafe_cells) {
+        moves->zone = a.safe_zone;
         return STATUS_PROVED;
     }
 
@@ -1507,12 +1640,18 @@ static Status evaluate_maker_to_move(Position p, MoveList* moves)
     if (forced) {
         candidates = forced;
     } else if (options.rules == RULES_MAKER_BREAKER && options.restrict_maker) {
+        /* Moves in safe components are skipped, so a proof relies on those components'
+           strategies (and on the dominators of skipped dominated moves). */
         candidates = a.unsafe_cells;
+        moves->zone = a.safe_zone;
         if (options.dominance) {
-            candidates = undominated_moves(&h, p, candidates, false);
+            Bitboard dominators = 0;
+            candidates = undominated_moves(&h, p, candidates, false, &dominators);
+            moves->zone |= dominators;
         }
     } else {
         candidates = board.all_cells & ~(p.maker | p.breaker);
+        moves->zone = 0;   /* every move is searched */
     }
     order_moves(candidates, a.weight, urgent, moves);
     return STATUS_OPEN;
@@ -1548,15 +1687,18 @@ static Status evaluate_breaker_to_move(Position p, MoveList* moves)
     Analysis a;
     analyse(&h, p.maker, &a);
     if (!a.unsafe_cells) {
+        moves->zone = a.safe_zone;   /* Breaker passes, then answers inside each component */
         return STATUS_PROVED;
     }
     if (a.breaker_first_fix) {
         stats.breaker_first_leaves++;
+        moves->zone = a.safe_zone | a.unsafe_cells;   /* ES needs the whole last component */
         return STATUS_PROVED;
     }
     Bitboard candidates = a.unsafe_cells;
     if (options.dominance) {
-        candidates = undominated_moves(&h, p, candidates, options.rules == RULES_STRONG);
+        Bitboard dominators = 0;   /* Breaker's own options: irrelevant to zones */
+        candidates = undominated_moves(&h, p, candidates, options.rules == RULES_STRONG, &dominators);
     }
     order_moves(candidates, a.weight, double_threat_cells(&h), moves);
     return STATUS_OPEN;
@@ -1566,20 +1708,29 @@ static Status evaluate(Position p, bool maker_to_move, MoveList* moves)
 {
     stats.evaluations++;
     moves->count = 0;
+    moves->zone = board.all_cells;
     if (!(board.all_cells & ~(p.maker | p.breaker))) {
+        moves->zone = 0;
         return STATUS_PROVED;   /* board full, no Maker line */
     }
     return maker_to_move ? evaluate_maker_to_move(p, moves) : evaluate_breaker_to_move(p, moves);
 }
 
-static Position child_state(Position p, bool maker_to_move, int cell)
+/* `transform` (if not NULL) receives the symmetry that canonicalized the child. */
+static Position child_state(Position p, bool maker_to_move, int cell, int* transform)
 {
     if (maker_to_move) {
         p.maker |= cell_bit(cell);
     } else {
         p.breaker |= cell_bit(cell);
     }
-    return canonical_state(p);
+    return canonical_state(p, transform);
+}
+
+/* A zone given in a child's canonical coordinates, in the parent's coordinates. */
+static inline Bitboard zone_to_parent(Bitboard zone, int transform)
+{
+    return transform == 0 ? zone : apply_symmetry(board.symmetry_inverse[transform], zone);
 }
 
 /* =========================================================================================
@@ -1597,6 +1748,7 @@ typedef struct {
 
 static const ProofNumbers PN_PROVED    = { 0, PN_INFINITY };
 static const ProofNumbers PN_DISPROVED = { PN_INFINITY, 0 };
+static const ProofNumbers PN_UNKNOWN   = { 1, 1 };   /* a child that was not looked up */
 
 static inline bool pn_solved(ProofNumbers v)
 {
@@ -1606,6 +1758,7 @@ static inline bool pn_solved(ProofNumbers v)
 typedef struct {
     Bitboard     maker;
     Bitboard     breaker;
+    Bitboard     zone;        /* relevance zone when proved (canonical coordinates)  */
     ProofNumbers value;
     uint32_t     work;        /* subtree effort, used for replacement                */
     uint8_t      turn;        /* 0 = empty, 1 = Breaker to move, 2 = Maker to move  */
@@ -1683,8 +1836,11 @@ static inline TTEntry* tt_find(size_t bucket, Position p, uint8_t turn)
     return NULL;
 }
 
-/* Copies out the value of (p, side to move); `searchers`, if not NULL, gets its thread count. */
-static bool tt_lookup(Position p, bool maker_to_move, ProofNumbers* out, int* searchers)
+/*
+ * Copies out the value of (p, side to move).  `searchers`, if not NULL, gets its thread count;
+ * `zone`, if not NULL, its relevance zone (meaningful when the value is proved).
+ */
+static bool tt_lookup(Position p, bool maker_to_move, ProofNumbers* out, int* searchers, Bitboard* zone)
 {
     const uint8_t turn = turn_code(maker_to_move);
     const size_t  bucket = tt_bucket_index(p, turn);
@@ -1696,12 +1852,16 @@ static bool tt_lookup(Position p, bool maker_to_move, ProofNumbers* out, int* se
         if (searchers) {
             *searchers = e->searchers;
         }
+        if (zone) {
+            *zone = e->zone;
+        }
     }
     spin_unlock(tt_lock_of(bucket));
     return e != NULL;
 }
 
-static void tt_store(Position p, bool maker_to_move, ProofNumbers value, uint64_t work)
+/* Stores a value; `zone` is its relevance zone when the value is proved (else ignored). */
+static void tt_store(Position p, bool maker_to_move, ProofNumbers value, uint64_t work, Bitboard zone)
 {
     const uint8_t turn = turn_code(maker_to_move);
     const size_t  bucket = tt_bucket_index(p, turn);
@@ -1712,6 +1872,7 @@ static void tt_store(Position p, bool maker_to_move, ProofNumbers value, uint64_
     if (slot) {
         if (pn_solved(slot->value) && !pn_solved(value)) {
             value = slot->value;   /* already solved by another thread: keep the fact */
+            zone = slot->zone;
         }
         if (slot->work > effort) {
             effort = slot->work;
@@ -1741,6 +1902,7 @@ static void tt_store(Position p, bool maker_to_move, ProofNumbers value, uint64_
         slot->searchers = 0;
     }
     slot->value = value;
+    slot->zone = zone;
     slot->work = effort;
     spin_unlock(tt_lock_of(bucket));
 }
@@ -1793,7 +1955,7 @@ static bool dfs_p1_wins(Position p, bool maker_to_move)
     }
 
     ProofNumbers known;
-    if (tt_lookup(p, maker_to_move, &known, NULL) && pn_solved(known)) {
+    if (tt_lookup(p, maker_to_move, &known, NULL, NULL) && pn_solved(known)) {
         return known.disproof == 0;
     }
 
@@ -1809,19 +1971,21 @@ static bool dfs_p1_wins(Position p, bool maker_to_move)
     } else if (maker_to_move) {
         p1_wins = false;
         for (int i = 0; i < moves.count && !p1_wins && !search_should_stop(); i++) {
-            p1_wins = dfs_p1_wins(child_state(p, true, moves.cell[i]), false);
+            p1_wins = dfs_p1_wins(child_state(p, true, moves.cell[i], NULL), false);
         }
     } else {
         p1_wins = true;
         for (int i = 0; i < moves.count && p1_wins && !search_should_stop(); i++) {
-            p1_wins = dfs_p1_wins(child_state(p, false, moves.cell[i]), true);
+            p1_wins = dfs_p1_wins(child_state(p, false, moves.cell[i], NULL), true);
         }
     }
 
     if (search_should_stop()) {
         return false;   /* incomplete: never store */
     }
-    tt_store(p, maker_to_move, p1_wins ? PN_DISPROVED : PN_PROVED, stats.search_calls - calls_before);
+    /* This engine does not track zones (the option is off for it): store the trivial one. */
+    tt_store(p, maker_to_move, p1_wins ? PN_DISPROVED : PN_PROVED, stats.search_calls - calls_before,
+             board.all_cells);
     return p1_wins;
 }
 
@@ -1918,13 +2082,14 @@ static inline void note_evaluation_seconds(double seconds)
 
 /*
  * Proof numbers of a canonical state, evaluating (and storing) it on a table miss.
- * `searchers` receives the number of threads currently searching below it.
+ * `searchers` receives the number of threads currently searching below it and `zone` its
+ * relevance zone (meaningful when proved), in its own canonical coordinates.
  */
-static ProofNumbers lookup_or_evaluate(Position p, bool maker_to_move, int* searchers)
+static ProofNumbers lookup_or_evaluate(Position p, bool maker_to_move, int* searchers, Bitboard* zone)
 {
     ProofNumbers value;
     *searchers = 0;
-    if (tt_lookup(p, maker_to_move, &value, searchers)) {
+    if (tt_lookup(p, maker_to_move, &value, searchers, zone)) {
         return value;
     }
     const bool   measure = measuring_evaluations();
@@ -1935,18 +2100,20 @@ static ProofNumbers lookup_or_evaluate(Position p, bool maker_to_move, int* sear
         note_evaluation_seconds(wall_seconds() - started);
     }
     value = initial_numbers(status, maker_to_move, moves.count);
-    tt_store(p, maker_to_move, value, 1);
+    *zone = moves.zone;
+    tt_store(p, maker_to_move, value, 1, *zone);
     return value;
 }
 
 /*
- * Children evaluated ahead of the selection loop.  ready[i] means value[i] is child i's
- * evaluation and is not yet in the table: the selection loop stores it at the moment the
- * serial program would have evaluated and stored it, so the table goes through exactly the
+ * Children evaluated ahead of the selection loop.  ready[i] means value[i] (with zone[i]) is
+ * child i's evaluation and is not yet in the table: the selection loop stores it at the moment
+ * the serial program would have evaluated and stored it, so the table goes through exactly the
  * serial sequence of operations, evictions included.
  */
 typedef struct {
     ProofNumbers value[MAX_CELLS];
+    Bitboard     zone[MAX_CELLS];
     bool         ready[MAX_CELLS];
 } Prefetch;
 
@@ -1992,7 +2159,7 @@ static void prefetch_children(const Position* child, int count, bool child_maker
     int missing_count = 0;
     for (int i = 0; i < count; i++) {
         ProofNumbers known;
-        if (!tt_lookup(child[i], child_maker_to_move, &known, NULL)) {
+        if (!tt_lookup(child[i], child_maker_to_move, &known, NULL, NULL)) {
             missing[missing_count++] = i;
         } else if (child_ends_loop(known, child_maker_to_move)) {
             break;   /* the serial loop stops here: later children are never needed */
@@ -2003,6 +2170,7 @@ static void prefetch_children(const Position* child, int count, bool child_maker
     }
 
     ProofNumbers value[MAX_CELLS];
+    Bitboard     zone[MAX_CELLS];
     double       seconds[MAX_CELLS];
     bool         complete[MAX_CELLS];
     atomic_int   cutoff;   /* lowest j whose child ends the loop; missing_count while none */
@@ -2033,6 +2201,7 @@ static void prefetch_children(const Position* child, int count, bool child_maker
                 continue;
             }
             value[j] = initial_numbers(status, child_maker_to_move, moves.count);
+            zone[j] = moves.zone;
             complete[j] = true;
             if (child_ends_loop(value[j], child_maker_to_move)) {
                 atomic_lower(&cutoff, j);
@@ -2045,9 +2214,10 @@ static void prefetch_children(const Position* child, int count, bool child_maker
        and the cutoff never rises); later ones are discarded. */
     const int last = atomic_load(&cutoff) < missing_count ? atomic_load(&cutoff) : missing_count - 1;
     for (int j = 0; j <= last; j++) {
-        out->value[missing[j]] = value[j];
         out->ready[missing[j]] = complete[j];
-        if (complete[j]) {
+        if (complete[j]) {   /* value, zone and seconds are written only for complete ones */
+            out->value[missing[j]] = value[j];
+            out->zone[missing[j]] = zone[j];
             note_evaluation_seconds(seconds[j]);
         }
     }
@@ -2091,6 +2261,67 @@ static inline uint32_t virtual_key(uint32_t key, int searchers)
     return v >= PN_INFINITY ? PN_INFINITY - 1 : (uint32_t)v;
 }
 
+/*
+ * A Maker move proved to win lies outside the zone of a refuted sibling, which says the move
+ * loses.  Both cannot hold, so a zone is wrong: stop rather than risk an unsound proof.
+ */
+static void zone_contradiction(Position p, int cell)
+{
+    fprintf(stderr,
+            "internal error: Maker move %d wins, yet a sibling's relevance zone refutes it\n"
+            "  position: maker %016llx, breaker %016llx\n",
+            cell, (unsigned long long)p.maker, (unsigned long long)p.breaker);
+    abort();
+}
+
+/*
+ * Relevance zone of a proved AND node (Maker to move), after Hsu et al.'s Algorithm 4.  The
+ * moves are visited in order.  A move outside the intersection of the zones collected so far
+ * is refuted by one of them; any other move must be proved, and its zone is added.  A move
+ * that the selection loop pruned through the zone of a *later* sibling is then covered by
+ * adding that sibling's zone.  The node's own requirement (skipped safe components and
+ * dominators) comes from the evaluation.  `zone[i]` is in the parent's coordinates and set
+ * when `value[i]` is proved.
+ */
+static Bitboard and_node_zone(const MoveList* moves, const ProofNumbers* value, const Bitboard* zone)
+{
+    /* (Visiting the smallest zones first instead of move order was measured: no gain.) */
+    Bitboard result = moves->zone;
+    Bitboard allowed = ~(Bitboard)0;
+    Bitboard pending = 0;   /* moves left to a later sibling's zone */
+    for (int i = 0; i < moves->count; i++) {
+        const Bitboard move = cell_bit(moves->cell[i]);
+        if (!(allowed & move)) {
+            continue;
+        }
+        if (value[i].proof == 0) {
+            result |= zone[i];
+            allowed &= zone[i];
+        } else {
+            pending |= move;
+        }
+    }
+    for (Bitboard f = pending; f; f &= f - 1) {
+        const Bitboard move = cell_bit(lowest_cell(f));
+        if (!(allowed & move)) {
+            continue;   /* a zone added meanwhile refutes it */
+        }
+        int witness = -1;
+        for (int j = 0; j < moves->count && witness < 0; j++) {
+            if (value[j].proof == 0 && !(zone[j] & move)) {
+                witness = j;
+            }
+        }
+        if (witness < 0) {
+            fprintf(stderr, "internal error: a pruned Maker move has no refuting zone\n");
+            abort();
+        }
+        result |= zone[witness];
+        allowed &= zone[witness];
+    }
+    return result;
+}
+
 static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, uint32_t disproof_threshold)
 {
     note_search_call();
@@ -2102,30 +2333,75 @@ static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, u
        move list (a table miss here means the root, or an entry evicted since the parent's
        look-up). */
     ProofNumbers value;
-    if (tt_lookup(p, maker_to_move, &value, NULL) &&
+    if (tt_lookup(p, maker_to_move, &value, NULL, NULL) &&
         (pn_solved(value) || value.proof >= proof_threshold || value.disproof >= disproof_threshold)) {
         return;
     }
     MoveList moves;
     const Status status = evaluate(p, maker_to_move, &moves);
     if (status != STATUS_OPEN) {
-        tt_store(p, maker_to_move, initial_numbers(status, maker_to_move, 0), 1);
+        tt_store(p, maker_to_move, initial_numbers(status, maker_to_move, 0), 1, moves.zone);
         return;
     }
     Position child[MAX_CELLS];
+    int      child_transform[MAX_CELLS];   /* symmetry that canonicalized each child */
     for (int i = 0; i < moves.count; i++) {
-        child[i] = child_state(p, maker_to_move, moves.cell[i]);
+        child[i] = child_state(p, maker_to_move, moves.cell[i], &child_transform[i]);
     }
     Prefetch prefetch;
     prefetch_children(child, moves.count, !maker_to_move, &prefetch);
 
     const bool     and_node = maker_to_move;
+    const bool     zone_pruning = options.zones && and_node;
     const uint32_t key_threshold = and_node ? disproof_threshold : proof_threshold;
     const uint32_t sum_threshold = and_node ? proof_threshold : disproof_threshold;
     const bool     entered = tt_add_searchers(p, maker_to_move, +1);
     const uint64_t calls_before = stats.search_calls;
 
     for (;;) {
+        /* Look the children up in move order, until one decides the node.  At an AND node a
+           move already outside `allowed` is refuted by an earlier sibling's zone: it is
+           neither looked up nor evaluated (its prefetched value, if any, is dropped, as the
+           serial program never computes it). */
+        ProofNumbers child_value[MAX_CELLS];       /* as stored in the table                 */
+        Bitboard     child_zone[MAX_CELLS];        /* parent coordinates; set when proved    */
+        int          child_searchers[MAX_CELLS];
+        int          looked_up = 0;
+        Bitboard     allowed = ~(Bitboard)0;       /* AND node: moves no proved zone refutes */
+
+        for (int i = 0; i < moves.count; i++) {
+            ProofNumbers c;
+            Bitboard     zone = board.all_cells;
+            int          searchers = 0;
+            looked_up = i + 1;
+            if (zone_pruning && !(allowed & cell_bit(moves.cell[i]))) {
+                prefetch.ready[i] = false;
+                child_value[i] = PN_UNKNOWN;   /* pruned below */
+                child_zone[i] = 0;
+                child_searchers[i] = 0;
+                continue;
+            }
+            if (prefetch.ready[i]) {
+                c = prefetch.value[i];   /* evaluated ahead: store it where the serial loop would */
+                zone = prefetch.zone[i];
+                prefetch.ready[i] = false;
+                tt_store(child[i], !maker_to_move, c, 1, zone);
+            } else {
+                c = lookup_or_evaluate(child[i], !maker_to_move, &searchers, &zone);
+            }
+            child_value[i] = c;
+            child_zone[i] = c.proof == 0 ? zone_to_parent(zone, child_transform[i]) : 0;
+            child_searchers[i] = searchers;
+            if (zone_pruning && c.proof == 0) {
+                allowed &= child_zone[i];
+            }
+            if (key_of(c, and_node) == 0) {
+                break;   /* solved: the remaining children cannot change that */
+            }
+        }
+
+        /* Combine.  At an AND node, a move outside `allowed` lies outside the zone of a proved
+           sibling, so it is refuted as well (Hsu et al., Property 2) and counts as proved. */
         uint32_t     key = PN_INFINITY;   /* min over children */
         uint32_t     sum = 0;             /* sum over children */
         int          best_index = -1;     /* serial choice: smallest key        */
@@ -2133,19 +2409,19 @@ static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, u
         int          virtual_index = -1;  /* choice with other threads counted  */
         uint32_t     virtual_best = PN_INFINITY;
         uint32_t     virtual_second = PN_INFINITY;
-        ProofNumbers child_value[MAX_CELLS];
+        ProofNumbers selection_value[MAX_CELLS];
+        int          pruned = 0;
 
-        for (int i = 0; i < moves.count; i++) {
-            int          searchers = 0;
-            ProofNumbers c;
-            if (prefetch.ready[i]) {
-                c = prefetch.value[i];   /* evaluated ahead: store it where the serial loop would */
-                prefetch.ready[i] = false;
-                tt_store(child[i], !maker_to_move, c, 1);
-            } else {
-                c = lookup_or_evaluate(child[i], !maker_to_move, &searchers);
+        for (int i = 0; i < looked_up; i++) {
+            ProofNumbers c = child_value[i];
+            if (zone_pruning && c.proof != 0 && !(allowed & cell_bit(moves.cell[i]))) {
+                if (c.disproof == 0) {
+                    zone_contradiction(p, moves.cell[i]);
+                }
+                c = PN_PROVED;
+                pruned++;
             }
-            child_value[i] = c;
+            selection_value[i] = c;
             const uint32_t k = key_of(c, and_node);
             sum = pn_add(sum, sum_of(c, and_node));
             if (k < key) {
@@ -2155,7 +2431,7 @@ static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, u
             } else if (k < second) {
                 second = k;
             }
-            const uint32_t vk = virtual_key(k, searchers);
+            const uint32_t vk = virtual_key(k, child_searchers[i]);
             if (vk < virtual_best) {
                 virtual_second = virtual_best;
                 virtual_best = vk;
@@ -2163,13 +2439,22 @@ static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, u
             } else if (vk < virtual_second) {
                 virtual_second = vk;
             }
-            if (key == 0) {
-                break;   /* solved: the remaining children cannot change that */
-            }
         }
 
         value = from_key_and_sum(key, sum, and_node);
-        tt_store(p, maker_to_move, value, stats.search_calls - calls_before + 1);
+        Bitboard zone = board.all_cells;
+        if (value.proof == 0 && options.zones) {
+            if (and_node) {
+                zone = and_node_zone(&moves, child_value, child_zone);
+                stats.zone_pruned_moves += (uint64_t)pruned;
+                stats.zone_nodes++;
+                stats.zone_cells += (uint64_t)popcount(zone);
+                stats.zone_free_cells += (uint64_t)popcount(board.all_cells & ~(p.maker | p.breaker));
+            } else {
+                zone = cell_bit(moves.cell[best_index]) | child_zone[best_index];
+            }
+        }
+        tt_store(p, maker_to_move, value, stats.search_calls - calls_before + 1, zone);
         if (pn_solved(value) || key >= key_threshold || sum >= sum_threshold || best_index < 0) {
             break;
         }
@@ -2178,13 +2463,13 @@ static void dfpn_mid(Position p, bool maker_to_move, uint32_t proof_threshold, u
            (it would return at once); the serial choice always makes progress. */
         int      chosen = best_index;
         uint32_t chosen_second = second;
-        if (virtual_index >= 0 && key_of(child_value[virtual_index], and_node) < key_threshold) {
+        if (virtual_index >= 0 && key_of(selection_value[virtual_index], and_node) < key_threshold) {
             chosen = virtual_index;
             chosen_second = virtual_second;
         }
         const uint32_t child_key_threshold = pn_min(key_threshold, pn_second_threshold(chosen_second));
         const uint32_t child_sum_threshold =
-            pn_child_threshold(sum_threshold, sum, sum_of(child_value[chosen], and_node));
+            pn_child_threshold(sum_threshold, sum, sum_of(selection_value[chosen], and_node));
         const ProofNumbers child_threshold =
             from_key_and_sum(child_key_threshold, child_sum_threshold, and_node);
 
@@ -2204,7 +2489,7 @@ static void dfpn_root_loop(Position root)
     while (!search_should_stop()) {
         dfpn_mid(root, true, PN_INFINITY, PN_INFINITY);
         ProofNumbers value;
-        if (tt_lookup(root, true, &value, NULL) && pn_solved(value)) {
+        if (tt_lookup(root, true, &value, NULL, NULL) && pn_solved(value)) {
             atomic_store_explicit(&search_finished, true, memory_order_relaxed);
         }
     }
@@ -2231,7 +2516,7 @@ static int dfpn_solve(Position root)
     dfpn_root_loop(root);
 #endif
     ProofNumbers value;
-    if (!tt_lookup(root, true, &value, NULL) || !pn_solved(value)) {
+    if (!tt_lookup(root, true, &value, NULL, NULL) || !pn_solved(value)) {
         return -1;
     }
     return value.disproof == 0 ? 1 : 0;
@@ -2253,7 +2538,11 @@ static void options_from_flags(int flags)
     options.reduced_state  = flags & 128;
     options.pair_cover     = flags & 256;
     options.twins          = flags & 512;
+    options.zones          = flags & 1024;
 }
+
+/* Every rule except relevance zones (1024), which are off by default (see the header). */
+enum { DEFAULT_FLAGS = 1023 };
 
 static const char* engine_name(Engine engine)
 {
@@ -2271,8 +2560,9 @@ static void print_usage(const char* program)
             "usage: %s m n k [MB|SG] [flags] [tt_log2] [PDFPN|DFPN|DFS] [time_limit_seconds] [threads]\n"
             "  flags: 1 components, 2 2-matching, 4 subsumption, 8 restrict Maker,\n"
             "         16 double-threat stop, 32 greedy hybrid, 64 dominance,\n"
-            "         128 reduced MB state, 256 exact pair cover, 512 twin pairs\n"
-            "         (default 1023 = all)\n"
+            "         128 reduced MB state, 256 exact pair cover, 512 twin pairs,\n"
+            "         1024 relevance zones (MB, df-pn engines)\n"
+            "         (default 1023 = all but relevance zones; 2047 = all)\n"
             "  engines: PDFPN (default; all threads search the tree, the proof varies run to run),\n"
             "           DFPN (children evaluated in parallel; exactly the serial proof), DFS (serial)\n"
             "  threads: default all logical processors\n",
@@ -2290,7 +2580,7 @@ int main(int argc, char** argv)
     const int k = atoi(argv[3]);
 
     options.rules = (argc > 4 && argv[4][0] == 'S') ? RULES_STRONG : RULES_MAKER_BREAKER;
-    options_from_flags(argc > 5 ? atoi(argv[5]) : 1023);
+    options_from_flags(argc > 5 ? atoi(argv[5]) : DEFAULT_FLAGS);
     options.tt_log2 = argc > 6 ? atoi(argv[6]) : 24;
     options.engine = ENGINE_PARALLEL_DFPN;
     if (argc > 7 && strcmp(argv[7], "DFS") == 0) {
@@ -2316,6 +2606,10 @@ int main(int argc, char** argv)
         /* Unsound with P2 lines in play (see the header). Breaker dominance stays allowed. */
         options.restrict_maker = false;
         options.reduced_state = false;
+        options.zones = false;
+    }
+    if (options.engine == ENGINE_DFS) {
+        options.zones = false;   /* the DFS engine does not track zones */
     }
     if (!board_init(rows, cols, k) || !tt_allocate(options.tt_log2)) {
         return 1;
@@ -2326,7 +2620,7 @@ int main(int argc, char** argv)
     }
 
     start_time = wall_seconds();
-    const Position root = canonical_state((Position){ 0, 0 });
+    const Position root = canonical_state((Position){ 0, 0 }, NULL);
     int result;
     if (options.engine == ENGINE_DFS) {
         const bool p1_wins = dfs_p1_wins(root, true);
@@ -2371,6 +2665,13 @@ int main(int argc, char** argv)
     printf("  Breaker-first leaves %llu, Maker wins detected %llu, dominated moves skipped %llu\n",
            (unsigned long long)total.breaker_first_leaves, (unsigned long long)total.maker_wins_detected,
            (unsigned long long)total.dominated_moves);
+    if (options.zones) {
+        const double nodes = total.zone_nodes > 0 ? (double)total.zone_nodes : 1.0;
+        printf("  relevance zones: %llu Maker moves refuted by a sibling's zone; %llu Maker nodes"
+               " proved, zone %.1f of %.1f free cells on average\n",
+               (unsigned long long)total.zone_pruned_moves, (unsigned long long)total.zone_nodes,
+               (double)total.zone_cells / nodes, (double)total.zone_free_cells / nodes);
+    }
     printf("  component cache: %llu hits, %llu misses\n", (unsigned long long)total.component_cache_hits,
            (unsigned long long)total.component_cache_misses);
     if (options.engine == ENGINE_DFPN && options.threads > 1) {

@@ -495,13 +495,13 @@ This is relevant to finding pairings when one pair must cover several lines.
 |---|---|---|---|---|
 | OR nodes searched (best reply found) | yes (AND/OR search) | yes (PNS) | **no**: one greedy reply, repaired afterwards | yes (df-pn, 1+ε) |
 | Pairing-strategy leaves | yes (core method: greedy rules, then the best N = 2 pairs per level) | partial pairings | **no** | yes: 2-matching, shared-pair cover (their score, N = 2, plus a 2-matching refutation at each node), twin pairs |
-| Relevance zones in draw proofs | yes (Breaker r-zones; essential without pairing leaves: Table 1) | no | **no** | **no** (next) |
+| Relevance zones in draw proofs | yes (Breaker r-zones; essential without pairing leaves: Table 1) | no | **no** | yes, optional (flag 1024, off by default: small gain, Section 5.7) |
 | Potential (ES) leaves | potential weights | yes | yes | yes (per component) |
 | Component decomposition | ? | yes (cut vertices) | **no** | yes (connected components, exact-key cache) |
 | Dominated squares / partial pairing | yes (credited) | yes | dead cells only | yes (bitboard test; SG-aware for P2) |
 | Symmetry-aware transpositions | yes | yes (dropped: too slow) | yes (cheap D4) | yes (canonical expansion) |
 | Massive GPU parallelism | no | no | **yes** | no GPU; 24-thread CPU search (PDFPN) |
-| Formal (Rocq/Lean) soundness of leaf rules | no | no | **yes** (ES, strategy stealing) | ES and strategy stealing; pairing lemma not yet |
+| Formal (Rocq/Lean) soundness of leaf rules | no | no | **yes** (ES, strategy stealing) | ES, strategy stealing, mid-game pairing (`pairing_no_maker_win`, Rocq); no draw-certificate checker yet |
 
 **Diagnosis.** The (7,7,5) proof DAG has 1.68×10^9 P1 nodes. A 2.5 s solve implies a proof
 smaller by 3–4 orders of magnitude. The gap is **algorithmic (proof size)**, not throughput.
@@ -660,6 +660,28 @@ Z. Then every sibling P + u with u ∉ Z ∪ {v} is proved too.
   already skip the safe parts of the board.
 - The larger effect is expected on (8,8,5), where 17.4 h is their figure to beat.
 
+**Measured outcome (implemented 2026-11-19, flag 1024).** Serial DFPN, MB rules:
+
+| Board | Zones | Search calls | Evaluations | Time |
+|---|---|---:|---:|---:|
+| (7,7,5) | off | 4,700 | 65,518 | 1.32 s |
+| (7,7,5) | on | 3,214 | 54,919 | 1.30 s |
+| (6,4,4) | off | 5,040 | 27,964 | 0.07 s |
+| (6,4,4) | on | 3,795 | 21,712 | 0.06 s |
+
+- On (7,7,5), 1,070 Maker moves were refuted by a sibling's zone. Zones cover about 80% of
+  the free cells of a refuted child (36.8 of 46) and 98% at a proved Maker node (44.4 of 45.1).
+  A zone must contain a blocking pair of every live line, so it can never be small.
+- Components and `restrict_maker` already skip the safe parts of the board, which is most of
+  what zones would prune. The serial time does not improve, because zone bookkeeping costs
+  about what the skipped evaluations save. PDFPN-24 goes from about 0.24 s to 0.20 s.
+- Validation: 98 configurations with flags 31, 1023 and 2047 (plus MB variants 2039 and 1983).
+  All verdicts agree, and the internal consistency check (no Maker win outside a sibling's
+  zone) never fired.
+- **Decision: off by default.** A certificate that uses zone pruning needs its own Rocq lemma
+  (Property 2 above, as a theorem about `maker_wins`). For a 1.5× smaller search tree and no
+  speed-up, that is not worth it yet. The code stays for (8,8,5), where the trade-off may differ.
+
 ## 6. Status log
 
 - **2026-11-18:**
@@ -698,4 +720,12 @@ Z. Then every sibling P + u with u ∉ Z ∪ {v} is proved too.
 
     (7,7,5) MB now takes 1.2 s serial and 0.23–0.24 s with PDFPN on 24 threads. All 50
     validation verdicts are unchanged.
-  - Breaker relevance zones are designed (Section 5.7) but not implemented.
+  - Breaker relevance zones were implemented (Section 5.7): 1.5× fewer search calls on
+    (7,7,5) MB, no serial speed-up. They are off by default (flag 1024 turns them on), since
+    a certificate using them would need its own Rocq lemma.
+  - Back to the formal goal. `MNKMakerBreaker.v` (Rocq, 0 axioms) proves:
+    - a Breaker win from the empty board makes the strong game a draw;
+    - a Breaker win for (m, n, k) is a Breaker win, and a draw, for every (m, n, k') with
+      k' >= k;
+    - the pairing strategy at any mid-game position: the pairing leaf rule for a future
+      draw-certificate checker.
